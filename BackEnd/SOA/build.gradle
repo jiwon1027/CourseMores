@@ -35,3 +35,8 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+// 실행파일 생성
+bootJar {
+	archiveFileName = "coursemores-0.0.1-SNAPSHOT.jar"
+}
