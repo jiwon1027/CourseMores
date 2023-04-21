@@ -1,4 +1,4 @@
-FROM openjdk:11-jdk-alpine
+FROM openjdk:11-jdk
 WORKDIR /var/jenkins_home/workspace/Backend/BackEnd/SOA
 
 COPY build/libs/coursemores-0.0.1-SNAPSHOT.jar /app.jar
