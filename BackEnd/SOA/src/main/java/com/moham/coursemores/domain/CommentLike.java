@@ -1,6 +1,5 @@
 package com.moham.coursemores.domain;
 
-import com.moham.coursemores.domain.time.RecordTimeEntity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -11,16 +10,17 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.ToString;
-import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.ColumnDefault;
+
+import com.moham.coursemores.domain.time.RecordTimeEntity;
+import lombok.*;
+
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "course_like")
+@Table(name = "comment_like")
 @Getter
 @ToString
-@SuperBuilder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CommentLike extends RecordTimeEntity {
 
     @Id
@@ -29,16 +29,25 @@ public class CommentLike extends RecordTimeEntity {
     private int id;
 
     @NotNull
-    @ColumnDefault("true")
+    @Column
     private boolean flag;
 
-
+    @NotNull
     @ManyToOne(targetEntity = User.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user; // 댓글에 좋아요를 누른 유저
 
+    @NotNull
     @ManyToOne(targetEntity = Course.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "comment_id")
     private Comment comment; // 좋아요가 눌린 댓글
 
+    @Builder
+    public CommentLike(User user,
+                       Comment comment){
+        this.flag = true;
+        this.registerTime = LocalDateTime.now();
+        this.user = user;
+        this.comment = comment;
+    }
 }

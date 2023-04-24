@@ -10,15 +10,15 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import lombok.Getter;
-import lombok.ToString;
-import lombok.experimental.SuperBuilder;
+import javax.validation.constraints.NotNull;
+
+import lombok.*;
 
 @Entity
 @Table(name = "course_of_user")
 @Getter
 @ToString
-@SuperBuilder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CourseOfUser extends CreateTimeEntity {
 
     @Id
@@ -26,12 +26,21 @@ public class CourseOfUser extends CreateTimeEntity {
     @Column(name = "cou_id")
     private int id;
 
+    @NotNull
     @ManyToOne(targetEntity = User.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user; // 코스의 작성 유저
 
+    @NotNull
     @ManyToOne(targetEntity = Course.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "course_id")
     private Course course; // 유저의 작성 코스
+
+    @Builder
+    public CourseOfUser(User user,
+                        Course course){
+        this.user = user;
+        this.course = course;
+    }
 
 }

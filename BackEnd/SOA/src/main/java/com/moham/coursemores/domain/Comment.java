@@ -1,6 +1,6 @@
 package com.moham.coursemores.domain;
 
-import com.moham.coursemores.domain.time.DeleteTimeEntity;
+import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -14,15 +14,16 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.ToString;
-import lombok.experimental.SuperBuilder;
+
+import com.moham.coursemores.domain.time.DeleteTimeEntity;
+import lombok.*;
 
 @Entity
 @Table(name = "comment")
 @Getter
 @ToString
-@SuperBuilder
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Comment extends DeleteTimeEntity {
 
     @Id
@@ -30,7 +31,7 @@ public class Comment extends DeleteTimeEntity {
     @Column(name = "comment_id")
     private int id;
 
-    @NotNull
+    @Column
     private int people;
 
     @NotNull
@@ -38,21 +39,34 @@ public class Comment extends DeleteTimeEntity {
     private String content;
 
     @NotNull
+    @Column
     private int likeCount;
-    
+
+    @NotNull
+    @ManyToOne(targetEntity = User.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user; // 댓글 작성 유저
+
+    @NotNull
+    @ManyToOne(targetEntity = Course.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "course_id")
+    private Course course; // 해당 코스
+
     @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommentImage> commentImageList; // 댓글의 사진 목록
 
     @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommentLike> commentLikeList; // 댓글의 좋아요 목록
-    
-    @ManyToOne(targetEntity = User.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user; // 댓글 작성 유저
 
-    @ManyToOne(targetEntity = Course.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "course_id")
-    private Course course; // 해당 코스
-
-
+    @Builder
+    public Comment(int people,
+                   String content,
+                   User user,
+                   Course course){
+        this.people = people;
+        this.content = content;
+        this.user = user;
+        this.course = course;
+        this.likeCount = 0;
+    }
 }

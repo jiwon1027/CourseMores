@@ -1,17 +1,16 @@
 package com.moham.coursemores.domain;
 
 import com.moham.coursemores.domain.time.CreateTimeEntity;
-import lombok.Getter;
-import lombok.ToString;
-import lombok.experimental.SuperBuilder;
+import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
-@Table(name="theme")
+@Table(name="theme_of_course")
 @Getter
 @ToString
-@SuperBuilder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ThemeOfCourse extends CreateTimeEntity {
 
     @Id
@@ -19,11 +18,20 @@ public class ThemeOfCourse extends CreateTimeEntity {
     @Column(name = "theme_of_course_id")
     private int id;
 
+    @NotNull
     @ManyToOne(targetEntity = Course.class, fetch = FetchType.LAZY)
     @JoinColumn(name="course_id")
     private Course course;
 
+    @NotNull
     @ManyToOne(targetEntity = Theme.class, fetch = FetchType.LAZY)
     @JoinColumn(name="theme_id")
     private Theme theme;
+
+    @Builder
+    public ThemeOfCourse(Course course,
+                         Theme theme){
+        this.course = course;
+        this.theme = theme;
+    }
 }

@@ -11,15 +11,14 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.ToString;
-import lombok.experimental.SuperBuilder;
+
+import lombok.*;
 
 @Entity
 @Table(name = "user")
 @Getter
 @ToString
-@SuperBuilder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends DeleteTimeEntity {
 
     @Id
@@ -36,9 +35,11 @@ public class User extends DeleteTimeEntity {
     private String roles;
 
     @NotNull
+    @Column
     private String provider;
 
     @NotNull
+    @Column
     private String providerId;
 
     @Column(length = 20)
@@ -47,8 +48,10 @@ public class User extends DeleteTimeEntity {
     @Column(length = 1)
     private String gender;
 
+    @Column
     private int age;
 
+    @Column
     private String profileImage;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -66,4 +69,14 @@ public class User extends DeleteTimeEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommentLike> commentLikeList; // 유저의 댓글 좋아요 목록
 
+    @Builder
+    public User(String email,
+                String roles,
+                String provider,
+                String providerId){
+        this.email = email;
+        this.roles = roles;
+        this.provider = provider;
+        this.providerId = providerId;
+    }
 }
