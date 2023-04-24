@@ -13,12 +13,10 @@ import java.time.LocalDateTime;
 
 @Getter
 @ToString
-@SuperBuilder
-@MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 public abstract class UpdateTimeEntity extends CreateTimeEntity{
 
     @LastModifiedDate
     @NotNull
-    private LocalDateTime modifyTime;
+    protected LocalDateTime modifyTime;
 }
