@@ -11,6 +11,6 @@ import java.time.LocalDateTime;
 @SuperBuilder
 @ToString
 @MappedSuperclass
-public abstract class DeleteTimeEntity extends ModifyTimeEntity{
+public abstract class DeleteTimeEntity extends UpdateTimeEntity{
     private LocalDateTime deleteTime;
 }

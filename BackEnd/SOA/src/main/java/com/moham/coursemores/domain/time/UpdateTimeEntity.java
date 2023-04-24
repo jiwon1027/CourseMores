@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @SuperBuilder
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public abstract class ModifyTimeEntity extends CreateTimeEntity{
+public abstract class UpdateTimeEntity extends CreateTimeEntity{
 
     @LastModifiedDate
     @NotNull
