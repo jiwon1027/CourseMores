@@ -28,4 +28,11 @@ public class User extends DeleteTimeEntity {
     private String provider;
     @NotNull
     private String providerId;
+
+    @Column(length = 20)
+    private String nickname;
+    @Column(length = 1)
+    private String gender;
+    private int age;
+    private String profileImage;
 }
