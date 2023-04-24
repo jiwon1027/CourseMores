@@ -1,16 +1,22 @@
 package com.moham.coursemores.domain;
 
 import com.moham.coursemores.domain.time.UpdateTimeEntity;
+import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.util.List;
-
 @Entity
-@Table(name="theme")
+@Table(name = "theme")
 @Getter
 @ToString
 @SuperBuilder
@@ -24,6 +30,6 @@ public class Theme extends UpdateTimeEntity {
     @Column(length = 20)
     private String name;
 
-    @OneToMany(mappedBy = "theme_of_course", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "theme", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ThemeOfCourse> themeOfCourseList;
 }
