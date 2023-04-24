@@ -39,7 +39,13 @@ public class Comment extends DeleteTimeEntity {
 
     @NotNull
     private int likeCount;
+    
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CommentImage> commentImageList; // 댓글의 사진 목록
 
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CommentLike> commentLikeList; // 댓글의 좋아요 목록
+    
     @ManyToOne(targetEntity = User.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user; // 댓글 작성 유저
@@ -48,7 +54,5 @@ public class Comment extends DeleteTimeEntity {
     @JoinColumn(name = "course_id")
     private Course course; // 해당 코스
 
-    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL)
-    private List<CommentLike> commentLikeList; // 댓글의 좋아요 목록
 
 }
