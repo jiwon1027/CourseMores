@@ -7,6 +7,8 @@ import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name="course")
@@ -37,4 +39,13 @@ public class Course extends DeleteTimeEntity {
     @NotNull
     @Column(length = 500)
     private String mainImage;
+
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CourseLocation> courseLocationList;
+
+    @OneToMany(mappedBy = "course_hashtag", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CourseHashtag> courseHashtagList;
+
+    @OneToMany(mappedBy = "theme_of_course", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ThemeOfCourse> themeOfCourseList;
 }
