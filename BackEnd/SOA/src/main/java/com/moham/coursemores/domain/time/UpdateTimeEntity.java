@@ -17,12 +17,7 @@ import java.time.LocalDateTime;
 @ToString
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public abstract class UpdateTimeEntity{
-
-    @CreatedDate
-    @NotNull
-    @Column(updatable = false)
-    private LocalDateTime createTime;
+public abstract class UpdateTimeEntity extends CreateTimeEntity{
 
     @LastModifiedDate
     @NotNull
