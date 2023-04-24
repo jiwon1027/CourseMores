@@ -1,4 +1,4 @@
-package com.moham.coursemores.repository.theme;
+package com.moham.coursemores.repository;
 
 import com.moham.coursemores.domain.Theme;
 import org.springframework.data.jpa.repository.JpaRepository;
