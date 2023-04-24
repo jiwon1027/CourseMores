@@ -38,7 +38,7 @@ public class CommentLike extends RecordTimeEntity {
     private User user; // 댓글에 좋아요를 누른 유저
 
     @NotNull
-    @ManyToOne(targetEntity = Course.class, fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = Comment.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "comment_id")
     private Comment comment; // 좋아요가 눌린 댓글
 
