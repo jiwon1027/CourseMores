@@ -30,7 +30,8 @@ public class InterestServiceImp implements InterestService {
     public List<InterestCourseResDto> getUserInterestCourseList(int userId) {
         List<InterestCourseResDto> result = new ArrayList<>();
 
-        interestRepository.findByUserId(userId)
+        // 현재의 관심 여부(flag)가 true인 것만 가져오기
+        interestRepository.findByUserIdAndFlag(userId, true)
                 .forEach(interest -> {
                     int interestId = interest.getId();
                     // 관심 코스 정보 가져오기

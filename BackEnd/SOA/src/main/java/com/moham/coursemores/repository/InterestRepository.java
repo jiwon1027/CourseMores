@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface InterestRepository extends JpaRepository<Interest, Integer> {
 
-    List<Interest> findByUserId(int userId);
+    List<Interest> findByUserIdAndFlag(int userId, boolean flag);
 
     Optional<Interest> findByUserIdAndCourseId(int userId, int courseId);
 
