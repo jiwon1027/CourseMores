@@ -44,6 +44,7 @@ bootJar {
 
 sonar {
 	properties {
+		property "sonar.host.url", "http://coursemores.site:8082"
 		property "sonar.projectKey", "sqa_7b4dff5b3173cfd25ae0feae999ca310004a6161"
 		property "sonar.projectName", "coursemores"
 	}
