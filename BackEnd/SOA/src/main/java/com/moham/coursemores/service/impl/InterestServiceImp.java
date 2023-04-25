@@ -12,6 +12,7 @@ import com.moham.coursemores.repository.UserRepository;
 import com.moham.coursemores.service.InterestService;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,12 +66,22 @@ public class InterestServiceImp implements InterestService {
     }
 
     @Override
+    @Transactional
     public void addInterestCourse(int userId, int courseId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다"));
-        Course course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new RuntimeException("해당 코스를 찾을 수 없습니다"));
-        interestRepository.save(new Interest(user, course));
+        Optional<Interest> interest = interestRepository.findByUserIdAndCourseId(userId, courseId);
+
+        if (interest.isPresent()) {
+            interest.get().register();
+        } else {
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다"));
+            Course course = courseRepository.findById(courseId)
+                    .orElseThrow(() -> new RuntimeException("해당 코스를 찾을 수 없습니다"));
+            interestRepository.save(Interest.builder()
+                    .user(user)
+                    .course(course)
+                    .build());
+        }
     }
 
     @Override
