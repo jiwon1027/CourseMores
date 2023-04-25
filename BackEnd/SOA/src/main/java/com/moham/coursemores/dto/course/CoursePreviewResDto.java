@@ -16,7 +16,7 @@ public class CoursePreviewResDto {
     private boolean visited; // 방문 여부
     private int likeCount; // 좋아요 수
     private int commentCount; // 댓글 수
-    private String mainImageUrl; // 대표 사진
+    private String mainImage; // 대표 사진
     private String sido; // 시,도
     private String gugun; // 구,군
     private String locationName; // 장소 이름("장소 이름" 외 n개의 장소)

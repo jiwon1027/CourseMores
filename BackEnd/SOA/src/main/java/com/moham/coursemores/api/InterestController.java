@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -52,13 +53,12 @@ public class InterestController {
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
 
-    @GetMapping
-    private ResponseEntity<Map<String, Object>> getUserInterestCourseList(@AuthenticationPrincipal User user) throws Exception {
-        logger.info(">> request : none");
+    @GetMapping("{userId}")
+    private ResponseEntity<Map<String, Object>> getUserInterestCourseList(@PathVariable int userId) throws Exception {
+        logger.info(">> request : userId={}",userId);
 
         Map<String, Object> resultMap = new HashMap<>();
 
-        int userId = Integer.parseInt(user.getUsername());
         List<InterestCourseResDto> InterestCourseResDtoList = interestService.getUserInterestCourseList(userId);
         resultMap.put("myInterestCourseList", InterestCourseResDtoList);
         logger.info("<< response : myInterestCourseList = {}", InterestCourseResDtoList);
