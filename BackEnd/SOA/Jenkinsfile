@@ -3,14 +3,12 @@ node {
     checkout scm
   }
   stage('SonarQube Analysis') {
-    withSonarQubeEnv() {
-      sh "pwd"
-      sh "cd BackEnd/SOA"
-      sh "pwd"
-      sh "chmod +x gradlew"
-      sh "pwd"
-      sh "./gradlew sonar"
-      sh "pwd"
+    dir('BackEnd/SOA') {
+      withSonarQubeEnv() {
+        sh "pwd"
+        sh "chmod +x gradlew"
+        sh "./gradlew sonar"
+      }
     }
   }
 }
