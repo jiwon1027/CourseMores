@@ -2,7 +2,6 @@ package com.moham.coursemores.domain;
 
 import com.moham.coursemores.domain.time.CreateTimeEntity;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;

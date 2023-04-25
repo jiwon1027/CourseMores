@@ -14,8 +14,6 @@ import javax.validation.constraints.NotNull;
 import com.moham.coursemores.domain.time.CreateTimeEntity;
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 @Entity
 @Table(name = "comment_image")
 @Getter
