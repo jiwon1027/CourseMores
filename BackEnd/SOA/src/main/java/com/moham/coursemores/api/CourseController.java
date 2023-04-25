@@ -1,18 +1,17 @@
 package com.moham.coursemores.api;
 
+import com.moham.coursemores.dto.course.CourseCreateReqDto;
 import com.moham.coursemores.dto.course.CourseDetailResDto;
 import com.moham.coursemores.dto.course.CourseInfoResDto;
 import com.moham.coursemores.dto.course.MyCourseResDto;
+import com.moham.coursemores.repository.CourseRepository;
 import com.moham.coursemores.service.CourseService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -92,5 +91,27 @@ public class CourseController {
         logger.info("<< response : myCourseList={}", myCourseResDtoList);
 
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
+    }
+
+    @PostMapping("{userId}")
+    public ResponseEntity<Void> addCourse(
+            @PathVariable int userId,
+            @RequestBody CourseCreateReqDto courseCreateReqDto) {
+        logger.info(">> request : userId={}",userId);
+        logger.info(">> request : courseCreateReqDto={}",courseCreateReqDto);
+
+        courseService.addCourse(userId, courseCreateReqDto);
+        logger.info("<< response : none");
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    private final CourseRepository courseRepository;
+    @GetMapping("all")
+    public ResponseEntity<?> getAllList() {
+        courseRepository.findByDeleteTimeIsNull().forEach(x->{
+            System.out.println(x.getId());
+        });
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
