@@ -55,7 +55,7 @@ public class User extends DeleteTimeEntity {
     private String profileImage;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CourseOfUser> courseOfUserList; // 유저가 작성한 코스 목록
+    private List<Course> courseList; // 유저가 작성한 코스 목록
     
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> commentList; // 유저가 작성한 댓글 목록
