@@ -1,14 +1,7 @@
 package com.moham.coursemores.domain;
 
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 import com.moham.coursemores.domain.time.DeleteTimeEntity;
@@ -59,6 +52,11 @@ public class Course extends DeleteTimeEntity {
     @Column(length = 500)
     private String mainImage;
 
+    @NotNull
+    @ManyToOne(targetEntity = User.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CourseLocation> courseLocationList;
 
@@ -77,16 +75,14 @@ public class Course extends DeleteTimeEntity {
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> commentList;
 
-    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CourseOfUser> courseOfUserList;
-
     @Builder
     public Course(String title,
                   String content,
                   int people,
                   int time,
                   boolean visited,
-                  String mainImage){
+                  String mainImage,
+                  User user){
         this.title = title;
         this.content = content;
         this.people = people;
@@ -96,5 +92,6 @@ public class Course extends DeleteTimeEntity {
         this.interestCount = 0;
         this.likeCount = 0;
         this.mainImage = mainImage;
+        this.user = user;
     }
 }
