@@ -1,6 +1,7 @@
 package com.moham.coursemores.repository;
 
 import com.moham.coursemores.domain.User;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
