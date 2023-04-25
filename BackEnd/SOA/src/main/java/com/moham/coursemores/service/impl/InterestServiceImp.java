@@ -48,7 +48,7 @@ public class InterestServiceImp implements InterestService {
 
                     result.add(InterestCourseResDto.builder()
                                     .interestCourseId(interestId)
-                                    .CoursePreviewResDto(coursePreviewResDto)
+                                    .coursePreviewResDto(coursePreviewResDto)
                             .build());
                 });
 
