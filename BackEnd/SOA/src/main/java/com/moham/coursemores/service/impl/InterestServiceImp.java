@@ -1,15 +1,13 @@
 package com.moham.coursemores.service.impl;
 
-import com.moham.coursemores.domain.*;
+import com.moham.coursemores.domain.Course;
+import com.moham.coursemores.domain.CourseLocation;
 import com.moham.coursemores.dto.course.CoursePreviewResDto;
 import com.moham.coursemores.dto.interest.InterestCourseResDto;
 import com.moham.coursemores.repository.InterestRepository;
-import com.moham.coursemores.repository.UserRepository;
 import com.moham.coursemores.service.InterestService;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,11 +45,12 @@ public class InterestServiceImp implements InterestService {
                             .build();
 
                     result.add(InterestCourseResDto.builder()
-                                    .interestCourseId(interestId)
-                                    .coursePreviewResDto(coursePreviewResDto)
+                            .interestCourseId(interestId)
+                            .coursePreviewResDto(coursePreviewResDto)
                             .build());
                 });
 
         return result;
     }
+
 }
