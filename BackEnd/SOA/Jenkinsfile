@@ -4,8 +4,9 @@ node {
   }
   stage('SonarQube Analysis') {
     withSonarQubeEnv() {
-      sh "chmod +x BackEnd/SOA/gradlew"
-      sh "BackEnd/SOA/gradlew sonar"
+      sh "cd BackEnd/SOA"
+      sh "chmod +x gradlew"
+      sh "./gradlew sonar"
     }
   }
 }
