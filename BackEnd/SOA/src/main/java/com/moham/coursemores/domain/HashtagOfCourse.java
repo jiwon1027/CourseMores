@@ -7,31 +7,32 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
-@Table(name="course_hashtag")
+@Table(name="hashtag_of_course")
 @Getter
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CourseHashtag extends CreateTimeEntity {
+public class HashtagOfCourse extends CreateTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "course_hashtag_id")
+    @Column(name = "hashtag_of_course_id")
     private int id;
-
-    @NotNull
-    @Column(length = 20)
-    private String name;
 
     @NotNull
     @ManyToOne(targetEntity = Course.class, fetch = FetchType.LAZY)
     @JoinColumn(name="course_id")
     private Course course;
 
+    @NotNull
+    @ManyToOne(targetEntity = Hashtag.class, fetch = FetchType.LAZY)
+    @JoinColumn(name="hashtag_id")
+    private Hsahtag hashtag;
+
     @Builder
-    public CourseHashtag(String name,
-                         Course course){
-        this.name = name;
+    public HashtagOfCourse(Course course,
+                           Hsahtag hashtag){
         this.course = course;
+        this.hashtag = hashtag;
     }
 }
