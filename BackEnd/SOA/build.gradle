@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '2.7.11'
 	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+	id "org.sonarqube" version "4.0.0.2929"
 }
 
 group = 'com.moham'
@@ -39,4 +40,11 @@ tasks.named('test') {
 // 실행파일 생성
 bootJar {
 	archiveFileName = "coursemores-0.0.1-SNAPSHOT.jar"
+}
+
+sonar {
+	properties {
+		property "sonar.projectKey", "sqa_7b4dff5b3173cfd25ae0feae999ca310004a6161"
+		property "sonar.projectName", "coursemores"
+	}
 }
