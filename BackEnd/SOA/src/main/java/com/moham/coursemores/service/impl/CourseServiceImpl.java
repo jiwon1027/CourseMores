@@ -48,7 +48,7 @@ public class CourseServiceImpl implements CourseService {
         // 코스 작성자 정보 가져오기
         User user = userRepository.findByIdAndDeleteTimeIsNull(course.getUser().getId())
                 .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
-
+        // 코스 정보 반환
         return CourseInfoResDto.builder()
                 .title(course.getTitle())
                 .content(course.getContent())
@@ -70,6 +70,10 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public List<CourseDetailResDto> getCourseDetail(int courseId) {
+        // 해당 코스가 존재하는지 확인
+        if(!courseRepository.existsByIdAndDeleteTimeIsNull(courseId))
+            throw new RuntimeException("해당 코스를 찾을 수 없습니다.");
+        // 코스 정보 반환
         return courseLocationRepository.findByCourseId(courseId)
                 .stream()
                 .map(courseLocation -> CourseDetailResDto.builder()
@@ -91,14 +95,18 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public List<MyCourseResDto> getMyCourseList(int userId) {
+        // 유저 정보 가져오기
         User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
                 .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
-
+        // 내 코스 목록 list 생성
         List<MyCourseResDto> myCourseResDtoList = new ArrayList<>();
-
+        // 유저의 코스들을 Dto로 가공하여 list에 담기
         user.getCourseList().forEach(course -> {
+            // 삭제한 코스인지 확인
+            if(course.getDeleteTime()!=null) return;
+            // 코스의 첫번째 지역
             CourseLocation firstCourseLocation = course.getCourseLocationList().get(0);
-
+            // 코스를 Dto로 가공하기
             myCourseResDtoList.add(MyCourseResDto.builder()
                     .courseId(course.getId())
                     .title(course.getTitle())
@@ -113,12 +121,13 @@ public class CourseServiceImpl implements CourseService {
                     .commentCount(course.getCommentList().size())
                     .build());
             });
-
+        // 내 코스 목록 반환
         return myCourseResDtoList;
     }
 
     @Override
     public void addCourse(int userId, CourseCreateReqDto courseCreateReqDto) {
+        // 유저 정보 가져오기
         User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
                 .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
         // 코스 생성
@@ -131,17 +140,17 @@ public class CourseServiceImpl implements CourseService {
                 .mainImage(courseCreateReqDto.getLocationList().get(0).getImageList().get(0))
                 .user(user)
                 .build());
-
         // 코스의 테마 생성
         courseCreateReqDto.getThemeIdList().forEach(themeId -> {
+            // 테마 정보 가져오기
             Theme theme = themeRepository.findById(themeId)
                             .orElseThrow(() -> new RuntimeException("해당 테마를 찾을 수 없습니다."));
+            // 코스의 테마 저장
             themeOfCourseRepository.save(ThemeOfCourse.builder()
                     .course(course)
                     .theme(theme)
                     .build());
         });
-
         // 코스의 해시태그 생성
         courseCreateReqDto.getHashtagList().forEach(hashtagName ->{
             Optional<Hashtag> hashtag = hashtagRepository.findByName(hashtagName);
@@ -166,12 +175,12 @@ public class CourseServiceImpl implements CourseService {
                         .build());
             }
         });
-
         // 코스의 장소 정보 생성
         courseCreateReqDto.getLocationList().forEach(location -> {
+            // 코스의 장소의 지역 가져오기
             Region region = regionRepository.findById(location.getRegionId())
                     .orElseThrow(() -> new RuntimeException("해당 지역을 찾을 수 없습니다."));
-
+            // 코스의 장소 저장
             CourseLocation courseLocation = courseLocationRepository.save(CourseLocation.builder()
                             .latitude(location.getLatitude())
                             .longitude(location.getLongitude())
@@ -180,14 +189,11 @@ public class CourseServiceImpl implements CourseService {
                             .course(course)
                             .region(region)
                     .build());
-
             // 코스의 장소의 이미지 생성
-            location.getImageList().forEach(image -> {
-                courseLocationImageRepository.save(CourseLocationImage.builder()
-                                .image(image)
-                                .courseLocation(courseLocation)
-                        .build());
-            });
+            location.getImageList().forEach(image -> courseLocationImageRepository.save(CourseLocationImage.builder()
+                            .image(image)
+                            .courseLocation(courseLocation)
+                    .build()));
         });
     }
 }
