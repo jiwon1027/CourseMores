@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,7 +25,8 @@ public class CourseServiceImpl implements CourseService {
     private final CourseLocationRepository courseLocationRepository;
     private final CourseLocationImageRepository courseLocationImageRepository;
     private final RegionRepository regionRepository;
-    private final CourseHashtagRepository courseHashtagRepository;
+    private final HashtagRepository hashtagRepository;
+    private final HashtagOfCourseRepository hashtagOfCourseRepository;
     private final ThemeRepository themeRepository;
     private final ThemeOfCourseRepository themeOfCourseRepository;
 
@@ -34,9 +36,9 @@ public class CourseServiceImpl implements CourseService {
         Course course = courseRepository.findByIdAndDeleteTimeIsNull(courseId)
                 .orElseThrow(()->new RuntimeException("해당 코스를 찾을 수 없습니다."));
         // 코스 해시태그 이름 가져오기
-        List<String> hashtagList = courseHashtagRepository.findByCourseId(courseId)
+        List<String> hashtagList = hashtagOfCourseRepository.findByCourseId(courseId)
                 .stream()
-                .map(hashtag -> hashtag.getName())
+                .map(hashtag -> hashtag.getHashtag().getName())
                 .collect(Collectors.toList());
         // 코스 테마 id 가져오기
         List<Integer> themeIdList = themeOfCourseRepository.findByCourseId(courseId)
@@ -141,10 +143,29 @@ public class CourseServiceImpl implements CourseService {
         });
 
         // 코스의 해시태그 생성
-        courseCreateReqDto.getHashtagList().forEach(hashtag -> courseHashtagRepository.save(CourseHashtag.builder()
-                .course(course)
-                .name(hashtag)
-                .build()));
+        courseCreateReqDto.getHashtagList().forEach(hashtagName ->{
+            Optional<Hashtag> hashtag = hashtagRepository.findByName(hashtagName);
+            // 해시태그가 이미 존재한다면
+            if(hashtag.isPresent()){
+                // 코스의 해시태그 생성
+                hashtagOfCourseRepository.save(HashtagOfCourse.builder()
+                        .course(course)
+                        .hashtag(hashtag.get())
+                        .build());
+            }
+            // 해시태그가 없다면
+            else{
+                // 해시태그를 생성하고
+                Hashtag newHashtag = hashtagRepository.save(Hashtag.builder()
+                        .name(hashtagName)
+                        .build());
+                // 코스의 해시태그 생성
+                hashtagOfCourseRepository.save(HashtagOfCourse.builder()
+                        .course(course)
+                        .hashtag(newHashtag)
+                        .build());
+            }
+        });
 
         // 코스의 장소 정보 생성
         courseCreateReqDto.getLocationList().forEach(location -> {
