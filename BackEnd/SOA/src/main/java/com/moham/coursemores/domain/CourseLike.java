@@ -51,4 +51,10 @@ public class CourseLike extends RecordTimeEntity {
         this.user = user;
         this.course = course;
     }
+
+    public void register() {
+        this.flag = true;
+        this.registerTime = LocalDateTime.now();
+    }
+
 }

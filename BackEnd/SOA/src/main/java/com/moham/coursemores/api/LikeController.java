@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -62,6 +63,17 @@ public class LikeController {
         logger.info("<< response : isLikeCourse={}", isLikeCourse);
 
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
+    }
+
+    @PostMapping("course/{courseId}/{userId}")
+    public ResponseEntity<Void> addLikeCourse(@PathVariable int userId, @PathVariable int courseId) {
+        logger.info(">> request : userId={}", userId);
+        logger.info(">> request : courseId={}", courseId);
+
+        likeService.addLikeCourse(userId, courseId);
+        logger.info("<< response : none");
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }
