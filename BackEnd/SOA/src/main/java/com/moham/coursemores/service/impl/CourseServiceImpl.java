@@ -1,16 +1,14 @@
 package com.moham.coursemores.service.impl;
 
 import com.moham.coursemores.domain.Course;
+import com.moham.coursemores.domain.CourseLocation;
 import com.moham.coursemores.domain.User;
+import com.moham.coursemores.dto.course.CourseDetailResDto;
 import com.moham.coursemores.dto.course.CourseInfoResDto;
 import com.moham.coursemores.dto.profile.UserSimpleInfoResDto;
-import com.moham.coursemores.repository.CourseHashtagRepository;
-import com.moham.coursemores.repository.CourseRepository;
-import com.moham.coursemores.repository.ThemeOfCourseRepository;
-import com.moham.coursemores.repository.UserRepository;
+import com.moham.coursemores.repository.*;
 import com.moham.coursemores.service.CourseService;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.tool.schema.extract.spi.ColumnInformation;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,6 +20,7 @@ public class CourseServiceImpl implements CourseService {
 
     private final CourseRepository courseRepository;
     private final UserRepository userRepository;
+    private final CourseLocationRepository courseLocationRepository;
     private final CourseHashtagRepository courseHashtagRepository;
     private final ThemeOfCourseRepository themeOfCourseRepository;
 
@@ -64,5 +63,29 @@ public class CourseServiceImpl implements CourseService {
             .build();
 
         return courseInfoResDto;
+    }
+
+    @Override
+    public List<CourseDetailResDto> getCourseDetail(int courseId) throws Exception {
+        // 코스 지역 정보 가져오기
+        List<CourseDetailResDto> courseDetailResDtoList = courseLocationRepository.findByCourseId(courseId)
+                .stream()
+                .map(courseLocation -> CourseDetailResDto.builder()
+                        .name(courseLocation.getName())
+                        .content(courseLocation.getContent())
+                        .latitude(courseLocation.getLatitude())
+                        .longitude(courseLocation.getLongitude())
+                        .sido(courseLocation.getRegion().getSido())
+                        .gugun(courseLocation.getRegion().getGugun())
+                        .locationImage(courseLocation.getCourseLocationImageList()
+                                .stream()
+                                .map(courseLocationImage->courseLocationImage.getImage())
+                                .collect(Collectors.toList())
+                        )
+                        .build()
+                )
+                .collect(Collectors.toList());
+
+        return courseDetailResDtoList;
     }
 }

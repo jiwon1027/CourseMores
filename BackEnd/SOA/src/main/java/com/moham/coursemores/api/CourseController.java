@@ -1,5 +1,6 @@
 package com.moham.coursemores.api;
 
+import com.moham.coursemores.dto.course.CourseDetailResDto;
 import com.moham.coursemores.dto.course.CourseInfoResDto;
 import com.moham.coursemores.service.CourseService;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -24,8 +26,6 @@ public class CourseController {
 
     private final CourseService courseService;
 
-    //반환할 결과값이 있다면 ResponseEntity<Map<String, Object>>
-    //    없다면 ResponseEntity<Void>
     @GetMapping("test")
     private ResponseEntity<Map<String, Object>> test() throws Exception {
         // 메서드 실행 - logger에 request값 표시하기 (없다면 none)
@@ -65,5 +65,18 @@ public class CourseController {
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
 
+    @GetMapping("detail/{courseId}")
+    private ResponseEntity<Map<String, Object>> getCourseDetail(
+            @PathVariable int courseId) throws Exception {
+        logger.info(">> request : courseId={}",courseId);
+
+        Map<String, Object> resultMap = new HashMap<>();
+
+        List<CourseDetailResDto> courseDetailResDtoList = courseService.getCourseDetail(courseId);
+        resultMap.put("courseDetailList", courseDetailResDtoList);
+        logger.info("<< response : courseDetailList={}", courseDetailResDtoList);
+
+        return new ResponseEntity<>(resultMap, HttpStatus.OK);
+    }
 
 }
