@@ -65,4 +65,18 @@ public class InterestController {
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
 
+    @GetMapping("course/{courseId}/{userId}")
+    public ResponseEntity<Map<String, Object>> checkInterest (@PathVariable int userId, @PathVariable int courseId)  {
+        logger.info(">> request : userId={}", userId);
+        logger.info(">> request : courseId={}", courseId);
+
+        Map<String, Object> resultMap = new HashMap<>();
+
+        boolean isInterestCourse = interestService.checkInterest(userId, courseId);
+        resultMap.put("isInterestCourse", isInterestCourse);
+        logger.info("<< response : isInterestCourse={}", isInterestCourse);
+
+        return new ResponseEntity<>(resultMap, HttpStatus.OK);
+    }
+
 }

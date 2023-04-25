@@ -53,4 +53,8 @@ public class InterestServiceImp implements InterestService {
         return result;
     }
 
+    @Override
+    public boolean checkInterest(int userId, int courseId) {
+        return interestRepository.existsByUserIdAndCourseId(userId, courseId);
+    }
 }
