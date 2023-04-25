@@ -31,7 +31,7 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public CourseInfoResDto getCourseInfo(int courseId) {
         // 코스 정보 가져오기
-        Course course = courseRepository.findById(courseId)
+        Course course = courseRepository.findByIdAndDeleteTimeIsNull(courseId)
                 .orElseThrow(()->new RuntimeException("해당 코스를 찾을 수 없습니다."));
         // 코스 해시태그 이름 가져오기
         List<String> hashtagList = courseHashtagRepository.findByCourseId(courseId)
@@ -44,7 +44,7 @@ public class CourseServiceImpl implements CourseService {
                 .map(theme -> theme.getId())
                 .collect(Collectors.toList());
         // 코스 작성자 정보 가져오기
-        User user = userRepository.findById(course.getUser().getId())
+        User user = userRepository.findByIdAndDeleteTimeIsNull(course.getUser().getId())
                 .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
 
         return CourseInfoResDto.builder()
@@ -89,7 +89,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public List<MyCourseResDto> getMyCourseList(int userId) {
-        User user = userRepository.findById(userId)
+        User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
                 .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
 
         List<MyCourseResDto> myCourseResDtoList = new ArrayList<>();
@@ -117,7 +117,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public void addCourse(int userId, CourseCreateReqDto courseCreateReqDto) {
-        User user = userRepository.findById(userId)
+        User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
                 .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
         // 코스 생성
         Course course = courseRepository.save(Course.builder()

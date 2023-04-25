@@ -74,9 +74,9 @@ public class InterestServiceImp implements InterestService {
         if (interest.isPresent()) {
             interest.get().register();
         } else {
-            User user = userRepository.findById(userId)
+            User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
                     .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다"));
-            Course course = courseRepository.findById(courseId)
+            Course course = courseRepository.findByIdAndDeleteTimeIsNull(courseId)
                     .orElseThrow(() -> new RuntimeException("해당 코스를 찾을 수 없습니다"));
             interestRepository.save(Interest.builder()
                     .user(user)
