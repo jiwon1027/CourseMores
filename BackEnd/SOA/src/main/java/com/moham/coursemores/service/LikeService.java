@@ -6,4 +6,6 @@ public interface LikeService {
 
     void addLikeCourse(int userId, int courseId);
 
+    void deleteLikeCourse(int userId, int courseId);
+
 }

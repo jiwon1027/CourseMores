@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -71,6 +72,17 @@ public class LikeController {
         logger.info(">> request : courseId={}", courseId);
 
         likeService.addLikeCourse(userId, courseId);
+        logger.info("<< response : none");
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping("course/{courseId}/{userId}")
+    public ResponseEntity<Void> deleteLikeCourse(@PathVariable int userId, @PathVariable int courseId) {
+        logger.info(">> request : userId={}", userId);
+        logger.info(">> request : courseId={}", courseId);
+
+        likeService.deleteLikeCourse(userId, courseId);
         logger.info("<< response : none");
 
         return new ResponseEntity<>(HttpStatus.OK);
