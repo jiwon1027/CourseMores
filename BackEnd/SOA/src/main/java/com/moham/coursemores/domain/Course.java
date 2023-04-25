@@ -61,7 +61,7 @@ public class Course extends DeleteTimeEntity {
     private List<CourseLocation> courseLocationList;
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CourseHashtag> courseHashtagList;
+    private List<HashtagOfCourse> courseHashtagList;
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ThemeOfCourse> themeOfCourseList;

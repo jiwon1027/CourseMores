@@ -27,11 +27,11 @@ public class HashtagOfCourse extends CreateTimeEntity {
     @NotNull
     @ManyToOne(targetEntity = Hashtag.class, fetch = FetchType.LAZY)
     @JoinColumn(name="hashtag_id")
-    private Hsahtag hashtag;
+    private Hashtag hashtag;
 
     @Builder
     public HashtagOfCourse(Course course,
-                           Hsahtag hashtag){
+                           Hashtag hashtag){
         this.course = course;
         this.hashtag = hashtag;
     }
