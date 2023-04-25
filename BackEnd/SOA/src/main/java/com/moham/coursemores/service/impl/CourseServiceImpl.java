@@ -45,8 +45,7 @@ public class CourseServiceImpl implements CourseService {
         User user = userRepository.findById(course.getUser().getId())
                 .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
 
-        // req 담기
-        CourseInfoResDto courseInfoResDto = CourseInfoResDto.builder()
+        return CourseInfoResDto.builder()
                 .title(course.getTitle())
                 .content(course.getContent())
                 .people(course.getPeople())
@@ -62,15 +61,12 @@ public class CourseServiceImpl implements CourseService {
                         .nickname(user.getNickname())
                         .profileImage(user.getProfileImage())
                         .build())
-            .build();
-
-        return courseInfoResDto;
+                .build();
     }
 
     @Override
     public List<CourseDetailResDto> getCourseDetail(int courseId) {
-        // 코스 지역 정보 가져오기
-        List<CourseDetailResDto> courseDetailResDtoList = courseLocationRepository.findByCourseId(courseId)
+        return courseLocationRepository.findByCourseId(courseId)
                 .stream()
                 .map(courseLocation -> CourseDetailResDto.builder()
                         .name(courseLocation.getName())
@@ -87,8 +83,6 @@ public class CourseServiceImpl implements CourseService {
                         .build()
                 )
                 .collect(Collectors.toList());
-
-        return courseDetailResDtoList;
     }
 
     @Override

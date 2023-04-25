@@ -11,6 +11,6 @@ import lombok.ToString;
 public class InterestCourseResDto {
 
     private int interestCourseId;
-    private CoursePreviewResDto CoursePreviewResDto;
+    private CoursePreviewResDto coursePreviewResDto;
 
 }
