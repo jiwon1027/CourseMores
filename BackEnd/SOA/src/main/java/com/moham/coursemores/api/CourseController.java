@@ -1,7 +1,6 @@
 package com.moham.coursemores.api;
 
 import com.moham.coursemores.dto.course.CourseInfoResDto;
-import com.moham.coursemores.dto.profile.UserSimpleInfoResDto;
 import com.moham.coursemores.service.CourseService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -30,7 +29,7 @@ public class CourseController {
     @GetMapping("test")
     private ResponseEntity<Map<String, Object>> test() throws Exception {
         // 메서드 실행 - logger에 request값 표시하기 (없다면 none)
-        logger.debug(">> request : none");
+        logger.info(">> request : none");
 
         // 결과값을 담을 resultMap 생성
         Map<String, Object> resultMap = new HashMap<>();
@@ -55,7 +54,7 @@ public class CourseController {
     @GetMapping("info/{courseId}")
     private ResponseEntity<Map<String, Object>> getCourseInfo(
             @PathVariable int courseId) throws Exception {
-        logger.debug(">> request : courseId={}",courseId);
+        logger.info(">> request : courseId={}",courseId);
 
         Map<String, Object> resultMap = new HashMap<>();
 

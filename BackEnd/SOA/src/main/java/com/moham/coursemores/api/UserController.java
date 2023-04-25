@@ -23,7 +23,7 @@ public class UserController {
     @GetMapping("test")
     private ResponseEntity<Map<String, Object>> test() throws Exception {
         // 메서드 실행 - logger에 request값 표시하기 (없다면 none)
-        logger.debug(">> request : none");
+        logger.info(">> request : none");
 
         // 결과값을 담을 resultMap 생성
         Map<String, Object> resultMap = new HashMap<>();
