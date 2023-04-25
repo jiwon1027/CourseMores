@@ -9,8 +9,6 @@ public interface InterestRepository extends JpaRepository<Interest, Integer> {
 
     List<Interest> findByUserId(int userId);
 
-    boolean existsByUserIdAndCourseId(int userId, int courseId);
-
     Optional<Interest> findByUserIdAndCourseId(int userId, int courseId);
 
 }
