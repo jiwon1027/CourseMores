@@ -5,6 +5,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 import com.moham.coursemores.domain.time.DeleteTimeEntity;
+import com.moham.coursemores.dto.course.CourseUpdateReqDto;
 import lombok.*;
 
 @Entity
@@ -103,4 +104,11 @@ public class Course extends DeleteTimeEntity {
         this.likeCount--;
     }
 
+    public void update(CourseUpdateReqDto courseUpdateReqDto){
+        this.title = courseUpdateReqDto.getTitle();
+        this.content = courseUpdateReqDto.getContent();
+        this.people = courseUpdateReqDto.getPeople();
+        this.time = courseUpdateReqDto.getTime();
+        this.visited = courseUpdateReqDto.isVisited();
+    }
 }

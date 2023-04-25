@@ -1,15 +1,13 @@
 package com.moham.coursemores.service.impl;
 
 import com.moham.coursemores.domain.*;
-import com.moham.coursemores.dto.course.CourseCreateReqDto;
-import com.moham.coursemores.dto.course.CourseDetailResDto;
-import com.moham.coursemores.dto.course.CourseInfoResDto;
-import com.moham.coursemores.dto.course.MyCourseResDto;
+import com.moham.coursemores.dto.course.*;
 import com.moham.coursemores.dto.profile.UserSimpleInfoResDto;
 import com.moham.coursemores.repository.*;
 import com.moham.coursemores.service.CourseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +16,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CourseServiceImpl implements CourseService {
 
     private final CourseRepository courseRepository;
@@ -126,6 +125,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    @Transactional
     public void addCourse(int userId, CourseCreateReqDto courseCreateReqDto) {
         // 유저 정보 가져오기
         User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
@@ -195,5 +195,24 @@ public class CourseServiceImpl implements CourseService {
                             .courseLocation(courseLocation)
                     .build()));
         });
+    }
+
+    @Override
+    @Transactional
+    public void setCourse(int userId, int courseId, CourseUpdateReqDto courseUpdateReqDto) {
+        // 유저 정보 가져오기
+        User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
+                .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
+        // 코스 정보 가져오기
+        Course course = courseRepository.findByIdAndDeleteTimeIsNull(courseId)
+                .orElseThrow(() -> new RuntimeException("해당 코스를 찾을 수 없습니다."));
+        // 코스 정보 수정하기
+        course.update(courseUpdateReqDto);
+        // 코스 해시태그 수정하기
+
+        // 해시태그, 테마, 장소(이름,내용,이미지)
+        // 코스 장소 목록 가져오기
+        List<CourseLocation> courseLocation = courseLocationRepository.findByCourseId(courseId);
+
     }
 }

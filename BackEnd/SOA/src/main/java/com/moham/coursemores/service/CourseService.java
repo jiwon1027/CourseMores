@@ -1,9 +1,6 @@
 package com.moham.coursemores.service;
 
-import com.moham.coursemores.dto.course.CourseCreateReqDto;
-import com.moham.coursemores.dto.course.CourseDetailResDto;
-import com.moham.coursemores.dto.course.CourseInfoResDto;
-import com.moham.coursemores.dto.course.MyCourseResDto;
+import com.moham.coursemores.dto.course.*;
 
 import java.util.List;
 
@@ -12,4 +9,5 @@ public interface CourseService {
     List<CourseDetailResDto> getCourseDetail(int courseId);
     List<MyCourseResDto> getMyCourseList(int userId);
     void addCourse(int userId, CourseCreateReqDto courseCreateReqDto);
+    void setCourse(int userId, int courseId, CourseUpdateReqDto courseUpdateReqDto);
 }
