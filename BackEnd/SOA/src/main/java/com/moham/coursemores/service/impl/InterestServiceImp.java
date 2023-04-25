@@ -62,7 +62,8 @@ public class InterestServiceImp implements InterestService {
 
     @Override
     public boolean checkInterest(int userId, int courseId) {
-        return interestRepository.existsByUserIdAndCourseId(userId, courseId);
+        Optional<Interest> interest = interestRepository.findByUserIdAndCourseId(userId, courseId);
+        return interest.isPresent() && interest.get().isFlag();
     }
 
     @Override
