@@ -106,12 +106,4 @@ public class CourseController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private final CourseRepository courseRepository;
-    @GetMapping("all")
-    public ResponseEntity<?> getAllList() {
-        courseRepository.findByDeleteTimeIsNull().forEach(x->{
-            System.out.println(x.getId());
-        });
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
 }
