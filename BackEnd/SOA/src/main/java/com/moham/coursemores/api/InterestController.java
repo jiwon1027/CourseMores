@@ -1,5 +1,8 @@
 package com.moham.coursemores.api;
 
+import com.moham.coursemores.dto.interest.InterestCourseResDto;
+import com.moham.coursemores.service.InterestService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +22,8 @@ public class InterestController {
 
     // 해당 컨트롤러의 이름과 일치해야한다
     private static final Logger logger = LoggerFactory.getLogger(InterestController.class);
+
+    private final InterestService interestService;
 
     //반환할 결과값이 있다면 ResponseEntity<Map<String, Object>>
     //    없다면 ResponseEntity<Void>
@@ -46,4 +51,19 @@ public class InterestController {
         // 결과값 반환하기
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
+
+    @GetMapping
+    private ResponseEntity<Map<String, Object>> getUserInterestCourseList(@AuthenticationPrincipal User user) throws Exception {
+        logger.info(">> request : none");
+
+        Map<String, Object> resultMap = new HashMap<>();
+
+        int userId = Integer.parseInt(user.getUsername());
+        List<InterestCourseResDto> InterestCourseResDtoList = interestService.getUserInterestCourseList(userId);
+        resultMap.put("myInterestCourseList", InterestCourseResDtoList);
+        logger.info("<< response : myInterestCourseList = {}", InterestCourseResDtoList);
+
+        return new ResponseEntity<>(resultMap, HttpStatus.OK);
+    }
+
 }
