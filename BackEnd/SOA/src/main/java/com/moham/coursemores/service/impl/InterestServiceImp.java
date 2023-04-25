@@ -18,8 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class InterestServiceImp implements InterestService {
 
     private final InterestRepository interestRepository;
@@ -30,10 +30,13 @@ public class InterestServiceImp implements InterestService {
     public List<InterestCourseResDto> getUserInterestCourseList(int userId) {
         List<InterestCourseResDto> result = new ArrayList<>();
 
-        interestRepository.findByUserId(userId)
+        // 현재의 관심 여부(flag)가 true인 것만 가져오기
+        interestRepository.findByUserIdAndFlag(userId, true)
                 .forEach(interest -> {
                     int interestId = interest.getId();
+                    // 관심 코스 정보 가져오기
                     Course course = interest.getCourse();
+                    // 코스의 첫 번째 장소 가져오기
                     CourseLocation firstCourseLocation = course.getCourseLocationList().get(0);
 
                     CoursePreviewResDto coursePreviewResDto = CoursePreviewResDto.builder()
@@ -62,6 +65,7 @@ public class InterestServiceImp implements InterestService {
 
     @Override
     public boolean checkInterest(int userId, int courseId) {
+        // 관심 객체가 존재하고 flag 또한 true이면 해당 유저의 관심 코스이다.
         Optional<Interest> interest = interestRepository.findByUserIdAndCourseId(userId, courseId);
         return interest.isPresent() && interest.get().isFlag();
     }
@@ -72,12 +76,14 @@ public class InterestServiceImp implements InterestService {
         Optional<Interest> interest = interestRepository.findByUserIdAndCourseId(userId, courseId);
 
         if (interest.isPresent()) {
+            // 관심 객체가 존재한다면 관심 등록일시를 설정해준다.
             interest.get().register();
         } else {
+            // 관심 객체가 존재하지 않으면 새로 생성해준다.
             User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
-                    .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다"));
+                    .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
             Course course = courseRepository.findByIdAndDeleteTimeIsNull(courseId)
-                    .orElseThrow(() -> new RuntimeException("해당 코스를 찾을 수 없습니다"));
+                    .orElseThrow(() -> new RuntimeException("해당 코스를 찾을 수 없습니다."));
             interestRepository.save(Interest.builder()
                     .user(user)
                     .course(course)
@@ -88,8 +94,9 @@ public class InterestServiceImp implements InterestService {
     @Override
     @Transactional
     public void deleteInterestCourse(int userId, int courseId) {
+        // 관심 객체의 해제일시를 설정해준다.
         Interest interest = interestRepository.findByUserIdAndCourseId(userId, courseId)
-                .orElseThrow(() -> new RuntimeException("해당 관심 내역을 찾을 수 없습니다"));
+                .orElseThrow(() -> new RuntimeException("해당 관심 내역을 찾을 수 없습니다."));
         interest.relese();
     }
 
