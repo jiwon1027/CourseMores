@@ -9,4 +9,6 @@ public interface InterestService {
 
     boolean checkInterest(int userId, int courseId);
 
+    void addInterestCourse(int userId, int courseId);
+
 }

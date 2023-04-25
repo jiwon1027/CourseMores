@@ -2,9 +2,13 @@ package com.moham.coursemores.service.impl;
 
 import com.moham.coursemores.domain.Course;
 import com.moham.coursemores.domain.CourseLocation;
+import com.moham.coursemores.domain.Interest;
+import com.moham.coursemores.domain.User;
 import com.moham.coursemores.dto.course.CoursePreviewResDto;
 import com.moham.coursemores.dto.interest.InterestCourseResDto;
+import com.moham.coursemores.repository.CourseRepository;
 import com.moham.coursemores.repository.InterestRepository;
+import com.moham.coursemores.repository.UserRepository;
 import com.moham.coursemores.service.InterestService;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class InterestServiceImp implements InterestService {
 
     private final InterestRepository interestRepository;
+    private final UserRepository userRepository;
+    private final CourseRepository courseRepository;
 
     @Override
     public List<InterestCourseResDto> getUserInterestCourseList(int userId) {
@@ -57,4 +63,14 @@ public class InterestServiceImp implements InterestService {
     public boolean checkInterest(int userId, int courseId) {
         return interestRepository.existsByUserIdAndCourseId(userId, courseId);
     }
+
+    @Override
+    public void addInterestCourse(int userId, int courseId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다"));
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new RuntimeException("해당 코스를 찾을 수 없습니다"));
+        interestRepository.save(new Interest(user, course));
+    }
+
 }
