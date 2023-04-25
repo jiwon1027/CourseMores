@@ -23,7 +23,7 @@ public class LikeController {
     //반환할 결과값이 있다면 ResponseEntity<Map<String, Object>>
     //    없다면 ResponseEntity<Void>
     @GetMapping("test")
-    private ResponseEntity<Map<String, Object>> test() throws Exception {
+    public ResponseEntity<Map<String, Object>> test() {
         // 메서드 실행 - logger에 request값 표시하기 (없다면 none)
         logger.info(">> request : none");
 

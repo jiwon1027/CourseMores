@@ -28,7 +28,7 @@ public class CourseController {
     private final CourseService courseService;
 
     @GetMapping("test")
-    private ResponseEntity<Map<String, Object>> test() {
+    public ResponseEntity<Map<String, Object>> test() {
         // 메서드 실행 - logger에 request값 표시하기 (없다면 none)
         logger.info(">> request : none");
 
@@ -53,7 +53,7 @@ public class CourseController {
     }
 
     @GetMapping("info/{courseId}")
-    private ResponseEntity<Map<String, Object>> getCourseInfo(
+    public ResponseEntity<Map<String, Object>> getCourseInfo(
             @PathVariable int courseId) {
         logger.info(">> request : courseId={}",courseId);
 
@@ -67,7 +67,7 @@ public class CourseController {
     }
 
     @GetMapping("detail/{courseId}")
-    private ResponseEntity<Map<String, Object>> getCourseDetail(
+    public ResponseEntity<Map<String, Object>> getCourseDetail(
             @PathVariable int courseId) {
         logger.info(">> request : courseId={}",courseId);
 
@@ -81,7 +81,7 @@ public class CourseController {
     }
 
     @GetMapping("{userId}")
-    private ResponseEntity<Map<String, Object>> getMyCourseList(
+    public ResponseEntity<Map<String, Object>> getMyCourseList(
             @PathVariable int userId) {
         logger.info(">> request : userId={}",userId);
 
