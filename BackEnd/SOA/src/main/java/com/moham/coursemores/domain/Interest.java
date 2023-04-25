@@ -51,4 +51,9 @@ public class Interest extends RecordTimeEntity {
         this.course = course;
     }
 
+    public void relese() {
+        this.flag = false;
+        this.releaseTime = LocalDateTime.now();
+    }
+
 }

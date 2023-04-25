@@ -11,4 +11,6 @@ public interface InterestService {
 
     void addInterestCourse(int userId, int courseId);
 
+    void deleteInterestCourse(int userId, int courseId);
+
 }

@@ -73,4 +73,12 @@ public class InterestServiceImp implements InterestService {
         interestRepository.save(new Interest(user, course));
     }
 
+    @Override
+    @Transactional
+    public void deleteInterestCourse(int userId, int courseId) {
+        Interest interest = interestRepository.findByUserIdAndCourseId(userId, courseId)
+                .orElseThrow(() -> new RuntimeException("해당 관심 내역을 찾을 수 없습니다"));
+        interest.relese();
+    }
+
 }
