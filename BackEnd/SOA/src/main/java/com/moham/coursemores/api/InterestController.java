@@ -28,7 +28,7 @@ public class InterestController {
     //반환할 결과값이 있다면 ResponseEntity<Map<String, Object>>
     //    없다면 ResponseEntity<Void>
     @GetMapping("test")
-    private ResponseEntity<Map<String, Object>> test() {
+    public ResponseEntity<Map<String, Object>> test() {
         // 메서드 실행 - logger에 request값 표시하기 (없다면 none)
         logger.info(">> request : none");
 
@@ -53,7 +53,7 @@ public class InterestController {
     }
 
     @GetMapping("{userId}")
-    private ResponseEntity<Map<String, Object>> getUserInterestCourseList(@PathVariable int userId) {
+    public ResponseEntity<Map<String, Object>> getUserInterestCourseList(@PathVariable int userId) {
         logger.info(">> request : userId={}", userId);
 
         Map<String, Object> resultMap = new HashMap<>();
@@ -66,7 +66,7 @@ public class InterestController {
     }
 
     @GetMapping("course/{courseId}/{userId}")
-    public ResponseEntity<Map<String, Object>> checkInterest (@PathVariable int userId, @PathVariable int courseId)  {
+    public ResponseEntity<Map<String, Object>> checkInterest(@PathVariable int userId, @PathVariable int courseId) {
         logger.info(">> request : userId={}", userId);
         logger.info(">> request : courseId={}", courseId);
 
