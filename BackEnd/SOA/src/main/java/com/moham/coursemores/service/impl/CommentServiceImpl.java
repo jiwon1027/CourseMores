@@ -14,7 +14,6 @@ import com.moham.coursemores.repository.UserRepository;
 import com.moham.coursemores.service.CommentService;
 import com.moham.coursemores.repository.CommentRepository;
 
-import java.awt.print.Pageable;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
