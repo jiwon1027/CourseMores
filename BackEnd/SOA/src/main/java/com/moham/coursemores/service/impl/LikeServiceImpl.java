@@ -1,8 +1,10 @@
 package com.moham.coursemores.service.impl;
 
+import com.moham.coursemores.domain.CommentLike;
 import com.moham.coursemores.domain.Course;
 import com.moham.coursemores.domain.CourseLike;
 import com.moham.coursemores.domain.User;
+import com.moham.coursemores.repository.CommentLikeRepository;
 import com.moham.coursemores.repository.CourseLikeRepository;
 import com.moham.coursemores.repository.CourseRepository;
 import com.moham.coursemores.repository.UserRepository;
@@ -20,6 +22,7 @@ public class LikeServiceImpl implements LikeService {
     private final CourseLikeRepository courseLikeRepository;
     private final UserRepository userRepository;
     private final CourseRepository courseRepository;
+    private final CommentLikeRepository commentLikeRepository;
 
     @Override
     public boolean checkLikeCourse(int userId, int courseId) {
@@ -63,6 +66,13 @@ public class LikeServiceImpl implements LikeService {
         courseLike.release();
 
         course.decreaseLikeCount();
+    }
+
+    @Override
+    public boolean checkLikeComment(int userId, int commentId) {
+        // 댓글 좋아요 객체가 존재하고 flag 또한 true이면 해당 유저가 좋아하는 댓글이다.
+        Optional<CommentLike> commentLike = commentLikeRepository.findByUserIdAndCommentId(userId, commentId);
+        return commentLike.isPresent() && commentLike.get().isFlag();
     }
 
 }
