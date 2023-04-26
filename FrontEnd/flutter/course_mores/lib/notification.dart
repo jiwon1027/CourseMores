@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'notiList.dart';
+import 'noti_list.dart' as noti;
 
 class Notification extends StatefulWidget {
   const Notification({Key? key}) : super(key: key);
@@ -12,7 +12,7 @@ class _NotificationState extends State<Notification> {
   @override
   Widget build(BuildContext context) {
     // notiList.dart 안에 임시 정의해놓은 알림 리스트 가져오기
-    var notiList = NOTI_LIST;
+    var notiList = noti.notiList;
 
     // 알림 삭제하는 함수
     deleteOne(item) => setState(() {

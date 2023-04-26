@@ -1,27 +1,32 @@
-var COURSE_LIST = [
+var courseList = [
   {
     "index": 0,
     "visited": true,
-    "course": "코스1",
+    "course": "연남동 핫플레이스 순회 코스ㅁㄴㅇㄻㄴㅇㅁㄴㅇㄻㄴㅇㄻㄴㅇㄻㄴㅇㄹ",
     "address": "서울시 마포구 연남동",
-    "people": "3",
-    "text": "연남동 돌면서 맛있는 것만 먹고 싶을 때!",
+    "people": 3,
+    "time": 2,
+    "text": "연남동 돌면서 맛있는 것만 먹고 싶을 때!ddddddddddddddddddddd",
     "summary": "바베큐가게 외 3개의 장소",
+    "views": 10,
     "likes": 28,
     "comments": 17,
-    "bookmark": true
+    "bookmark": true,
+    "author": "사용자1",
+    "date": "22. 04. 26"
   },
   {
     "index": 1,
     "visited": false,
     "course": "코스2",
     "address": "서울시 마포구 연남동",
-    "people": "3",
+    "people": 0,
     "text": "연남동 돌면서 맛있는 것만 먹고 싶을 때!",
     "summary": "바베큐가게 외 3개의 장소",
     "likes": 28,
     "comments": 17,
-    "bookmark": true
+    "bookmark": false,
+    "author": "사용자1"
   },
   {
     "index": 2,
@@ -33,7 +38,8 @@ var COURSE_LIST = [
     "summary": "바베큐가게 외 3개의 장소",
     "likes": 28,
     "comments": 17,
-    "bookmark": true
+    "bookmark": true,
+    "author": "사용자1"
   },
   {
     "index": 3,
@@ -45,11 +51,51 @@ var COURSE_LIST = [
     "summary": "바베큐가게 외 3개의 장소",
     "likes": 28,
     "comments": 17,
-    "bookmark": true
+    "bookmark": true,
+    "author": "사용자1"
+  },
+  {
+    "index": 4,
+    "visited": false,
+    "course": "코스4",
+    "address": "서울시 마포구 연남동",
+    "people": "3",
+    "text": "연남동 돌면서 맛있는 것만 먹고 싶을 때!",
+    "summary": "바베큐가게 외 3개의 장소",
+    "likes": 28,
+    "comments": 17,
+    "bookmark": true,
+    "author": "사용자1"
+  },
+  {
+    "index": 5,
+    "visited": false,
+    "course": "코스4",
+    "address": "서울시 마포구 연남동",
+    "people": "3",
+    "text": "연남동 돌면서 맛있는 것만 먹고 싶을 때!",
+    "summary": "바베큐가게 외 3개의 장소",
+    "likes": 28,
+    "comments": 17,
+    "bookmark": true,
+    "author": "사용자1"
+  },
+  {
+    "index": 6,
+    "visited": false,
+    "course": "코스4",
+    "address": "서울시 마포구 연남동",
+    "people": "3",
+    "text": "연남동 돌면서 맛있는 것만 먹고 싶을 때!",
+    "summary": "바베큐가게 외 3개의 장소",
+    "likes": 28,
+    "comments": 17,
+    "bookmark": true,
+    "author": "사용자1"
   },
 ];
 
-var THEME_LIST = [
+var themeList = [
   {"text": "혼자 가기 좋은 😎"},
   {"text": "특별한 날 🎠"},
   {"text": "활동적인 🤸‍♀️"},
@@ -62,7 +108,7 @@ var THEME_LIST = [
   {"text": "가족과 함께 👪"},
 ];
 
-var SIDO_LIST = [
+var sidoList = [
   "서울특별시",
   "부산광역시",
   "대구광역시",
@@ -382,7 +428,7 @@ var SIDO_LIST = [
 //   },
 // ];
 
-var SIDO_ALL_LIST = {
+var sidoAllList = {
   "서울특별시": [
     "종로구",
     "중구",

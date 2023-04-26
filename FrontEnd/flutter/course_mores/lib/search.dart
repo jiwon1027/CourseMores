@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
-import 'courseList.dart' as course;
+import 'course_list.dart' as course;
+import 'course_detail.dart' as detail;
 import 'package:flutter_multi_select_items/flutter_multi_select_items.dart';
-import 'package:awesome_dropdown/awesome_dropdown.dart';
+// import 'package:awesome_dropdown/awesome_dropdown.dart';
+// import 'package:skeletons/skeletons.dart';
 
 class Search extends StatefulWidget {
-  const Search({super.key});
+  const Search({Key? key}) : super(key: key);
 
   @override
   State<Search> createState() => _SearchState();
 }
 
 class _SearchState extends State<Search> {
-  var courseList = course.COURSE_LIST;
-  var sidoList = course.SIDO_LIST;
+  var courseList = course.courseList;
+  var sidoList = course.sidoList;
 
   @override
   Widget build(BuildContext context) {
@@ -27,29 +29,51 @@ class _SearchState extends State<Search> {
           padding: const EdgeInsets.all(8),
           itemCount: courseList.length,
           itemBuilder: (BuildContext context, int index) {
-            return Container(
-              margin: const EdgeInsets.only(
-                  left: 10, right: 10, top: 10, bottom: 5),
-              padding: const EdgeInsets.all(15),
-              decoration: const BoxDecoration(
-                  boxShadow: [
-                    BoxShadow(
-                        // color: Colors.white24,
-                        color: Color.fromARGB(255, 211, 211, 211),
-                        blurRadius: 10.0,
-                        spreadRadius: 1.0,
-                        offset: Offset(3, 3)),
+            return InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => detail.CourseDetail(index: index)),
+                );
+              },
+              child: Container(
+                margin: const EdgeInsets.only(
+                    left: 10, right: 10, top: 10, bottom: 5),
+                padding: const EdgeInsets.all(10),
+                decoration: const BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                          // color: Colors.white24,
+                          color: Color.fromARGB(255, 211, 211, 211),
+                          blurRadius: 10.0,
+                          spreadRadius: 1.0,
+                          offset: Offset(3, 3)),
+                    ],
+                    color: Color.fromARGB(255, 255, 255, 255),
+                    borderRadius: BorderRadius.all(Radius.circular(10))),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                        // 알림 유형별로 다른 문구 출력을 위해 따로 빼둠
+                        // 더 효율적인 방식 있으면 바꿔도 됨
+                        child: SizedBox(
+                            width: 300,
+                            child: Row(
+                              children: [
+                                ThumbnailImage(),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Expanded(
+                                  child: CourseSearchList(
+                                      courseList: courseList, index: index),
+                                ),
+                              ],
+                            ))),
                   ],
-                  color: Color.fromARGB(255, 255, 255, 255),
-                  borderRadius: BorderRadius.all(Radius.circular(10))),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                      // 알림 유형별로 다른 문구 출력을 위해 따로 빼둠
-                      // 더 효율적인 방식 있으면 바꿔도 됨
-                      child: Text("${courseList[index]['course']}"))
-                ],
+                ),
               ),
             );
           },
@@ -114,20 +138,142 @@ class _SearchState extends State<Search> {
   displayUsersFoundScreen() {}
 }
 
+class ThumbnailImage extends StatelessWidget {
+  const ThumbnailImage({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(10),
+      child: Image(
+        image: AssetImage('assets/img1.jpg'),
+        height: 80,
+        width: 80,
+        fit: BoxFit.cover,
+      ),
+    );
+  }
+}
+
+class CourseSearchList extends StatelessWidget {
+  const CourseSearchList({
+    super.key,
+    required this.courseList,
+    required this.index,
+  });
+
+  final List<Map<String, Object>> courseList;
+  final index;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Text(
+                "${courseList[index]['course']}",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+                softWrap: true,
+              ),
+            ),
+            if (courseList[index]["bookmark"] == true)
+              Icon(Icons.bookmark, size: 24),
+            if (courseList[index]["bookmark"] == false)
+              Icon(Icons.bookmark_outline_rounded, size: 24),
+          ],
+        ),
+        SizedBox(height: 3),
+        Text(
+          "${courseList[index]['address']} / 추천 인원수 ${courseList[index]['people'].toString()}",
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.black38,
+          ),
+          overflow: TextOverflow.ellipsis,
+          maxLines: 1,
+          softWrap: true,
+        ),
+        SizedBox(height: 3),
+        Text(
+          "${courseList[index]['text']}",
+          style: TextStyle(
+            fontSize: 14,
+          ),
+          overflow: TextOverflow.ellipsis,
+          maxLines: 1,
+          softWrap: true,
+        ),
+        SizedBox(height: 3),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              "${courseList[index]['summary']}",
+              style: TextStyle(
+                fontSize: 12,
+              ),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+              softWrap: true,
+            ),
+            SizedBox(width: 8),
+            Row(
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.favorite, size: 14),
+                    SizedBox(width: 3),
+                    Text(courseList[index]["likes"].toString()),
+                  ],
+                ),
+                SizedBox(width: 8),
+                Row(
+                  children: [
+                    Icon(Icons.comment, size: 14),
+                    SizedBox(width: 3),
+                    Text(courseList[index]["comments"].toString()),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
 class SearchFilter extends StatefulWidget {
-  const SearchFilter({super.key});
+  const SearchFilter({Key? key}) : super(key: key);
 
   @override
   State<SearchFilter> createState() => _SearchFilterState();
 }
 
 class _SearchFilterState extends State<SearchFilter> {
+  var allSelectedTheme = [];
+  var selectedAddress = [];
+
+  selectAddress(address) {
+    setState(() {
+      selectedAddress = address;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    // var courseList = course.COURSE_LIST;
-    var themeList = course.THEME_LIST;
-    var sidoList = course.SIDO_LIST;
-    var selectedSido = "";
+    var themeList = course.themeList;
 
     List<MultiSelectCard> cards = [];
     for (var theme in themeList) {
@@ -175,6 +321,10 @@ class _SearchFilterState extends State<SearchFilter> {
             ),
             onPressed: () {
               Navigator.pop(context);
+              print("저장 아이템 리스트 : ");
+              print(allSelectedTheme);
+              print("선택 지역 : ");
+              print(selectedAddress);
             },
           ),
           // 알림 아이콘과 텍스트 같이 넣으려고 RichText 사용
@@ -216,9 +366,8 @@ class _SearchFilterState extends State<SearchFilter> {
         ),
         // 알림 리스트
         body: Container(
-          color: Color.fromARGB(221, 244, 244, 244),
-          child: Column(
-            children: [
+            color: Color.fromARGB(221, 244, 244, 244),
+            child: Column(children: [
               Center(
                 child: Padding(
                   padding: const EdgeInsets.only(top: 20),
@@ -232,6 +381,7 @@ class _SearchFilterState extends State<SearchFilter> {
                   onChange: (allSelectedItems, selectedItem) {
                     print("선택된 아이템 리스트 : ");
                     print(allSelectedItems);
+                    allSelectedTheme = allSelectedItems;
                   },
                 ),
               ),
@@ -239,19 +389,71 @@ class _SearchFilterState extends State<SearchFilter> {
                 padding: const EdgeInsets.only(top: 20),
                 child: Text("지역을 선택해보세요 🗺", style: TextStyle(fontSize: 20)),
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 20),
-                child: AwesomeDropDown(
-                  selectedItem: selectedSido,
-                  dropDownList: sidoList,
-                  onDropDownItemClick: (selectedItem) {
-                    selectedSido = selectedItem;
-                    print(selectedSido);
-                  },
-                ),
-              )
-            ],
-          ),
-        ));
+              MyDropdown(selectAddress: selectAddress)
+            ])));
+  }
+}
+
+class MyDropdown extends StatefulWidget {
+  MyDropdown({Key? key, this.selectAddress}) : super(key: key);
+  final selectAddress;
+
+  @override
+  // ignore: no_logic_in_create_state, library_private_types_in_public_api
+  _MyDropdownState createState() => _MyDropdownState(selectAddress);
+}
+
+class _MyDropdownState extends State<MyDropdown> {
+  final List<String> _firstDropdownItems = course.sidoList;
+  final Map<String, List<String>> _secondDropdownItems = course.sidoAllList;
+
+  String _selectedFirstDropdownItem = "서울특별시";
+  String _selectedSecondDropdownItem = "종로구";
+
+  _MyDropdownState(selectAddress);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        DropdownButton(
+          value: _selectedFirstDropdownItem,
+          items: _firstDropdownItems.map((String value) {
+            return DropdownMenuItem(
+              value: value,
+              child: Text(value),
+            );
+          }).toList(),
+          onChanged: (newValue) {
+            setState(() {
+              _selectedFirstDropdownItem = newValue ?? "";
+              _selectedSecondDropdownItem =
+                  _secondDropdownItems[_selectedFirstDropdownItem]![0];
+            });
+            print("$_selectedFirstDropdownItem $_selectedSecondDropdownItem");
+          },
+        ),
+        SizedBox(width: 16),
+        DropdownButton(
+          value: _selectedSecondDropdownItem,
+          items: _secondDropdownItems[_selectedFirstDropdownItem]!
+              .map((String value) {
+            return DropdownMenuItem(
+              value: value,
+              child: Text(value),
+            );
+          }).toList(),
+          onChanged: (newValue) {
+            setState(() {
+              _selectedSecondDropdownItem = newValue ?? "";
+            });
+            // selectAddress(
+            //     [_selectedFirstDropdownItem, _selectedSecondDropdownItem]);
+            print("$_selectedFirstDropdownItem $_selectedSecondDropdownItem");
+          },
+        ),
+      ],
+    );
   }
 }
