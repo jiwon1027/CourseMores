@@ -10,4 +10,6 @@ public interface LikeService {
 
     boolean checkLikeComment(int userId, int commentId);
 
+    void addLikeComment(int userId, int commentId);
+
 }

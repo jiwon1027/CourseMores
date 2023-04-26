@@ -83,4 +83,8 @@ public class Comment extends DeleteTimeEntity {
         this.deleteTime = LocalDateTime.now();
     }
 
+    public void increaseLikeCount() {
+        this.likeCount++;
+    }
+
 }

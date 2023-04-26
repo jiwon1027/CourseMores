@@ -53,4 +53,9 @@ public class CommentLike extends RecordTimeEntity {
         this.comment = comment;
     }
 
+    public void register() {
+        this.flag = true;
+        this.registerTime = LocalDateTime.now();
+    }
+
 }

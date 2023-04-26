@@ -102,4 +102,15 @@ public class LikeController {
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
 
+    @PostMapping("course/{commentId}/{userId}")
+    public ResponseEntity<Void> addLikeComment(@PathVariable int userId, @PathVariable int commentId) {
+        logger.info(">> request : userId={}", userId);
+        logger.info(">> request : commentId={}", commentId);
+
+        likeService.addLikeComment(userId, commentId);
+        logger.info("<< response : none");
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 }
