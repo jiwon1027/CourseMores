@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class LikeServiceImpl implements LikeService {
 
     private final CourseLikeRepository courseLikeRepository;
