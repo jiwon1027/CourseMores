@@ -265,4 +265,17 @@ public class CourseServiceImpl implements CourseService {
             });
         });
     }
+
+    @Override
+    @Transactional
+    public void deleteCourse(int userId, int courseId) {
+        // 유저 찾기
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
+        // 코스 찾기
+        Course course = courseRepository.findByIdAndUserId(courseId,user.getId())
+                .orElseThrow(() -> new RuntimeException("해당 코스를 찾을 수 없습니다."));
+        // 코스 삭제
+        course.delete();
+    }
 }

@@ -102,4 +102,32 @@ public class CourseController {
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @PutMapping("{courseId}/{userId}")
+    public ResponseEntity<Void> setCourse(
+            @PathVariable int courseId,
+            @PathVariable int userId,
+            @RequestBody CourseUpdateReqDto courseUpdateReqDto) {
+        logger.info(">> request : courseId={}",courseId);
+        logger.info(">> request : userId={}",userId);
+        logger.info(">> request : courseUpdateReqDto={}",courseUpdateReqDto);
+
+        courseService.setCourse(userId, courseId, courseUpdateReqDto);
+        logger.info("<< response : none");
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping("{courseId}/{userId}")
+    public ResponseEntity<Void> deleteCourse(
+            @PathVariable int courseId,
+            @PathVariable int userId) {
+        logger.info(">> request : courseId={}",courseId);
+        logger.info(">> request : userId={}",userId);
+
+        courseService.deleteCourse(userId,courseId);
+        logger.info("<< response : none");
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

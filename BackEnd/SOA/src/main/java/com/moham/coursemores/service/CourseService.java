@@ -10,4 +10,5 @@ public interface CourseService {
     List<MyCourseResDto> getMyCourseList(int userId);
     void addCourse(int userId, CourseCreateReqDto courseCreateReqDto);
     void setCourse(int userId, int courseId, CourseUpdateReqDto courseUpdateReqDto);
+    void deleteCourse(int userId, int courseId);
 }
