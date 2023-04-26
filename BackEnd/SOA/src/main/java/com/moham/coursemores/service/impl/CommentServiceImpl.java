@@ -17,6 +17,13 @@ import com.moham.coursemores.repository.CommentRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,34 +38,41 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public List<CommentResDTO> getCommentList(int courseId, int page, String sortby) {
-/*
-        return commentRepository.findByCourseId(courseId)
+        // 한 페이지에 보여줄 댓글의 수
+        final int size = 5;
+
+        // Sort 정렬 기준
+        Sort sort = ("Like".equals(sortby))?Sort.by("likeCount").descending():Sort.by("createTime").descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        List<CommentResDTO> commentList = commentRepository.findByCourseIdAndDeleteTimeIsNull(courseId, pageable)
                 .stream()
                 .map(comment -> CommentResDTO.builder()
                         .commentId(comment.getId())
                         .content(comment.getContent())
                         .people(comment.getPeople())
                         .likeCount(comment.getLikeCount())
-                        .imageList(comment.getCommentImageList()
+                        .imageList(commentImageRepository.findByCommentId(comment.getId())
                                 .stream()
                                 .map(CommentImage::getImage)
                                 .collect(Collectors.toList())).build()
                 )
                 .collect(Collectors.toList());
-*/
-        return null;
+        return commentList;
+
     }
 
     @Override
     public List<CommentResDTO> getMyCommentList(int userId) {
-        return commentRepository.findByUserId(userId)
+        // userId가 작성한 댓글 중 deletetime이 null이 아닌 댓글(삭제되지 않은 댓글)
+        return commentRepository.findByUserIdAndDeleteTimeIsNull(userId)
                 .stream()
                 .map(comment -> CommentResDTO.builder()
                         .commentId(comment.getId())
                         .content(comment.getContent())
                         .people(comment.getPeople())
                         .likeCount(comment.getLikeCount())
-                        .imageList(comment.getCommentImageList()
+                        .imageList(commentImageRepository.findByCommentId(comment.getId())
                                 .stream()
                                 .map(CommentImage::getImage)
                                 .collect(Collectors.toList())).build()
@@ -107,14 +121,14 @@ public class CommentServiceImpl implements CommentService {
                 .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
 
         // commentId의 Comment 가져오기
-        Comment comment = commentRepository.findByIdAndDeleteTimeIsNull(commentId)
+        Comment comment = commentRepository.findByIdAndUserIdAndDeleteTimeIsNull(commentId, user.getId())
                 .orElseThrow(()-> new RuntimeException("해당 댓글를 찾을 수 없습니다."));
 
         // commentId의 comment가 있다면 comment를 가져와서 수정
         comment.update(commentUpdateDTO);
 
         // 기존에 있었던 commentImage 삭제
-        commentImageRepository.deleteById(commentId);
+        commentImageRepository.deleteByCommentId(commentId);
 
         // 이미지 새롭게 추가
         commentUpdateDTO.getImageList().forEach(
@@ -136,7 +150,7 @@ public class CommentServiceImpl implements CommentService {
                 .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
 
         // commentId의 Comment 가져오기
-        Comment comment = commentRepository.findByIdAndDeleteTimeIsNull(commentId)
+        Comment comment = commentRepository.findByIdAndUserIdAndDeleteTimeIsNull(commentId, user.getId())
                 .orElseThrow(()-> new RuntimeException("해당 댓글를 찾을 수 없습니다."));
 
         // commentId의 comment가 있다면 comment를 가져와서 수정
