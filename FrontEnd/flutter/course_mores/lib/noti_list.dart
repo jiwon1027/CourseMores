@@ -1,4 +1,4 @@
-var NOTI_LIST = [
+var notiList = <Map<String, Object>>[
   {"index": 0, "type": 0, "nickname": "사용자1", "course": "코스이름1"},
   {"index": 1, "type": 1, "nickname": "사용자2", "course": "코스이름2"},
   {"index": 2, "type": 2, "nickname": "사용자3", "course": "코스이름3"},
