@@ -8,4 +8,10 @@ public interface LikeService {
 
     void deleteLikeCourse(int userId, int courseId);
 
+    boolean checkLikeComment(int userId, int commentId);
+
+    void addLikeComment(int userId, int commentId);
+
+    void deleteLikeComment(int userId, int commentId);
+
 }

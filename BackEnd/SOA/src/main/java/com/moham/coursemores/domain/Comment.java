@@ -1,7 +1,7 @@
 package com.moham.coursemores.domain;
 
+import com.moham.coursemores.domain.time.DeleteTimeEntity;
 import com.moham.coursemores.dto.comment.CommentUpdateDTO;
-import com.moham.coursemores.repository.UserRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -16,17 +16,19 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-
-import com.moham.coursemores.domain.time.DeleteTimeEntity;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Table(name = "comment")
 @Getter
 @ToString
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Comment extends DeleteTimeEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "comment_id")
@@ -61,9 +63,9 @@ public class Comment extends DeleteTimeEntity {
 
     @Builder
     public Comment(int people,
-                   String content,
-                   User user,
-                   Course course){
+            String content,
+            User user,
+            Course course) {
         this.people = people;
         this.content = content;
         this.user = user;
@@ -71,12 +73,21 @@ public class Comment extends DeleteTimeEntity {
         this.likeCount = 0;
     }
 
-    public void update(CommentUpdateDTO commentUpdateDTO){
+    public void update(CommentUpdateDTO commentUpdateDTO) {
         this.content = commentUpdateDTO.getContent();
         this.people = commentUpdateDTO.getPeople();
     }
-    public void delete(){
+
+    public void delete() {
         this.deleteTime = LocalDateTime.now();
+    }
+
+    public void increaseLikeCount() {
+        this.likeCount++;
+    }
+
+    public void decreaseLikeCount() {
+        this.likeCount--;
     }
 
 }

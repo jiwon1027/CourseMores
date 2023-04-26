@@ -8,4 +8,5 @@ public interface CourseLikeRepository extends JpaRepository<CourseLike, Integer>
 
     Optional<CourseLike> findByUserIdAndCourseId(int userId, int courseId);
 
+
 }

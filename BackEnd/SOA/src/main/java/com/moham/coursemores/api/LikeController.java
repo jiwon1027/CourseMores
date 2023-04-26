@@ -88,4 +88,40 @@ public class LikeController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @GetMapping("comment/{commentId}/{userId}")
+    public ResponseEntity<Map<String, Object>> checkLikeComment(@PathVariable int userId, @PathVariable int commentId) {
+        logger.info(">> request : userId={}", userId);
+        logger.info(">> request : commentId={}", commentId);
+
+        Map<String, Object> resultMap = new HashMap<>();
+
+        boolean isLikeComment = likeService.checkLikeComment(userId, commentId);
+        resultMap.put("isLikeComment", isLikeComment);
+        logger.info("<< response : isLikeComment={}", isLikeComment);
+
+        return new ResponseEntity<>(resultMap, HttpStatus.OK);
+    }
+
+    @PostMapping("course/{commentId}/{userId}")
+    public ResponseEntity<Void> addLikeComment(@PathVariable int userId, @PathVariable int commentId) {
+        logger.info(">> request : userId={}", userId);
+        logger.info(">> request : commentId={}", commentId);
+
+        likeService.addLikeComment(userId, commentId);
+        logger.info("<< response : none");
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping("course/{commentId}/{userId}")
+    public ResponseEntity<Void> deleteLikeComment(@PathVariable int userId, @PathVariable int commentId) {
+        logger.info(">> request : userId={}", userId);
+        logger.info(">> request : commentId={}", commentId);
+
+        likeService.deleteLikeComment(userId, commentId);
+        logger.info("<< response : none");
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 }

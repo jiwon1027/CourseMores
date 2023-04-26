@@ -1,5 +1,7 @@
 package com.moham.coursemores.domain;
 
+import com.moham.coursemores.domain.time.RecordTimeEntity;
+import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,11 +12,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-
-import com.moham.coursemores.domain.time.RecordTimeEntity;
-import lombok.*;
-
-import java.time.LocalDateTime;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Table(name = "comment_like")
@@ -44,10 +46,21 @@ public class CommentLike extends RecordTimeEntity {
 
     @Builder
     public CommentLike(User user,
-                       Comment comment){
+            Comment comment) {
         this.flag = true;
         this.registerTime = LocalDateTime.now();
         this.user = user;
         this.comment = comment;
     }
+
+    public void register() {
+        this.flag = true;
+        this.registerTime = LocalDateTime.now();
+    }
+
+    public void release() {
+        this.flag = false;
+        this.releaseTime = LocalDateTime.now();
+    }
+
 }
