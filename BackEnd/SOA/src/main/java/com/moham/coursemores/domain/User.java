@@ -1,6 +1,8 @@
 package com.moham.coursemores.domain;
 
 import com.moham.coursemores.domain.time.DeleteTimeEntity;
+import com.moham.coursemores.dto.profile.UserInfoUpdateReqDto;
+import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -78,5 +80,16 @@ public class User extends DeleteTimeEntity {
         this.roles = roles;
         this.provider = provider;
         this.providerId = providerId;
+    }
+
+    public void update(UserInfoUpdateReqDto userInfoUpdateReqDto){
+        this.nickname = userInfoUpdateReqDto.getNickname();
+        this.age = userInfoUpdateReqDto.getAge();
+        this.gender = userInfoUpdateReqDto.getGender();
+        this.profileImage = userInfoUpdateReqDto.getProfileImage();
+    }
+
+    public void delete(){
+        this.deleteTime = LocalDateTime.now();
     }
 }
