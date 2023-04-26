@@ -96,6 +96,14 @@ public class Course extends DeleteTimeEntity {
         this.user = user;
     }
 
+    public void increaseInterestCount() {
+        this.interestCount++;
+    }
+
+    public void decreaseInterestCount() {
+        this.interestCount--;
+    }
+
     public void increaseLikeCount() {
         this.likeCount++;
     }
