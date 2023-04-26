@@ -60,9 +60,9 @@ public class InterestController {
 
         Map<String, Object> resultMap = new HashMap<>();
 
-        List<InterestCourseResDto> InterestCourseResDtoList = interestService.getUserInterestCourseList(userId);
-        resultMap.put("myInterestCourseList", InterestCourseResDtoList);
-        logger.info("<< response : myInterestCourseList = {}", InterestCourseResDtoList);
+        List<InterestCourseResDto> interestCourseResDtoList = interestService.getUserInterestCourseList(userId);
+        resultMap.put("myInterestCourseList", interestCourseResDtoList);
+        logger.info("<< response : myInterestCourseList = {}", interestCourseResDtoList);
 
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
