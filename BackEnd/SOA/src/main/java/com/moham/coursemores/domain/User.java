@@ -1,5 +1,6 @@
 package com.moham.coursemores.domain;
 
+import com.moham.coursemores.common.auth.oauth2.OAuth2UserInfo;
 import com.moham.coursemores.domain.time.DeleteTimeEntity;
 import com.moham.coursemores.dto.profile.UserInfoUpdateReqDto;
 import java.time.LocalDateTime;
