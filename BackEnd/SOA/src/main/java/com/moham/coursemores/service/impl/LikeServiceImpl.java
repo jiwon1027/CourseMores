@@ -54,10 +54,15 @@ public class LikeServiceImpl implements LikeService {
     @Override
     @Transactional
     public void deleteLikeCourse(int userId, int courseId) {
+        Course course = courseRepository.findByIdAndDeleteTimeIsNull(courseId)
+                .orElseThrow(() -> new RuntimeException("해당 코스를 찾을 수 없습니다."));
+
         // 코스 좋아요 객체의 해제일시를 설정해준다.
         CourseLike courseLike = courseLikeRepository.findByUserIdAndCourseId(userId, courseId)
                 .orElseThrow(() -> new RuntimeException("해당 코스 좋아요 내역을 찾을 수 없습니다."));
         courseLike.release();
+
+        course.decreaseLikeCount();
     }
 
 }
