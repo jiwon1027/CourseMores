@@ -1,5 +1,8 @@
 package com.moham.coursemores.domain;
 
+import com.moham.coursemores.dto.comment.CommentUpdateDTO;
+import com.moham.coursemores.repository.UserRepository;
+import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -24,7 +27,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Comment extends DeleteTimeEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "comment_id")
@@ -68,4 +70,13 @@ public class Comment extends DeleteTimeEntity {
         this.course = course;
         this.likeCount = 0;
     }
+
+    public void update(CommentUpdateDTO commentUpdateDTO){
+        this.content = commentUpdateDTO.getContent();
+        this.people = commentUpdateDTO.getPeople();
+    }
+    public void delete(){
+        this.deleteTime = LocalDateTime.now();
+    }
+
 }
