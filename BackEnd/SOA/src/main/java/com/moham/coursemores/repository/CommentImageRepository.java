@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CommentImageRepository extends JpaRepository<CommentImage, Integer> {
     List<CommentImage> findByCommentId(int commentId);
-
+    void deleteByCommentId(int commentId);
 
 }
