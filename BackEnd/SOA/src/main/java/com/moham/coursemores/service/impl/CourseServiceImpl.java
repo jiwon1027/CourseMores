@@ -30,6 +30,16 @@ public class CourseServiceImpl implements CourseService {
     private final ThemeOfCourseRepository themeOfCourseRepository;
 
     @Override
+    @Transactional
+    public void increaseViewCount(int courseId) {
+        // 코스 정보 가져오기
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new RuntimeException("해당 코스를 찾을 수 없습니다."));
+        // 코스 조회수 증가
+        course.increaseViewCount();
+    }
+
+    @Override
     public CourseInfoResDto getCourseInfo(int courseId) {
         // 코스 정보 가져오기
         Course course = courseRepository.findByIdAndDeleteTimeIsNull(courseId)
@@ -37,12 +47,12 @@ public class CourseServiceImpl implements CourseService {
         // 코스 해시태그 이름 가져오기
         List<String> hashtagList = hashtagOfCourseRepository.findByCourseId(courseId)
                 .stream()
-                .map(hashtag -> hashtag.getHashtag().getName())
+                .map(hashtagOfCourse -> hashtagOfCourse.getHashtag().getName())
                 .collect(Collectors.toList());
         // 코스 테마 id 가져오기
         List<Integer> themeIdList = themeOfCourseRepository.findByCourseId(courseId)
                 .stream()
-                .map(theme -> theme.getId())
+                .map(themeOfCourse -> themeOfCourse.getTheme().getId())
                 .collect(Collectors.toList());
         // 코스 작성자 정보 가져오기
         User user = userRepository.findByIdAndDeleteTimeIsNull(course.getUser().getId())

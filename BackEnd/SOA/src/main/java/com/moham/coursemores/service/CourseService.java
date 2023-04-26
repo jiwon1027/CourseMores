@@ -5,6 +5,7 @@ import com.moham.coursemores.dto.course.*;
 import java.util.List;
 
 public interface CourseService {
+    void increaseViewCount(int courseId);
     CourseInfoResDto getCourseInfo(int courseId);
     List<CourseDetailResDto> getCourseDetail(int courseId);
     List<MyCourseResDto> getMyCourseList(int userId);

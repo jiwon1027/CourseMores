@@ -55,6 +55,7 @@ public class CourseController {
 
         Map<String, Object> resultMap = new HashMap<>();
 
+        courseService.increaseViewCount(courseId);
         CourseInfoResDto courseInfoResDto = courseService.getCourseInfo(courseId);
         resultMap.put("courseInfo", courseInfoResDto);
         logger.info("<< response : courseInfo={}", courseInfoResDto);
