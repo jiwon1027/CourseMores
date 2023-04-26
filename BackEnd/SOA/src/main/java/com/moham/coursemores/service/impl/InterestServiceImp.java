@@ -98,10 +98,16 @@ public class InterestServiceImp implements InterestService {
     @Override
     @Transactional
     public void deleteInterestCourse(int userId, int courseId) {
+        Course course = courseRepository.findByIdAndDeleteTimeIsNull(courseId)
+                .orElseThrow(() -> new RuntimeException("해당 코스를 찾을 수 없습니다."));
+
         // 관심 객체의 해제일시를 설정해준다.
         Interest interest = interestRepository.findByUserIdAndCourseId(userId, courseId)
                 .orElseThrow(() -> new RuntimeException("해당 관심 내역을 찾을 수 없습니다."));
         interest.release();
+
+        // 코스의 관심수 감소
+        course.decreaseInterestCount();
     }
 
 }
