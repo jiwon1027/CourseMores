@@ -49,7 +49,7 @@ public class CourseLocation extends UpdateTimeEntity {
     private double longitude;
 
     @NotNull
-    @OneToOne
+    @OneToOne(targetEntity = Region.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "region_id")
     private Region region;
 
