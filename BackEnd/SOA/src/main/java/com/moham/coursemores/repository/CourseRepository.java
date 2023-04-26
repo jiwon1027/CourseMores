@@ -8,4 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CourseRepository extends JpaRepository<Course, Integer> {
     Optional<Course> findByIdAndDeleteTimeIsNull(int courseId);
+    boolean existsByIdAndDeleteTimeIsNull(int courseId);
 }

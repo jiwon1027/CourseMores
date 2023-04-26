@@ -1,9 +1,6 @@
 package com.moham.coursemores.api;
 
-import com.moham.coursemores.dto.course.CourseCreateReqDto;
-import com.moham.coursemores.dto.course.CourseDetailResDto;
-import com.moham.coursemores.dto.course.CourseInfoResDto;
-import com.moham.coursemores.dto.course.MyCourseResDto;
+import com.moham.coursemores.dto.course.*;
 import com.moham.coursemores.repository.CourseRepository;
 import com.moham.coursemores.service.CourseService;
 import lombok.RequiredArgsConstructor;
@@ -105,5 +102,4 @@ public class CourseController {
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
 }
