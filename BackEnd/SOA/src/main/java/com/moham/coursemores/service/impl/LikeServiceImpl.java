@@ -23,6 +23,7 @@ public class LikeServiceImpl implements LikeService {
 
     @Override
     public boolean checkLikeCourse(int userId, int courseId) {
+        // 코스 좋아요 객체가 존재하고 flag 또한 true이면 해당 유저가 좋아하는 코스이다.
         Optional<CourseLike> courseLike = courseLikeRepository.findByUserIdAndCourseId(userId, courseId);
         return courseLike.isPresent() && courseLike.get().isFlag();
     }
@@ -33,8 +34,10 @@ public class LikeServiceImpl implements LikeService {
         Optional<CourseLike> courseLike = courseLikeRepository.findByUserIdAndCourseId(userId, courseId);
 
         if (courseLike.isPresent()) {
+            // 코스 좋아요 객체가 존재한다면 좋아요 등록일시를 설정해준다.
             courseLike.get().register();
         } else {
+            // 코스 좋아요 객체가 존재하지 않으면 새로 생성해준다.
             User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
                     .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
             Course course = courseRepository.findByIdAndDeleteTimeIsNull(courseId)
@@ -49,8 +52,9 @@ public class LikeServiceImpl implements LikeService {
     @Override
     @Transactional
     public void deleteLikeCourse(int userId, int courseId) {
+        // 코스 좋아요 객체의 해제일시를 설정해준다.
         CourseLike courseLike = courseLikeRepository.findByUserIdAndCourseId(userId, courseId)
-                .orElseThrow(() -> new RuntimeException("해당 코스 좋아요 내역을 찾을 수 없습니다"));
+                .orElseThrow(() -> new RuntimeException("해당 코스 좋아요 내역을 찾을 수 없습니다."));
         courseLike.release();
     }
 
