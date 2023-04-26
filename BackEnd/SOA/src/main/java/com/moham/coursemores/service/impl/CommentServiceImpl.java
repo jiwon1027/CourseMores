@@ -153,9 +153,6 @@ public class CommentServiceImpl implements CommentService {
         Comment comment = commentRepository.findByIdAndUserIdAndDeleteTimeIsNull(commentId, user.getId())
                 .orElseThrow(()-> new RuntimeException("해당 댓글를 찾을 수 없습니다."));
 
-        // 기존에 있었던 commentImage 삭제
-        commentImageRepository.deleteByCommentId(commentId);
-
         // commentId의 comment가 있다면 comment를 가져와서 수정
         comment.delete();
     }
