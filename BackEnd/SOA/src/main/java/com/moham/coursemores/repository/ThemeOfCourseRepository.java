@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface ThemeOfCourseRepository extends JpaRepository<ThemeOfCourse, Integer> {
     List<ThemeOfCourse> findByCourseId(int courseId);
+    void deleteByCourseId(int courseId);
 }

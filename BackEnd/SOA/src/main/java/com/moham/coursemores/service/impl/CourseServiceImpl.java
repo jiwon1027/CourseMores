@@ -208,11 +208,61 @@ public class CourseServiceImpl implements CourseService {
                 .orElseThrow(() -> new RuntimeException("해당 코스를 찾을 수 없습니다."));
         // 코스 정보 수정하기
         course.update(courseUpdateReqDto);
-        // 코스 해시태그 수정하기
-
-        // 해시태그, 테마, 장소(이름,내용,이미지)
-        // 코스 장소 목록 가져오기
-        List<CourseLocation> courseLocation = courseLocationRepository.findByCourseId(courseId);
-
+        // 기존 해시태그 지우기
+        hashtagOfCourseRepository.deleteByCourseId(courseId);
+        // 코스 해시태그 생성하기
+        courseUpdateReqDto.getHashtagList().forEach(hashtag -> {
+            Optional<Hashtag> beforeHashtag = hashtagRepository.findByName(hashtag);
+            // 해시태그가 이미 존재한다면
+            if(beforeHashtag.isPresent()){
+                // 코스의 해시태그 생성
+                hashtagOfCourseRepository.save(HashtagOfCourse.builder()
+                        .course(course)
+                        .hashtag(beforeHashtag.get())
+                        .build());
+            }
+            // 해시태그가 없다면
+            else{
+                // 해시태그를 생성하고
+                Hashtag newHashtag = hashtagRepository.save(Hashtag.builder()
+                        .name(hashtag)
+                        .build());
+                // 코스의 해시태그 생성
+                hashtagOfCourseRepository.save(HashtagOfCourse.builder()
+                        .course(course)
+                        .hashtag(newHashtag)
+                        .build());
+            }
+        });
+        // 기존 테마 지우기
+        themeOfCourseRepository.deleteByCourseId(courseId);
+        // 코스의 테마 생성
+        courseUpdateReqDto.getThemeIdList().forEach(themeId -> {
+            // 테마 정보 가져오기
+            Theme theme = themeRepository.findById(themeId)
+                    .orElseThrow(() -> new RuntimeException("해당 테마를 찾을 수 없습니다."));
+            // 코스의 테마 저장
+            themeOfCourseRepository.save(ThemeOfCourse.builder()
+                    .course(course)
+                    .theme(theme)
+                    .build());
+        });
+        // 코스 장소와 장소의 이미지 수정하기
+        courseUpdateReqDto.getLocationList().forEach(updateCourseLocation -> {
+            // 코스 장소 불러오기
+            CourseLocation courseLocation = courseLocationRepository.findById(updateCourseLocation.getCourseLocationId())
+                    .orElseThrow(() -> new RuntimeException("해당 장소를 찾을 수 없습니다."));
+            // 코스 장소 수정하기
+            courseLocation.update(updateCourseLocation);
+            // 기존 코스 장소 이미지 지우기
+            courseLocationImageRepository.deleteByCourseLocationId(courseLocation.getId());
+            // 코스 장소 이미지 생성
+            updateCourseLocation.getImageList().forEach(image -> {
+                courseLocationImageRepository.save(CourseLocationImage.builder()
+                        .courseLocation(courseLocation)
+                        .image(image)
+                        .build());
+            });
+        });
     }
 }

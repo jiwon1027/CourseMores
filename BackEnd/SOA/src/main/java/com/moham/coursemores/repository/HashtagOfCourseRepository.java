@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface HashtagOfCourseRepository extends JpaRepository<HashtagOfCourse, Integer> {
     List<HashtagOfCourse> findByCourseId(int courseId);
+    void deleteByCourseId(int courseId);
 }

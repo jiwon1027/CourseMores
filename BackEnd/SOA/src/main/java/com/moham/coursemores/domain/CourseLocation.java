@@ -18,6 +18,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import com.moham.coursemores.dto.course.LocationUpdateReqDto;
 import lombok.*;
 
 @Entity
@@ -73,5 +74,10 @@ public class CourseLocation extends UpdateTimeEntity {
         this.longitude = longitude;
         this.region = region;
         this.course = course;
+    }
+
+    public void update(LocationUpdateReqDto locationUpdateReqDto){
+        this.name=locationUpdateReqDto.getName();
+        this.content=locationUpdateReqDto.getContent();
     }
 }
