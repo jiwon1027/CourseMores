@@ -113,4 +113,15 @@ public class LikeController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @DeleteMapping("course/{commentId}/{userId}")
+    public ResponseEntity<Void> deleteLikeComment(@PathVariable int userId, @PathVariable int commentId) {
+        logger.info(">> request : userId={}", userId);
+        logger.info(">> request : commentId={}", commentId);
+
+        likeService.deleteLikeComment(userId, commentId);
+        logger.info("<< response : none");
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 }

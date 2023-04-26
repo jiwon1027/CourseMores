@@ -103,4 +103,19 @@ public class LikeServiceImpl implements LikeService {
         comment.increaseLikeCount();
     }
 
+    @Override
+    @Transactional
+    public void deleteLikeComment(int userId, int commentId) {
+        Comment comment = commentRepository.findByIdAndDeleteTimeIsNull(commentId)
+                .orElseThrow(() -> new RuntimeException("해당 댓글을 찾을 수 없습니다."));
+
+        // 댓글 좋아요 객체의 해제일시를 설정해준다.
+        CommentLike commentLike = commentLikeRepository.findByUserIdAndCommentId(userId, commentId)
+                .orElseThrow(() -> new RuntimeException("해당 댓글 좋아요 내역을 찾을 수 없습니다."));
+        commentLike.release();
+
+        // 댓글의 좋아요수 감소
+        comment.decreaseLikeCount();
+    }
+
 }

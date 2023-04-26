@@ -12,4 +12,6 @@ public interface LikeService {
 
     void addLikeComment(int userId, int commentId);
 
+    void deleteLikeComment(int userId, int commentId);
+
 }
