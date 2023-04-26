@@ -31,6 +31,9 @@ public class LikeServiceImpl implements LikeService {
     @Override
     @Transactional
     public void addLikeCourse(int userId, int courseId) {
+        Course course = courseRepository.findByIdAndDeleteTimeIsNull(courseId)
+                .orElseThrow(() -> new RuntimeException("해당 코스를 찾을 수 없습니다."));
+
         Optional<CourseLike> courseLike = courseLikeRepository.findByUserIdAndCourseId(userId, courseId);
 
         if (courseLike.isPresent()) {
@@ -40,13 +43,12 @@ public class LikeServiceImpl implements LikeService {
             // 코스 좋아요 객체가 존재하지 않으면 새로 생성해준다.
             User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
                     .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
-            Course course = courseRepository.findByIdAndDeleteTimeIsNull(courseId)
-                    .orElseThrow(() -> new RuntimeException("해당 코스를 찾을 수 없습니다."));
             courseLikeRepository.save(CourseLike.builder()
                     .user(user)
                     .course(course)
                     .build());
         }
+        course.increaseLikeCount();
     }
 
     @Override
