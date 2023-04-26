@@ -48,7 +48,7 @@ public class CommentController {
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
 
-    @GetMapping("comment/{userId}")
+    @GetMapping("{userId}")
     public ResponseEntity<Map<String, Object>> serarchMyCommentList(@PathVariable int userId){
         logger.info(">> request : userId = {}", userId);
 
