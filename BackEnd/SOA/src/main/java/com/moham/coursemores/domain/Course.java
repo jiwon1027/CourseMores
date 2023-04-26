@@ -1,5 +1,6 @@
 package com.moham.coursemores.domain;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -96,6 +97,10 @@ public class Course extends DeleteTimeEntity {
         this.user = user;
     }
 
+    public void increaseViewCount(){
+        this.viewCount++;
+    }
+
     public void increaseInterestCount() {
         this.interestCount++;
     }
@@ -119,5 +124,9 @@ public class Course extends DeleteTimeEntity {
         this.time = courseUpdateReqDto.getTime();
         this.visited = courseUpdateReqDto.isVisited();
         this.mainImage = courseUpdateReqDto.getLocationList().get(0).getImageList().get(0);
+    }
+
+    public void delete(){
+        this.deleteTime = LocalDateTime.now();
     }
 }
