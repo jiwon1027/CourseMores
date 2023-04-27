@@ -84,15 +84,18 @@ public class Course extends DeleteTimeEntity {
                   int time,
                   boolean visited,
                   String mainImage,
+                  int viewCount,
+                  int likeCount,
+                  int interestCount,
                   User user){
         this.title = title;
         this.content = content;
         this.people = people;
         this.time = time;
         this.visited = visited;
-        this.viewCount = 0;
-        this.interestCount = 0;
-        this.likeCount = 0;
+        this.viewCount = viewCount;
+        this.interestCount = interestCount;
+        this.likeCount = likeCount;
         this.mainImage = mainImage;
         this.user = user;
     }
