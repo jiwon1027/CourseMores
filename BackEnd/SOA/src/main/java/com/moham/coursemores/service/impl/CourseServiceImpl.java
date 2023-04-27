@@ -147,6 +147,9 @@ public class CourseServiceImpl implements CourseService {
                 .people(courseCreateReqDto.getPeople())
                 .time(courseCreateReqDto.getTime())
                 .visited(courseCreateReqDto.isVisited())
+                .viewCount(0)
+                .interestCount(0)
+                .likeCount(0)
                 .mainImage(courseCreateReqDto.getLocationList().get(0).getImageList().get(0))
                 .user(user)
                 .build());
