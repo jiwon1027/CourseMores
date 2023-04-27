@@ -22,26 +22,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Color.fromARGB(255, 240, 240, 240),
-        appBar: AppBar(
-          title:
-              const Text('CourseMores', style: TextStyle(color: Colors.black)),
-          centerTitle: true,
-          actions: [
-            IconButton(
-              icon: const Icon(
-                Icons.notifications,
-                color: Colors.black,
-              ),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const noti.Notification()),
-                );
-              },
-            )
-          ],
-        ),
+        appBar: CustomAppBar(),
         body: [
           const Text("홈페이지"),
           const Text("코스페이지"),
@@ -79,4 +60,36 @@ class _MyAppState extends State<MyApp> {
           ],
         ));
   }
+}
+
+class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
+  const CustomAppBar({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return AppBar(
+      title: const Text('CourseMores', style: TextStyle(color: Colors.black)),
+      centerTitle: true,
+      actions: [
+        IconButton(
+          icon: const Icon(
+            Icons.notifications,
+            color: Colors.black,
+          ),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const noti.Notification()),
+            );
+          },
+        )
+      ],
+    );
+  }
+
+  @override
+  Size get preferredSize => Size.fromHeight(kToolbarHeight);
 }
