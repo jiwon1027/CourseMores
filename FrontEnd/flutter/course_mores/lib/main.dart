@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'style.dart' as style;
 import 'notification.dart' as noti;
 import 'search.dart' as search;
+import 'home_screen.dart' as home;
+import 'mypage.dart' as mypage;
 
 void main() {
   runApp(MaterialApp(theme: style.theme, home: const MyApp()));
@@ -24,11 +26,11 @@ class _MyAppState extends State<MyApp> {
         backgroundColor: Color.fromARGB(255, 240, 240, 240),
         appBar: CustomAppBar(),
         body: [
-          const Text("홈페이지"),
+          const home.HomeScreen(),
           const Text("코스페이지"),
           const search.Search(),
           const Text("관심페이지"),
-          const Text("마이페이지")
+          const mypage.MyPage(),
         ][pageNum],
         bottomNavigationBar: FlashyTabBar(
           selectedIndex: pageNum,
