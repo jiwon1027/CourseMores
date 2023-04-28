@@ -8,6 +8,7 @@ import com.moham.coursemores.domain.User;
 import com.moham.coursemores.dto.comment.CommentCreateReqDTO;
 import com.moham.coursemores.dto.comment.CommentResDTO;
 import com.moham.coursemores.dto.comment.CommentUpdateDTO;
+import com.moham.coursemores.dto.profile.UserSimpleInfoResDto;
 import com.moham.coursemores.repository.CommentImageRepository;
 import com.moham.coursemores.repository.CourseRepository;
 import com.moham.coursemores.repository.UserRepository;
@@ -55,7 +56,12 @@ public class CommentServiceImpl implements CommentService {
                         .imageList(commentImageRepository.findByCommentId(comment.getId())
                                 .stream()
                                 .map(CommentImage::getImage)
-                                .collect(Collectors.toList())).build()
+                                .collect(Collectors.toList()))
+                        .writeUser(UserSimpleInfoResDto.builder()
+                                .nickname(comment.getUser().getNickname())
+                                .profileImage(comment.getUser().getProfileImage())
+                                .build())
+                        .build()
                 )
                 .collect(Collectors.toList());
         return commentList;
@@ -75,7 +81,12 @@ public class CommentServiceImpl implements CommentService {
                         .imageList(commentImageRepository.findByCommentId(comment.getId())
                                 .stream()
                                 .map(CommentImage::getImage)
-                                .collect(Collectors.toList())).build()
+                                .collect(Collectors.toList()))
+                        .writeUser(UserSimpleInfoResDto.builder()
+                                .nickname(comment.getUser().getNickname())
+                                .profileImage(comment.getUser().getProfileImage())
+                                .build())
+                        .build()
                 )
                 .collect(Collectors.toList());
     }
