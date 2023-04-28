@@ -1,15 +1,16 @@
 package com.moham.coursemores.api;
 
 import com.moham.coursemores.dto.course.*;
-import com.moham.coursemores.repository.CourseRepository;
 import com.moham.coursemores.service.CourseService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.websocket.server.PathParam;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +46,34 @@ public class CourseController {
          */
 
         // 결과값 반환하기
+        return new ResponseEntity<>(resultMap, HttpStatus.OK);
+    }
+
+    @GetMapping("search/{userId}")
+    public ResponseEntity<Map<String, Object>> searchCourse(
+            @PathVariable int userId,
+            @RequestParam String word,
+            @RequestParam int regionId,
+            @RequestParam List<Integer> themeIds,
+            @RequestParam int page,
+            @RequestParam String sortby) {
+        logger.info(">> request : userId={}",userId);
+        logger.info(">> request : word={}",word);
+        logger.info(">> request : regionId={}",regionId);
+        logger.info(">> request : themeIds={}",themeIds);
+        logger.info(">> request : page={}",page);
+        logger.info(">> request : sortby={}",sortby);
+
+        Map<String, Object> resultMap = new HashMap<>();
+
+        Page<CoursePreviewResDto> pageCourse = courseService.search(userId, word,regionId,themeIds,page,sortby);
+        resultMap.put("courseList", pageCourse.getContent());
+        logger.info("<< response : courseList={}",pageCourse.getContent());
+        resultMap.put("isFirst", pageCourse.isFirst());
+        logger.info("<< response : isFirst={}",pageCourse.isFirst());
+        resultMap.put("isLast", pageCourse.isLast());
+        logger.info("<< response : isLast={}",pageCourse.isLast());
+
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
 
