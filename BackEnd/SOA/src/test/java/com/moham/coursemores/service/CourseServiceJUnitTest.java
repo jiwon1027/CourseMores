@@ -1,6 +1,7 @@
 package com.moham.coursemores.service;
 
 import com.moham.coursemores.domain.*;
+import com.moham.coursemores.dto.course.CourseDetailResDto;
 import com.moham.coursemores.dto.course.CourseInfoResDto;
 import com.moham.coursemores.dto.profile.UserInfoUpdateReqDto;
 import com.moham.coursemores.repository.*;
@@ -17,6 +18,7 @@ import static org.mockito.Mockito.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @ExtendWith(MockitoExtension.class)
 public class CourseServiceJUnitTest {
@@ -42,71 +44,64 @@ public class CourseServiceJUnitTest {
     @Mock
     ThemeOfCourseRepository themeOfCourseRepository;
 
+    @Mock
+    Region region;
 
     final int HOC_LIST_SIZE = 2;
     final int TOC_LIST_SIZE = 3;
+    final int COURSE_LOCATION_LIST_SIZE = 3;
     final int COURSE_ID = 1;
     final int USER_ID = 1;
 
     // 유저 정보
-    User user1;
     String email, roles, provider, providerId, gender, nickname, profileImage;
     int age;
     // 코스 정보
     String title, content, mainImage;
     int time, people, viewCount, interestCount, likeCount;
     boolean visited;
-    List<String> hashtagList, themeList;
     // 코스 장소 정보
     String locationName, locationContent;
     double latitude, longitude;
 
-    @BeforeEach
-    void 초기_세팅(){
-
-        // 테스트 유저
-        email = "test@naver.com";
-        roles = "ROLE_TEST_USER";
-        provider = "TEST";
-        providerId = "12345678";
-
-        age = 10;
-        gender = "W";
-        nickname = "test nickname";
-        profileImage = "test profile image";
-
-        // 테스트 코스
-        title = "test title";
-        time = 30;
-        visited = true;
-        people = 4;
-        content = "test content";
-        mainImage = "test main image";
-        viewCount = 25;
-        likeCount = 13;
-        interestCount = 10;
-    }
-
     @Nested
-    @DisplayName("코스 정보 불러오기")
-    class 코스_정보_불러오기{
+    @DisplayName("코스 소개 조회")
+    class 코스_소개_조회{
+
+        @BeforeEach
+        void 초기_세팅(){
+
+            // 테스트 유저
+            nickname = "test nickname";
+            profileImage = "test profile image";
+
+            // 테스트 코스
+            title = "test title";
+            time = 30;
+            visited = true;
+            people = 4;
+            content = "test content";
+            mainImage = "test main image";
+            viewCount = 25;
+            likeCount = 13;
+            interestCount = 10;
+        }
 
         @Test
-        @DisplayName("기존 코스 정보 가져오기")
-        void 코스1() {
+        @DisplayName("정상 작동")
+        void 정상_작동() {
             // given
-
             // 테스트 유저 세팅
-            user1 = User.builder().build();
-            user1.update(UserInfoUpdateReqDto.builder()
+            User user = User.builder().build();
+            user.update(UserInfoUpdateReqDto.builder()
                     .nickname(nickname)
                     .profileImage(profileImage)
                     .build());
 
-            when(userRepository.findByIdAndDeleteTimeIsNull(any(Integer.class))).thenReturn(Optional.of(user1));
+            when(userRepository.findByIdAndDeleteTimeIsNull(any(Integer.class))).thenReturn(Optional.of(user));
 
             // 테스트 코스 세팅
-            Course course1 = Course.builder()
+            Course course = Course.builder()
                     .title(title)
                     .time(time)
                     .visited(visited)
@@ -116,19 +111,17 @@ public class CourseServiceJUnitTest {
                     .likeCount(likeCount)
                     .interestCount(interestCount)
                     .viewCount(viewCount)
-                    .user(user1)
+                    .user(user)
                     .build();
 
-            when(courseRepository.findByIdAndDeleteTimeIsNull(COURSE_ID)).thenReturn(Optional.of(course1));
+            when(courseRepository.findByIdAndDeleteTimeIsNull(COURSE_ID)).thenReturn(Optional.of(course));
 
             // 테스트 코스 해시태그 세팅
             List<HashtagOfCourse> hashtagOfCourseList = new ArrayList<>();
             for (int i=0;i<HOC_LIST_SIZE;i++) {
                 hashtagOfCourseList.add(HashtagOfCourse.builder()
-                        .hashtag(Hashtag.builder()
-                                .name("test hashtag"+i)
-                                .build())
-                        .course(course1).build());
+                        .hashtag(Hashtag.builder().build())
+                        .course(course).build());
             }
             when(hashtagOfCourseRepository.findByCourseId(COURSE_ID)).thenReturn(hashtagOfCourseList);
 
@@ -136,10 +129,8 @@ public class CourseServiceJUnitTest {
             List<ThemeOfCourse> themeOfCourseList = new ArrayList<>();
             for (int i=0;i<TOC_LIST_SIZE;i++){
                 themeOfCourseList.add(ThemeOfCourse.builder()
-                        .theme(Theme.builder()
-                                .name("test theme"+i)
-                                .build())
-                        .course(course1)
+                        .theme(Theme.builder().build())
+                        .course(course)
                         .build());
             }
             when(themeOfCourseRepository.findByCourseId(COURSE_ID)).thenReturn(themeOfCourseList);
@@ -163,7 +154,46 @@ public class CourseServiceJUnitTest {
             assertThat(courseInfoResDto.getSimpleInfoOfWriter().getProfileImage()).isEqualTo(profileImage);
         }
 
+    }
 
+    @Nested
+    @DisplayName("코스 상세 정보 조회")
+    class 코스_상세_정보_조회{
+
+        @BeforeEach
+        void 초기_세팅(){
+            // 테스트 코스
+            title = "test title";
+            time = 30;
+            visited = true;
+            people = 4;
+            content = "test content";
+            mainImage = "test main image";
+            viewCount = 25;
+            likeCount = 13;
+            interestCount = 10;
+        }
+
+        @Test
+        @DisplayName("정상 작동")
+        void 정상_작동(){
+            // given
+//            when(courseRepository.existsByIdAndDeleteTimeIsNull(COURSE_ID)).thenReturn(true);
+//            when(regionRepository.findById(any(Integer.class))).thenReturn(Optional.of(Region.builder().sido("test sido").gugun("test gugun").build()));
+//            when(region.getId()).thenReturn();
+////            when(courseLocationImageRepository.findByCourseLocationId())
+//            List<CourseLocation> courseLocationList = new ArrayList<>();
+//            for(int i=0;i<COURSE_LOCATION_LIST_SIZE;i++){
+//                courseLocationList.add(CourseLocation.builder().build());
+//            }
+//            when(courseLocationRepository.findByCourseId(COURSE_ID)).thenReturn(courseLocationList);
+//
+//            // when
+//            List<CourseDetailResDto> courseDetailResDtoList = courseService.getCourseDetail(COURSE_ID);
+//
+//            // then
+//            assertThat(courseDetailResDtoList.size()).isEqualTo(COURSE_LOCATION_LIST_SIZE);
+        }
     }
 
 

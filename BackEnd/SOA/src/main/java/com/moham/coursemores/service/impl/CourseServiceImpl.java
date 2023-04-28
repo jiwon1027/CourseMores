@@ -6,11 +6,16 @@ import com.moham.coursemores.dto.profile.UserSimpleInfoResDto;
 import com.moham.coursemores.repository.*;
 import com.moham.coursemores.service.CourseService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -28,6 +33,56 @@ public class CourseServiceImpl implements CourseService {
     private final HashtagOfCourseRepository hashtagOfCourseRepository;
     private final ThemeRepository themeRepository;
     private final ThemeOfCourseRepository themeOfCourseRepository;
+    private final InterestRepository interestRepository;
+
+
+    @Override
+    public Page<CoursePreviewResDto> search(int userId, String word, int regionId, List<Integer> themeIds, int page, String sortby) {
+        User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
+                .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
+
+        // 한 페이지에 보여줄 코스의 수
+        final int size = 2;
+
+        // Sort 정렬 기준
+        Sort sort = ("latest".equals(sortby) ?
+                Sort.by("createTime").descending() :
+                Sort.by("likeCount").descending());
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Page<Course> pageCourse = courseRepository.searchAll(word, regionId,themeIds,pageable);
+        Page<CoursePreviewResDto> result = pageCourse
+                .map(course -> {
+                    CourseLocation courseLocation = course.getCourseLocationList().get(0);
+                    Region region = courseLocation.getRegion();
+                    Optional<Interest> interest = interestRepository.findByUserIdAndCourseId(user.getId(), course.getId());
+
+                    return CoursePreviewResDto.builder()
+                        .courseId(course.getId())
+                        .title(course.getTitle())
+                        .content(course.getContent())
+                        .people(course.getPeople())
+                        .visited(course.isVisited())
+                        .likeCount(course.getLikeCount())
+                        .commentCount(course.getCommentList().size())
+                        .mainImage(course.getMainImage())
+                        .sido(region.getSido())
+                        .gugun(region.getGugun())
+                        .locationName(courseLocation.getName())
+                        .isInterest(interest.isPresent() ? interest.get().isFlag() : false)
+                        .build();
+                });
+
+        long totalElements = result.getTotalElements();
+        System.out.println("size = "+result.getContent().size());
+        System.out.println("totalElements = "+totalElements);
+        System.out.println("isFirst = "+result.isFirst());
+        System.out.println("isLast = "+result.isLast());
+        System.out.println("isEmpty = "+result.isEmpty());
+        System.out.println("getNumber = "+result.getNumber());
+
+        return result;
+    }
 
     @Override
     @Transactional
