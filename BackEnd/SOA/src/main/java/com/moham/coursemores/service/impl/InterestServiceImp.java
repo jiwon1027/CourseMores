@@ -106,9 +106,14 @@ public class InterestServiceImp implements InterestService {
         Course course = courseRepository.findByIdAndDeleteTimeIsNull(courseId)
                 .orElseThrow(() -> new RuntimeException("해당 코스를 찾을 수 없습니다."));
 
-        // 관심 객체의 해제일시를 설정해준다.
         Interest interest = interestRepository.findByUserIdAndCourseId(userId, courseId)
                 .orElseThrow(() -> new RuntimeException("해당 관심 내역을 찾을 수 없습니다."));
+
+        // 관심 객체의 flag가 false라면 이미 관심 해제된 코스이다.
+        if (!interest.isFlag()) {
+            throw new RuntimeException("이미 관심 해제된 코스입니다.");
+        }
+        // 그렇지 않다면 관심 객체의 해제일시를 설정해준다.
         interest.release();
 
         // 코스의 관심수 감소
