@@ -276,10 +276,12 @@ public class CommentServiceJUnitTest {
         when(commentRepository.findByIdAndUserIdAndDeleteTimeIsNull(any(Integer.class), any(Integer.class))).thenReturn(Optional.of(comment1));
 
         // when
+        System.out.println(comment1.getDeleteTime());
         commentService.deleteComment(comment1.getId(), user1.getId());
 
         // then
         assertNotNull(comment1.getDeleteTime());
+
     }
 
 }
