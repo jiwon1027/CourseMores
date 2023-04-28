@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -142,6 +141,7 @@ public class CourseServiceImpl implements CourseService {
                 .stream()
                 .map(courseLocation -> CourseDetailResDto.builder()
                         .name(courseLocation.getName())
+                        .title(courseLocation.getTitle())
                         .content(courseLocation.getContent())
                         .latitude(courseLocation.getLatitude())
                         .longitude(courseLocation.getLongitude())
@@ -250,10 +250,11 @@ public class CourseServiceImpl implements CourseService {
                     .orElseThrow(() -> new RuntimeException("해당 지역을 찾을 수 없습니다."));
             // 코스의 장소 저장
             CourseLocation courseLocation = courseLocationRepository.save(CourseLocation.builder()
+                            .name(location.getName())
+                            .title(location.getTitle())
+                            .content(location.getContent())
                             .latitude(location.getLatitude())
                             .longitude(location.getLongitude())
-                            .content(location.getContent())
-                            .name(location.getName())
                             .course(course)
                             .region(region)
                     .build());

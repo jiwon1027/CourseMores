@@ -12,6 +12,7 @@ import java.util.List;
 public class LocationUpdateReqDto {
     private int courseLocationId;
     private String name;
+    private String title;
     private String content;
     private List<String> imageList;
 }

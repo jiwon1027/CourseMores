@@ -13,6 +13,7 @@ public class LocationCreateReqDto {
     private double latitude;
     private double longitude;
     private String name;
+    private String title;
     private String content;
     private int regionId;
     private List<String> imageList;

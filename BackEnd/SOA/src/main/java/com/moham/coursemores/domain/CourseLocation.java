@@ -37,6 +37,9 @@ public class CourseLocation extends UpdateTimeEntity {
     @Column(length = 50)
     private String name;
 
+    @Column(length = 50)
+    private String title;
+
     @Column(length = 1000)
     private String content;
 
@@ -63,12 +66,14 @@ public class CourseLocation extends UpdateTimeEntity {
 
     @Builder
     public CourseLocation(String name,
+                          String title,
                           String content,
                           double latitude,
                           double longitude,
                           Region region,
                           Course course){
         this.name = name;
+        this.title = title;
         this.content = content;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -78,6 +83,7 @@ public class CourseLocation extends UpdateTimeEntity {
 
     public void update(LocationUpdateReqDto locationUpdateReqDto){
         this.name=locationUpdateReqDto.getName();
+        this.title=locationUpdateReqDto.getTitle();
         this.content=locationUpdateReqDto.getContent();
     }
 }
