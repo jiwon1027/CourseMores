@@ -23,8 +23,8 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Color.fromARGB(255, 240, 240, 240),
-        appBar: CustomAppBar(),
+        backgroundColor: const Color.fromARGB(255, 240, 240, 240),
+        appBar: const CustomAppBar(),
         body: [
           const home.HomeScreen(),
           const Text("코스페이지"),
@@ -40,24 +40,24 @@ class _MyAppState extends State<MyApp> {
           }),
           items: [
             FlashyTabBarItem(
-              icon: Icon(Icons.home),
-              title: Text('홈'),
+              icon: const Icon(Icons.home),
+              title: const Text('홈'),
             ),
             FlashyTabBarItem(
-              icon: Icon(Icons.route),
-              title: Text('코스'),
+              icon: const Icon(Icons.route),
+              title: const Text('코스'),
             ),
             FlashyTabBarItem(
-              icon: Icon(Icons.search),
-              title: Text('검색'),
+              icon: const Icon(Icons.search),
+              title: const Text('검색'),
             ),
             FlashyTabBarItem(
-              icon: Icon(Icons.bookmark),
-              title: Text('관심'),
+              icon: const Icon(Icons.bookmark),
+              title: const Text('관심'),
             ),
             FlashyTabBarItem(
-              icon: Icon(Icons.person),
-              title: Text('마이페이지'),
+              icon: const Icon(Icons.person),
+              title: const Text('마이페이지'),
             ),
           ],
         ));
@@ -93,5 +93,5 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(kToolbarHeight);
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }

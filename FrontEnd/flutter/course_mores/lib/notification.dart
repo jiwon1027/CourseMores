@@ -124,6 +124,7 @@ class _NotificationState extends State<Notification> {
               child: Text(
                 "${item['nickname']}님이 ${item['course']} 코스에 좋아요를 눌렀습니다.",
                 softWrap: true,
+                style: const TextStyle(fontSize: 18),
               ),
             ),
             // 삭제 아이콘
@@ -146,6 +147,7 @@ class _NotificationState extends State<Notification> {
               child: Text(
                 "${item['nickname']}님이 ${item['course']} 코스의 리뷰에 좋아요를 눌렀습니다.",
                 softWrap: true,
+                style: const TextStyle(fontSize: 18),
               ),
             ),
             IconButton(
@@ -165,8 +167,10 @@ class _NotificationState extends State<Notification> {
             ),
             Expanded(
               child: Text(
-                  "${item['nickname']}님이 ${item['course']} 코스에 코멘트를 남겼습니다.",
-                  softWrap: true),
+                "${item['nickname']}님이 ${item['course']} 코스에 코멘트를 남겼습니다.",
+                softWrap: true,
+                style: const TextStyle(fontSize: 18),
+              ),
             ),
             IconButton(
               icon: const Icon(Icons.close),
