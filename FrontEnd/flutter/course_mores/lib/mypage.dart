@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-import 'modal_bottom.dart' as modal;
 
 class MyPage extends StatefulWidget {
   const MyPage({super.key});
@@ -88,7 +87,7 @@ profileBox() {
           Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              IconButton(onPressed: () {}, icon: Icon(Icons.settings)),
+              ModalBottom(),
             ],
           )
         ],
@@ -108,4 +107,64 @@ boxDeco() {
       ),
     ],
   );
+}
+
+class ModalBottom extends StatelessWidget {
+  const ModalBottom({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: IconButton(
+          onPressed: () {
+            showModalBottomSheet<void>(
+                context: context,
+                builder: (BuildContext context) {
+                  return Container(
+                      height: 150,
+                      color: Colors.transparent,
+                      child: Center(
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.max,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: <Widget>[
+                              Expanded(
+                                child: InkWell(
+                                    onTap: () {},
+                                    child: Center(
+                                        child: const Text(
+                                      '내 정보 수정',
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ))),
+                              ),
+                              Expanded(
+                                child: InkWell(
+                                    onTap: () {},
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                          border: Border(
+                                              top: BorderSide(
+                                                  color: Colors.grey,
+                                                  width: 1))),
+                                      child: Center(
+                                          // color: Colors.yellow,
+                                          child: const Text(
+                                        '로그아웃',
+                                        style: TextStyle(
+                                            fontSize: 20, color: Colors.red),
+                                        textAlign: TextAlign.center,
+                                      )),
+                                    )),
+                              ),
+                            ]),
+                      ));
+                });
+          },
+          icon: Icon(Icons.settings)),
+    );
+  }
 }
