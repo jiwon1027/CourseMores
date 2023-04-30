@@ -40,7 +40,12 @@ dependencies:
   http: ^0.13.5
   geolocator: ^9.0.2
   carousel_slider: ^4.2.1
-  modal_bottom_sheet: ^2.1.2
+  modal_bottom_sheet:
+    git:
+      url: https://github.com/followthemoney1/modal_bottom_sheet.git
+      ref: main
+      path: modal_bottom_sheet
+  # modal_bottom_sheet: ^2.1.2
 
 dev_dependencies:
   flutter_test:
