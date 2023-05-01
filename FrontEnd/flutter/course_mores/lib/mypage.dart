@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'sign_up.dart' as signup;
 
 class MyPage extends StatefulWidget {
   const MyPage({super.key});
@@ -16,12 +14,11 @@ class _MyPageState extends State<MyPage> {
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Container(
-            child: Column(
+        child: Column(
           children: [
             profileBox(),
           ],
-        )),
+        ),
       ),
     );
   }
@@ -36,7 +33,7 @@ profileBox() {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Container(
-              padding: EdgeInsets.all(5),
+              padding: const EdgeInsets.all(5),
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
                   begin: Alignment.bottomRight,
@@ -49,7 +46,7 @@ profileBox() {
                 ),
                 borderRadius: BorderRadius.circular(120),
               ),
-              child: CircleAvatar(
+              child: const CircleAvatar(
                 radius: 60,
                 backgroundImage: AssetImage("assets/img2.png"),
               ),
@@ -59,23 +56,23 @@ profileBox() {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+              children: const [
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(15.0, 20.0, 15.0, 15.0),
+                  padding: EdgeInsets.fromLTRB(15.0, 20.0, 15.0, 15.0),
                   child: Text(
                     '닉네임',
                     style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 0),
+                  padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 0),
                   child: Text(
                     '20대',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
+                  padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
                   child: Text(
                     '남성',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
@@ -86,7 +83,7 @@ profileBox() {
           ),
           Column(
             mainAxisAlignment: MainAxisAlignment.start,
-            children: [
+            children: const [
               ModalBottom(),
             ],
           )
@@ -96,14 +93,14 @@ profileBox() {
 
 boxDeco() {
   return BoxDecoration(
-    color: Color.fromARGB(255, 231, 151, 151),
+    color: const Color.fromARGB(255, 231, 151, 151),
     borderRadius: BorderRadius.circular(20),
     boxShadow: [
       BoxShadow(
         color: Colors.grey.withOpacity(0.5),
         spreadRadius: 2,
         blurRadius: 3,
-        offset: Offset(0, 2), // changes position of shadow
+        offset: const Offset(0, 2), // changes position of shadow
       ),
     ],
   );
@@ -131,9 +128,15 @@ class ModalBottom extends StatelessWidget {
                             children: <Widget>[
                               Expanded(
                                 child: InkWell(
-                                    onTap: () {},
-                                    child: Center(
-                                        child: const Text(
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const signup.SignUp()));
+                                    },
+                                    child: const Center(
+                                        child: Text(
                                       '내 정보 수정',
                                       style: TextStyle(
                                         fontSize: 20,
@@ -145,14 +148,14 @@ class ModalBottom extends StatelessWidget {
                                 child: InkWell(
                                     onTap: () {},
                                     child: Container(
-                                      decoration: BoxDecoration(
+                                      decoration: const BoxDecoration(
                                           border: Border(
                                               top: BorderSide(
                                                   color: Colors.grey,
                                                   width: 1))),
-                                      child: Center(
+                                      child: const Center(
                                           // color: Colors.yellow,
-                                          child: const Text(
+                                          child: Text(
                                         '로그아웃',
                                         style: TextStyle(
                                             fontSize: 20, color: Colors.red),
@@ -164,7 +167,7 @@ class ModalBottom extends StatelessWidget {
                       ));
                 });
           },
-          icon: Icon(Icons.settings)),
+          icon: const Icon(Icons.settings)),
     );
   }
 }
