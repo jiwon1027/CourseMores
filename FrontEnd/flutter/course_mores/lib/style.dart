@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 var theme = ThemeData(
+  fontFamily: 'SCDream5',
   bottomNavigationBarTheme: const BottomNavigationBarThemeData(
       backgroundColor: Colors.white,
       elevation: 2,

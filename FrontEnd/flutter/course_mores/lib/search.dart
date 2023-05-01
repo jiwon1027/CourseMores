@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'course_list.dart' as course;
 import 'course_detail.dart' as detail;
 import 'package:flutter_multi_select_items/flutter_multi_select_items.dart';
-// import 'package:awesome_dropdown/awesome_dropdown.dart';
-// import 'package:skeletons/skeletons.dart';
 
 class Search extends StatefulWidget {
   const Search({Key? key}) : super(key: key);
@@ -16,69 +14,15 @@ class _SearchState extends State<Search> {
   var courseList = course.courseList;
   var sidoList = course.sidoList;
 
+  var isSearchResults = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: searchPageHeader(),
-      // body: futureSearchResults == null
-      // ? displayNoSearchResultScreen()
-      // : displayUsersFoundScreen(),
-      body: Container(
-        color: Color.fromARGB(221, 244, 244, 244),
-        child: ListView.builder(
-          padding: const EdgeInsets.all(8),
-          itemCount: courseList.length,
-          itemBuilder: (BuildContext context, int index) {
-            return InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => detail.CourseDetail(index: index)),
-                );
-              },
-              child: Container(
-                margin: const EdgeInsets.only(
-                    left: 10, right: 10, top: 10, bottom: 5),
-                padding: const EdgeInsets.all(10),
-                decoration: const BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                          // color: Colors.white24,
-                          color: Color.fromARGB(255, 211, 211, 211),
-                          blurRadius: 10.0,
-                          spreadRadius: 1.0,
-                          offset: Offset(3, 3)),
-                    ],
-                    color: Color.fromARGB(255, 255, 255, 255),
-                    borderRadius: BorderRadius.all(Radius.circular(10))),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                        // 알림 유형별로 다른 문구 출력을 위해 따로 빼둠
-                        // 더 효율적인 방식 있으면 바꿔도 됨
-                        child: SizedBox(
-                            width: 300,
-                            child: Row(
-                              children: [
-                                ThumbnailImage(),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Expanded(
-                                  child: CourseSearchList(
-                                      courseList: courseList, index: index),
-                                ),
-                              ],
-                            ))),
-                  ],
-                ),
-              ),
-            );
-          },
-        ),
-      ),
+      body: isSearchResults == false
+          ? displayNoSearchResultScreen()
+          : SearchResult(courseList: courseList),
+      // body: SearchResult(courseList: courseList),
     );
   }
 
@@ -94,38 +38,43 @@ class _SearchState extends State<Search> {
     return AppBar(
         backgroundColor: Colors.black,
         title: TextFormField(
+          textAlignVertical: TextAlignVertical.center,
           controller: searchTextEditingController,
           decoration: InputDecoration(
             hintText: "코스를 검색해보세요",
-            hintStyle: TextStyle(color: Colors.grey),
-            enabledBorder: UnderlineInputBorder(
+            hintStyle: const TextStyle(color: Colors.grey),
+            enabledBorder: const UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.grey),
             ),
-            focusedBorder: UnderlineInputBorder(
+            focusedBorder: const UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.white),
             ),
             filled: true,
             prefixIcon: IconButton(
-                icon: Icon(Icons.tune),
+                icon: const Icon(Icons.tune),
                 color: Colors.grey,
-                iconSize: 30,
+                iconSize: 25,
                 onPressed: () {
                   // print("필터 열기");
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => SearchFilter()),
+                    MaterialPageRoute(
+                        builder: (context) => const SearchFilter()),
                   );
                 }),
             suffixIcon: IconButton(
-              icon: Icon(Icons.search),
+              icon: const Icon(Icons.search),
               color: Colors.grey,
-              iconSize: 30,
+              iconSize: 25,
               onPressed: () {
-                print("${searchTextEditingController.text} 검색하기");
+                // print("${searchTextEditingController.text} 검색하기");
+                setState(() {
+                  isSearchResults = true;
+                });
               },
             ),
           ),
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 18,
             color: Colors.white,
           ),
@@ -135,19 +84,99 @@ class _SearchState extends State<Search> {
 
   displayNoSearchResultScreen() {}
 
-  displayUsersFoundScreen() {}
+  // displayUsersFoundScreen() {}
 }
 
-class ThumbnailImage extends StatelessWidget {
+class SearchResult extends StatefulWidget {
+  const SearchResult({
+    super.key,
+    required this.courseList,
+  });
+
+  final List<Map<String, Object>> courseList;
+
+  @override
+  State<SearchResult> createState() => _SearchResultState();
+}
+
+class _SearchResultState extends State<SearchResult> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: const Color.fromARGB(221, 244, 244, 244),
+      child: ListView.builder(
+        padding: const EdgeInsets.all(8),
+        itemCount: widget.courseList.length,
+        itemBuilder: (BuildContext context, int index) {
+          return InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => detail.CourseDetail(index: index)),
+              );
+            },
+            child: Container(
+              margin: const EdgeInsets.only(
+                  left: 10, right: 10, top: 10, bottom: 5),
+              padding: const EdgeInsets.all(10),
+              decoration: const BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                        // color: Colors.white24,
+                        color: Color.fromARGB(255, 211, 211, 211),
+                        blurRadius: 10.0,
+                        spreadRadius: 1.0,
+                        offset: Offset(3, 3)),
+                  ],
+                  color: Color.fromARGB(255, 255, 255, 255),
+                  borderRadius: BorderRadius.all(Radius.circular(10))),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                      // 알림 유형별로 다른 문구 출력을 위해 따로 빼둠
+                      // 더 효율적인 방식 있으면 바꿔도 됨
+                      child: SizedBox(
+                          width: 300,
+                          child: Row(
+                            children: [
+                              const ThumbnailImage(),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Expanded(
+                                child: CourseSearchList(
+                                    // courseList: courseList,
+                                    index: index),
+                              ),
+                            ],
+                          ))),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class ThumbnailImage extends StatefulWidget {
   const ThumbnailImage({
     super.key,
   });
 
   @override
+  State<ThumbnailImage> createState() => _ThumbnailImageState();
+}
+
+class _ThumbnailImageState extends State<ThumbnailImage> {
+  @override
   Widget build(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
-      child: Image(
+      child: const Image(
         image: AssetImage('assets/img1.jpg'),
         height: 80,
         width: 80,
@@ -157,15 +186,21 @@ class ThumbnailImage extends StatelessWidget {
   }
 }
 
-class CourseSearchList extends StatelessWidget {
+class CourseSearchList extends StatefulWidget {
   const CourseSearchList({
     super.key,
-    required this.courseList,
     required this.index,
+    // required addLike,
   });
 
-  final List<Map<String, Object>> courseList;
-  final index;
+  final int index;
+
+  @override
+  State<CourseSearchList> createState() => _CourseSearchListState();
+}
+
+class _CourseSearchListState extends State<CourseSearchList> {
+  var courseList = course.courseList;
 
   @override
   Widget build(BuildContext context) {
@@ -177,8 +212,8 @@ class CourseSearchList extends StatelessWidget {
           children: [
             Expanded(
               child: Text(
-                "${courseList[index]['course']}",
-                style: TextStyle(
+                "${courseList[widget.index]['course']}",
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
@@ -187,62 +222,82 @@ class CourseSearchList extends StatelessWidget {
                 softWrap: true,
               ),
             ),
-            if (courseList[index]["bookmark"] == true)
-              Icon(Icons.bookmark, size: 24),
-            if (courseList[index]["bookmark"] == false)
-              Icon(Icons.bookmark_outline_rounded, size: 24),
+            if (courseList[widget.index]["bookmark"] == true)
+              const Icon(Icons.bookmark, size: 24),
+            if (courseList[widget.index]["bookmark"] == false)
+              const Icon(Icons.bookmark_outline_rounded, size: 24),
           ],
         ),
-        SizedBox(height: 3),
-        Text(
-          "${courseList[index]['address']} / 추천 인원수 ${courseList[index]['people'].toString()}",
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.black38,
-          ),
-          overflow: TextOverflow.ellipsis,
-          maxLines: 1,
-          softWrap: true,
+        const SizedBox(height: 2),
+        Row(
+          children: [
+            const Icon(Icons.map, size: 12, color: Colors.black54),
+            const SizedBox(width: 3),
+            Text(
+              courseList[widget.index]["address"].toString(),
+              style: const TextStyle(
+                fontSize: 12,
+                color: Colors.black54,
+              ),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+              softWrap: true,
+            ),
+            const SizedBox(width: 8),
+            const Icon(Icons.people, size: 12, color: Colors.black54),
+            const SizedBox(width: 3),
+            Text(
+              "${courseList[widget.index]['people'].toString()}명",
+              style: const TextStyle(
+                fontSize: 12,
+                color: Colors.black54,
+              ),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+              softWrap: true,
+            ),
+          ],
         ),
-        SizedBox(height: 3),
+        const SizedBox(height: 6),
         Text(
-          "${courseList[index]['text']}",
-          style: TextStyle(
+          "${courseList[widget.index]['text']}",
+          style: const TextStyle(
             fontSize: 14,
           ),
           overflow: TextOverflow.ellipsis,
           maxLines: 1,
           softWrap: true,
         ),
-        SizedBox(height: 3),
+        const SizedBox(height: 5),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              "${courseList[index]['summary']}",
-              style: TextStyle(
+              "${courseList[widget.index]['summary']}",
+              style: const TextStyle(
                 fontSize: 12,
+                color: Colors.black45,
               ),
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
               softWrap: true,
             ),
-            SizedBox(width: 8),
+            const SizedBox(width: 8),
             Row(
               children: [
                 Row(
                   children: [
-                    Icon(Icons.favorite, size: 14),
-                    SizedBox(width: 3),
-                    Text(courseList[index]["likes"].toString()),
+                    const Icon(Icons.favorite, size: 14),
+                    const SizedBox(width: 3),
+                    Text(courseList[widget.index]["likes_cnt"].toString()),
                   ],
                 ),
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
                 Row(
                   children: [
-                    Icon(Icons.comment, size: 14),
-                    SizedBox(width: 3),
-                    Text(courseList[index]["comments"].toString()),
+                    const Icon(Icons.comment, size: 14),
+                    const SizedBox(width: 3),
+                    Text(courseList[widget.index]["comments"].toString()),
                   ],
                 ),
               ],
@@ -290,20 +345,20 @@ class _SearchFilterState extends State<SearchFilter> {
                 color: Colors.grey.withOpacity(0.5),
                 spreadRadius: 2,
                 blurRadius: 3,
-                offset: Offset(0, 2), // changes position of shadow
+                offset: const Offset(0, 2), // changes position of shadow
               ),
             ],
           ),
           // 선택된 테마 스타일
           selectedDecoration: BoxDecoration(
-            color: Color.fromARGB(255, 115, 81, 255),
+            color: const Color.fromARGB(255, 115, 81, 255),
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
                 color: Colors.grey.withOpacity(0.5),
                 spreadRadius: 2,
                 blurRadius: 3,
-                offset: Offset(0, 2), // changes position of shadow
+                offset: const Offset(0, 2), // changes position of shadow
               ),
             ],
           ),
@@ -321,10 +376,10 @@ class _SearchFilterState extends State<SearchFilter> {
             ),
             onPressed: () {
               Navigator.pop(context);
-              print("저장 아이템 리스트 : ");
-              print(allSelectedTheme);
-              print("선택 지역 : ");
-              print(selectedAddress);
+              // print("저장 아이템 리스트 : ");
+              // print(allSelectedTheme);
+              // print("선택 지역 : ");
+              // print(selectedAddress);
             },
           ),
           // 알림 아이콘과 텍스트 같이 넣으려고 RichText 사용
@@ -366,11 +421,11 @@ class _SearchFilterState extends State<SearchFilter> {
         ),
         // 알림 리스트
         body: Container(
-            color: Color.fromARGB(221, 244, 244, 244),
+            color: const Color.fromARGB(221, 244, 244, 244),
             child: Column(children: [
-              Center(
+              const Center(
                 child: Padding(
-                  padding: const EdgeInsets.only(top: 20),
+                  padding: EdgeInsets.only(top: 20),
                   child: Text("이런 테마는 어때요? 😊", style: TextStyle(fontSize: 20)),
                 ),
               ),
@@ -379,14 +434,14 @@ class _SearchFilterState extends State<SearchFilter> {
                 child: MultiSelectContainer(
                   items: cards,
                   onChange: (allSelectedItems, selectedItem) {
-                    print("선택된 아이템 리스트 : ");
-                    print(allSelectedItems);
+                    // print("선택된 아이템 리스트 : ");
+                    // print(allSelectedItems);
                     allSelectedTheme = allSelectedItems;
                   },
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 20),
+              const Padding(
+                padding: EdgeInsets.only(top: 20),
                 child: Text("지역을 선택해보세요 🗺", style: TextStyle(fontSize: 20)),
               ),
               MyDropdown(selectAddress: selectAddress)
@@ -395,8 +450,8 @@ class _SearchFilterState extends State<SearchFilter> {
 }
 
 class MyDropdown extends StatefulWidget {
-  MyDropdown({Key? key, this.selectAddress}) : super(key: key);
-  final selectAddress;
+  const MyDropdown({Key? key, this.selectAddress}) : super(key: key);
+  final dynamic selectAddress;
 
   @override
   // ignore: no_logic_in_create_state, library_private_types_in_public_api
@@ -431,10 +486,10 @@ class _MyDropdownState extends State<MyDropdown> {
               _selectedSecondDropdownItem =
                   _secondDropdownItems[_selectedFirstDropdownItem]![0];
             });
-            print("$_selectedFirstDropdownItem $_selectedSecondDropdownItem");
+            // print("$_selectedFirstDropdownItem $_selectedSecondDropdownItem");
           },
         ),
-        SizedBox(width: 16),
+        const SizedBox(width: 16),
         DropdownButton(
           value: _selectedSecondDropdownItem,
           items: _secondDropdownItems[_selectedFirstDropdownItem]!
@@ -450,7 +505,7 @@ class _MyDropdownState extends State<MyDropdown> {
             });
             // selectAddress(
             //     [_selectedFirstDropdownItem, _selectedSecondDropdownItem]);
-            print("$_selectedFirstDropdownItem $_selectedSecondDropdownItem");
+            // print("$_selectedFirstDropdownItem $_selectedSecondDropdownItem");
           },
         ),
       ],
