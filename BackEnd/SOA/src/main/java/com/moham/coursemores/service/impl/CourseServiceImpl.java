@@ -34,7 +34,6 @@ public class CourseServiceImpl implements CourseService {
     private final ThemeOfCourseRepository themeOfCourseRepository;
     private final InterestRepository interestRepository;
 
-
     @Override
     public Page<CoursePreviewResDto> search(Long userId, String word, Long regionId, List<Long> themeIds, int page, String sortby) {
         User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
@@ -52,8 +51,7 @@ public class CourseServiceImpl implements CourseService {
         Page<Course> pageCourse = courseRepository.searchAll(word, regionId,themeIds,pageable);
         Page<CoursePreviewResDto> result = pageCourse
                 .map(course -> {
-                    CourseLocation courseLocation = course.getCourseLocationList().get(0);
-                    Region region = courseLocation.getRegion();
+                    Region region = course.getCourseLocationList().get(0).getRegion();
                     Optional<Interest> interest = interestRepository.findByUserIdAndCourseId(user.getId(), course.getId());
 
                     return CoursePreviewResDto.builder()
@@ -68,7 +66,7 @@ public class CourseServiceImpl implements CourseService {
                         .sido(region.getSido())
                         .gugun(region.getGugun())
                         .locationName(course.getLocationName())
-                        .isInterest(interest.isPresent() ? interest.get().isFlag() : false)
+                        .isInterest(interest.map(Interest::isFlag).orElse(false))
                         .build();
                 });
 
@@ -169,7 +167,7 @@ public class CourseServiceImpl implements CourseService {
             // 삭제한 코스인지 확인
             if(course.getDeleteTime()!=null) return;
             // 코스의 첫번째 지역
-            CourseLocation firstCourseLocation = course.getCourseLocationList().get(0);
+            Region region = course.getCourseLocationList().get(0).getRegion();
             // 코스를 Dto로 가공하기
             myCourseResDtoList.add(MyCourseResDto.builder()
                     .courseId(course.getId())
@@ -179,8 +177,8 @@ public class CourseServiceImpl implements CourseService {
                     .visited(course.isVisited())
                     .likeCount(course.getLikeCount())
                     .mainImage(course.getMainImage())
-                    .sido(firstCourseLocation.getRegion().getSido())
-                    .gugun(firstCourseLocation.getRegion().getGugun())
+                    .sido(region.getSido())
+                    .gugun(region.getGugun())
                     .locationName(course.getLocationName())
                     .commentCount(course.getCommentList().size())
                     .build());
@@ -274,7 +272,7 @@ public class CourseServiceImpl implements CourseService {
         User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
                 .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
         // 코스 정보 가져오기
-        Course course = courseRepository.findByIdAndDeleteTimeIsNull(courseId)
+        Course course = courseRepository.findByIdAndUserIdAndDeleteTimeIsNull(courseId, user.getId())
                 .orElseThrow(() -> new RuntimeException("해당 코스를 찾을 수 없습니다."));
         // 코스 정보 수정하기
         course.update(courseUpdateReqDto);

@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class CommentServiceImpl implements CommentService {
+
     private final CommentRepository commentRepository;
     private final CommentImageRepository commentImageRepository;
     private final UserRepository userRepository;
@@ -38,7 +39,9 @@ public class CommentServiceImpl implements CommentService {
         final int size = 5;
 
         // Sort 정렬 기준
-        Sort sort = ("Like".equals(sortby))?Sort.by("likeCount").descending():Sort.by("createTime").descending();
+        Sort sort = ("Like".equals(sortby)) ?
+                Sort.by("likeCount").descending() :
+                Sort.by("createTime").descending();
         Pageable pageable = PageRequest.of(page, size, sort);
 
         return commentRepository.findByCourseIdAndDeleteTimeIsNull(courseId, pageable)
@@ -106,15 +109,11 @@ public class CommentServiceImpl implements CommentService {
         commentRepository.save(comment);
 
         // commentImage table에도 사진 추가
-        commentCreateReqDTO.getImageList().forEach(
-                imageUrl -> {
-                    CommentImage commentImage = CommentImage.builder()
-                            .comment(comment)
-                            .image(imageUrl)
-                            .build();
-                    commentImageRepository.save(commentImage);
-                }
-        );
+        commentCreateReqDTO.getImageList().forEach(imageUrl ->
+                commentImageRepository.save(CommentImage.builder()
+                        .comment(comment)
+                        .image(imageUrl)
+                        .build()));
     }
 
     @Override
@@ -135,15 +134,11 @@ public class CommentServiceImpl implements CommentService {
         commentImageRepository.deleteByCommentId(commentId);
 
         // 이미지 새롭게 추가
-        commentUpdateDTO.getImageList().forEach(
-                imageUrl -> {
-                    CommentImage commentImage = CommentImage.builder()
-                            .image(imageUrl)
-                            .comment(comment)
-                            .build();
-                    commentImageRepository.save(commentImage);
-                }
-        );
+        commentUpdateDTO.getImageList().forEach(imageUrl ->
+                commentImageRepository.save(CommentImage.builder()
+                        .image(imageUrl)
+                        .comment(comment)
+                        .build()));
     }
 
     @Override

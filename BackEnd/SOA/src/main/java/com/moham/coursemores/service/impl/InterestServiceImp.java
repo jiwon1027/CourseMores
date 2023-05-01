@@ -1,9 +1,6 @@
 package com.moham.coursemores.service.impl;
 
-import com.moham.coursemores.domain.Course;
-import com.moham.coursemores.domain.CourseLocation;
-import com.moham.coursemores.domain.Interest;
-import com.moham.coursemores.domain.User;
+import com.moham.coursemores.domain.*;
 import com.moham.coursemores.dto.course.CoursePreviewResDto;
 import com.moham.coursemores.dto.interest.InterestCourseResDto;
 import com.moham.coursemores.repository.CourseRepository;
@@ -13,6 +10,8 @@ import com.moham.coursemores.service.InterestService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,16 +27,15 @@ public class InterestServiceImp implements InterestService {
 
     @Override
     public List<InterestCourseResDto> getUserInterestCourseList(Long userId) {
-        List<InterestCourseResDto> result = new ArrayList<>();
-
         // 현재의 관심 여부(flag)가 true인 것만 가져오기
-        interestRepository.findByUserIdAndFlag(userId, true)
-                .forEach(interest -> {
+        return interestRepository.findByUserIdAndFlag(userId, true)
+                .stream()
+                .map(interest -> {
                     Long interestId = interest.getId();
                     // 관심 코스 정보 가져오기
                     Course course = interest.getCourse();
                     // 코스의 첫 번째 장소 가져오기
-                    CourseLocation firstCourseLocation = course.getCourseLocationList().get(0);
+                    Region region = course.getCourseLocationList().get(0).getRegion();
 
                     CoursePreviewResDto coursePreviewResDto = CoursePreviewResDto.builder()
                             .courseId(course.getId())
@@ -48,19 +46,18 @@ public class InterestServiceImp implements InterestService {
                             .likeCount(course.getLikeCount())
                             .commentCount(course.getCommentList().size())
                             .mainImage(course.getMainImage())
-                            .sido(firstCourseLocation.getRegion().getSido())
-                            .gugun(firstCourseLocation.getRegion().getGugun())
-                            .locationName(firstCourseLocation.getName())
+                            .locationName(course.getLocationName())
+                            .sido(region.getSido())
+                            .gugun(region.getGugun())
                             .isInterest(true)
                             .build();
 
-                    result.add(InterestCourseResDto.builder()
+                    return InterestCourseResDto.builder()
                             .interestCourseId(interestId)
                             .coursePreviewResDto(coursePreviewResDto)
-                            .build());
-                });
-
-        return result;
+                            .build();
+                })
+                .collect(Collectors.toList());
     }
 
     @Override
