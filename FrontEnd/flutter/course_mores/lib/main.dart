@@ -1,8 +1,8 @@
 import 'package:flashy_tab_bar2/flashy_tab_bar2.dart';
 import 'package:flutter/material.dart' hide ModalBottomSheetRoute;
 import 'style.dart' as style;
-import 'notification.dart' as noti;
-import 'search.dart' as search;
+import 'notification/notification.dart' as noti;
+import 'course_search/search.dart' as search;
 import 'home_screen.dart' as home;
 import 'mypage.dart' as mypage;
 import 'course_make/make_start.dart' as make;
