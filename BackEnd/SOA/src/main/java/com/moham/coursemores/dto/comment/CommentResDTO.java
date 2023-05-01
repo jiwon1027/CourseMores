@@ -10,7 +10,7 @@ import lombok.ToString;
 @Getter
 @Builder
 public class CommentResDTO {
-    int commentId;
+    Long commentId;
     String content;
     int people;
     int likeCount;

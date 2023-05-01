@@ -24,7 +24,7 @@ public class CommentImage extends CreateTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "comment_image_id")
-    private int id;
+    private Long id;
 
     @NotNull
     @Column(length = 500)

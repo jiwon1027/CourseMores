@@ -9,7 +9,7 @@ import lombok.ToString;
 @Builder
 public class CoursePreviewResDto {
 
-    private int courseId; // 코스 id
+    private Long courseId; // 코스 id
     private String title; // 제목
     private String content; // 내용
     private int people; // 인원수

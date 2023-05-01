@@ -28,7 +28,7 @@ public class LikeServiceImpl implements LikeService {
     private final CommentRepository commentRepository;
 
     @Override
-    public boolean checkLikeCourse(int userId, int courseId) {
+    public boolean checkLikeCourse(Long userId, Long courseId) {
         // 코스 좋아요 객체가 존재하고 flag 또한 true이면 해당 유저가 좋아하는 코스이다.
         Optional<CourseLike> courseLike = courseLikeRepository.findByUserIdAndCourseId(userId, courseId);
         return courseLike.isPresent() && courseLike.get().isFlag();
@@ -36,7 +36,7 @@ public class LikeServiceImpl implements LikeService {
 
     @Override
     @Transactional
-    public void addLikeCourse(int userId, int courseId) {
+    public void addLikeCourse(Long userId, Long courseId) {
         Course course = courseRepository.findByIdAndDeleteTimeIsNull(courseId)
                 .orElseThrow(() -> new RuntimeException("해당 코스를 찾을 수 없습니다."));
 
@@ -59,7 +59,7 @@ public class LikeServiceImpl implements LikeService {
 
     @Override
     @Transactional
-    public void deleteLikeCourse(int userId, int courseId) {
+    public void deleteLikeCourse(Long userId, Long courseId) {
         Course course = courseRepository.findByIdAndDeleteTimeIsNull(courseId)
                 .orElseThrow(() -> new RuntimeException("해당 코스를 찾을 수 없습니다."));
 
@@ -72,7 +72,7 @@ public class LikeServiceImpl implements LikeService {
     }
 
     @Override
-    public boolean checkLikeComment(int userId, int commentId) {
+    public boolean checkLikeComment(Long userId, Long commentId) {
         // 댓글 좋아요 객체가 존재하고 flag 또한 true이면 해당 유저가 좋아하는 댓글이다.
         Optional<CommentLike> commentLike = commentLikeRepository.findByUserIdAndCommentId(userId, commentId);
         return commentLike.isPresent() && commentLike.get().isFlag();
@@ -80,7 +80,7 @@ public class LikeServiceImpl implements LikeService {
 
     @Override
     @Transactional
-    public void addLikeComment(int userId, int commentId) {
+    public void addLikeComment(Long userId, Long commentId) {
         Comment comment = commentRepository.findByIdAndDeleteTimeIsNull(commentId)
                 .orElseThrow(() -> new RuntimeException("해당 댓글을 찾을 수 없습니다."));
 
@@ -105,7 +105,7 @@ public class LikeServiceImpl implements LikeService {
 
     @Override
     @Transactional
-    public void deleteLikeComment(int userId, int commentId) {
+    public void deleteLikeComment(Long userId, Long commentId) {
         Comment comment = commentRepository.findByIdAndDeleteTimeIsNull(commentId)
                 .orElseThrow(() -> new RuntimeException("해당 댓글을 찾을 수 없습니다."));
 

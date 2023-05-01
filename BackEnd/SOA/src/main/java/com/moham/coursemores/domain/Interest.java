@@ -26,7 +26,7 @@ public class Interest extends RecordTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "interest_id")
-    private int id;
+    private Long id;
 
     @NotNull
     @Column

@@ -34,9 +34,8 @@ public class CourseServiceImpl implements CourseService {
     private final ThemeOfCourseRepository themeOfCourseRepository;
     private final InterestRepository interestRepository;
 
-
     @Override
-    public Page<CoursePreviewResDto> search(int userId, String word, int regionId, List<Integer> themeIds, int page, String sortby) {
+    public Page<CoursePreviewResDto> search(Long userId, String word, Long regionId, List<Long> themeIds, int page, String sortby) {
         User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
                 .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
 
@@ -52,8 +51,7 @@ public class CourseServiceImpl implements CourseService {
         Page<Course> pageCourse = courseRepository.searchAll(word, regionId,themeIds,pageable);
         Page<CoursePreviewResDto> result = pageCourse
                 .map(course -> {
-                    CourseLocation courseLocation = course.getCourseLocationList().get(0);
-                    Region region = courseLocation.getRegion();
+                    Region region = course.getCourseLocationList().get(0).getRegion();
                     Optional<Interest> interest = interestRepository.findByUserIdAndCourseId(user.getId(), course.getId());
 
                     return CoursePreviewResDto.builder()
@@ -67,8 +65,8 @@ public class CourseServiceImpl implements CourseService {
                         .mainImage(course.getMainImage())
                         .sido(region.getSido())
                         .gugun(region.getGugun())
-                        .locationName(courseLocation.getName())
-                        .isInterest(interest.isPresent() ? interest.get().isFlag() : false)
+                        .locationName(course.getLocationName())
+                        .isInterest(interest.map(Interest::isFlag).orElse(false))
                         .build();
                 });
 
@@ -85,7 +83,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     @Transactional
-    public void increaseViewCount(int courseId) {
+    public void increaseViewCount(Long courseId) {
         // 코스 정보 가져오기
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new RuntimeException("해당 코스를 찾을 수 없습니다."));
@@ -94,7 +92,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public CourseInfoResDto getCourseInfo(int courseId) {
+    public CourseInfoResDto getCourseInfo(Long courseId) {
         // 코스 정보 가져오기
         Course course = courseRepository.findByIdAndDeleteTimeIsNull(courseId)
                 .orElseThrow(()->new RuntimeException("해당 코스를 찾을 수 없습니다."));
@@ -104,7 +102,7 @@ public class CourseServiceImpl implements CourseService {
                 .map(hashtagOfCourse -> hashtagOfCourse.getHashtag().getName())
                 .collect(Collectors.toList());
         // 코스 테마 id 가져오기
-        List<Integer> themeIdList = themeOfCourseRepository.findByCourseId(courseId)
+        List<Long> themeIdList = themeOfCourseRepository.findByCourseId(courseId)
                 .stream()
                 .map(themeOfCourse -> themeOfCourse.getTheme().getId())
                 .collect(Collectors.toList());
@@ -132,7 +130,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public List<CourseDetailResDto> getCourseDetail(int courseId) {
+    public List<CourseDetailResDto> getCourseDetail(Long courseId) {
         // 해당 코스가 존재하는지 확인
         if(!courseRepository.existsByIdAndDeleteTimeIsNull(courseId))
             throw new RuntimeException("해당 코스를 찾을 수 없습니다.");
@@ -149,7 +147,7 @@ public class CourseServiceImpl implements CourseService {
                         .gugun(courseLocation.getRegion().getGugun())
                         .locationImage(courseLocation.getCourseLocationImageList()
                                 .stream()
-                                .map(courseLocationImage->courseLocationImage.getImage())
+                                .map(CourseLocationImage::getImage)
                                 .collect(Collectors.toList())
                         )
                         .build()
@@ -158,7 +156,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public List<MyCourseResDto> getMyCourseList(int userId) {
+    public List<MyCourseResDto> getMyCourseList(Long userId) {
         // 유저 정보 가져오기
         User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
                 .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
@@ -169,7 +167,7 @@ public class CourseServiceImpl implements CourseService {
             // 삭제한 코스인지 확인
             if(course.getDeleteTime()!=null) return;
             // 코스의 첫번째 지역
-            CourseLocation firstCourseLocation = course.getCourseLocationList().get(0);
+            Region region = course.getCourseLocationList().get(0).getRegion();
             // 코스를 Dto로 가공하기
             myCourseResDtoList.add(MyCourseResDto.builder()
                     .courseId(course.getId())
@@ -179,9 +177,9 @@ public class CourseServiceImpl implements CourseService {
                     .visited(course.isVisited())
                     .likeCount(course.getLikeCount())
                     .mainImage(course.getMainImage())
-                    .sido(firstCourseLocation.getRegion().getSido())
-                    .gugun(firstCourseLocation.getRegion().getGugun())
-                    .locationName(firstCourseLocation.getName())
+                    .sido(region.getSido())
+                    .gugun(region.getGugun())
+                    .locationName(course.getLocationName())
                     .commentCount(course.getCommentList().size())
                     .build());
             });
@@ -191,7 +189,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     @Transactional
-    public void addCourse(int userId, CourseCreateReqDto courseCreateReqDto) {
+    public void addCourse(Long userId, CourseCreateReqDto courseCreateReqDto) {
         // 유저 정보 가져오기
         User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
                 .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
@@ -206,6 +204,7 @@ public class CourseServiceImpl implements CourseService {
                 .interestCount(0)
                 .likeCount(0)
                 .mainImage(courseCreateReqDto.getLocationList().get(0).getImageList().get(0))
+                .locationName(courseCreateReqDto.getLocationList().get(0).getName())
                 .user(user)
                 .build());
         // 코스의 테마 생성
@@ -268,12 +267,12 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     @Transactional
-    public void setCourse(int userId, int courseId, CourseUpdateReqDto courseUpdateReqDto) {
+    public void setCourse(Long userId, Long courseId, CourseUpdateReqDto courseUpdateReqDto) {
         // 유저 정보 가져오기
         User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
                 .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
         // 코스 정보 가져오기
-        Course course = courseRepository.findByIdAndDeleteTimeIsNull(courseId)
+        Course course = courseRepository.findByIdAndUserIdAndDeleteTimeIsNull(courseId, user.getId())
                 .orElseThrow(() -> new RuntimeException("해당 코스를 찾을 수 없습니다."));
         // 코스 정보 수정하기
         course.update(courseUpdateReqDto);
@@ -337,7 +336,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     @Transactional
-    public void deleteCourse(int userId, int courseId) {
+    public void deleteCourse(Long userId, Long courseId) {
         // 유저 찾기
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));

@@ -5,10 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface InterestRepository extends JpaRepository<Interest, Integer> {
-
-    List<Interest> findByUserIdAndFlag(int userId, boolean flag);
-
-    Optional<Interest> findByUserIdAndCourseId(int userId, int courseId);
-
+public interface InterestRepository extends JpaRepository<Interest, Long> {
+    List<Interest> findByUserIdAndFlag(Long userId, boolean flag);
+    Optional<Interest> findByUserIdAndCourseId(Long userId, Long courseId);
 }

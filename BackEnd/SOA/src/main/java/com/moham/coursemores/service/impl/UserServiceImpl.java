@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
 
     @Override
-    public UserSimpleInfoResDto getUserSimpleInfo(int userId) {
+    public UserSimpleInfoResDto getUserSimpleInfo(Long userId) {
         return null;
     }
 }

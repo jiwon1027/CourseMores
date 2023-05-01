@@ -67,7 +67,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             // 4. RefreshToken 저장
             // (rf 토큰의 key값은 user의 id로 할껀지? 아니면 provider + providerId로 할껀지??)
             RefreshToken rfToken = RefreshToken.builder()
-                    .key(Integer.toString(user.getId()))
+                    .key(Long.toString(user.getId()))
                     .value(refreshToken)
                     .build();
 

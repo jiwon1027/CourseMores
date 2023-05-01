@@ -23,37 +23,12 @@ public class CourseController {
 
     private final CourseService courseService;
 
-    @GetMapping("test")
-    public ResponseEntity<Map<String, Object>> test() {
-        // 메서드 실행 - logger에 request값 표시하기 (없다면 none)
-        logger.info(">> request : none");
-
-        // 결과값을 담을 resultMap 생성
-        Map<String, Object> resultMap = new HashMap<>();
-
-        /* 해당 과정 반복
-
-        // service 실행
-        String test = testService.getTest();
-
-        // 결과값이 있다면 resultMap에 넣기
-        resultMap.put("test", test);
-
-        // logger에 결과값 표시하기 (없다면 none)
-        logger.info("<< response : test={}", test);
-
-         */
-
-        // 결과값 반환하기
-        return new ResponseEntity<>(resultMap, HttpStatus.OK);
-    }
-
     @GetMapping("search/{userId}")
     public ResponseEntity<Map<String, Object>> searchCourse(
-            @PathVariable int userId,
+            @PathVariable Long userId,
             @RequestParam String word,
-            @RequestParam int regionId,
-            @RequestParam List<Integer> themeIds,
+            @RequestParam Long regionId,
+            @RequestParam List<Long> themeIds,
             @RequestParam int page,
             @RequestParam String sortby) {
         logger.info(">> request : userId={}",userId);
@@ -78,7 +53,7 @@ public class CourseController {
 
     @GetMapping("info/{courseId}")
     public ResponseEntity<Map<String, Object>> getCourseInfo(
-            @PathVariable int courseId) {
+            @PathVariable Long courseId) {
         logger.info(">> request : courseId={}",courseId);
 
         Map<String, Object> resultMap = new HashMap<>();
@@ -93,7 +68,7 @@ public class CourseController {
 
     @GetMapping("detail/{courseId}")
     public ResponseEntity<Map<String, Object>> getCourseDetail(
-            @PathVariable int courseId) {
+            @PathVariable Long courseId) {
         logger.info(">> request : courseId={}",courseId);
 
         Map<String, Object> resultMap = new HashMap<>();
@@ -107,7 +82,7 @@ public class CourseController {
 
     @GetMapping("{userId}")
     public ResponseEntity<Map<String, Object>> getMyCourseList(
-            @PathVariable int userId) {
+            @PathVariable Long userId) {
         logger.info(">> request : userId={}",userId);
 
         Map<String, Object> resultMap = new HashMap<>();
@@ -121,7 +96,7 @@ public class CourseController {
 
     @PostMapping("{userId}")
     public ResponseEntity<Void> addCourse(
-            @PathVariable int userId,
+            @PathVariable Long userId,
             @RequestBody CourseCreateReqDto courseCreateReqDto) {
         logger.info(">> request : userId={}",userId);
         logger.info(">> request : courseCreateReqDto={}",courseCreateReqDto);
@@ -134,8 +109,8 @@ public class CourseController {
 
     @PutMapping("{courseId}/{userId}")
     public ResponseEntity<Void> setCourse(
-            @PathVariable int courseId,
-            @PathVariable int userId,
+            @PathVariable Long courseId,
+            @PathVariable Long userId,
             @RequestBody CourseUpdateReqDto courseUpdateReqDto) {
         logger.info(">> request : courseId={}",courseId);
         logger.info(">> request : userId={}",userId);
@@ -149,8 +124,8 @@ public class CourseController {
 
     @DeleteMapping("{courseId}/{userId}")
     public ResponseEntity<Void> deleteCourse(
-            @PathVariable int courseId,
-            @PathVariable int userId) {
+            @PathVariable Long courseId,
+            @PathVariable Long userId) {
         logger.info(">> request : courseId={}",courseId);
         logger.info(">> request : userId={}",userId);
 

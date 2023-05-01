@@ -1,17 +1,10 @@
 package com.moham.coursemores.service;
 
 public interface LikeService {
-
-    boolean checkLikeCourse(int userId, int courseId);
-
-    void addLikeCourse(int userId, int courseId);
-
-    void deleteLikeCourse(int userId, int courseId);
-
-    boolean checkLikeComment(int userId, int commentId);
-
-    void addLikeComment(int userId, int commentId);
-
-    void deleteLikeComment(int userId, int commentId);
-
+    boolean checkLikeCourse(Long userId, Long courseId);
+    void addLikeCourse(Long userId, Long courseId);
+    void deleteLikeCourse(Long userId, Long courseId);
+    boolean checkLikeComment(Long userId, Long commentId);
+    void addLikeComment(Long userId, Long commentId);
+    void deleteLikeComment(Long userId, Long commentId);
 }

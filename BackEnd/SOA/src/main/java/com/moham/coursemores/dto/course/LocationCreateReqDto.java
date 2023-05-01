@@ -15,6 +15,6 @@ public class LocationCreateReqDto {
     private String name;
     private String title;
     private String content;
-    private int regionId;
+    private Long regionId;
     private List<String> imageList;
 }

@@ -22,40 +22,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class InterestController {
 
-    // 해당 컨트롤러의 이름과 일치해야한다
     private static final Logger logger = LoggerFactory.getLogger(InterestController.class);
 
     private final InterestService interestService;
 
-    //반환할 결과값이 있다면 ResponseEntity<Map<String, Object>>
-    //    없다면 ResponseEntity<Void>
-    @GetMapping("test")
-    public ResponseEntity<Map<String, Object>> test() {
-        // 메서드 실행 - logger에 request값 표시하기 (없다면 none)
-        logger.info(">> request : none");
-
-        // 결과값을 담을 resultMap 생성
-        Map<String, Object> resultMap = new HashMap<>();
-
-        /* 해당 과정 반복
-
-        // service 실행
-        String test = testService.getTest();
-
-        // 결과값이 있다면 resultMap에 넣기
-        resultMap.put("test", test);
-
-        // logger에 결과값 표시하기 (없다면 none)
-        logger.info("<< response : test={}", test);
-
-         */
-
-        // 결과값 반환하기
-        return new ResponseEntity<>(resultMap, HttpStatus.OK);
-    }
-
     @GetMapping("{userId}")
-    public ResponseEntity<Map<String, Object>> getUserInterestCourseList(@PathVariable int userId) {
+    public ResponseEntity<Map<String, Object>> getUserInterestCourseList(
+            @PathVariable Long userId) {
         logger.info(">> request : userId={}", userId);
 
         Map<String, Object> resultMap = new HashMap<>();
@@ -68,7 +41,9 @@ public class InterestController {
     }
 
     @GetMapping("course/{courseId}/{userId}")
-    public ResponseEntity<Map<String, Object>> checkInterest(@PathVariable int userId, @PathVariable int courseId) {
+    public ResponseEntity<Map<String, Object>> checkInterest(
+            @PathVariable Long userId,
+            @PathVariable Long courseId) {
         logger.info(">> request : userId={}", userId);
         logger.info(">> request : courseId={}", courseId);
 
@@ -82,7 +57,9 @@ public class InterestController {
     }
 
     @PostMapping("course/{courseId}/{userId}")
-    public ResponseEntity<Void> addInterestCourse(@PathVariable int userId, @PathVariable int courseId) {
+    public ResponseEntity<Void> addInterestCourse(
+            @PathVariable Long userId,
+            @PathVariable Long courseId) {
         logger.info(">> request : userId={}", userId);
         logger.info(">> request : courseId={}", courseId);
 
@@ -93,7 +70,9 @@ public class InterestController {
     }
 
     @DeleteMapping("course/{courseId}/{userId}")
-    public ResponseEntity<Void> deleteInterestCourse(@PathVariable int userId, @PathVariable int courseId) {
+    public ResponseEntity<Void> deleteInterestCourse(
+            @PathVariable Long userId,
+            @PathVariable Long courseId) {
         logger.info(">> request : userId={}", userId);
         logger.info(">> request : courseId={}", courseId);
 

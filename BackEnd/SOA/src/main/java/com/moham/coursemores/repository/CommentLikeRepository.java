@@ -4,8 +4,8 @@ import com.moham.coursemores.domain.CommentLike;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface CommentLikeRepository extends JpaRepository<CommentLike, Integer> {
+public interface CommentLikeRepository extends JpaRepository<CommentLike, Long> {
 
-    Optional<CommentLike> findByUserIdAndCommentId(int userId, int commentId);
+    Optional<CommentLike> findByUserIdAndCommentId(Long userId, Long commentId);
 
 }

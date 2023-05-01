@@ -6,14 +6,14 @@ import java.util.Optional;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface CommentRepository extends JpaRepository<Comment, Integer> {
+public interface CommentRepository extends JpaRepository<Comment, Long> {
 
-    List<Comment> findByCourseIdAndDeleteTimeIsNull(int courseId, Pageable pageable);
+    List<Comment> findByCourseIdAndDeleteTimeIsNull(Long courseId, Pageable pageable);
 
-    List<Comment> findByUserIdAndDeleteTimeIsNull(int userId);
+    List<Comment> findByUserIdAndDeleteTimeIsNull(Long userId);
 
-    Optional<Comment> findByIdAndUserIdAndDeleteTimeIsNull(int commentId, int userId);
+    Optional<Comment> findByIdAndUserIdAndDeleteTimeIsNull(Long commentId, Long userId);
 
-    Optional<Comment> findByIdAndDeleteTimeIsNull(int commentId);
+    Optional<Comment> findByIdAndDeleteTimeIsNull(Long commentId);
 
 }

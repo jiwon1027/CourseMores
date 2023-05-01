@@ -5,11 +5,11 @@ import java.util.Optional;
 
 import com.moham.coursemores.repository.querydsl.CourseCustomRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
 
-public interface CourseRepository extends JpaRepository<Course, Integer>, CourseCustomRepository {
-    Optional<Course> findByIdAndUserId(int courseId, int userId);
-    Optional<Course> findByIdAndDeleteTimeIsNull(int courseId);
-    boolean existsByIdAndDeleteTimeIsNull(int courseId);
+public interface CourseRepository extends JpaRepository<Course, Long>, CourseCustomRepository {
+    Optional<Course> findByIdAndUserId(Long courseId, Long userId);
+    Optional<Course> findByIdAndDeleteTimeIsNull(Long courseId);
+    Optional<Course> findByIdAndUserIdAndDeleteTimeIsNull(Long courseId, Long userId);
+    boolean existsByIdAndDeleteTimeIsNull(Long courseId);
 }

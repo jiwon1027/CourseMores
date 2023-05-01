@@ -8,7 +8,7 @@ import lombok.ToString;
 @Getter
 @Builder
 public class MyCourseResDto {
-    private int courseId;
+    private Long courseId;
     private String title;
     private String content;
     private int people;

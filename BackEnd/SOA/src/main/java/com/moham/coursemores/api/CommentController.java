@@ -27,14 +27,17 @@ import java.util.Map;
 @RequestMapping("comment")
 @RequiredArgsConstructor
 public class CommentController {
+
     private static final Logger logger = LoggerFactory.getLogger(CommentController.class);
 
     private final CommentService commentService;
 
-
-
     @GetMapping("course/{courseId}/{userId}")
-    public ResponseEntity<Map<String, Object>> searchCommentAll(@PathVariable int courseId, @PathVariable int userId, @RequestParam int page, @RequestParam String sortby) {
+    public ResponseEntity<Map<String, Object>> searchCommentAll(
+            @PathVariable Long courseId,
+            @PathVariable Long userId,
+            @RequestParam int page,
+            @RequestParam String sortby) {
 
         logger.info(">> request : courseId : {}, userId : {}, page : {}, sortby : {}", courseId, userId, page, sortby);
 
@@ -49,7 +52,8 @@ public class CommentController {
     }
 
     @GetMapping("{userId}")
-    public ResponseEntity<Map<String, Object>> serarchMyCommentList(@PathVariable int userId){
+    public ResponseEntity<Map<String, Object>> serarchMyCommentList(
+            @PathVariable Long userId){
         logger.info(">> request : userId = {}", userId);
 
         Map<String, Object> resultMap = new HashMap<>();
@@ -63,7 +67,10 @@ public class CommentController {
 
 
     @PostMapping("course/{courseId}/{userId}")
-    public ResponseEntity<Void> postComment(@PathVariable int courseId, @PathVariable int userId,@RequestBody CommentCreateReqDTO commentCreateReqDTO){
+    public ResponseEntity<Void> postComment(
+            @PathVariable Long courseId,
+            @PathVariable Long userId,
+            @RequestBody CommentCreateReqDTO commentCreateReqDTO){
         logger.info(">> request : courseId = {}, commentCreateReqDTO = {}", courseId, commentCreateReqDTO);
 
         commentService.createComment(courseId, userId, commentCreateReqDTO);
@@ -73,7 +80,10 @@ public class CommentController {
     }
 
     @PutMapping("{commentId}/{userId}")
-    public ResponseEntity<Void> putComment(@PathVariable int commentId, @PathVariable int userId,@RequestBody CommentUpdateDTO commentUpdateDTO){
+    public ResponseEntity<Void> putComment(
+            @PathVariable Long commentId,
+            @PathVariable Long userId,
+            @RequestBody CommentUpdateDTO commentUpdateDTO){
         logger.info(">> request : commentId = {}, commentUpdateDTO = {}", commentId, commentUpdateDTO);
 
         commentService.updateComment(commentId, userId,commentUpdateDTO);
@@ -84,7 +94,9 @@ public class CommentController {
     }
 
     @DeleteMapping("{commentId}/{userId}")
-    public ResponseEntity<Void> deleteComment(@PathVariable int commentId, @PathVariable int userId){
+    public ResponseEntity<Void> deleteComment(
+            @PathVariable Long commentId,
+            @PathVariable Long userId){
         logger.info(">> request : commentId = {}", commentId);
 
         commentService.deleteComment(commentId, userId);

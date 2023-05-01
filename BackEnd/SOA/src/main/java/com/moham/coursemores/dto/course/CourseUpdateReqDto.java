@@ -17,5 +17,5 @@ public class CourseUpdateReqDto {
     private boolean visited;
     private List<LocationUpdateReqDto> locationList;
     private List<String> hashtagList;
-    private List<Integer> themeIdList;
+    private List<Long> themeIdList;
 }

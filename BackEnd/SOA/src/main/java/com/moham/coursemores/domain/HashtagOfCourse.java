@@ -17,7 +17,7 @@ public class HashtagOfCourse extends CreateTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "hashtag_of_course_id")
-    private int id;
+    private Long id;
 
     @NotNull
     @ManyToOne(targetEntity = Course.class, fetch = FetchType.LAZY)

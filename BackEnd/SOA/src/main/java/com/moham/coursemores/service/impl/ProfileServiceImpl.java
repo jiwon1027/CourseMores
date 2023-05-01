@@ -17,7 +17,7 @@ public class ProfileServiceImpl implements ProfileService {
     private final UserRepository userRepository;
 
     @Override
-    public UserInfoResDto getMyProfile(int userId) {
+    public UserInfoResDto getMyProfile(Long userId) {
         // userId의 User 가져오기
         User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
                 .orElseThrow(()-> new NullPointerException("해당 유저를 찾을 수 없습니다."));
@@ -31,13 +31,13 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public void alramSetting(int userId) {
+    public void alramSetting(Long userId) {
         // 알람 셋팅
     }
 
     @Override
     @Transactional
-    public void updateUserInfo(int userId, UserInfoUpdateReqDto userInfoUpdateReqDto) {
+    public void updateUserInfo(Long userId, UserInfoUpdateReqDto userInfoUpdateReqDto) {
         // userId의 User 가져오기
         User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
                 .orElseThrow(()-> new NullPointerException("해당 유저를 찾을 수 없습니다."));
@@ -48,7 +48,7 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     @Transactional
-    public void deleteUser(int userId) {
+    public void deleteUser(Long userId) {
         // userId의 User 가져오기
         User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
                 .orElseThrow(()-> new NullPointerException("해당 유저를 찾을 수 없습니다."));

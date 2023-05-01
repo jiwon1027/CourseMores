@@ -31,7 +31,7 @@ public class CourseLocation extends UpdateTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "course_location_id")
-    private int id;
+    private Long id;
 
     @NotNull
     @Column(length = 50)

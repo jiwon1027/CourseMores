@@ -30,8 +30,8 @@ public class ProfileController {
     private final ProfileService profileService;
 
     @GetMapping("{userId}")
-    public ResponseEntity<Map<String, Object>> myProfile(@PathVariable int userId) {
-
+    public ResponseEntity<Map<String, Object>> myProfile(
+            @PathVariable Long userId) {
         logger.info(">> request : userId={}", userId);
 
         Map<String, Object> resultMap = new HashMap<>();
@@ -45,7 +45,8 @@ public class ProfileController {
     }
 
     @PutMapping("{userId}/alram")
-    public ResponseEntity<Void> alarmSetting(@PathVariable int userId){
+    public ResponseEntity<Void> alarmSetting(
+            @PathVariable Long userId){
         logger.info(">> request : userId={}", userId);
         
         // 알림 셋팅
@@ -56,7 +57,9 @@ public class ProfileController {
     }
 
     @PutMapping("{userId}")
-    public ResponseEntity<Void> putUserInfo(@PathVariable int userId, @RequestBody UserInfoUpdateReqDto userInfoUpdateReqDto){
+    public ResponseEntity<Void> putUserInfo(
+            @PathVariable Long userId,
+            @RequestBody UserInfoUpdateReqDto userInfoUpdateReqDto){
         logger.info(">> request : userId={}, userInfoUpdateReqDto={}", userId, userInfoUpdateReqDto);
 
         profileService.updateUserInfo(userId, userInfoUpdateReqDto);
@@ -73,7 +76,8 @@ public class ProfileController {
     }
 
     @DeleteMapping("{userId}")
-    public ResponseEntity<Void> deleteUser(@PathVariable int userId){
+    public ResponseEntity<Void> deleteUser(
+            @PathVariable Long userId){
         logger.info(">> request : userId={}", userId);
 
         profileService.deleteUser(userId);

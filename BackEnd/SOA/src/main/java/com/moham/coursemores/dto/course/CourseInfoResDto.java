@@ -19,6 +19,6 @@ public class CourseInfoResDto {
     private int interestCount;
     private String mainImage;
     private List<String> hashtagList;
-    private List<Integer> themeIdList;
+    private List<Long> themeIdList;
     private UserSimpleInfoResDto simpleInfoOfWriter;
 }
