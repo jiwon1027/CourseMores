@@ -1,25 +1,22 @@
 import 'package:flutter/material.dart';
 import 'course_list.dart' as course;
-import 'notification.dart' as noti;
+import '../notification/notification.dart' as noti;
+import 'course_new_comment.dart' as comment;
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_advanced_segment/flutter_advanced_segment.dart';
 import 'package:flip_card/flip_card.dart';
 import 'package:timelines/timelines.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-// import 'package:multi_image_layout/multi_image_layout.dart';
-// import 'package:galleryimage/galleryimage.dart';
 
 class CourseDetail extends StatefulWidget {
   const CourseDetail({Key? key, required this.index}) : super(key: key);
   final int index;
 
   @override
-  // ignore: library_private_types_in_public_api
-  _CourseDetailState createState() => _CourseDetailState();
+  State<CourseDetail> createState() => _CourseDetailState();
 }
 
 class _CourseDetailState extends State<CourseDetail> {
-  // ignore: non_constant_identifier_names
   late var courseInfo = course.courseList[widget.index];
   late var themes = course.courseList[widget.index]['theme'].toString();
   late List<String> themeList =
@@ -194,189 +191,159 @@ class DetailTapCourseComments extends StatefulWidget {
 class _DetailTapCourseCommentsState extends State<DetailTapCourseComments> {
   late var courseIndex = widget.courseIndex;
 
+  late List commentsList =
+      course.courseList[courseIndex]['comments_list'] as List;
+
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      // height: 1000,
-      child: Container(
-        // height: 800,
-        padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
-        child: Column(
-          children: [
-            Card(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10)),
-              elevation: 6,
-              child: Padding(
-                padding: const EdgeInsets.all(15),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+    return Container(
+      padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
+      child: Column(
+        children: [
+          DetailTapCourseCommentsCreateSection(courseIndex: courseIndex),
+          SizedBox(
+            height: commentsList.isEmpty ? null : 600,
+            child:
+                DetailTapCourseCommentsListSection(commentsList: commentsList),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class DetailTapCourseCommentsListSection extends StatelessWidget {
+  const DetailTapCourseCommentsListSection({
+    super.key,
+    required this.commentsList,
+  });
+
+  final List commentsList;
+
+  @override
+  Widget build(BuildContext context) {
+    return commentsList.isEmpty
+        ? Container(
+            margin: EdgeInsets.only(top: 50),
+            child: Column(
+              children: const [
+                // Icon(Icons.tag_faces, color: Colors.black38, size: 70),
+                Text("☺", style: TextStyle(fontSize: 70)),
+                SizedBox(height: 20),
+                Text("아직 코멘트가 없어요."),
+                SizedBox(height: 10),
+                Text("첫 작성자가 되어보시는 건 어떨까요?"),
+              ],
+            ),
+          )
+        : ListView.builder(
+            padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+            itemCount: commentsList.length,
+            itemBuilder: (context, index) {
+              return Card(
+                elevation: 6,
+                margin: EdgeInsets.fromLTRB(4, 10, 4, 0),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+                child: Padding(
+                  padding: const EdgeInsets.all(15),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            "${(course.courseList[courseIndex]['comments_list'] as List<dynamic>).length}개의 코멘트가 있어요",
-                            style: const TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.w800),
+                          Row(
+                            children: [
+                              Icon(Icons.account_circle),
+                              SizedBox(width: 5),
+                              Text(
+                                commentsList[index]['user_name'],
+                              ),
+                            ],
                           ),
-                          const SizedBox(height: 8),
-                          const Text("코멘트를 남겨보세요"),
+                          Row(
+                            children: [
+                              Icon(Icons.favorite_outline),
+                              SizedBox(width: 5),
+                              Text('${commentsList[index]['likes_cnt']}'),
+                            ],
+                          ),
                         ],
                       ),
-                    ),
-                    TextButton(
-                      onPressed: () {},
-                      style: TextButton.styleFrom(
-                        backgroundColor:
-                            const Color.fromARGB(255, 115, 81, 255),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(50)),
-                        elevation: 2,
-                        padding: const EdgeInsets.fromLTRB(20, 3, 20, 3),
+                      SizedBox(height: 5),
+                      Row(
+                        children: [
+                          Icon(Icons.calendar_month, size: 16),
+                          SizedBox(width: 5),
+                          Text('${commentsList[index]['date']}'),
+                          SizedBox(width: 10),
+                          Icon(Icons.people, size: 16),
+                          SizedBox(width: 5),
+                          Text('${commentsList[index]['people']}'),
+                        ],
                       ),
-                      child: const Text(
-                        "작성하러 가기 →",
-                        style: TextStyle(color: Colors.white, fontSize: 14),
-                      ),
-                    ),
-                  ],
+                      SizedBox(height: 10),
+                      Text('${commentsList[index]['text']}'),
+                    ],
+                  ),
                 ),
+              );
+            },
+          );
+  }
+}
+
+class DetailTapCourseCommentsCreateSection extends StatelessWidget {
+  const DetailTapCourseCommentsCreateSection({
+    super.key,
+    required this.courseIndex,
+  });
+
+  final int courseIndex;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      elevation: 6,
+      child: Container(
+        padding: EdgeInsets.all(15),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "${(course.courseList[courseIndex]['comments_list'] as List<dynamic>).length}개의 코멘트가 있어요",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
+                  ),
+                  SizedBox(height: 8),
+                  Text("코멘트를 남겨보세요"),
+                ],
               ),
             ),
-
-            Card(
-              margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10)),
-              elevation: 6,
-              child: Container(
-                padding: const EdgeInsets.all(15),
-                child: Text(
-                    "${(course.courseList[courseIndex]['comments_list'] as List<dynamic>)[0]}"),
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const comment.NewComment()),
+                );
+              },
+              style: TextButton.styleFrom(
+                backgroundColor: const Color.fromARGB(255, 115, 81, 255),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(50)),
+                elevation: 2,
+                padding: const EdgeInsets.fromLTRB(20, 3, 20, 3),
+              ),
+              child: const Text(
+                "작성하러 가기 →",
+                style: TextStyle(color: Colors.white, fontSize: 14),
               ),
             ),
-            Card(
-              margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10)),
-              elevation: 6,
-              child: Container(
-                padding: const EdgeInsets.all(15),
-                child: Text(
-                    "${(course.courseList[courseIndex]['comments_list'] as List<dynamic>)[1]}"),
-              ),
-            ),
-
-            // ListView.builder(
-            //   itemCount: (course.courseList[courseIndex]['comments_list']
-            //           as List<dynamic>)
-            //       .length,
-            //   itemBuilder: (context, index) {
-            //     return Card(
-            //       shape: RoundedRectangleBorder(
-            //           borderRadius: BorderRadius.circular(10)),
-            //       elevation: 6,
-            //       margin: const EdgeInsets.fromLTRB(0, 20, 0, 20),
-            //       child: Padding(
-            //         padding: const EdgeInsets.all(15),
-            //         child: Column(
-            //           children: [
-            //             Text(
-            //                 "${(course.courseList[courseIndex]['comments_list'] as List<dynamic>)[index]['user_name']}"),
-            //             Text(
-            //                 "${(course.courseList[courseIndex]['comments_list'] as List<dynamic>)[index]['date']}"),
-            //             Text(
-            //                 "${(course.courseList[courseIndex]['comments_list'] as List<dynamic>)[index]['people']}"),
-            //             Text(
-            //                 "${(course.courseList[courseIndex]['comments_list'] as List<dynamic>)[index]['likes_cnt']}"),
-            //             Text(
-            //                 "${(course.courseList[courseIndex]['comments_list'] as List<dynamic>)[index]['text']}"),
-            //           ],
-            //         ),
-            //       ),
-            //     );
-            //   },
-            // ),
-
-            // ListView.builder(
-            //   itemCount: (course.courseList[courseIndex]['comments_list']
-            //           as List<dynamic>)
-            //       .length,
-            //   itemBuilder: (context, index) {
-            //     return Card(
-            //       shape: RoundedRectangleBorder(
-            //           borderRadius: BorderRadius.circular(10)),
-            //       elevation: 6,
-            //       margin: const EdgeInsets.fromLTRB(0, 20, 0, 20),
-            //       child: Padding(
-            //         padding: const EdgeInsets.all(15),
-            //         child: Column(
-            //           crossAxisAlignment: CrossAxisAlignment.start,
-            //           children: [
-            //             Text(
-            //                 "${(course.courseList[courseIndex]['comments_list'] as List<dynamic>)[index]['user_name']}"),
-            //             Text(
-            //                 "${(course.courseList[courseIndex]['comments_list'] as List<dynamic>)[index]['date']}"),
-            //             Text(
-            //                 "${(course.courseList[courseIndex]['comments_list'] as List<dynamic>)[index]['people']}"),
-            //             Text(
-            //                 "${(course.courseList[courseIndex]['comments_list'] as List<dynamic>)[index]['likes_cnt']}"),
-            //             Text(
-            //                 "${(course.courseList[courseIndex]['comments_list'] as List<dynamic>)[index]['text']}"),
-            //           ],
-            //         ),
-            //       ),
-            //     );
-            //   },
-            // ),
-
-            // ListView.builder(
-            //   itemBuilder: (context, index) {
-            //     Column(
-            //       children: [
-            //         Card(
-            //           shape: RoundedRectangleBorder(
-            //               borderRadius: BorderRadius.circular(10)),
-            //           elevation: 6,
-            //           margin: const EdgeInsets.fromLTRB(0, 20, 0, 20),
-            //           child: Padding(
-            //             padding: const EdgeInsets.all(15),
-            //             child:
-            //             Text(
-            //                 "${(course.courseList[courseIndex]['comments_list'] as List<dynamic>)[index]['user_name']}"),
-            //             // Column(
-            //             //   children: [
-            //             //     Text(
-            //             //         "${(course.courseList[courseIndex]['comments_list'] as List<dynamic>)[index]['user_name']}"),
-            //             //     Text(
-            //             //         "${(course.courseList[courseIndex]['comments_list'] as List<dynamic>)[index]['date']}"),
-            //             //     Text(
-            //             //         "${(course.courseList[courseIndex]['comments_list'] as List<dynamic>)[index]['people']}"),
-            //             //     Text(
-            //             //         "${(course.courseList[courseIndex]['comments_list'] as List<dynamic>)[index]['likes_cnt']}"),
-            //             //     Text(
-            //             //         "${(course.courseList[courseIndex]['comments_list'] as List<dynamic>)[index]['text']}"),
-            //             //   ],
-            //             // ),
-            //           ),
-            //         ),
-            //       ],
-            //     );
-            //     return null;
-            //   },
-            // )
-            // ListView.builder(
-            //   itemCount: (course.courseList[courseIndex]['comments_list']
-            //           as List<dynamic>).length,
-            //   itemBuilder: (BuildContext context, int index) {
-            //     final comment = (course.courseList[courseIndex]['comments_list']
-            //         as List<dynamic>)[index];
-            //     return Card(
-            //       child: Text("${comment['user_name']}"),
-            //     );
-            //   },
-            // ),
           ],
         ),
       ),
@@ -475,15 +442,6 @@ class _DetailTapCoursePlacesState extends State<DetailTapCoursePlaces> {
               padding: const EdgeInsets.all(15),
               child: Column(
                 children: [
-                  // MultiImageViewer(
-                  //   images: [
-                  //     "https://picsum.photos/id/1/200/300",
-                  //     "https://picsum.photos/id/2/200/300",
-                  //     "https://picsum.photos/id/3/200/300",
-                  //   ],
-                  //   height: 200,
-                  //   width: 300,
-                  // ),
                   Padding(
                     padding: const EdgeInsets.all(15),
                     child: Column(
@@ -555,7 +513,7 @@ class _DetailTapCourseIntroductionState
         margin: const EdgeInsets.fromLTRB(0, 30, 0, 30),
         padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
         width: double.infinity,
-        height: 650,
+        height: 600,
         child: Expanded(
           child: ListView(
             // crossAxisAlignment: CrossAxisAlignment.end,
