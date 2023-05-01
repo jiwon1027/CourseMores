@@ -129,6 +129,7 @@ class ModalBottom extends StatelessWidget {
                               Expanded(
                                 child: InkWell(
                                     onTap: () {
+                                      Navigator.pop(context);
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
@@ -146,7 +147,11 @@ class ModalBottom extends StatelessWidget {
                               ),
                               Expanded(
                                 child: InkWell(
-                                    onTap: () {},
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                      // 로그아웃 메서드 쓰기..
+                                      print('logout');
+                                    },
                                     child: Container(
                                       decoration: const BoxDecoration(
                                           border: Border(
