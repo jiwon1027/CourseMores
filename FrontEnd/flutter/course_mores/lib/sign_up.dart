@@ -105,7 +105,7 @@ class _ProfileImageState extends State<ProfileImage> {
         await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       setState(() {
-        _pickedFile = _pickedFile;
+        _pickedFile = pickedFile;
       });
     } else {
       if (kDebugMode) {
