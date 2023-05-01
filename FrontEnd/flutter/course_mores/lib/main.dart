@@ -5,6 +5,7 @@ import 'notification.dart' as noti;
 import 'search.dart' as search;
 import 'home_screen.dart' as home;
 import 'mypage.dart' as mypage;
+import 'course_make/makeStart.dart' as make;
 
 void main() {
   runApp(MaterialApp(theme: style.theme, home: const MyApp()));
@@ -27,7 +28,7 @@ class _MyAppState extends State<MyApp> {
         appBar: const CustomAppBar(),
         body: [
           const home.HomeScreen(),
-          const Text("코스페이지"),
+          const make.MakeStart(),
           const search.Search(),
           const Text("관심페이지"),
           const mypage.MyPage(),
