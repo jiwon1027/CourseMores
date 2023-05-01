@@ -4,6 +4,8 @@ import 'package:coursemores/course_make/make_search.dart';
 import 'package:flutter/material.dart';
 
 class CourseMake extends StatefulWidget {
+  const CourseMake({super.key});
+
   @override
   State<CourseMake> createState() => _CourseMakeState();
 }

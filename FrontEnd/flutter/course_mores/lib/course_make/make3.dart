@@ -5,14 +5,16 @@ import 'package:textfield_tags/textfield_tags.dart';
 import 'package:lottie/lottie.dart';
 
 class MakeStepper extends StatefulWidget {
+  const MakeStepper({super.key});
+
   @override
-  _MakeStepperState createState() => _MakeStepperState();
+  State<MakeStepper> createState() => _MakeStepperState();
 }
 
 class _MakeStepperState extends State<MakeStepper> {
   int _currentStep = 0;
 
-  List<Step> _mySteps = [
+  final List<Step> _mySteps = [
     Step(
       title: Text('필수 입력'),
       content: Center(
@@ -51,7 +53,7 @@ class _MakeStepperState extends State<MakeStepper> {
                     ),
                     SizedBox(height: 15),
                     Row(
-                      children: [
+                      children: const [
                         CircleAvatar(
                           radius: 40,
                           backgroundImage: AssetImage("assets/img1.jpg"),
@@ -87,7 +89,7 @@ class _MakeStepperState extends State<MakeStepper> {
                   crossAxisAlignment: CrossAxisAlignment.start, // 자식 위젯을 왼쪽 정렬
                   children: [
                     Row(
-                      children: [
+                      children: const [
                         Text(
                           '코스 이름',
                           style: TextStyle(
@@ -144,7 +146,7 @@ class _MakeStepperState extends State<MakeStepper> {
                   crossAxisAlignment: CrossAxisAlignment.start, // 자식 위젯을 왼쪽 정렬
                   children: [
                     Row(
-                      children: [
+                      children: const [
                         Text(
                           '방문 여부',
                           style: TextStyle(
@@ -162,7 +164,7 @@ class _MakeStepperState extends State<MakeStepper> {
                       ],
                     ),
                     SizedBox(height: 15),
-                    checkVisited()
+                    CheckVisited()
                   ],
                 ),
               ),
@@ -199,7 +201,7 @@ class _MakeStepperState extends State<MakeStepper> {
                     child: Column(
                       crossAxisAlignment:
                           CrossAxisAlignment.start, // 자식 위젯을 왼쪽 정렬
-                      children: [
+                      children: const [
                         Text(
                           '인원수',
                           style: TextStyle(
@@ -208,7 +210,7 @@ class _MakeStepperState extends State<MakeStepper> {
                           ),
                         ),
                         SizedBox(height: 8), // 간격 추가
-                        slider1(),
+                        Slider1(),
                         SizedBox(height: 5),
                         // Text('Slider Value: $_sliderValue'),
                       ],
@@ -230,7 +232,7 @@ class _MakeStepperState extends State<MakeStepper> {
                     child: Column(
                       crossAxisAlignment:
                           CrossAxisAlignment.start, // 자식 위젯을 왼쪽 정렬
-                      children: [
+                      children: const [
                         Text(
                           '소요 시간',
                           style: TextStyle(
@@ -239,7 +241,7 @@ class _MakeStepperState extends State<MakeStepper> {
                           ),
                         ),
                         SizedBox(height: 8), // 간격 추가
-                        slider2(),
+                        Slider2(),
                         SizedBox(height: 5),
                       ],
                     ),
@@ -302,7 +304,7 @@ class _MakeStepperState extends State<MakeStepper> {
                     child: Column(
                       crossAxisAlignment:
                           CrossAxisAlignment.start, // 자식 위젯을 왼쪽 정렬
-                      children: [
+                      children: const [
                         Text(
                           '해시태그',
                           style: TextStyle(
@@ -325,7 +327,7 @@ class _MakeStepperState extends State<MakeStepper> {
         title: Text('테마 선택'),
         content: Center(
           child: Column(
-            children: [
+            children: const [
               Text(
                 '코스 상세 선택 내용',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
@@ -339,7 +341,7 @@ class _MakeStepperState extends State<MakeStepper> {
                 '이 코스에는 어울리는 테마는 무엇인가요?',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
               ),
-              themeSelect()
+              ThemeSelect()
             ],
           ),
         )),
@@ -476,19 +478,19 @@ class _MakeStepperState extends State<MakeStepper> {
   }
 }
 
-class slider1 extends StatefulWidget {
-  const slider1({
+class Slider1 extends StatefulWidget {
+  const Slider1({
     super.key,
   });
 
   @override
-  State<slider1> createState() => _slider1State();
+  State<Slider1> createState() => _Slider1State();
 }
 
-class _slider1State extends State<slider1> {
+class _Slider1State extends State<Slider1> {
   late double _sliderValue = 3;
 
-  Map<int, String> PeopleMapping = {
+  Map<int, String> peopleMapping = {
     1: '1인',
     2: '2인',
     3: '3인',
@@ -510,7 +512,7 @@ class _slider1State extends State<slider1> {
       shouldAlwaysShowTooltip: true,
       // tooltipTextFormatterCallback: ,
       tooltipTextFormatterCallback: (value, formattedText) {
-        return PeopleMapping[value.toInt()]?.toString() ?? '';
+        return peopleMapping[value.toInt()]?.toString() ?? '';
       },
       showTicks: true,
       showDividers: true,
@@ -525,19 +527,19 @@ class _slider1State extends State<slider1> {
   }
 }
 
-class slider2 extends StatefulWidget {
-  const slider2({
+class Slider2 extends StatefulWidget {
+  const Slider2({
     super.key,
   });
 
   @override
-  State<slider2> createState() => _slider2State();
+  State<Slider2> createState() => _Slider2State();
 }
 
-class _slider2State extends State<slider2> {
+class _Slider2State extends State<Slider2> {
   late double _sliderValue2 = 3;
 
-  Map<int, String> TimeMapping = {
+  Map<int, String> timeMapping = {
     1: '30분 이하',
     2: '30분',
     3: '1시간',
@@ -560,7 +562,7 @@ class _slider2State extends State<slider2> {
       shouldAlwaysShowTooltip: true,
       // tooltipTextFormatterCallback: ,
       tooltipTextFormatterCallback: (value, formattedText) {
-        return TimeMapping[value.toInt()]?.toString() ?? '';
+        return timeMapping[value.toInt()]?.toString() ?? '';
       },
       showTicks: true,
       showDividers: true,
@@ -726,16 +728,16 @@ class _MakeHashtagState extends State<MakeHashtag> {
   }
 }
 
-class themeSelect extends StatefulWidget {
-  const themeSelect({
+class ThemeSelect extends StatefulWidget {
+  const ThemeSelect({
     super.key,
   });
 
   @override
-  State<themeSelect> createState() => _themeSelectState();
+  State<ThemeSelect> createState() => _ThemeSelectState();
 }
 
-class _themeSelectState extends State<themeSelect> {
+class _ThemeSelectState extends State<ThemeSelect> {
   var themeList = [
     {"text": "혼자 가기 좋은 😎"},
     {"text": "특별한 날 🎠"},
@@ -798,20 +800,20 @@ class _themeSelectState extends State<themeSelect> {
   }
 }
 
-class checkVisited extends StatefulWidget {
-  const checkVisited({
+class CheckVisited extends StatefulWidget {
+  const CheckVisited({
     super.key,
   });
 
   @override
-  State<checkVisited> createState() => _checkVisitedState();
+  State<CheckVisited> createState() => _CheckVisitedState();
 }
 
-class _checkVisitedState extends State<checkVisited> {
+class _CheckVisitedState extends State<CheckVisited> {
   late bool _selectedFirst;
   late bool _selectedSecond;
 
-  _checkVisitedState() {
+  _CheckVisitedState() {
     _selectedFirst = false;
     _selectedSecond = false;
   }

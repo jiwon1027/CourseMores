@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class CMSearch extends StatefulWidget {
+  const CMSearch({super.key});
+
   @override
   State<CMSearch> createState() => _CMSearchState();
 }
@@ -59,7 +61,7 @@ class _CMSearchState extends State<CMSearch> {
       ),
       body: Center(
           child: Column(
-        children: [Text('장소 검색으로 추가하기')],
+        children: const [Text('장소 검색으로 추가하기')],
       )),
     );
   }

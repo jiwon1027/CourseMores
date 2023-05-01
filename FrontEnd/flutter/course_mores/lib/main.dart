@@ -5,7 +5,7 @@ import 'notification.dart' as noti;
 import 'search.dart' as search;
 import 'home_screen.dart' as home;
 import 'mypage.dart' as mypage;
-import 'course_make/makeStart.dart' as make;
+import 'course_make/make_start.dart' as make;
 
 void main() {
   runApp(MaterialApp(theme: style.theme, home: const MyApp()));
