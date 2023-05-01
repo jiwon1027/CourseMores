@@ -16,7 +16,7 @@ public class Region extends UpdateTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "region_id")
-    private int id;
+    private Long id;
 
     @NotNull
     @Column

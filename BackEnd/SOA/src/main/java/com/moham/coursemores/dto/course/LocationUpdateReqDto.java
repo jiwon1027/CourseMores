@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 @Builder
 public class LocationUpdateReqDto {
-    private int courseLocationId;
+    private Long courseLocationId;
     private String name;
     private String title;
     private String content;

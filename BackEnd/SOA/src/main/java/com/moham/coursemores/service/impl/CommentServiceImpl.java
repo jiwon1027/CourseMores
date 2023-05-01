@@ -1,6 +1,5 @@
 package com.moham.coursemores.service.impl;
 
-
 import com.moham.coursemores.domain.Comment;
 import com.moham.coursemores.domain.CommentImage;
 import com.moham.coursemores.domain.Course;
@@ -18,13 +17,9 @@ import com.moham.coursemores.repository.CommentRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,7 +33,7 @@ public class CommentServiceImpl implements CommentService {
     private final CourseRepository courseRepository;
 
     @Override
-    public List<CommentResDTO> getCommentList(int courseId, int page, String sortby) {
+    public List<CommentResDTO> getCommentList(Long courseId, int page, String sortby) {
         // 한 페이지에 보여줄 댓글의 수
         final int size = 5;
 
@@ -46,7 +41,7 @@ public class CommentServiceImpl implements CommentService {
         Sort sort = ("Like".equals(sortby))?Sort.by("likeCount").descending():Sort.by("createTime").descending();
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        List<CommentResDTO> commentList = commentRepository.findByCourseIdAndDeleteTimeIsNull(courseId, pageable)
+        return commentRepository.findByCourseIdAndDeleteTimeIsNull(courseId, pageable)
                 .stream()
                 .map(comment -> CommentResDTO.builder()
                         .commentId(comment.getId())
@@ -64,12 +59,10 @@ public class CommentServiceImpl implements CommentService {
                         .build()
                 )
                 .collect(Collectors.toList());
-        return commentList;
-
     }
 
     @Override
-    public List<CommentResDTO> getMyCommentList(int userId) {
+    public List<CommentResDTO> getMyCommentList(Long userId) {
         // userId가 작성한 댓글 중 deletetime이 null이 아닌 댓글(삭제되지 않은 댓글)
         return commentRepository.findByUserIdAndDeleteTimeIsNull(userId)
                 .stream()
@@ -93,7 +86,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public void createComment(int courseId, int userId, CommentCreateReqDTO commentCreateReqDTO) {
+    public void createComment(Long courseId, Long userId, CommentCreateReqDTO commentCreateReqDTO) {
         // userId의 User 가져오기
         User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
                 .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
@@ -126,7 +119,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public void updateComment(int commentId, int userId, CommentUpdateDTO commentUpdateDTO) {
+    public void updateComment(Long commentId, Long userId, CommentUpdateDTO commentUpdateDTO) {
         // userId의 User 가져오기
         User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
                 .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
@@ -155,7 +148,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public void deleteComment(int commentId, int userId) {
+    public void deleteComment(Long commentId, Long userId) {
         // userId의 User 가져오기
         User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
                 .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));

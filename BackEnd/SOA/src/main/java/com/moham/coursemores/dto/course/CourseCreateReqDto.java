@@ -17,5 +17,5 @@ public class CourseCreateReqDto {
     private boolean visited;
     private List<LocationCreateReqDto> locationList;
     private List<String> hashtagList;
-    private List<Integer> themeIdList;
+    private List<Long> themeIdList;
 }

@@ -16,7 +16,7 @@ public class ThemeOfCourse extends CreateTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "theme_of_course_id")
-    private int id;
+    private Long id;
 
     @NotNull
     @ManyToOne(targetEntity = Course.class, fetch = FetchType.LAZY)

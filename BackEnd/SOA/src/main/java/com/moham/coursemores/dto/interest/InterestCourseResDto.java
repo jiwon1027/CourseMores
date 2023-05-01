@@ -10,7 +10,7 @@ import lombok.ToString;
 @Builder
 public class InterestCourseResDto {
 
-    private int interestCourseId;
+    private Long interestCourseId;
     private CoursePreviewResDto coursePreviewResDto;
 
 }

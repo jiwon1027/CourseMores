@@ -36,7 +36,7 @@ public class CourseServiceImpl implements CourseService {
 
 
     @Override
-    public Page<CoursePreviewResDto> search(int userId, String word, int regionId, List<Integer> themeIds, int page, String sortby) {
+    public Page<CoursePreviewResDto> search(Long userId, String word, Long regionId, List<Long> themeIds, int page, String sortby) {
         User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
                 .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
 
@@ -85,7 +85,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     @Transactional
-    public void increaseViewCount(int courseId) {
+    public void increaseViewCount(Long courseId) {
         // 코스 정보 가져오기
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new RuntimeException("해당 코스를 찾을 수 없습니다."));
@@ -94,7 +94,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public CourseInfoResDto getCourseInfo(int courseId) {
+    public CourseInfoResDto getCourseInfo(Long courseId) {
         // 코스 정보 가져오기
         Course course = courseRepository.findByIdAndDeleteTimeIsNull(courseId)
                 .orElseThrow(()->new RuntimeException("해당 코스를 찾을 수 없습니다."));
@@ -104,7 +104,7 @@ public class CourseServiceImpl implements CourseService {
                 .map(hashtagOfCourse -> hashtagOfCourse.getHashtag().getName())
                 .collect(Collectors.toList());
         // 코스 테마 id 가져오기
-        List<Integer> themeIdList = themeOfCourseRepository.findByCourseId(courseId)
+        List<Long> themeIdList = themeOfCourseRepository.findByCourseId(courseId)
                 .stream()
                 .map(themeOfCourse -> themeOfCourse.getTheme().getId())
                 .collect(Collectors.toList());
@@ -132,7 +132,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public List<CourseDetailResDto> getCourseDetail(int courseId) {
+    public List<CourseDetailResDto> getCourseDetail(Long courseId) {
         // 해당 코스가 존재하는지 확인
         if(!courseRepository.existsByIdAndDeleteTimeIsNull(courseId))
             throw new RuntimeException("해당 코스를 찾을 수 없습니다.");
@@ -149,7 +149,7 @@ public class CourseServiceImpl implements CourseService {
                         .gugun(courseLocation.getRegion().getGugun())
                         .locationImage(courseLocation.getCourseLocationImageList()
                                 .stream()
-                                .map(courseLocationImage->courseLocationImage.getImage())
+                                .map(CourseLocationImage::getImage)
                                 .collect(Collectors.toList())
                         )
                         .build()
@@ -158,7 +158,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public List<MyCourseResDto> getMyCourseList(int userId) {
+    public List<MyCourseResDto> getMyCourseList(Long userId) {
         // 유저 정보 가져오기
         User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
                 .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
@@ -191,7 +191,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     @Transactional
-    public void addCourse(int userId, CourseCreateReqDto courseCreateReqDto) {
+    public void addCourse(Long userId, CourseCreateReqDto courseCreateReqDto) {
         // 유저 정보 가져오기
         User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
                 .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
@@ -269,7 +269,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     @Transactional
-    public void setCourse(int userId, int courseId, CourseUpdateReqDto courseUpdateReqDto) {
+    public void setCourse(Long userId, Long courseId, CourseUpdateReqDto courseUpdateReqDto) {
         // 유저 정보 가져오기
         User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
                 .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
@@ -338,7 +338,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     @Transactional
-    public void deleteCourse(int userId, int courseId) {
+    public void deleteCourse(Long userId, Long courseId) {
         // 유저 찾기
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));

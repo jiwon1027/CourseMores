@@ -19,7 +19,7 @@ public class Course extends DeleteTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "course_id")
-    private int id;
+    private Long id;
 
     @NotNull
     @Column(length = 50)

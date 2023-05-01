@@ -27,13 +27,13 @@ public class InterestServiceImp implements InterestService {
     private final CourseRepository courseRepository;
 
     @Override
-    public List<InterestCourseResDto> getUserInterestCourseList(int userId) {
+    public List<InterestCourseResDto> getUserInterestCourseList(Long userId) {
         List<InterestCourseResDto> result = new ArrayList<>();
 
         // 현재의 관심 여부(flag)가 true인 것만 가져오기
         interestRepository.findByUserIdAndFlag(userId, true)
                 .forEach(interest -> {
-                    int interestId = interest.getId();
+                    Long interestId = interest.getId();
                     // 관심 코스 정보 가져오기
                     Course course = interest.getCourse();
                     // 코스의 첫 번째 장소 가져오기
@@ -64,7 +64,7 @@ public class InterestServiceImp implements InterestService {
     }
 
     @Override
-    public boolean checkInterest(int userId, int courseId) {
+    public boolean checkInterest(Long userId, Long courseId) {
         // 관심 객체가 존재하고 flag 또한 true이면 해당 유저의 관심 코스이다.
         Optional<Interest> interest = interestRepository.findByUserIdAndCourseId(userId, courseId);
         return interest.isPresent() && interest.get().isFlag();
@@ -72,7 +72,7 @@ public class InterestServiceImp implements InterestService {
 
     @Override
     @Transactional
-    public void addInterestCourse(int userId, int courseId) {
+    public void addInterestCourse(Long userId, Long courseId) {
         Course course = courseRepository.findByIdAndDeleteTimeIsNull(courseId)
                 .orElseThrow(() -> new RuntimeException("해당 코스를 찾을 수 없습니다."));
 
@@ -102,7 +102,7 @@ public class InterestServiceImp implements InterestService {
 
     @Override
     @Transactional
-    public void deleteInterestCourse(int userId, int courseId) {
+    public void deleteInterestCourse(Long userId, Long courseId) {
         Course course = courseRepository.findByIdAndDeleteTimeIsNull(courseId)
                 .orElseThrow(() -> new RuntimeException("해당 코스를 찾을 수 없습니다."));
 
