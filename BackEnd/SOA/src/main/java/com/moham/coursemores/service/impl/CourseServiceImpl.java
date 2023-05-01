@@ -67,7 +67,7 @@ public class CourseServiceImpl implements CourseService {
                         .mainImage(course.getMainImage())
                         .sido(region.getSido())
                         .gugun(region.getGugun())
-                        .locationName(courseLocation.getName())
+                        .locationName(course.getLocationName())
                         .isInterest(interest.isPresent() ? interest.get().isFlag() : false)
                         .build();
                 });
@@ -181,7 +181,7 @@ public class CourseServiceImpl implements CourseService {
                     .mainImage(course.getMainImage())
                     .sido(firstCourseLocation.getRegion().getSido())
                     .gugun(firstCourseLocation.getRegion().getGugun())
-                    .locationName(firstCourseLocation.getName())
+                    .locationName(course.getLocationName())
                     .commentCount(course.getCommentList().size())
                     .build());
             });
@@ -206,6 +206,7 @@ public class CourseServiceImpl implements CourseService {
                 .interestCount(0)
                 .likeCount(0)
                 .mainImage(courseCreateReqDto.getLocationList().get(0).getImageList().get(0))
+                .locationName(courseCreateReqDto.getLocationList().get(0).getName())
                 .user(user)
                 .build());
         // 코스의 테마 생성

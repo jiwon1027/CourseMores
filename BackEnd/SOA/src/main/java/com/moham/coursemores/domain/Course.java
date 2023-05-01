@@ -55,6 +55,10 @@ public class Course extends DeleteTimeEntity {
     private String mainImage;
 
     @NotNull
+    @Column(length = 50)
+    private String locationName;
+
+    @NotNull
     @ManyToOne(targetEntity = User.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
@@ -84,6 +88,7 @@ public class Course extends DeleteTimeEntity {
                   int time,
                   boolean visited,
                   String mainImage,
+                  String locationName,
                   int viewCount,
                   int likeCount,
                   int interestCount,
@@ -97,6 +102,7 @@ public class Course extends DeleteTimeEntity {
         this.interestCount = interestCount;
         this.likeCount = likeCount;
         this.mainImage = mainImage;
+        this.locationName = locationName;
         this.user = user;
     }
 
@@ -127,6 +133,7 @@ public class Course extends DeleteTimeEntity {
         this.time = courseUpdateReqDto.getTime();
         this.visited = courseUpdateReqDto.isVisited();
         this.mainImage = courseUpdateReqDto.getLocationList().get(0).getImageList().get(0);
+        this.locationName = courseUpdateReqDto.getLocationList().get(0).getName();
     }
 
     public void delete(){
