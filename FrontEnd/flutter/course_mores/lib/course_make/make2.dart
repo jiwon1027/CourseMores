@@ -64,11 +64,11 @@ class _CourseMakeState extends State<CourseMake> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
+            const Text(
               '장소 추가하기 🏙',
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 23),
             ),
-            Text(
+            const Text(
               '장소는 최대 ~~개까지 추가할 수 있어요',
               style: TextStyle(color: Colors.grey),
             ),
@@ -83,13 +83,13 @@ class _CourseMakeState extends State<CourseMake> {
                         MaterialPageRoute(builder: (context) => CMSearch()),
                       );
                     },
-                    icon: Icon(Icons.search),
-                    label: Text(
+                    icon: const Icon(Icons.search),
+                    label: const Text(
                       '검색 추가',
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                     )),
-                SizedBox(width: 16),
+                const SizedBox(width: 16),
                 ElevatedButton.icon(
                     onPressed: () {
                       Navigator.push(
@@ -97,11 +97,11 @@ class _CourseMakeState extends State<CourseMake> {
                         MaterialPageRoute(builder: (context) => CMMap()),
                       );
                     },
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.location_on,
                       color: Colors.red,
                     ),
-                    label: Text(
+                    label: const Text(
                       '마커 추가',
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
@@ -109,14 +109,14 @@ class _CourseMakeState extends State<CourseMake> {
               ],
             ),
             ElevatedButton.icon(
-                icon: Icon(Icons.verified),
+                icon: const Icon(Icons.verified),
                 onPressed: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => MakeStepper()),
                   );
                 },
-                label: Text('코스 지정 완료')),
+                label: const Text('코스 지정 완료')),
           ],
         ),
       ),
