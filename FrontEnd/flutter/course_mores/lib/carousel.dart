@@ -12,77 +12,77 @@ final List<String> imgList = [
 
 final List<Widget> imageSliders = imgList
     .map((item) => Container(
-          child: Container(
-            margin: EdgeInsets.all(5.0),
-            child: ClipRRect(
-                borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                child: Stack(
-                  children: <Widget>[
-                    Image.network(item, fit: BoxFit.cover, width: 1000.0),
-                    Positioned(
-                      bottom: 0.0,
-                      left: 0.0,
-                      right: 0.0,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Color.fromARGB(200, 0, 0, 0),
-                              Color.fromARGB(0, 0, 0, 0)
-                            ],
-                            begin: Alignment.bottomCenter,
-                            end: Alignment.topCenter,
-                          ),
-                        ),
-                        padding: EdgeInsets.symmetric(
-                            vertical: 10.0, horizontal: 20.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              ' ${imgList.indexOf(item)}번째 코스',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 20.0,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text('서울시 마포구 연남동',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 10.0,
-                                )),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Text('어쩌구 저쩌구',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 14.0,
-                                    ))
-                              ],
-                            )
+          margin: const EdgeInsets.all(5.0),
+          child: ClipRRect(
+              borderRadius: const BorderRadius.all(Radius.circular(5.0)),
+              child: Stack(
+                children: <Widget>[
+                  Image.network(item, fit: BoxFit.cover, width: 1000.0),
+                  Positioned(
+                    bottom: 0.0,
+                    left: 0.0,
+                    right: 0.0,
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Color.fromARGB(200, 0, 0, 0),
+                            Color.fromARGB(0, 0, 0, 0)
                           ],
+                          begin: Alignment.bottomCenter,
+                          end: Alignment.topCenter,
                         ),
                       ),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 10.0, horizontal: 20.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            ' ${imgList.indexOf(item)}번째 코스',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 20.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const Text('서울시 마포구 연남동',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 10.0,
+                              )),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: const [
+                              Text('어쩌구 저쩌구',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14.0,
+                                  ))
+                            ],
+                          )
+                        ],
+                      ),
                     ),
-                  ],
-                )),
-          ),
+                  ),
+                ],
+              )),
         ))
     .toList();
 
 class CoourseCarousel extends StatelessWidget {
+  const CoourseCarousel({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 240, 240, 240),
+      backgroundColor: const Color.fromARGB(255, 240, 240, 240),
       body: Padding(
         padding: const EdgeInsets.fromLTRB(0, 15.0, 0, 0),
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 0, 0, 15.0),
+            const Padding(
+              padding: EdgeInsets.fromLTRB(0, 0, 0, 15.0),
               child: Text(
                 '최근 인기 코스 🔥',
                 style: TextStyle(
@@ -107,16 +107,18 @@ class CoourseCarousel extends StatelessWidget {
 }
 
 class ReviewCarousel extends StatelessWidget {
+  const ReviewCarousel({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 240, 240, 240),
+      backgroundColor: const Color.fromARGB(255, 240, 240, 240),
       body: Padding(
         padding: const EdgeInsets.fromLTRB(0, 15.0, 0, 0),
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 0, 0, 15.0),
+            const Padding(
+              padding: EdgeInsets.fromLTRB(0, 0, 0, 15.0),
               child: Text(
                 '사람들의 생생 코멘트 👀',
                 style: TextStyle(

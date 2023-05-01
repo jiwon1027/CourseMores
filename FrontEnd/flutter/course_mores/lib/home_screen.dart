@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
-import 'search.dart' as search;
-import 'package:carousel_slider/carousel_slider.dart';
+// import 'search.dart' as search;
+// import 'package:carousel_slider/carousel_slider.dart';
 import 'carousel.dart' as carousel;
 import 'course_list.dart' as course;
 
@@ -27,7 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         // resizeToAvoidBottomInset: false,
-        backgroundColor: Color.fromARGB(255, 240, 240, 240),
+        backgroundColor: const Color.fromARGB(255, 240, 240, 240),
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -39,7 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   width: double.infinity,
                   height: 200.0,
                   color: Colors.amber,
-                  child: Text('날씨..'),
+                  child: const Text('날씨..'),
                 ),
                 buttonBar1(),
                 buttonBar2(),
@@ -64,7 +62,7 @@ buttonBar1() {
           decoration: iconBoxDeco(),
           child: IconButton(
             onPressed: () {},
-            icon: Icon(Icons.tune),
+            icon: const Icon(Icons.tune),
           ),
         ),
         Container(
@@ -98,7 +96,7 @@ buttonBar2() {
             child: SizedBox(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[Icon(Icons.route), Text('코스 작성')],
+                children: const <Widget>[Icon(Icons.route), Text('코스 작성')],
               ),
             ),
           ),
@@ -118,7 +116,10 @@ buttonBar2() {
             child: SizedBox(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[Icon(Icons.star_outline), Text('관심 목록')],
+                children: const <Widget>[
+                  Icon(Icons.star_outline),
+                  Text('관심 목록')
+                ],
               ),
             ),
           ),
@@ -138,7 +139,10 @@ buttonBar2() {
             child: SizedBox(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[Icon(Icons.account_circle), Text('마이페이지')],
+                children: const <Widget>[
+                  Icon(Icons.account_circle),
+                  Text('마이페이지')
+                ],
               ),
             ),
           ),
@@ -157,9 +161,9 @@ iconBoxDeco() {
 popularCourse() {
   return Container(
     decoration: iconBoxDeco(),
-    child: Padding(
-      padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0),
-      child: Container(
+    child: const Padding(
+      padding: EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0),
+      child: SizedBox(
         height: 300.0,
         child: carousel.CoourseCarousel(),
       ),
@@ -181,7 +185,7 @@ themeList() {
           padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0),
           child: Column(
             children: [
-              Text(
+              const Text(
                 '이런 테마는 어때요? 😊',
                 style: TextStyle(
                     color: Colors.black,
@@ -196,7 +200,6 @@ themeList() {
                     itemBuilder: (BuildContext context, int index) {
                       return Container(
                         height: 30.0,
-                        child: Center(child: Text('${themes[index]}')),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(20),
@@ -205,11 +208,12 @@ themeList() {
                               color: Colors.grey.withOpacity(0.5),
                               spreadRadius: 2,
                               blurRadius: 3,
-                              offset:
-                                  Offset(0, 2), // changes position of shadow
+                              offset: const Offset(
+                                  0, 2), // changes position of shadow
                             ),
                           ],
                         ),
+                        child: Center(child: Text('${themes[index]}')),
                       );
                     }),
               )
@@ -222,9 +226,9 @@ themeList() {
 reviews() {
   return Container(
     decoration: iconBoxDeco(),
-    child: Padding(
-      padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0),
-      child: Container(
+    child: const Padding(
+      padding: EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0),
+      child: SizedBox(
         height: 300.0,
         child: carousel.ReviewCarousel(),
       ),
@@ -245,7 +249,7 @@ searchButtonBar() {
     controller: searchTextEditingController,
     decoration: InputDecoration(
       hintText: "원하는 코스를 검색해보세요",
-      hintStyle: TextStyle(color: Colors.grey),
+      hintStyle: const TextStyle(color: Colors.grey),
       // enabledBorder: UnderlineInputBorder(
       //   borderSide: BorderSide(color: Colors.grey),
       // ),
@@ -254,15 +258,15 @@ searchButtonBar() {
       // ),
       filled: true,
       suffixIcon: IconButton(
-        icon: Icon(Icons.search),
+        icon: const Icon(Icons.search),
         color: Colors.grey,
         iconSize: 30,
         onPressed: () {
-          print("${searchTextEditingController.text} 검색하기");
+          // print("${searchTextEditingController.text} 검색하기");
         },
       ),
     ),
-    style: TextStyle(
+    style: const TextStyle(
       fontSize: 18,
       color: Colors.black,
     ),
