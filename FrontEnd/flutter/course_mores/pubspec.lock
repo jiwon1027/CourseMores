@@ -153,8 +153,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.5"
-<<<<<<< HEAD
-<<<<<<< HEAD
+  dio:
+    dependency: "direct main"
+    description:
+      name: dio
+      sha256: "7d328c4d898a61efc3cd93655a0955858e29a0aa647f0f9e02d59b3bb275e2e8"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.0.6"
   dotted_border:
     dependency: "direct main"
     description:
@@ -171,10 +177,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.0.1"
-<<<<<<< HEAD
->>>>>>> 5bc8f13 (✨ feat : 마이페이지 코스리스트 연동, 로그인 설정)
-=======
->>>>>>> 5bc8f133d3b7ecdbc0e927980c4848d30585e037
   fake_async:
     dependency: transitive
     description:
@@ -711,8 +713,6 @@ packages:
       url: "https://github.com/followthemoney1/modal_bottom_sheet.git"
     source: git
     version: "2.1.2+1"
-<<<<<<< HEAD
-<<<<<<< HEAD
   multi_image_picker:
     dependency: "direct main"
     description:
@@ -721,9 +721,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.8.01"
-=======
-=======
->>>>>>> 5bc8f133d3b7ecdbc0e927980c4848d30585e037
   nested:
     dependency: transitive
     description:
@@ -756,10 +753,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.1"
-<<<<<<< HEAD
->>>>>>> 5bc8f13 (✨ feat : 마이페이지 코스리스트 연동, 로그인 설정)
-=======
->>>>>>> 5bc8f133d3b7ecdbc0e927980c4848d30585e037
   path:
     dependency: "direct main"
     description:
@@ -768,8 +761,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.8.2"
-<<<<<<< HEAD
-<<<<<<< HEAD
   path_drawing:
     dependency: transitive
     description:
@@ -786,6 +777,7 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.1"
+<<<<<<< HEAD
   path_provider:
     dependency: transitive
     description:
@@ -810,6 +802,11 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.2"
+=======
+=======
+=======
+>>>>>>> 5bc8f13 (✨ feat : 마이페이지 코스리스트 연동, 로그인 설정)
+>>>>>>> 40e205d (✨ feat : 마이페이지 코스리스트 연동, 로그인 설정)
   path_provider_linux:
     dependency: transitive
     description:
@@ -866,10 +863,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.0"
-<<<<<<< HEAD
->>>>>>> 5bc8f13 (✨ feat : 마이페이지 코스리스트 연동, 로그인 설정)
-=======
->>>>>>> 5bc8f133d3b7ecdbc0e927980c4848d30585e037
   plugin_platform_interface:
     dependency: transitive
     description:
