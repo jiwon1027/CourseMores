@@ -7,6 +7,8 @@ import 'package:flutter_advanced_segment/flutter_advanced_segment.dart';
 import 'package:flip_card/flip_card.dart';
 import 'package:timelines/timelines.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:photo_view/photo_view.dart';
+import 'package:photo_view/photo_view_gallery.dart';
 
 class CourseDetail extends StatefulWidget {
   const CourseDetail({Key? key, required this.index}) : super(key: key);
@@ -284,13 +286,383 @@ class DetailTapCourseCommentsListSection extends StatelessWidget {
                         ],
                       ),
                       SizedBox(height: 10),
+                      SizedBox(height: 10),
                       Text('${commentsList[index]['text']}'),
+                      SizedBox(height: 10),
+                      ImageGridView(
+                          commentImageList: commentsList[index]['images']),
+
+                      // GridView.builder(
+                      //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      //     crossAxisCount: 3,
+                      //   ),
+                      //   physics: NeverScrollableScrollPhysics(),
+                      //   shrinkWrap: true,
+                      //   itemCount: commentsList[index]['images'].length,
+                      //   itemBuilder: (context, imageIndex) {
+                      //     return InkWell(
+                      //       onTap: () {
+                      //         Navigator.of(context).push(MaterialPageRoute(
+                      //           builder: (context) {
+                      //             return Scaffold(
+                      //               appBar: AppBar(
+                      //                 title: Text('Image'),
+                      //               ),
+                      //               body: Center(
+                      //                 child: Hero(
+                      //                   tag:
+                      //                       'image${commentsList[index]['id']}_$imageIndex',
+                      //                   child: PhotoView(
+                      //                     imageProvider: AssetImage(
+                      //                       commentsList[index]['images']
+                      //                           [imageIndex],
+                      //                     ),
+                      //                   ),
+                      //                 ),
+                      //               ),
+                      //             );
+                      //           },
+                      //         ));
+                      //       },
+                      //       child: Padding(
+                      //         padding: const EdgeInsets.all(2),
+                      //         child: Hero(
+                      //           tag:
+                      //               'image${commentsList[index]['id']}_$imageIndex',
+                      //           child: ClipRRect(
+                      //             borderRadius: BorderRadius.circular(10.0),
+                      //             child: Image.asset(
+                      //               commentsList[index]['images'][imageIndex],
+                      //               fit: BoxFit.cover,
+                      //               width: 100,
+                      //               height: 100,
+                      //             ),
+                      //           ),
+                      //         ),
+                      //       ),
+                      //     );
+                      //   },
+                      // ),
+
+                      // GridView.builder(
+                      //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      //     crossAxisCount: 3,
+                      //   ),
+                      //   physics: NeverScrollableScrollPhysics(),
+                      //   shrinkWrap: true,
+                      //   itemCount: commentsList[index]['images'].length,
+                      //   itemBuilder: (context, imageIndex) {
+                      //     return InkWell(
+                      //       onTap: () {
+                      //         Navigator.of(context).push(MaterialPageRoute(
+                      //           builder: (context) {
+                      //             return Scaffold(
+                      //               appBar: AppBar(
+                      //                 title: Text('Image'),
+                      //               ),
+                      //               body: Center(
+                      //                 child: Hero(
+                      //                   tag:
+                      //                       'image${commentsList[index]['id']}_$imageIndex',
+                      //                   child: Image.asset(
+                      //                     commentsList[index]['images']
+                      //                         [imageIndex],
+                      //                     fit: BoxFit.cover,
+                      //                   ),
+                      //                 ),
+                      //               ),
+                      //             );
+                      //           },
+                      //         ));
+                      //       },
+                      //       child: Padding(
+                      //         padding: const EdgeInsets.all(2),
+                      //         child: Hero(
+                      //           tag:
+                      //               'image${commentsList[index]['id']}_$imageIndex',
+                      //           child: ClipRRect(
+                      //             borderRadius: BorderRadius.circular(10.0),
+                      //             child: Image.asset(
+                      //               commentsList[index]['images'][imageIndex],
+                      //               fit: BoxFit.cover,
+                      //               width: 100,
+                      //               height: 100,
+                      //             ),
+                      //           ),
+                      //         ),
+                      //       ),
+                      //     );
+                      //   },
+                      // ),
+
+                      // GridView.builder(
+                      //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      //     crossAxisCount: 3,
+                      //   ),
+                      //   physics: NeverScrollableScrollPhysics(),
+                      //   shrinkWrap: true,
+                      //   itemCount: commentsList[index]['images'].length,
+                      //   itemBuilder: (context, imageIndex) {
+                      //     return InkWell(
+                      //       onTap: () {
+                      //         Navigator.of(context).push(MaterialPageRoute(
+                      //           builder: (context) {
+                      //             return Scaffold(
+                      //               appBar: AppBar(
+                      //                 title: Text('Image'),
+                      //               ),
+                      //               body: Center(
+                      //                 child: Hero(
+                      //                   tag:
+                      //                       'image${commentsList[index]['id']}_$imageIndex',
+                      //                   child: Image.asset(
+                      //                     commentsList[index]['images']
+                      //                         [imageIndex],
+                      //                     fit: BoxFit.cover,
+                      //                   ),
+                      //                 ),
+                      //               ),
+                      //             );
+                      //           },
+                      //         ));
+                      //       },
+                      //       child: Padding(
+                      //         padding: const EdgeInsets.all(2),
+                      //         child: Hero(
+                      //           tag:
+                      //               'image${commentsList[index]['id']}_$imageIndex',
+                      //           child: ClipRRect(
+                      //             borderRadius: BorderRadius.circular(10.0),
+                      //             child: Image.asset(
+                      //               commentsList[index]['images'][imageIndex],
+                      //               fit: BoxFit.cover,
+                      //               width: 100,
+                      //               height: 100,
+                      //             ),
+                      //           ),
+                      //         ),
+                      //       ),
+                      //     );
+                      //   },
+                      // ),
+
+                      // GridView.builder(
+                      //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      //     crossAxisCount: 2,
+                      //     crossAxisSpacing: 8,
+                      //     mainAxisSpacing: 8,
+                      //   ),
+                      //   itemCount: commentsList[index]['images'].length,
+                      //   itemBuilder: (context, imageIndex) {
+                      //     return Image.asset(
+                      //         commentsList[index]['images'][imageIndex]);
+                      //   },
+                      // )
                     ],
                   ),
                 ),
               );
             },
           );
+  }
+}
+
+class ImageGridView extends StatelessWidget {
+  const ImageGridView({
+    Key? key,
+    required this.commentImageList,
+  }) : super(key: key);
+
+  final List<String> commentImageList;
+
+  @override
+  Widget build(BuildContext context) {
+    return GridView.builder(
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+      ),
+      physics: NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: commentImageList.length > 3 ? 3 : commentImageList.length,
+      itemBuilder: (context, imageIndex) {
+        if (imageIndex == 2 && commentImageList.length > 3) {
+          return Stack(
+            children: [
+              ImageInkWell(
+                  commentImageList: commentImageList, imageIndex: imageIndex),
+              Positioned(
+                right: 0,
+                bottom: 0,
+                child: ClipRRect(
+                  // borderRadius: BorderRadius.circular(100.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.rectangle,
+                      color: Colors.black38,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    margin: const EdgeInsets.all(2),
+                    width: 94,
+                    height: 94,
+                    child: Center(
+                      child: Text(
+                        '+${commentImageList.length - 3}',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          );
+        } else {
+          return ImageInkWell(
+              commentImageList: commentImageList, imageIndex: imageIndex);
+        }
+      },
+    );
+  }
+}
+
+class ImageInkWell extends StatelessWidget {
+  const ImageInkWell({
+    super.key,
+    required this.commentImageList,
+    required this.imageIndex,
+  });
+
+  final List<String> commentImageList;
+  final imageIndex;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) {
+            return CommentGallery(
+              images: commentImageList,
+              initialIndex: imageIndex,
+            );
+          },
+        ));
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(2),
+        child: Hero(
+          tag: 'image${commentImageList}_$imageIndex',
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(10.0),
+            child: Image.asset(
+              commentImageList[imageIndex],
+              fit: BoxFit.cover,
+              width: 100,
+              height: 100,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class CommentGallery extends StatefulWidget {
+  final List<String> images;
+  final int initialIndex;
+
+  const CommentGallery({
+    Key? key,
+    required this.images,
+    this.initialIndex = 0,
+  }) : super(key: key);
+
+  @override
+  State<CommentGallery> createState() => _CommentGalleryState();
+}
+
+class _CommentGalleryState extends State<CommentGallery> {
+  late int _currentIndex;
+  late PageController _pageController;
+
+  @override
+  void initState() {
+    _currentIndex = widget.initialIndex;
+    _pageController = PageController(initialPage: widget.initialIndex);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Stack(
+        children: [
+          PhotoViewGallery.builder(
+            scrollPhysics: const BouncingScrollPhysics(),
+            builder: (BuildContext context, int index) {
+              return PhotoViewGalleryPageOptions(
+                imageProvider: AssetImage(widget.images[index]),
+                initialScale: PhotoViewComputedScale.contained,
+                heroAttributes: PhotoViewHeroAttributes(
+                  tag: 'image${widget.initialIndex}_$index',
+                ),
+                minScale: PhotoViewComputedScale.contained,
+                maxScale: PhotoViewComputedScale.covered * 2.0,
+              );
+            },
+            itemCount: widget.images.length,
+            pageController: PageController(initialPage: widget.initialIndex),
+            onPageChanged: (int index) {
+              setState(() {
+                _currentIndex = index;
+              });
+            },
+          ),
+          Positioned(
+            top: 50,
+            left: 30,
+            child: GestureDetector(
+              onTap: () => Navigator.pop(context),
+              child: Icon(
+                Icons.arrow_back_ios,
+                color: Colors.white,
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: 50,
+            left: 0,
+            right: 0,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: widget.images.map((image) {
+                int index = widget.images.indexOf(image);
+                return Container(
+                  width: 10.0,
+                  height: 10.0,
+                  margin: EdgeInsets.symmetric(horizontal: 2.0),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: _currentIndex == index
+                        ? Colors.grey.shade800
+                        : Colors.grey.shade600,
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -443,9 +815,14 @@ class _DetailTapCoursePlacesState extends State<DetailTapCoursePlaces> {
               child: Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.all(15),
+                    padding: const EdgeInsets.fromLTRB(0, 15, 0, 15),
                     child: Column(
                       children: [
+                        ImageGridView(
+                            commentImageList: (course.courseList[courseIndex]
+                                    ['places'] as List<dynamic>)[placeIndex]
+                                ['images']),
+                        SizedBox(height: 15),
                         Text(
                           "${(course.courseList[courseIndex]['places'] as List<dynamic>)[placeIndex]['title']}",
                           // '''테스트 메시지. 테스트 메시지. 테스트 메시지. 테스트 메시지. 테스트 메시지. 테스트 메시지. ㄴ''',
@@ -454,16 +831,15 @@ class _DetailTapCoursePlacesState extends State<DetailTapCoursePlaces> {
                               fontWeight: FontWeight.w600,
                               color: Colors.black),
                         ),
-                        const SizedBox(
-                          height: 10,
-                        ),
+                        SizedBox(height: 10),
                         Text(
                           "${(course.courseList[courseIndex]['places'] as List<dynamic>)[placeIndex]['text']}",
                           // '''테스트 메시지. 테스트 메시지. 테스트 메시지. 테스트 메시지. 테스트 메시지. 테스트 메시지. ㄴ''',
                           style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black),
+                            fontSize: 16,
+                            color: Colors.black,
+                            height: 1.7,
+                          ),
                         ),
                       ],
                     ),
@@ -578,7 +954,7 @@ class DetailTapCourseIntroductionTimeline extends StatelessWidget {
           contentsBuilder: (context, index) => Padding(
             padding: const EdgeInsets.all(15),
             child: Text(
-                "${(course.courseList[courseIndex]['places'] as List<dynamic>)[index]['text']}",
+                "${(course.courseList[courseIndex]['places'] as List<dynamic>)[index]['title']}",
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 18,
@@ -701,6 +1077,7 @@ class _DetailCourseInfoState extends State<DetailCourseInfo> {
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
+                          height: 1.3,
                         ),
                         softWrap: true,
                       ),
@@ -713,8 +1090,9 @@ class _DetailCourseInfoState extends State<DetailCourseInfo> {
                       Text(
                         "${widget.courseInfo['text']}",
                         style: const TextStyle(
-                            // fontSize: 14,
-                            ),
+                          // fontSize: 14,
+                          height: 1.7,
+                        ),
                       ),
                       const SizedBox(height: 10),
                       // 테마 라인

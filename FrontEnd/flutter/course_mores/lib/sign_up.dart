@@ -275,7 +275,7 @@ class RegisterNickname extends StatefulWidget {
 
 class _RegisterNicknameState extends State<RegisterNickname> {
   final formKey = GlobalKey<FormState>();
-  String? _helperText = null;
+  String? _helperText;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -404,14 +404,14 @@ class _GenderChoiceState extends State<GenderChoice> {
                     _gender = 'M';
                   });
                 },
-                child: Text(
-                  '남성',
-                  style: TextStyle(color: manTextColor),
-                ),
                 style: TextButton.styleFrom(
                   backgroundColor: manColor,
                   fixedSize:
                       Size(MediaQuery.of(context).size.width / 2 - 40, 40),
+                ),
+                child: Text(
+                  '남성',
+                  style: TextStyle(color: manTextColor),
                 ),
               ),
               OutlinedButton(
@@ -420,14 +420,14 @@ class _GenderChoiceState extends State<GenderChoice> {
                     _gender = 'W';
                   });
                 },
-                child: Text(
-                  '여성',
-                  style: TextStyle(color: womanTextColor),
-                ),
                 style: TextButton.styleFrom(
                     backgroundColor: womanColor,
                     fixedSize:
                         Size(MediaQuery.of(context).size.width / 2 - 40, 40)),
+                child: Text(
+                  '여성',
+                  style: TextStyle(color: womanTextColor),
+                ),
               )
             ],
           )
