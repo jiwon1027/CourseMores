@@ -2,10 +2,7 @@ package com.moham.coursemores.common.config;
 
 import com.moham.coursemores.common.auth.jwt.JwtAuthenticationEntryPoint;
 import com.moham.coursemores.common.auth.jwt.TokenProvider;
-import com.moham.coursemores.common.auth.oauth2.PrincipalOauth2UserService;
 import com.moham.coursemores.common.handler.JwtAccessDeniedHandler;
-import com.moham.coursemores.common.handler.OAuth2AuthenticationFailureHandler;
-import com.moham.coursemores.common.handler.OAuth2AuthenticationSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,9 +21,6 @@ public class SecurityConfig{
     private final TokenProvider tokenProvider;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
-    private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
-    private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
-    private final PrincipalOauth2UserService principalOauth2UserService;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -61,15 +55,6 @@ public class SecurityConfig{
                 .and()
                 .apply(new JwtSecurityConfig(tokenProvider))
 
-                // oauth2 를 이용한 소셜 로그인 설정 적용
-                .and()
-                .oauth2Login()
-                .userInfoEndpoint()
-                .userService(principalOauth2UserService)
-
-                .and()
-                .successHandler(oAuth2AuthenticationSuccessHandler)
-                .failureHandler(oAuth2AuthenticationFailureHandler)
         ;
 
         return http.build();
