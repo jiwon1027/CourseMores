@@ -105,6 +105,8 @@ class _SearchResultState extends State<SearchResult> {
     return Container(
       color: const Color.fromARGB(221, 244, 244, 244),
       child: ListView.builder(
+        shrinkWrap: true,
+        scrollDirection: Axis.vertical,
         padding: const EdgeInsets.all(8),
         itemCount: widget.courseList.length,
         itemBuilder: (BuildContext context, int index) {
