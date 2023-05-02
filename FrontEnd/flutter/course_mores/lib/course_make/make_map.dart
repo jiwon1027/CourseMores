@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:geolocator/geolocator.dart';
 
 class CMMap extends StatefulWidget {
   const CMMap({super.key});
@@ -14,8 +15,52 @@ class _CMMapState extends State<CMMap> {
 
   GoogleMapController? _mapController;
 
-  void _onMapCreated(GoogleMapController controller) {
+  void _onMapCreated(GoogleMapController controller) async {
     _mapController = controller;
+
+    // 위치 권한 확인
+    LocationPermission permission;
+    bool serviceEnabled;
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return;
+    }
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return;
+      }
+    }
+    if (permission == LocationPermission.deniedForever) {
+      return;
+    }
+
+    // 현재 위치 가져오기
+    Position position = await Geolocator.getCurrentPosition();
+    LatLng currentPosition = LatLng(position.latitude, position.longitude);
+
+    // 현재 위치 마커 추가
+    // setState(() {
+    //   _markers.add(
+    //     Marker(
+    //       markerId: MarkerId('current-position'),
+    //       position: currentPosition,
+    //       icon:
+    //           BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+    //     ),
+    //   );
+    // });
+
+    // 카메라 이동
+    _mapController?.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(
+          target: currentPosition,
+          zoom: 15.0,
+        ),
+      ),
+    );
   }
 
   void _onTap(LatLng location) {
@@ -29,6 +74,22 @@ class _CMMapState extends State<CMMap> {
       );
       // _selectedLocation = location;
     });
+  }
+
+  void _onMyLocationButtonPressed() async {
+    final position = await Geolocator.getCurrentPosition();
+    final cameraUpdate = CameraUpdate.newLatLngZoom(
+        LatLng(position.latitude, position.longitude), 17);
+    _mapController?.animateCamera(cameraUpdate);
+  }
+
+  void _onSavePressed() {
+    final selectedMarker = _markers.first;
+    final latitude = selectedMarker.position.latitude;
+    final longitude = selectedMarker.position.longitude;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text('위도: $latitude, 경도: $longitude'),
+    ));
   }
 
   @override
@@ -97,6 +158,8 @@ class _CMMapState extends State<CMMap> {
                   markers: _markers,
                   onTap: _onTap,
                   onMapCreated: _onMapCreated,
+                  myLocationButtonEnabled: false, // 현재 위치 버튼 숨기기
+                  myLocationEnabled: true, // 현재 위치 파란색 마커로 표시
                 ),
               ),
             ),
@@ -107,20 +170,14 @@ class _CMMapState extends State<CMMap> {
                 FloatingActionButton.extended(
                   onPressed: () {
                     // 저장 버튼 클릭 시, _selectedLocation 변수에 현재 선택한 위치 값을 사용할 수 있습니다.
+                    _onSavePressed();
                   },
                   icon: const Icon(Icons.save),
                   label: const Text('해당 위치 저장'),
                   elevation: 15,
                 ),
                 FloatingActionButton(
-                  onPressed: () {
-                    _mapController?.animateCamera(
-                      CameraUpdate.newLatLngZoom(
-                        LatLng(37.5665, 126.9780),
-                        10,
-                      ),
-                    );
-                  },
+                  onPressed: _onMyLocationButtonPressed,
                   child: const Icon(Icons.my_location),
                 ),
               ],

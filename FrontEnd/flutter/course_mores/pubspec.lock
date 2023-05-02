@@ -230,6 +230,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.13"
+  flutter_reorderable_list:
+    dependency: "direct main"
+    description:
+      name: flutter_reorderable_list
+      sha256: "0400ef34fa00b7cac69f71efc92d7e49727f425bc1080180ebe70bf47618afe0"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.3.1"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -340,10 +348,10 @@ packages:
     dependency: "direct main"
     description:
       name: google_maps_webservice
-      sha256: "188bbb363adf1bc69c708029e315f383020c1caba8c5146176de1a6f6feb3524"
+      sha256: d0ae4e4508afd74a3f051565261a3cdbae59db29448f9b6e6beb5674545e1eb7
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.19"
+    version: "0.0.20-nullsafety.5"
   http:
     dependency: "direct main"
     description:
