@@ -121,6 +121,39 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.5"
+<<<<<<< HEAD
+<<<<<<< HEAD
+  dotted_border:
+    dependency: "direct main"
+    description:
+      name: dotted_border
+      sha256: "07a5c5e8d4e6e992279e190e0352be8faa5b8f96d81c77a78b2d42f060279840"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.0+3"
+=======
+=======
+>>>>>>> 5bc8f133d3b7ecdbc0e927980c4848d30585e037
+  dio:
+    dependency: "direct main"
+    description:
+      name: dio
+      sha256: "7d328c4d898a61efc3cd93655a0955858e29a0aa647f0f9e02d59b3bb275e2e8"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.0.6"
+  encrypt:
+    dependency: transitive
+    description:
+      name: encrypt
+      sha256: "4fd4e4fdc21b9d7d4141823e1e6515cd94e7b8d84749504c232999fba25d9bbb"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.0.1"
+<<<<<<< HEAD
+>>>>>>> 5bc8f13 (✨ feat : 마이페이지 코스리스트 연동, 로그인 설정)
+=======
+>>>>>>> 5bc8f133d3b7ecdbc0e927980c4848d30585e037
   fake_async:
     dependency: transitive
     description:
@@ -324,10 +357,10 @@ packages:
     dependency: "direct main"
     description:
       name: http
-      sha256: "6aa2946395183537c8b880962d935877325d6a09a2867c3970c05c0fed6ac482"
+      sha256: "5895291c13fa8a3bd82e76d5627f69e0d85ca6a30dcac95c4ea19a5d555879c2"
       url: "https://pub.dev"
     source: hosted
-    version: "0.13.5"
+    version: "0.13.6"
   http_parser:
     dependency: transitive
     description:
@@ -348,10 +381,10 @@ packages:
     dependency: transitive
     description:
       name: image_picker_android
-      sha256: "7d2b25e0aec884495d782bb60cd09f779a92370035374c5ec622d09782ac68fe"
+      sha256: "271e0448e82268b3fa1cb2a48e4a911cbc2135587123d7df8e7ca703c5b10da2"
       url: "https://pub.dev"
     source: hosted
-    version: "0.8.6+10"
+    version: "0.8.6+11"
   image_picker_for_web:
     dependency: transitive
     description:
@@ -529,6 +562,47 @@ packages:
       url: "https://github.com/followthemoney1/modal_bottom_sheet.git"
     source: git
     version: "2.1.2+1"
+<<<<<<< HEAD
+<<<<<<< HEAD
+  multi_image_picker:
+    dependency: "direct main"
+    description:
+      name: multi_image_picker
+      sha256: "3071bef51d4165f152bde7e22b6f6769745acd5939d70b9fc3d0c9137dbd0a15"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.8.01"
+=======
+=======
+>>>>>>> 5bc8f133d3b7ecdbc0e927980c4848d30585e037
+  nested:
+    dependency: transitive
+    description:
+      name: nested
+      sha256: "03bac4c528c64c95c722ec99280375a6f2fc708eec17c7b3f07253b626cd2a20"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
+  package_info_plus:
+    dependency: "direct main"
+    description:
+      name: package_info_plus
+      sha256: "10259b111176fba5c505b102e3a5b022b51dd97e30522e906d6922c745584745"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.1.2"
+  package_info_plus_platform_interface:
+    dependency: transitive
+    description:
+      name: package_info_plus_platform_interface
+      sha256: "9bc8ba46813a4cc42c66ab781470711781940780fd8beddd0c3da62506d3a6c6"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.1"
+<<<<<<< HEAD
+>>>>>>> 5bc8f13 (✨ feat : 마이페이지 코스리스트 연동, 로그인 설정)
+=======
+>>>>>>> 5bc8f133d3b7ecdbc0e927980c4848d30585e037
   path:
     dependency: transitive
     description:
@@ -537,6 +611,63 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.8.2"
+<<<<<<< HEAD
+<<<<<<< HEAD
+  path_drawing:
+    dependency: transitive
+    description:
+      name: path_drawing
+      sha256: bbb1934c0cbb03091af082a6389ca2080345291ef07a5fa6d6e078ba8682f977
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.1"
+  path_parsing:
+    dependency: transitive
+    description:
+      name: path_parsing
+      sha256: e3e67b1629e6f7e8100b367d3db6ba6af4b1f0bb80f64db18ef1fbabd2fa9ccf
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.1"
+=======
+=======
+>>>>>>> 5bc8f133d3b7ecdbc0e927980c4848d30585e037
+  path_provider_linux:
+    dependency: transitive
+    description:
+      name: path_provider_linux
+      sha256: "2ae08f2216225427e64ad224a24354221c2c7907e448e6e0e8b57b1eb9f10ad1"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.10"
+  path_provider_platform_interface:
+    dependency: transitive
+    description:
+      name: path_provider_platform_interface
+      sha256: "57585299a729335f1298b43245842678cb9f43a6310351b18fb577d6e33165ec"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.6"
+  path_provider_windows:
+    dependency: transitive
+    description:
+      name: path_provider_windows
+      sha256: d3f80b32e83ec208ac95253e0cd4d298e104fbc63cb29c5c69edaed43b0c69d6
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.6"
+  platform:
+    dependency: "direct main"
+    description:
+      name: platform
+      sha256: "4a451831508d7d6ca779f7ac6e212b4023dd5a7d08a27a63da33756410e32b76"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.1.0"
+<<<<<<< HEAD
+>>>>>>> 5bc8f13 (✨ feat : 마이페이지 코스리스트 연동, 로그인 설정)
+=======
+>>>>>>> 5bc8f133d3b7ecdbc0e927980c4848d30585e037
   plugin_platform_interface:
     dependency: transitive
     description:
