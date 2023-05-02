@@ -1,5 +1,9 @@
+import 'login_page.dart' as login;
 import 'package:flutter/material.dart';
 import 'sign_up.dart' as signup;
+import 'package:animated_button_bar/animated_button_bar.dart';
+import 'search.dart' as search;
+import 'course_search/course_list.dart' as course;
 
 class MyPage extends StatefulWidget {
   const MyPage({super.key});
@@ -9,18 +13,79 @@ class MyPage extends StatefulWidget {
 }
 
 class _MyPageState extends State<MyPage> {
+  var courseList = course.courseList;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            profileBox(),
-          ],
-        ),
-      ),
-    );
+        body: SingleChildScrollView(
+      child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                profileBox(),
+                OutlinedButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const login.LoginPage()));
+                    },
+                    child: Text('로그인페이지')),
+                ButtonBar(),
+                Text(
+                  '내가 작성한 코스 : 11 개',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                  ),
+                ),
+                Flexible(
+                  child: search.SearchResult(
+                    courseList: courseList,
+                  ),
+                )
+                // Container(
+                //   margin: const EdgeInsets.only(
+                //       left: 10, right: 10, top: 10, bottom: 5),
+                //   padding: const EdgeInsets.all(10),
+                //   decoration: const BoxDecoration(
+                //       boxShadow: [
+                //         BoxShadow(
+                //             // color: Colors.white24,
+                //             color: Color.fromARGB(255, 211, 211, 211),
+                //             blurRadius: 10.0,
+                //             spreadRadius: 1.0,
+                //             offset: Offset(3, 3)),
+                //       ],
+                //       color: Color.fromARGB(255, 255, 255, 255),
+                //       borderRadius: BorderRadius.all(Radius.circular(10))),
+                //   child: Row(
+                //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //     children: [
+                //       Expanded(
+                //           child: SizedBox(
+                //               width: 350,
+                //               child: Row(
+                //                 children: const [
+                //                   search.ThumbnailImage(),
+                //                   SizedBox(
+                //                     width: 10,
+                //                   ),
+                //                   Expanded(
+                //                     child: search.CourseSearchList(
+                //                       // courseList: courseList,
+                //                       index: 1,
+                //                     ),
+                //                   ),
+                //                 ],
+                //               )))
+                //     ],
+                //   ),
+                // ),
+              ])),
+    ));
   }
 }
 
@@ -104,6 +169,46 @@ boxDeco() {
       ),
     ],
   );
+}
+
+class ButtonBar extends StatefulWidget {
+  const ButtonBar({super.key});
+
+  @override
+  State<ButtonBar> createState() => _ButtonBarState();
+}
+
+class _ButtonBarState extends State<ButtonBar> {
+  String choice = 'course';
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 220,
+      height: 60,
+      child: AnimatedButtonBar(
+          radius: 20.0,
+          padding: EdgeInsets.all(8),
+          backgroundColor: Colors.blueGrey.shade100,
+          foregroundColor: Colors.blue,
+          innerVerticalPadding: 0,
+          children: [
+            ButtonBarEntry(
+                child: Text('내 코스'),
+                onTap: () {
+                  setState(() {
+                    choice = 'course';
+                  });
+                }),
+            ButtonBarEntry(
+                child: Text('내 리뷰'),
+                onTap: () {
+                  setState(() {
+                    choice = 'review';
+                  });
+                }),
+          ]),
+    );
+  }
 }
 
 class ModalBottom extends StatelessWidget {

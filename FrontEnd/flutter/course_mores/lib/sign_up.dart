@@ -62,7 +62,7 @@ class _ProfileImageState extends State<ProfileImage> {
             bottom: 15,
           ),
           child: Padding(
-            padding: const EdgeInsets.only(bottom: 15.0),
+            padding: EdgeInsets.only(bottom: 15.0),
             child: Text('프로필 사진'),
           ),
         ),
