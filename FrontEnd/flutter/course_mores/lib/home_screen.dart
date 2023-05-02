@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 // import 'package:carousel_slider/carousel_slider.dart';
 import 'carousel.dart' as carousel;
 import 'course_list.dart' as course;
+import 'mypage.dart' as mypage;
 
 final List<String> imgList = [
   'https://images.unsplash.com/photo-1520342868574-5fa3804e551c?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=6ff92caffcdd63681a35134a6770ed3b&auto=format&fit=crop&w=1951&q=80',
@@ -40,7 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: const Text('날씨..'),
                 ),
                 buttonBar1(),
-                buttonBar2(),
+                ButtonBar2(),
                 popularCourse(),
                 themeList(),
                 reviews(),
@@ -75,81 +76,94 @@ buttonBar1() {
   );
 }
 
-buttonBar2() {
-  return Padding(
-    padding: const EdgeInsets.fromLTRB(0, 0, 0, 15.0),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        InkWell(
-          onTap: () {
-            // Navigator.push(
-            //   context,
-            //   MaterialPageRoute(
-            //       builder: (context) => const register.Register()),
-            // );
-          },
-          child: Container(
-            width: 80.0,
-            height: 80.0,
-            decoration: iconBoxDeco(),
-            child: SizedBox(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const <Widget>[Icon(Icons.route), Text('코스 작성')],
+class ButtonBar2 extends StatelessWidget {
+  const ButtonBar2({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0, 0, 0, 15.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          InkWell(
+            onTap: () {
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //       builder: (context) => const register.Register()),
+              // );
+            },
+            child: Container(
+              width: 80.0,
+              height: 80.0,
+              decoration: iconBoxDeco(),
+              child: SizedBox(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const <Widget>[Icon(Icons.route), Text('코스 작성')],
+                ),
               ),
             ),
           ),
-        ),
-        InkWell(
-          onTap: () {
-            // Navigator.push(
-            //   context,
-            //   MaterialPageRoute(
-            //       builder: (context) => const search.Search()),
-            // );
-          },
-          child: Container(
-            width: 80.0,
-            height: 80.0,
-            decoration: iconBoxDeco(),
-            child: SizedBox(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const <Widget>[
-                  Icon(Icons.star_outline),
-                  Text('관심 목록')
-                ],
+          InkWell(
+            onTap: () {
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //       builder: (context) => const search.Search()),
+              // );
+            },
+            child: Container(
+              width: 80.0,
+              height: 80.0,
+              decoration: iconBoxDeco(),
+              child: SizedBox(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const <Widget>[
+                    Icon(Icons.star_outline),
+                    Text('관심 목록')
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-        InkWell(
-          onTap: () {
-            // Navigator.push(
-            //   context,
-            //   MaterialPageRoute(
-            //       builder: (context) => const search.Search()),
-            // );
-          },
-          child: Container(
-            width: 80.0,
-            height: 80.0,
-            decoration: iconBoxDeco(),
-            child: SizedBox(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const <Widget>[
-                  Icon(Icons.account_circle),
-                  Text('마이페이지')
-                ],
+          InkWell(
+            onTap: () {
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //       builder: (context) => const search.Search()),
+              // );
+            },
+            child: Container(
+              width: 80.0,
+              height: 80.0,
+              decoration: iconBoxDeco(),
+              child: InkWell(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const mypage.MyPage()));
+                },
+                child: SizedBox(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const <Widget>[
+                      Icon(Icons.account_circle),
+                      Text('마이페이지')
+                    ],
+                  ),
+                ),
               ),
             ),
-          ),
-        )
-      ],
-    ),
-  );
+          )
+        ],
+      ),
+    );
+  }
 }
 
 iconBoxDeco() {

@@ -1,5 +1,6 @@
 import 'package:flashy_tab_bar2/flashy_tab_bar2.dart';
 import 'package:flutter/material.dart' hide ModalBottomSheetRoute;
+import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'style.dart' as style;
 import 'notification.dart' as noti;
 import 'search.dart' as search;
@@ -7,7 +8,9 @@ import 'home_screen.dart' as home;
 import 'mypage.dart' as mypage;
 import 'course_make/make_start.dart' as make;
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  KakaoSdk.init(nativeAppKey: '59816c34bd5a0094d4f29bf08b55a34c');
   runApp(MaterialApp(theme: style.theme, home: const MyApp()));
 }
 
