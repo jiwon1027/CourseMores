@@ -1,18 +1,11 @@
 package com.moham.coursemores.domain;
 
-import com.moham.coursemores.common.auth.oauth2.OAuth2UserInfo;
+import com.moham.coursemores.common.util.OAuthProvider;
 import com.moham.coursemores.domain.time.DeleteTimeEntity;
 import com.moham.coursemores.dto.profile.UserInfoUpdateReqDto;
 import java.time.LocalDateTime;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 import lombok.*;
@@ -39,11 +32,12 @@ public class User extends DeleteTimeEntity {
 
     @NotNull
     @Column
-    private String provider;
+    @Enumerated(EnumType.STRING)
+    private OAuthProvider provider;
 
-    @NotNull
-    @Column
-    private String providerId;
+//    @NotNull
+//    @Column
+//    private String providerId;
 
     @Column(length = 20)
     private String nickname;
@@ -73,14 +67,15 @@ public class User extends DeleteTimeEntity {
     private List<CommentLike> commentLikeList; // 유저의 댓글 좋아요 목록
 
     @Builder
-    public User(String email,
-                String roles,
-                String provider,
-                String providerId){
+    public User(String email
+            ,String roles
+            ,OAuthProvider provider
+//                ,String providerId
+    ){
         this.email = email;
         this.roles = roles;
         this.provider = provider;
-        this.providerId = providerId;
+//        this.providerId = providerId;
     }
 
     public void update(UserInfoUpdateReqDto userInfoUpdateReqDto){
