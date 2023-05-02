@@ -114,6 +114,9 @@ public class CommentServiceImpl implements CommentService {
                         .comment(comment)
                         .image(imageUrl)
                         .build()));
+
+        // 코스의 댓글 수 증가
+        course.increaseCommentCount();
     }
 
     @Override
@@ -154,5 +157,8 @@ public class CommentServiceImpl implements CommentService {
 
         // commentId의 comment가 있다면 comment를 가져와서 수정
         comment.delete();
+
+        // 코스의 댓글 수 감소
+        comment.getCourse().decreaseCommentCount();
     }
 }

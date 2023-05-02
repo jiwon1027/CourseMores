@@ -52,11 +52,11 @@ public class CourseCustomRepositoryImpl implements CourseCustomRepository {
         List<Course> fetch = jpaQueryFactory
                 .selectFrom(course)
                 .distinct()
-                .leftJoin(course.courseLocationList, courseLocation)
-                .leftJoin(course.courseHashtagList, hashtagOfCourse)
-                .leftJoin(hashtagOfCourse.hashtag, hashtag)
-                .leftJoin(course.themeOfCourseList, themeOfCourse)
-                .leftJoin(themeOfCourse.theme, theme)
+//                .leftJoin(course.courseLocationList, courseLocation)
+//                .leftJoin(course.courseHashtagList, hashtagOfCourse)
+//                .leftJoin(hashtagOfCourse.hashtag, hashtag)
+//                .leftJoin(course.themeOfCourseList, themeOfCourse)
+//                .leftJoin(themeOfCourse.theme, theme)
                 .where(searchCoursesFilter(word, regionId, themeIds))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -66,11 +66,11 @@ public class CourseCustomRepositoryImpl implements CourseCustomRepository {
         JPQLQuery<Course> count = jpaQueryFactory
                 .selectFrom(course)
                 .distinct()
-                .leftJoin(course.courseLocationList, courseLocation)
-                .leftJoin(course.courseHashtagList, hashtagOfCourse)
-                .leftJoin(hashtagOfCourse.hashtag, hashtag)
-                .leftJoin(course.themeOfCourseList, themeOfCourse)
-                .leftJoin(themeOfCourse.theme, theme)
+//                .leftJoin(course.courseLocationList, courseLocation)
+//                .leftJoin(course.courseHashtagList, hashtagOfCourse)
+//                .leftJoin(hashtagOfCourse.hashtag, hashtag)
+//                .leftJoin(course.themeOfCourseList, themeOfCourse)
+//                .leftJoin(themeOfCourse.theme, theme)
                 .where(searchCoursesFilter(word, regionId, themeIds));
 
         return PageableExecutionUtils.getPage(fetch, pageable, count::fetchCount);

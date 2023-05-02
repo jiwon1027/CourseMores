@@ -14,9 +14,9 @@ public class MyCourseResDto {
     private int people;
     private boolean visited;
     private int likeCount;
-    private String mainImage;
+    private int commentCount;
     private String sido;
     private String gugun;
+    private String mainImage;
     private String locationName;
-    private int commentCount;
 }
