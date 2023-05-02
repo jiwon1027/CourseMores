@@ -51,6 +51,10 @@ public class Course extends DeleteTimeEntity {
     private int interestCount;
 
     @NotNull
+    @Column
+    private int commentCount;
+
+    @NotNull
     @Column(length = 500)
     private String mainImage;
 
@@ -92,6 +96,7 @@ public class Course extends DeleteTimeEntity {
                   int viewCount,
                   int likeCount,
                   int interestCount,
+                  int commentCount,
                   User user){
         this.title = title;
         this.content = content;
@@ -102,6 +107,7 @@ public class Course extends DeleteTimeEntity {
         this.interestCount = interestCount;
         this.likeCount = likeCount;
         this.mainImage = mainImage;
+        this.commentCount = commentCount;
         this.locationName = locationName;
         this.user = user;
     }
@@ -124,6 +130,14 @@ public class Course extends DeleteTimeEntity {
 
     public void decreaseLikeCount() {
         this.likeCount--;
+    }
+
+    public void increaseCommentCount(){
+        this.commentCount++;
+    }
+
+    public void decreaseCommentCount(){
+        this.commentCount--;
     }
 
     public void update(CourseUpdateReqDto courseUpdateReqDto){

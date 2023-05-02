@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -40,7 +41,7 @@ public class CourseServiceImpl implements CourseService {
                 .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
 
         // 한 페이지에 보여줄 코스의 수
-        final int size = 2;
+        final int size = 10;
 
         // Sort 정렬 기준
         Sort sort = ("latest".equals(sortby) ?
@@ -52,7 +53,15 @@ public class CourseServiceImpl implements CourseService {
         Page<CoursePreviewResDto> result = pageCourse
                 .map(course -> {
                     Region region = course.getCourseLocationList().get(0).getRegion();
-                    Optional<Interest> interest = interestRepository.findByUserIdAndCourseId(user.getId(), course.getId());
+
+//                    Optional<Interest> interest = interestRepository.findByUserIdAndCourseId(user.getId(), course.getId());
+                    boolean isInterest = false;
+                    for (Interest interest : course.getInterestList()){
+                        if(Objects.equals(interest.getUser().getId(), user.getId())){
+                            isInterest = interest.isFlag();
+                            break;
+                        }
+                    }
 
                     return CoursePreviewResDto.builder()
                         .courseId(course.getId())
@@ -61,12 +70,13 @@ public class CourseServiceImpl implements CourseService {
                         .people(course.getPeople())
                         .visited(course.isVisited())
                         .likeCount(course.getLikeCount())
-                        .commentCount(course.getCommentList().size())
+                        .commentCount(course.getCommentCount())
                         .mainImage(course.getMainImage())
                         .sido(region.getSido())
                         .gugun(region.getGugun())
                         .locationName(course.getLocationName())
-                        .isInterest(interest.map(Interest::isFlag).orElse(false))
+//                        .isInterest(interest.map(Interest::isFlag).orElse(false))
+                        .isInterest(isInterest)
                         .build();
                 });
 
@@ -180,7 +190,7 @@ public class CourseServiceImpl implements CourseService {
                     .sido(region.getSido())
                     .gugun(region.getGugun())
                     .locationName(course.getLocationName())
-                    .commentCount(course.getCommentList().size())
+                    .commentCount(course.getCommentCount())
                     .build());
             });
         // 내 코스 목록 반환
@@ -203,6 +213,7 @@ public class CourseServiceImpl implements CourseService {
                 .viewCount(0)
                 .interestCount(0)
                 .likeCount(0)
+                .commentCount(0)
                 .mainImage(courseCreateReqDto.getLocationList().get(0).getImageList().get(0))
                 .locationName(courseCreateReqDto.getLocationList().get(0).getName())
                 .user(user)
