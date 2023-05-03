@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 // import 'search.dart' as search;
 // import 'package:carousel_slider/carousel_slider.dart';
 import 'carousel.dart' as carousel;
-import 'course_list.dart' as course;
+import 'course_search/course_list.dart' as course;
+import 'mypage.dart' as mypage;
 
 final List<String> imgList = [
   'https://images.unsplash.com/photo-1520342868574-5fa3804e551c?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=6ff92caffcdd63681a35134a6770ed3b&auto=format&fit=crop&w=1951&q=80',
@@ -75,9 +76,15 @@ buttonBar1() {
   );
 }
 
-class ButtonBar2 extends StatelessWidget {
+class ButtonBar2 extends StatefulWidget {
   const ButtonBar2({super.key});
 
+  @override
+  State<ButtonBar2> createState() => _ButtonBar2State();
+}
+
+class _ButtonBar2State extends State<ButtonBar2> {
+  var pageNum = pageController.pageNum.value;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -87,11 +94,10 @@ class ButtonBar2 extends StatelessWidget {
         children: [
           InkWell(
             onTap: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //       builder: (context) => const register.Register()),
-              // );
+              setState(() {
+                pageNum = 1;
+              });
+              // print(pageController.pageNum.value);
             },
             child: Container(
               width: 80.0,

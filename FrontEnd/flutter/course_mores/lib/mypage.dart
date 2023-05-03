@@ -1,9 +1,11 @@
-import 'login_page.dart' as login;
+// import 'login_page.dart' as login;
 import 'package:flutter/material.dart';
 import 'sign_up.dart' as signup;
 import 'package:animated_button_bar/animated_button_bar.dart';
 import 'search.dart' as search;
 import 'course_search/course_list.dart' as course;
+// import 'package:get/get.dart';
+import 'main.dart';
 
 class MyPage extends StatefulWidget {
   const MyPage({super.key});
@@ -25,14 +27,14 @@ class _MyPageState extends State<MyPage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 profileBox(),
-                OutlinedButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const login.LoginPage()));
-                    },
-                    child: Text('로그인페이지')),
+                // OutlinedButton(
+                //     onPressed: () {
+                //       Navigator.push(
+                //           context,
+                //           MaterialPageRoute(
+                //               builder: (context) => const login.LoginPage()));
+                //     },
+                //     child: Text('로그인페이지')),
                 ButtonBar(),
                 Text(
                   '내가 작성한 코스 : 11 개',
@@ -254,6 +256,7 @@ class ModalBottom extends StatelessWidget {
                                 child: InkWell(
                                     onTap: () {
                                       Navigator.pop(context);
+                                      loginController.changeLoginStatus();
                                       // 로그아웃 메서드 쓰기..
                                       print('logout');
                                     },

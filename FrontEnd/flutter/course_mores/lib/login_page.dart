@@ -1,3 +1,4 @@
+import 'package:coursemores/getx_controller.dart';
 import 'package:coursemores/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -5,9 +6,39 @@ import 'package:flutter_web_auth/flutter_web_auth.dart';
 import 'package:get/get.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'sign_up.dart' as signup;
+import 'home_screen.dart' as home;
+import 'main.dart' as main;
+import 'package:dio/dio.dart';
+
+var options = BaseOptions(baseUrl: 'https://coursemores.site/api/');
+final dio = Dio(options);
+final tokenController = Get.put(TokenStorage());
+
+void postLogin(accessToken) async {
+  print(accessToken);
+
+  dynamic bodyData = {'accessToken': accessToken};
+  print(bodyData);
+
+  final response = await dio.post('auth/kakao/login', data: bodyData);
+
+  print(response);
+
+  if (response.statusCode == 200) {
+    // 추후에 issignup으로 교체
+    if (response.data['userSimpleInfo'] == null) {
+      tokenController.saveToken(response.data['token']['accessToken'],
+          response.data['token']['refreshToken']);
+      Get.to(signup.SignUp());
+    } else {
+      Get.to(main.MyApp());
+    }
+  }
+}
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
+  // const BASE_URL = 'https://coursemores.site/api/';
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +79,10 @@ class LoginPage extends StatelessWidget {
                         OutlinedButton(
                             onPressed: () {
                               loginController.changeLoginStatus();
-                              print(loginController.isLoggedIn.value);
+                              Get.to(
+                                main.MyApp(),
+                                transition: Transition.fadeIn,
+                              );
                             },
                             child: Text(
                               '로그인된척하기',
@@ -91,8 +125,10 @@ class LoginPage extends StatelessWidget {
                                 debugPrint('카카오계정 로그인 실패 $error');
                               }
                             }
+
                             if (token != null) {
                               print(token);
+                              postLogin(token.accessToken);
                               // Map<String, dynamic>? response =
                               //     await userService.signInByKakaoToken(token.accessToken);
                             }
