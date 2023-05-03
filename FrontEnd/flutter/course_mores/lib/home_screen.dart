@@ -17,7 +17,9 @@ final List<String> imgList = [
 ];
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({super.key, required this.changePageNum});
+
+  final changePageNum;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -25,6 +27,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   Position? _currentPosition;
+  late Function changePageNum = widget.changePageNum;
 
   Future<void> _getCurrentLocation() async {
     final permission = await Geolocator.requestPermission();
@@ -170,8 +173,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     ]),
                   ),
                 ),
-                buttonBar1(),
-                ButtonBar2(),
+                buttonBar1(changePageNum: changePageNum),
+                ButtonBar2(changePageNum: changePageNum),
                 popularCourse(),
                 themeList(),
                 reviews(),
@@ -182,7 +185,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-buttonBar1() {
+buttonBar1({required Function changePageNum}) {
   return Padding(
     padding: const EdgeInsets.fromLTRB(0, 15.0, 0, 15.0),
     child: Row(
@@ -199,7 +202,7 @@ buttonBar1() {
         Container(
           decoration: iconBoxDeco(),
           width: 300.0,
-          child: searchButtonBar(),
+          child: searchButtonBar(changePageNum: changePageNum),
         )
       ],
     ),
@@ -207,7 +210,9 @@ buttonBar1() {
 }
 
 class ButtonBar2 extends StatefulWidget {
-  const ButtonBar2({super.key});
+  const ButtonBar2({super.key, required this.changePageNum});
+
+  final changePageNum;
 
   @override
   State<ButtonBar2> createState() => _ButtonBar2State();
@@ -215,6 +220,8 @@ class ButtonBar2 extends StatefulWidget {
 
 class _ButtonBar2State extends State<ButtonBar2> {
   var pageNum = pageController.pageNum.value;
+  late Function changePageNum = widget.changePageNum;
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -225,9 +232,8 @@ class _ButtonBar2State extends State<ButtonBar2> {
           InkWell(
             onTap: () {
               setState(() {
-                pageNum = 1;
+                changePageNum(1);
               });
-              // print(pageController.pageNum.value);
             },
             child: Container(
               width: 80.0,
@@ -243,11 +249,7 @@ class _ButtonBar2State extends State<ButtonBar2> {
           ),
           InkWell(
             onTap: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //       builder: (context) => const search.Search()),
-              // );
+              changePageNum(3);
             },
             child: Container(
               width: 80.0,
@@ -266,31 +268,19 @@ class _ButtonBar2State extends State<ButtonBar2> {
           ),
           InkWell(
             onTap: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //       builder: (context) => const search.Search()),
-              // );
+              changePageNum(4);
             },
             child: Container(
               width: 80.0,
               height: 80.0,
               decoration: iconBoxDeco(),
-              child: InkWell(
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const mypage.MyPage()));
-                },
-                child: SizedBox(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const <Widget>[
-                      Icon(Icons.account_circle),
-                      Text('마이페이지')
-                    ],
-                  ),
+              child: SizedBox(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const <Widget>[
+                    Icon(Icons.account_circle),
+                    Text('마이페이지')
+                  ],
                 ),
               ),
             ),
@@ -393,7 +383,7 @@ emptyTheTextFormField() {
 
 controlSearching(str) {}
 
-searchButtonBar() {
+searchButtonBar({required Function changePageNum}) {
   return TextFormField(
     controller: searchTextEditingController,
     decoration: InputDecoration(
@@ -412,6 +402,7 @@ searchButtonBar() {
         iconSize: 30,
         onPressed: () {
           // print("${searchTextEditingController.text} 검색하기");
+          changePageNum(2);
         },
       ),
     ),
