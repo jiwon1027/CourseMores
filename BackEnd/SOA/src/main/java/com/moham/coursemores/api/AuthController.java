@@ -8,11 +8,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -51,6 +49,29 @@ public class AuthController {
         logger.info("<< response : userSimpleInfo={}",resultMap.get("userSimpleInfo"));
         logger.info("<< response : token={}",resultMap.get("token"));
 
+        return new ResponseEntity<>(resultMap,HttpStatus.OK);
+    }
+
+    @GetMapping("{testId}")
+    public ResponseEntity<Map<String, Object>> testGet(
+            @PathVariable int testId) {
+        logger.info(">> request : testId={}", testId);
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("testId",testId);
+        logger.info("<< response : none");
+
+        return new ResponseEntity<>(resultMap,HttpStatus.OK);
+    }
+    @PostMapping("{testId}")
+    public ResponseEntity<Map<String, Object>> testPost(
+            @PathVariable int testId,
+            @RequestBody String testBody) {
+        logger.info(">> request : testId={}", testId);
+        logger.info(">> request : testBody={}", testBody);
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("testId",testId);
+        resultMap.put("testBody",testBody);
+        logger.info("<< response : none");
         return new ResponseEntity<>(resultMap,HttpStatus.OK);
     }
 }
