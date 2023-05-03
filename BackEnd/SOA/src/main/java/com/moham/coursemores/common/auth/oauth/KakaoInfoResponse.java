@@ -1,4 +1,4 @@
-package com.moham.coursemores.common.auth.oauth2;
+package com.moham.coursemores.common.auth.oauth;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

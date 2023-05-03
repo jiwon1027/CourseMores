@@ -1,6 +1,6 @@
 package com.moham.coursemores.api;
 
-import com.moham.coursemores.common.auth.oauth2.KakaoLoginParams;
+import com.moham.coursemores.common.auth.oauth.KakaoLoginParams;
 import com.moham.coursemores.common.util.OAuthProvider;
 import com.moham.coursemores.dto.profile.UserSimpleInfoResDto;
 import com.moham.coursemores.dto.token.TokenResDto;

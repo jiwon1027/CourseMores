@@ -1,4 +1,4 @@
-package com.moham.coursemores.common.auth.oauth2;
+package com.moham.coursemores.common.auth.oauth;
 
 import com.moham.coursemores.common.util.OAuthProvider;
 

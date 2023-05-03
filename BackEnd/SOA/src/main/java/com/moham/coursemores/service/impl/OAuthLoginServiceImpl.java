@@ -1,8 +1,8 @@
 package com.moham.coursemores.service.impl;
 
 import com.moham.coursemores.common.auth.jwt.TokenProvider;
-import com.moham.coursemores.common.auth.oauth2.OAuthInfoResponse;
-import com.moham.coursemores.common.auth.oauth2.OAuthLoginParams;
+import com.moham.coursemores.common.auth.oauth.OAuthInfoResponse;
+import com.moham.coursemores.common.auth.oauth.OAuthLoginParams;
 import com.moham.coursemores.common.util.OAuthProvider;
 import com.moham.coursemores.domain.User;
 import com.moham.coursemores.dto.profile.UserSimpleInfoResDto;
@@ -10,7 +10,6 @@ import com.moham.coursemores.dto.token.TokenResDto;
 import com.moham.coursemores.repository.UserRepository;
 import com.moham.coursemores.service.OAuthApiClient;
 import com.moham.coursemores.service.OAuthLoginService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
