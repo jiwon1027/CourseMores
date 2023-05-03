@@ -2,8 +2,6 @@ package com.moham.coursemores.api;
 
 import com.moham.coursemores.common.auth.oauth.KakaoLoginParams;
 import com.moham.coursemores.common.util.OAuthProvider;
-import com.moham.coursemores.dto.profile.UserSimpleInfoResDto;
-import com.moham.coursemores.dto.token.TokenResDto;
 import com.moham.coursemores.service.OAuthLoginService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -15,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -27,7 +24,7 @@ public class AuthController {
 
     private final OAuthLoginService oAuthLoginService;
 
-    @PostMapping("/kakao")
+    @PostMapping("kakao")
     public ResponseEntity<?> loginKakao(
             @RequestBody KakaoLoginParams params) {
         logger.info(">> request : params={}", params);
@@ -42,7 +39,7 @@ public class AuthController {
         return new ResponseEntity<>(resultMap,HttpStatus.OK);
     }
 
-    @PostMapping("/kakao/login")
+    @PostMapping("kakao/login")
     public ResponseEntity<?> kakaoLogin(
             @RequestBody String accessToken) {
         logger.info(">> request : accessToken={}", accessToken);
@@ -51,7 +48,7 @@ public class AuthController {
         logger.info("<< response : userId={}",userId);
 
         Map<String, Object> resultMap = oAuthLoginService.getUserProfile(userId, OAuthProvider.KAKAO);
-        logger.info("<< response : userSimpleInfoResDto={}",resultMap.get("userSimpleInfo"));
+        logger.info("<< response : userSimpleInfo={}",resultMap.get("userSimpleInfo"));
         logger.info("<< response : token={}",resultMap.get("token"));
 
         return new ResponseEntity<>(resultMap,HttpStatus.OK);
