@@ -39,7 +39,8 @@ public class AuthController {
 
     @PostMapping("kakao/login")
     public ResponseEntity<Map<String, Object>> kakaoLogin(
-            @RequestBody String accessToken) {
+            @RequestBody Map<String,Object> requestMap) {
+        String accessToken = (String)requestMap.get("accessToken");
         logger.info(">> request : accessToken={}", accessToken);
 
         Long userId = oAuthLoginService.login(accessToken, OAuthProvider.KAKAO);
