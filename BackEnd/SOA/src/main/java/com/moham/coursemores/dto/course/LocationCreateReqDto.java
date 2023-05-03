@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.ToString;
 
 import java.util.List;
+import org.springframework.web.multipart.MultipartFile;
 
 @ToString
 @Getter
@@ -16,5 +17,5 @@ public class LocationCreateReqDto {
     private String title;
     private String content;
     private Long regionId;
-    private List<String> imageList;
+    private List<MultipartFile> imageList;
 }
