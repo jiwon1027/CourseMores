@@ -12,6 +12,8 @@ import 'login_page.dart' as login;
 import 'package:get/get.dart';
 
 final loginController = Get.put(LoginStatus());
+final pageController = Get.put(PageNum());
+var pageNum = pageController.pageNum.value;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,11 +29,10 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  var pageNum = 0;
-
   @override
   Widget build(BuildContext context) {
     return Obx(() {
+      print(pageNum);
       if (loginController.isLoggedIn.value == true) {
         return Scaffold(
             backgroundColor: const Color.fromARGB(255, 240, 240, 240),

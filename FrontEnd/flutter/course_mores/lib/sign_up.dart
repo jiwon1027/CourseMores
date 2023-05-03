@@ -4,6 +4,7 @@ import 'notification/notification.dart' as noti;
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
+import 'package:dio/dio.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
@@ -302,6 +303,7 @@ class _RegisterNicknameState extends State<RegisterNickname> {
                         2,
                         '최소 2자 이상이어야 합니다.',
                         '최대 10자 이하여야 합니다.',
+                        '이미 존재하는 닉네임입니다.',
                         _helperText)),
               ),
               IconButton(
@@ -321,6 +323,7 @@ class _RegisterNicknameState extends State<RegisterNickname> {
       return;
     } else {
       formKey.currentState!.save();
+
       setState(() {
         _helperText = '사용 가능한 닉네임입니다!';
       });
@@ -333,25 +336,52 @@ class _RegisterNicknameState extends State<RegisterNickname> {
   }
 }
 
-Widget textFormFieldComponent(bool obscureText, String hintText, int maxSize,
-    int minSize, String underError, String overError, String? helperText) {
+Widget textFormFieldComponent(
+    bool obscureText,
+    String hintText,
+    int maxSize,
+    int minSize,
+    String underError,
+    String overError,
+    String duplicateError,
+    String? helperText) {
   return TextFormField(
     obscureText: obscureText,
     decoration: InputDecoration(
         hintText: hintText,
         helperText: helperText,
         helperStyle: TextStyle(color: Colors.blue)),
+    onSaved: (String? inputValue) {
+      String nicknameValue = inputValue!;
+      print('닉네임inputvalue!');
+    },
     validator: (value) {
+      duplicateCheck(value);
       if (value!.length < minSize) {
         return underError;
       } else if (value.length > maxSize) {
         return overError;
         // ###중복 닉네임 체크 필요
+      } else if (isDuplicate == true) {
+        return duplicateError;
       } else {
         return null;
       }
     },
   );
+}
+
+var options = BaseOptions(baseUrl: 'https://coursemores.site/api/');
+final dio = Dio(options);
+bool? isDuplicate;
+void duplicateCheck(nickname) async {
+  dynamic bodyData = {'nickname': nickname};
+  final response = await dio.post('user/validation', data: bodyData);
+
+  if (response.statusCode == 200) {
+    print('닉네임 중복 검사!');
+    isDuplicate = response.data['isDuplicate'];
+  }
 }
 
 class GenderChoice extends StatefulWidget {
@@ -466,6 +496,7 @@ class _AgeRangeState extends State<AgeRange> {
               setState(() {
                 _value = newValue;
               });
+              print(_value);
             },
             min: 0.0,
             max: 70.0,
