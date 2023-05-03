@@ -11,8 +11,15 @@ import com.moham.coursemores.repository.UserRepository;
 import com.moham.coursemores.service.OAuthApiClient;
 import com.moham.coursemores.service.OAuthLoginService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -30,12 +37,17 @@ public class OAuthLoginServiceImpl implements OAuthLoginService {
     @Autowired
     private TokenProvider tokenProvider;
 
+    @Autowired
+    private AuthenticationManagerBuilder authenticationManagerBuilder;
+
     public OAuthLoginServiceImpl(List<OAuthApiClient> clients) {
         this.clients = clients.stream().collect(
                 Collectors.toUnmodifiableMap(OAuthApiClient::oAuthProvider, Function.identity())
         );
     }
 
+    //////////////////////////////////////////////////////////
+    // 지울 부분
     public OAuthInfoResponse request(OAuthLoginParams params) {
         OAuthApiClient client = clients.get(params.oAuthProvider());
         String accessToken = client.requestAccessToken(params);
@@ -46,11 +58,10 @@ public class OAuthLoginServiceImpl implements OAuthLoginService {
     @Override
     public Long login(OAuthLoginParams params) {
         OAuthInfoResponse oAuthInfoResponse = request(params);
-        System.out.println("email : "+oAuthInfoResponse.getEmail());
-        System.out.println("provider : "+oAuthInfoResponse.getOAuthProvider());
 
         return successLogin(oAuthInfoResponse).getId();
     }
+    //////////////////////////////////////////////////////////
 
     @Override
     public Long login(String accessToken, OAuthProvider oAuthProvider) {
@@ -61,16 +72,38 @@ public class OAuthLoginServiceImpl implements OAuthLoginService {
     }
 
     @Override
-    public UserSimpleInfoResDto getUserProfile(Long userId) {
+    public Map<String, Object> getUserProfile(Long userId, OAuthProvider oAuthProvider) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
 
-        if(user.getNickname() == null || user.getAge() == 0 || user.getGender() == null)
-            return null;
+        Map<String, Object> resultMap = new HashMap<>();
+        UserSimpleInfoResDto userSimpleInfo = null;
 
-        return UserSimpleInfoResDto.builder()
-                .profileImage(user.getProfileImage())
-                .nickname(user.getNickname())
+        // 값이 존재한다면
+        if(StringUtils.hasText(user.getNickname())
+                && user.getAge() > 0
+                && StringUtils.hasText(user.getGender()))
+            userSimpleInfo = UserSimpleInfoResDto.builder()
+                    .profileImage(user.getProfileImage())
+                    .nickname(user.getNickname())
+                    .build();
+
+        resultMap.put("userSimpleInfo",userSimpleInfo);
+
+        TokenResDto tokenResDto = generateToken(userId, oAuthProvider);
+        resultMap.put("token",tokenResDto);
+
+        return resultMap;
+    }
+
+    @Override
+    public TokenResDto generateToken(Long userId, OAuthProvider oAuthProvider){
+        String accessToken = tokenProvider.generateAccessToken(Long.toString(userId), oAuthProvider);
+        String refreshToken = tokenProvider.generateRefreshToken();
+
+        return TokenResDto.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
                 .build();
     }
 
@@ -84,16 +117,5 @@ public class OAuthLoginServiceImpl implements OAuthLoginService {
                 .roles("ROLE_USER")
                 .provider(oAuthInfo.getOAuthProvider())
                 .build()));
-    }
-
-    @Override
-    public TokenResDto generateToken(Long userId){
-        String accessToken = tokenProvider.generateAccessToken(Long.toString(userId));
-        String refreshToken = tokenProvider.generateRefreshToken();
-
-        return TokenResDto.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
     }
 }

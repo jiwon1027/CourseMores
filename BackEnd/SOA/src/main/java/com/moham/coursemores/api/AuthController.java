@@ -30,25 +30,14 @@ public class AuthController {
     @PostMapping("/kakao")
     public ResponseEntity<?> loginKakao(
             @RequestBody KakaoLoginParams params) {
-
         logger.info(">> request : params={}", params);
-
-        Map<String, Object> resultMap = new HashMap<>();
 
         Long userId = oAuthLoginService.login(params);
         logger.info("<< response : userId={}",userId);
 
-        UserSimpleInfoResDto userSimpleInfoResDto = oAuthLoginService.getUserProfile(userId);
-        resultMap.put("userSimpleInfo",userSimpleInfoResDto);
-        logger.info("<< response : userSimpleInfoResDto={}",userSimpleInfoResDto);
-
-        boolean isSignUp = userSimpleInfoResDto==null ? false : true;
-        resultMap.put("isSignUp",isSignUp);
-        logger.info("<< response : isSignUp={}",isSignUp);
-
-        TokenResDto tokenResDto = oAuthLoginService.generateToken(userId);
-        resultMap.put("token",tokenResDto);
-        logger.info("<< response : token={}",tokenResDto);
+        Map<String, Object> resultMap = oAuthLoginService.getUserProfile(userId, OAuthProvider.KAKAO);
+        logger.info("<< response : userSimpleInfoResDto={}",resultMap.get("userSimpleInfo"));
+        logger.info("<< response : token={}",resultMap.get("token"));
 
         return new ResponseEntity<>(resultMap,HttpStatus.OK);
     }
@@ -56,25 +45,14 @@ public class AuthController {
     @PostMapping("/kakao/login")
     public ResponseEntity<?> kakaoLogin(
             @RequestBody String accessToken) {
-
         logger.info(">> request : accessToken={}", accessToken);
-
-        Map<String, Object> resultMap = new HashMap<>();
 
         Long userId = oAuthLoginService.login(accessToken, OAuthProvider.KAKAO);
         logger.info("<< response : userId={}",userId);
 
-        UserSimpleInfoResDto userSimpleInfoResDto = oAuthLoginService.getUserProfile(userId);
-        resultMap.put("userSimpleInfo",userSimpleInfoResDto);
-        logger.info("<< response : userSimpleInfoResDto={}",userSimpleInfoResDto);
-
-        boolean isSignUp = userSimpleInfoResDto==null ? false : true;
-        resultMap.put("isSignUp",isSignUp);
-        logger.info("<< response : isSignUp={}",isSignUp);
-
-        TokenResDto tokenResDto = oAuthLoginService.generateToken(userId);
-        resultMap.put("token",tokenResDto);
-        logger.info("<< response : token={}",tokenResDto);
+        Map<String, Object> resultMap = oAuthLoginService.getUserProfile(userId, OAuthProvider.KAKAO);
+        logger.info("<< response : userSimpleInfoResDto={}",resultMap.get("userSimpleInfo"));
+        logger.info("<< response : token={}",resultMap.get("token"));
 
         return new ResponseEntity<>(resultMap,HttpStatus.OK);
     }
