@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'carousel.dart' as carousel;
 import 'course_search/course_list.dart' as course;
 import 'mypage.dart' as mypage;
+import 'getx_controller.dart';
+import 'main.dart';
 
 final List<String> imgList = [
   'https://images.unsplash.com/photo-1520342868574-5fa3804e551c?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=6ff92caffcdd63681a35134a6770ed3b&auto=format&fit=crop&w=1951&q=80',
@@ -22,6 +24,71 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  Position? _currentPosition;
+
+  Future<void> _getCurrentLocation() async {
+    final permission = await Geolocator.requestPermission();
+    if (permission == LocationPermission.denied) {
+      // 권한이 거부됨
+      return;
+    }
+    final position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+    setState(() {
+      _currentPosition = position;
+    });
+  }
+
+  // openweathermap의 api키
+  final String apiKey = '0345e074935e928407e8821eb5ed8291';
+  final String apiBaseUrl = 'https://api.openweathermap.org/data/2.5/weather';
+
+  Future<Map<String, dynamic>> getWeatherData(double lat, double lon) async {
+    try {
+      final dio = Dio();
+      final response = await dio.get(apiBaseUrl, queryParameters: {
+        'lat': lat.toString(),
+        'lon': lon.toString(),
+        'appid': apiKey,
+        'units': 'metric',
+        'lang': 'kr'
+      });
+      if (response.statusCode == 200) {
+        return response.data;
+      } else {
+        throw Exception('Failed to load weather data');
+      }
+    } catch (e) {
+      throw Exception('Failed to load weather data: $e');
+    }
+  }
+
+  Future<Map<String, dynamic>> _getWeather() async {
+    if (_currentPosition == null) {
+      await _getCurrentLocation();
+    }
+    final lat = _currentPosition?.latitude;
+    final lon = _currentPosition?.longitude;
+    if (lat != null && lon != null) {
+      final weatherData = await getWeatherData(lat, lon);
+      return weatherData;
+    }
+    throw Exception('Failed to get current location');
+  }
+
+  Future<String> _getAddress(double lat, double lon) async {
+    final List<geocoding.Placemark> placemarks = await geocoding
+        .placemarkFromCoordinates(lat, lon, localeIdentifier: 'ko');
+    if (placemarks != null && placemarks.isNotEmpty) {
+      final placemark = placemarks.first;
+      final String address =
+          '${placemark.subLocality} ${placemark.thoroughfare} ';
+      return address;
+    }
+    return '';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,7 +105,70 @@ class _HomeScreenState extends State<HomeScreen> {
                   width: double.infinity,
                   height: 200.0,
                   color: Colors.amber,
-                  child: const Text('날씨..'),
+                  child: Center(
+                    child: Column(children: [
+                      Text('날씨~~'),
+                      SizedBox(
+                        child: FutureBuilder<Map<String, dynamic>>(
+                          future: _getWeather(),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              final weatherData = snapshot.data!;
+                              final temp =
+                                  weatherData['main']['temp'].toString();
+                              final weather = weatherData['weather'][0]
+                                      ['description']
+                                  .toString();
+                              return Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    '위치: ${_currentPosition?.latitude}, ${_currentPosition?.longitude}',
+                                    style: TextStyle(fontSize: 24),
+                                  ),
+                                  SizedBox(height: 16),
+                                  Text(
+                                    '기온: $temp °C',
+                                    style: TextStyle(fontSize: 24),
+                                  ),
+                                  SizedBox(height: 16),
+                                  Text(
+                                    '날씨: $weather',
+                                    style: TextStyle(fontSize: 24),
+                                  ),
+                                  FutureBuilder<String>(
+                                    future: _getAddress(
+                                        _currentPosition?.latitude ?? 0,
+                                        _currentPosition?.longitude ?? 0),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return Text('검색중...');
+                                      } else if (snapshot.hasData) {
+                                        final address = snapshot.data!;
+                                        return Text(
+                                          '장소: $address',
+                                          style: TextStyle(fontSize: 24),
+                                        );
+                                      } else if (snapshot.hasError) {
+                                        return Text('Error: ${snapshot.error}');
+                                      } else {
+                                        return Text('');
+                                      }
+                                    },
+                                  ),
+                                ],
+                              );
+                            } else if (snapshot.hasError) {
+                              return Text('Error: ${snapshot.error}');
+                            } else {
+                              return CircularProgressIndicator();
+                            }
+                          },
+                        ),
+                      )
+                    ]),
+                  ),
                 ),
                 buttonBar1(),
                 ButtonBar2(),

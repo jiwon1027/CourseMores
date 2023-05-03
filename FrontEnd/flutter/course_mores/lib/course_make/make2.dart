@@ -4,6 +4,7 @@ import 'package:coursemores/course_make/make_search.dart';
 // import 'package:flutter_reorderable_list/flutter_reorderable_list.dart';
 import 'package:flutter_reorderable_list/flutter_reorderable_list.dart' as frl;
 import 'package:flutter/material.dart';
+import './place_edit.dart';
 
 class CourseMake extends StatefulWidget {
   const CourseMake({Key? key}) : super(key: key);
@@ -31,7 +32,7 @@ class _CourseMakeState extends State<CourseMake> {
   late List<ItemData> _items;
   _CourseMakeState() {
     _items = [];
-    for (int i = 0; i < 100; ++i) {
+    for (int i = 0; i < 30; ++i) {
       String label = "List item $i";
       if (i == 5) {
         label += ". This item has a long label and will be wrapped.";
@@ -65,6 +66,19 @@ class _CourseMakeState extends State<CourseMake> {
   void _reorderDone(Key item) {
     final draggedItem = _items[_indexOfKey(item)];
     debugPrint("Reordering finished for ${draggedItem.title}}");
+  }
+
+  void onEdit(ItemData item) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EditItemPage(item: item),
+      ),
+    );
+  }
+
+  void onDelete(ItemData item) {
+    // TODO: Implement deleting logic here
   }
 
   //
@@ -104,7 +118,7 @@ class _CourseMakeState extends State<CourseMake> {
               ),
             ),
             TextSpan(
-              text: '코스 작성하기',
+              text: '장소 추가하기 🏙',
               style: TextStyle(
                 fontSize: 22,
                 color: Colors.black,
@@ -131,25 +145,19 @@ class _CourseMakeState extends State<CourseMake> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedBox(
-                height: 10,
-              ),
-              const Text(
-                '장소 추가하기 🏙',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 23),
-              ),
-              SizedBox(
                 height: 20,
               ),
               const Text(
-                '장소는 최대 ~~개까지 추가할 수 있어요',
-                style: TextStyle(color: Colors.grey),
+                '장소는 최대 5개까지 추가할 수 있어요',
+                style: TextStyle(
+                    color: Color.fromARGB(255, 92, 67, 67), fontSize: 18),
               ),
               SizedBox(
                 height: 10,
               ),
               SizedBox(
                 width: 380,
-                height: 480,
+                height: 520,
                 child: frl.ReorderableList(
                   onReorder: _reorderCallback,
                   onReorderDone: _reorderDone,
@@ -194,6 +202,8 @@ class _CourseMakeState extends State<CourseMake> {
                                   isFirst: index == 0,
                                   isLast: index == _items.length - 1,
                                   draggingMode: _draggingMode,
+                                  onEdit: () => onEdit(_items[index]),
+                                  onDelete: () => onDelete(_items[index]),
                                 );
                               },
                               childCount: _items.length,
@@ -270,12 +280,16 @@ class Item extends StatelessWidget {
     required this.isFirst,
     required this.isLast,
     required this.draggingMode,
+    required this.onEdit,
+    required this.onDelete,
   }) : super(key: key);
 
   final ItemData data;
   final bool isFirst;
   final bool isLast;
   final DraggingMode draggingMode;
+  final VoidCallback onEdit;
+  final VoidCallback onDelete;
 
   Widget _buildChild(BuildContext context, frl.ReorderableItemState state) {
     BoxDecoration decoration;
@@ -314,38 +328,120 @@ class Item extends StatelessWidget {
     Widget content = Container(
       decoration: decoration,
       child: SafeArea(
-          top: false,
-          bottom: false,
-          child: Opacity(
-            // hide content for placeholder
-            opacity: state == frl.ReorderableItemState.placeholder ? 0.0 : 1.0,
-            child: IntrinsicHeight(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Expanded(
-                      child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 14.0, horizontal: 14.0),
-                    child: Text(data.title,
-                        style: Theme.of(context).textTheme.titleMedium),
-                  )),
-                  // Triggers the reordering
-                  dragHandle,
-                ],
+        top: false,
+        bottom: false,
+        child: IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(
+                flex: 5,
+                child: Container(
+                  padding:
+                      EdgeInsets.symmetric(vertical: 14.0, horizontal: 14.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        data.title,
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          ElevatedButton.icon(
+                            onPressed: () {},
+                            icon: Icon(Icons.edit),
+                            label: Text('수정'),
+                            style: ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 10),
+                          ElevatedButton.icon(
+                            onPressed: () {},
+                            icon: Icon(Icons.delete),
+                            label: Text('삭제'),
+                            style: ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ),
-          )),
+              Expanded(
+                flex: 1,
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: dragHandle,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    Widget image = Container(
+      // height: MediaQuery.of(context).size.height / 4,
+      height: 120,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('assets/img1.jpg'),
+          fit: BoxFit.cover,
+        ),
+      ),
     );
 
     // For android dragging mode, wrap the entire content in DelayedReorderableListener
     if (draggingMode == DraggingMode.android) {
       content = frl.DelayedReorderableListener(
-        child: content,
+        child:
+            // Column(
+            //   children: [
+            //     image,
+            //     content,
+            //   ],
+            // ),
+            Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20.0),
+          ),
+          child: Column(
+            children: [
+              image,
+              content,
+            ],
+          ),
+        ),
       );
     }
 
-    return content;
+    // return Column(
+    //   children: [
+    //     image,
+    //     content,
+    //   ],
+    // );
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20.0),
+      ),
+      child: Column(
+        children: [
+          image,
+          content,
+        ],
+      ),
+    );
   }
 
   @override

@@ -11,7 +11,16 @@ class CMMap extends StatefulWidget {
 
 class _CMMapState extends State<CMMap> {
   final Set<Marker> _markers = {};
+  late BitmapDescriptor customIcon;
   // LatLng? _selectedLocation;
+
+  @override
+  void initState() {
+    super.initState();
+    BitmapDescriptor.fromAssetImage(
+            ImageConfiguration(size: Size(30, 40)), 'assets/flower_marker.png')
+        .then((icon) => customIcon = icon);
+  }
 
   GoogleMapController? _mapController;
 
@@ -70,9 +79,9 @@ class _CMMapState extends State<CMMap> {
         Marker(
           markerId: MarkerId('selected-location'),
           position: location,
+          icon: customIcon,
         ),
-      );
-      // _selectedLocation = location;
+      ); // _selectedLocation = location;
     });
   }
 
