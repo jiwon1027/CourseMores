@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Map;
 
 @RestController
-@RequestMapping("test")
+@RequestMapping("auth")
 @RequiredArgsConstructor
 public class AuthController {
 
@@ -25,7 +25,7 @@ public class AuthController {
     private final OAuthLoginService oAuthLoginService;
 
     @PostMapping("kakao")
-    public ResponseEntity<?> loginKakao(
+    public ResponseEntity<Map<String, Object>> loginKakao(
             @RequestBody KakaoLoginParams params) {
         logger.info(">> request : params={}", params);
 
@@ -40,7 +40,7 @@ public class AuthController {
     }
 
     @PostMapping("kakao/login")
-    public ResponseEntity<?> kakaoLogin(
+    public ResponseEntity<Map<String, Object>> kakaoLogin(
             @RequestBody String accessToken) {
         logger.info(">> request : accessToken={}", accessToken);
 
