@@ -13,3 +13,27 @@ eureka:
 spring:
   application:
     name: service
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://k8a4061.p.ssafy.io:3306/coursemores?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: root
+    password: moham1234
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        highlight_sql: true
+        default_batch_fetch_size: 100
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    open-in-view: false
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: debug
+
+jwt:
+  secret: c3ByaW5nLWJvb3Qtc2VjdXJpdHktand0LXR1dG9yaWFsLWppd29vbi1zcHJpbmctYm9vdC1zZWN1cml0eS1qd3QtdHV0b3JpYWwK
