@@ -42,6 +42,12 @@ class _SearchState extends State<Search> {
   isVisitedCheckBoxClick() {
     setState(() {
       isVisited = !isVisited;
+      Fluttertoast.showToast(
+        msg:
+            "방문여부 : $isVisited, 최신순 : $isLatestSelected, 인기순 : $isPopularSelected",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+      );
     });
   }
 
@@ -49,6 +55,12 @@ class _SearchState extends State<Search> {
     setState(() {
       isLatestSelected = true;
       isPopularSelected = false;
+      Fluttertoast.showToast(
+        msg:
+            "방문여부 : $isVisited, 최신순 : $isLatestSelected, 인기순 : $isPopularSelected",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+      );
     });
   }
 
@@ -56,12 +68,18 @@ class _SearchState extends State<Search> {
     setState(() {
       isLatestSelected = false;
       isPopularSelected = true;
+      Fluttertoast.showToast(
+        msg:
+            "방문여부 : $isVisited, 최신순 : $isLatestSelected, 인기순 : $isPopularSelected",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+      );
     });
   }
 
   searchPageHeader() {
     return AppBar(
-        backgroundColor: Colors.white,
+        automaticallyImplyLeading: false,
         toolbarHeight: 110,
         title: Column(
           children: [
@@ -109,6 +127,7 @@ class _SearchState extends State<Search> {
             ),
             SizedBox(
               height: 45,
+              width: 400,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -152,70 +171,77 @@ class SortButtonBar extends StatefulWidget {
 }
 
 class _SortButtonBarState extends State<SortButtonBar> {
-  late bool isLatestSelected;
-  late bool isPopularSelected;
-  late Function isLatestSelectedClick;
-  late Function isPopularSelectedClick;
+  late var isLatestSelected = widget.isLatestSelected;
+  late var isPopularSelected = widget.isPopularSelected;
+  late var isLatestSelectedClick = widget.isLatestSelectedClick;
+  late var isPopularSelectedClick = widget.isPopularSelectedClick;
+
+  @override
+  void initState() {
+    super.initState();
+    isLatestSelected = widget.isLatestSelected;
+    isPopularSelected = widget.isPopularSelected;
+    isLatestSelectedClick = widget.isLatestSelectedClick;
+    isPopularSelectedClick = widget.isPopularSelectedClick;
+  }
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       // color: Colors.amber,
       height: 45,
-      child: Expanded(
-        child: ButtonBar(
-          buttonPadding: EdgeInsets.symmetric(horizontal: 0),
-          alignment: MainAxisAlignment.end,
-          children: [
-            ElevatedButton(
-              onPressed: () {
-                // setState(() {
-                //   isLatestSelected = true;
-                //   isPopularSelected = false;
-                // });
-                isLatestSelectedClick();
-              },
-              style: ButtonStyle(
-                padding: MaterialStateProperty.all(
-                    EdgeInsetsDirectional.symmetric(horizontal: 0)),
-                elevation: MaterialStateProperty.all<double>(0),
-                backgroundColor:
-                    MaterialStateProperty.all<Color>(Colors.transparent),
-                foregroundColor: MaterialStateProperty.all<Color>(
-                    isLatestSelected ? Colors.blue : Colors.grey),
-              ),
-              child: const Text(
-                '최신순',
-                style: TextStyle(
-                  fontWeight: FontWeight.w800,
-                  fontSize: 16,
-                ),
+      width: 250,
+      child: ButtonBar(
+        buttonPadding: EdgeInsets.symmetric(horizontal: 10),
+        alignment: MainAxisAlignment.end,
+        children: [
+          ElevatedButton(
+            onPressed: () {
+              isLatestSelectedClick();
+              isLatestSelected = true;
+              isPopularSelected = false;
+            },
+            style: ButtonStyle(
+              minimumSize: MaterialStateProperty.all<Size>(Size(90, 35)),
+              padding: MaterialStateProperty.all(
+                  EdgeInsetsDirectional.symmetric(horizontal: 10)),
+              elevation: MaterialStateProperty.all<double>(0),
+              backgroundColor:
+                  MaterialStateProperty.all<Color>(Colors.transparent),
+              foregroundColor: MaterialStateProperty.all<Color>(
+                  isLatestSelected ? Colors.blue : Colors.grey),
+            ),
+            child: const Text(
+              '최신순',
+              style: TextStyle(
+                fontWeight: FontWeight.w800,
+                fontSize: 16,
               ),
             ),
-            ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  isLatestSelected = false;
-                  isPopularSelected = true;
-                });
-              },
-              style: ButtonStyle(
-                elevation: MaterialStateProperty.all<double>(0),
-                backgroundColor:
-                    MaterialStateProperty.all<Color>(Colors.transparent),
-                foregroundColor: MaterialStateProperty.all<Color>(
-                    isPopularSelected ? Colors.blue : Colors.grey),
-              ),
-              child: const Text(
-                '인기순',
-                style: TextStyle(
-                  fontWeight: FontWeight.w800,
-                  fontSize: 16,
-                ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              isPopularSelectedClick();
+              isLatestSelected = false;
+              isPopularSelected = true;
+            },
+            style: ButtonStyle(
+              minimumSize: MaterialStateProperty.all<Size>(Size(90, 35)),
+              elevation: MaterialStateProperty.all<double>(0),
+              backgroundColor:
+                  MaterialStateProperty.all<Color>(Colors.transparent),
+              foregroundColor: MaterialStateProperty.all<Color>(
+                  isPopularSelected ? Colors.blue : Colors.grey),
+            ),
+            child: const Text(
+              '인기순',
+              style: TextStyle(
+                fontWeight: FontWeight.w800,
+                fontSize: 16,
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
