@@ -22,7 +22,7 @@ class _SearchState extends State<Search> {
   TextEditingController searchTextEditingController = TextEditingController();
 
   var allSelectedThemeList = [];
-  var selectedAddress = [];
+  var selectedAddress = ["전체", "전체"];
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +38,12 @@ class _SearchState extends State<Search> {
   saveFilter(newSelectedThemeList) {
     setState(() {
       allSelectedThemeList = newSelectedThemeList;
+    });
+  }
+
+  saveAddress(newSelectedAddress) {
+    setState(() {
+      selectedAddress = newSelectedAddress;
     });
   }
 
@@ -110,7 +116,8 @@ class _SearchState extends State<Search> {
                       context: context,
                       allSelectedThemeList: allSelectedThemeList,
                       selectedAddress: selectedAddress,
-                      saveFilter: saveFilter),
+                      saveFilter: saveFilter,
+                      saveAddress: saveAddress),
                   suffixIcon: IconButton(
                     icon: const Icon(Icons.search),
                     color: Colors.grey,
@@ -266,12 +273,14 @@ class FilterButton extends StatelessWidget {
     required this.allSelectedThemeList,
     required this.selectedAddress,
     required this.saveFilter,
+    required this.saveAddress,
   });
 
   final BuildContext context;
   final allSelectedThemeList;
   final selectedAddress;
   final saveFilter;
+  final saveAddress;
 
   @override
   Widget build(BuildContext context) {
@@ -287,7 +296,8 @@ class FilterButton extends StatelessWidget {
                 builder: (context) => SearchFilter(
                     allSelectedThemeList: allSelectedThemeList,
                     selectedAddress: selectedAddress,
-                    saveFilter: saveFilter)),
+                    saveFilter: saveFilter,
+                    saveAddress: saveAddress)),
           );
         });
   }
@@ -562,12 +572,14 @@ class SearchFilter extends StatefulWidget {
       {Key? key,
       required this.allSelectedThemeList,
       required this.selectedAddress,
-      required this.saveFilter})
+      required this.saveFilter,
+      required this.saveAddress})
       : super(key: key);
 
   final allSelectedThemeList;
   final selectedAddress;
   final saveFilter;
+  final saveAddress;
 
   @override
   State<SearchFilter> createState() => _SearchFilterState();
@@ -580,12 +592,13 @@ class _SearchFilterState extends State<SearchFilter> {
   late var newAllSelectedThemeList = widget.allSelectedThemeList;
   late var newSelectedAddress = widget.selectedAddress;
   late var saveFilter = widget.saveFilter;
+  late var saveAddress = widget.saveAddress;
 
   final multiSelectController = MultiSelectController();
 
   selectAddress(address) {
     setState(() {
-      newSelectedAddress = address;
+      selectedAddress = address;
     });
   }
 
@@ -694,7 +707,8 @@ class _SearchFilterState extends State<SearchFilter> {
           ),
           SizedBox(height: 20),
           Text("지역을 선택해보세요 🗺", style: TextStyle(fontSize: 20)),
-          MyDropdown(selectAddress: selectAddress),
+          MyDropdown(
+              selectAddress: selectAddress, selectedAddress: selectedAddress),
           SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -710,10 +724,11 @@ class _SearchFilterState extends State<SearchFilter> {
                   setState(() {
                     multiSelectController.deselectAll(); // 선택 취소
                     newAllSelectedThemeList = [];
+                    selectedAddress = ["전체", "전체"];
                     Fluttertoast.showToast(
                       msg:
                           "allSelectedTheme : $newAllSelectedThemeList, selectedAddress : $selectedAddress",
-                      toastLength: Toast.LENGTH_SHORT,
+                      toastLength: Toast.LENGTH_LONG,
                       gravity: ToastGravity.CENTER,
                     );
                   });
@@ -730,10 +745,11 @@ class _SearchFilterState extends State<SearchFilter> {
                 onPressed: () {
                   //TODO: 저장 버튼이 눌렸을 때, 지역 저장 동작 구현 필요
                   saveFilter(newAllSelectedThemeList);
+                  saveAddress(selectedAddress);
                   Fluttertoast.showToast(
                     msg:
                         "allSelectedTheme : $newAllSelectedThemeList, selectedAddress : $selectedAddress",
-                    toastLength: Toast.LENGTH_SHORT,
+                    toastLength: Toast.LENGTH_LONG,
                     gravity: ToastGravity.CENTER,
                   );
                 },
@@ -748,8 +764,11 @@ class _SearchFilterState extends State<SearchFilter> {
 }
 
 class MyDropdown extends StatefulWidget {
-  const MyDropdown({Key? key, this.selectAddress}) : super(key: key);
+  const MyDropdown(
+      {Key? key, this.selectAddress, required this.selectedAddress})
+      : super(key: key);
   final dynamic selectAddress;
+  final List<String> selectedAddress;
 
   @override
   // ignore: no_logic_in_create_state, library_private_types_in_public_api
@@ -760,8 +779,10 @@ class _MyDropdownState extends State<MyDropdown> {
   final List<String> _firstDropdownItems = course.sidoList;
   final Map<String, List<String>> _secondDropdownItems = course.sidoAllList;
 
-  String _selectedFirstDropdownItem = "서울특별시";
-  String _selectedSecondDropdownItem = "종로구";
+  // late var selectedAddress = widget.selectedAddress;
+
+  // late String _selectedFirstDropdownItem = widget.selectedAddress[0];
+  // late String _selectedSecondDropdownItem = widget.selectedAddress[1];
 
   _MyDropdownState(selectAddress);
 
@@ -771,7 +792,8 @@ class _MyDropdownState extends State<MyDropdown> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         DropdownButton(
-          value: _selectedFirstDropdownItem,
+          // value: _selectedFirstDropdownItem,
+          value: widget.selectedAddress[0],
           items: _firstDropdownItems.map((String value) {
             return DropdownMenuItem(
               value: value,
@@ -780,17 +802,20 @@ class _MyDropdownState extends State<MyDropdown> {
           }).toList(),
           onChanged: (newValue) {
             setState(() {
-              _selectedFirstDropdownItem = newValue ?? "";
-              _selectedSecondDropdownItem =
-                  _secondDropdownItems[_selectedFirstDropdownItem]![0];
+              widget.selectedAddress[0] = newValue ?? "전체";
+              widget.selectedAddress[1] =
+                  _secondDropdownItems[widget.selectedAddress[0]]![0];
+              widget.selectAddress(
+                  [widget.selectedAddress[0], widget.selectedAddress[1]]);
             });
             // print("$_selectedFirstDropdownItem $_selectedSecondDropdownItem");
           },
         ),
-        const SizedBox(width: 16),
+        const SizedBox(width: 15),
         DropdownButton(
-          value: _selectedSecondDropdownItem,
-          items: _secondDropdownItems[_selectedFirstDropdownItem]!
+          // value: _selectedSecondDropdownItem,
+          value: widget.selectedAddress[1],
+          items: _secondDropdownItems[widget.selectedAddress[0]]!
               .map((String value) {
             return DropdownMenuItem(
               value: value,
@@ -799,7 +824,9 @@ class _MyDropdownState extends State<MyDropdown> {
           }).toList(),
           onChanged: (newValue) {
             setState(() {
-              _selectedSecondDropdownItem = newValue ?? "";
+              widget.selectedAddress[1] = newValue ?? "전체";
+              widget.selectAddress(
+                  [widget.selectedAddress[0], widget.selectedAddress[1]]);
             });
             // selectAddress(
             //     [_selectedFirstDropdownItem, _selectedSecondDropdownItem]);
