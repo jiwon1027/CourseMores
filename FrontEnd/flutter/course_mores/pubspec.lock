@@ -940,6 +940,7 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.6"
+<<<<<<< HEAD
   pedantic:
     dependency: transitive
     description:
@@ -948,6 +949,8 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.11.1"
+=======
+>>>>>>> b0d3243 ( fix : 회원 등록되어있을시 홈으로 가게 수정)
   petitparser:
     dependency: transitive
     description:
@@ -1227,6 +1230,7 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.0"
+<<<<<<< HEAD
   uuid:
     dependency: transitive
     description:
@@ -1235,6 +1239,8 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.7"
+=======
+>>>>>>> b0d3243 ( fix : 회원 등록되어있을시 홈으로 가게 수정)
   vector_math:
     dependency: transitive
     description:
