@@ -27,7 +27,28 @@ class TokenStorage extends GetxController {
   }
 }
 
-// class UserInfo extends GetxController{
-//   final 
-// }
+class UserInfo extends GetxController {
+  final nickname = ''.obs;
+  final gender = ''.obs;
+  final age = 0.obs;
+  final image = ''.obs;
+  void saveNickname(newNickname) {
+    nickname.value = newNickname;
+    print(nickname.value);
+  }
 
+  void saveGender(newGender) {
+    gender.value = newGender;
+    print(gender.value);
+  }
+
+  void saveAge(newAge) {
+    age.value = newAge;
+    print(age.value);
+  }
+
+  void saveImage(newImage) {
+    image.value = newImage;
+    print(image.value);
+  }
+}
