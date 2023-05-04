@@ -33,7 +33,7 @@ public class AuthController {
         Long userId = oAuthLoginService.login(params);
         logger.info("<< response : userId={}",userId);
 
-        Map<String, Object> resultMap = oAuthLoginService.getUserProfile(userId, OAuthProvider.KAKAO);
+        Map<String, Object> resultMap = oAuthLoginService.getLoginUserInfo(userId, OAuthProvider.KAKAO);
         logger.info("<< response : userSimpleInfoResDto={}",resultMap.get("userSimpleInfo"));
         logger.info("<< response : token={}",resultMap.get("token"));
 
@@ -50,7 +50,7 @@ public class AuthController {
         Long userId = oAuthLoginService.kakao(accessToken);
         logger.info("<< response : userId={}",userId);
 
-        Map<String, Object> resultMap = oAuthLoginService.getUserProfile(userId, OAuthProvider.KAKAO);
+        Map<String, Object> resultMap = oAuthLoginService.getLoginUserInfo(userId, OAuthProvider.KAKAO);
         logger.info("<< response : userInfo={}",resultMap.get("userInfo"));
         logger.info("<< response : token={}",resultMap.get("token"));
 
@@ -67,7 +67,7 @@ public class AuthController {
         Long userId = oAuthLoginService.google(email);
         logger.info("<< response : userId={}",userId);
 
-        Map<String, Object> resultMap = oAuthLoginService.getUserProfile(userId, OAuthProvider.GOOGLE);
+        Map<String, Object> resultMap = oAuthLoginService.getLoginUserInfo(userId, OAuthProvider.GOOGLE);
         logger.info("<< response : userInfo={}",resultMap.get("userInfo"));
         logger.info("<< response : token={}",resultMap.get("token"));
 
