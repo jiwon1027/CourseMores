@@ -7,9 +7,10 @@ import lombok.ToString;
 @ToString
 @Getter
 @Builder
-public class CommentCreateReqDTO {
+public class CommentImageResDTO {
 
-    String content;
-    int people;
+    private long commentImageId;
+
+    private String image;
 
 }
