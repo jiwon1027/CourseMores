@@ -10,6 +10,7 @@ import 'mypage.dart' as mypage;
 import 'course_make/make_start.dart' as make;
 import 'login_page.dart' as login;
 import 'package:get/get.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 final loginController = Get.put(LoginStatus());
 final pageController = Get.put(PageNum());
@@ -29,50 +30,63 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  changePageNum(index) {
+    setState(() {
+      pageNum = index;
+      Fluttertoast.showToast(
+        msg: "$pageNum번 탭으로 이동",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      print(pageNum);
+      // print(pageNum);
       if (loginController.isLoggedIn.value == true) {
         return Scaffold(
             backgroundColor: const Color.fromARGB(255, 240, 240, 240),
             appBar: const CustomAppBar(),
             body: [
-              const home.HomeScreen(),
-              const make.MakeStart(),
-              const search.Search(),
-              const Text("관심페이지"),
-              const mypage.MyPage(),
+              home.HomeScreen(changePageNum: changePageNum),
+              make.MakeStart(),
+              search.Search(),
+              Text("관심페이지"),
+              mypage.MyPage(),
             ][pageNum],
-            bottomNavigationBar: FlashyTabBar(
-              selectedIndex: pageNum,
-              showElevation: true,
-              onItemSelected: (index) => setState(() {
-                pageNum = index;
-              }),
-              items: [
-                FlashyTabBarItem(
-                  icon: const Icon(Icons.home),
-                  title: const Text('홈'),
-                ),
-                FlashyTabBarItem(
-                  icon: const Icon(Icons.route),
-                  title: const Text('코스'),
-                ),
-                FlashyTabBarItem(
-                  icon: const Icon(Icons.search),
-                  title: const Text('검색'),
-                ),
-                FlashyTabBarItem(
-                  icon: const Icon(Icons.bookmark),
-                  title: const Text('관심'),
-                ),
-                FlashyTabBarItem(
-                  icon: const Icon(Icons.person),
-                  title: const Text('마이페이지'),
-                ),
-              ],
-            ));
+            bottomNavigationBar: pageNum == 0
+                ? null
+                : FlashyTabBar(
+                    selectedIndex: pageNum,
+                    showElevation: true,
+                    onItemSelected: (index) => setState(() {
+                      changePageNum(index);
+                    }),
+                    items: [
+                      FlashyTabBarItem(
+                        icon: const Icon(Icons.home),
+                        title: const Text('홈'),
+                      ),
+                      FlashyTabBarItem(
+                        icon: const Icon(Icons.route),
+                        title: const Text('코스'),
+                      ),
+                      FlashyTabBarItem(
+                        icon: const Icon(Icons.search),
+                        title: const Text('검색'),
+                      ),
+                      FlashyTabBarItem(
+                        icon: const Icon(Icons.bookmark),
+                        title: const Text('관심'),
+                      ),
+                      FlashyTabBarItem(
+                        icon: const Icon(Icons.person),
+                        title: const Text('마이페이지'),
+                      ),
+                    ],
+                  ));
       } else {
         return login.LoginPage();
       }

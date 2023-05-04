@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'course_list.dart' as course;
 import 'course_detail.dart' as detail;
 import 'package:flutter_multi_select_items/flutter_multi_select_items.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class Search extends StatefulWidget {
   const Search({Key? key}) : super(key: key);
@@ -15,6 +16,10 @@ class _SearchState extends State<Search> {
   var sidoList = course.sidoList;
 
   var isSearchResults = false;
+  bool isVisited = false;
+  bool isLatestSelected = true;
+  bool isPopularSelected = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,57 +39,276 @@ class _SearchState extends State<Search> {
 
   controlSearching(str) {}
 
+  isVisitedCheckBoxClick() {
+    setState(() {
+      isVisited = !isVisited;
+      Fluttertoast.showToast(
+        msg:
+            "방문여부 : $isVisited, 최신순 : $isLatestSelected, 인기순 : $isPopularSelected",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+      );
+    });
+  }
+
+  isLatestSelectedClick() {
+    setState(() {
+      isLatestSelected = true;
+      isPopularSelected = false;
+      Fluttertoast.showToast(
+        msg:
+            "방문여부 : $isVisited, 최신순 : $isLatestSelected, 인기순 : $isPopularSelected",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+      );
+    });
+  }
+
+  isPopularSelectedClick() {
+    setState(() {
+      isLatestSelected = false;
+      isPopularSelected = true;
+      Fluttertoast.showToast(
+        msg:
+            "방문여부 : $isVisited, 최신순 : $isLatestSelected, 인기순 : $isPopularSelected",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+      );
+    });
+  }
+
   searchPageHeader() {
     return AppBar(
-        backgroundColor: Colors.black,
-        title: TextFormField(
-          textAlignVertical: TextAlignVertical.center,
-          controller: searchTextEditingController,
-          decoration: InputDecoration(
-            hintText: "코스를 검색해보세요",
-            hintStyle: const TextStyle(color: Colors.grey),
-            enabledBorder: const UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.grey),
+        automaticallyImplyLeading: false,
+        toolbarHeight: 110,
+        title: Column(
+          children: [
+            SizedBox(
+              height: 45,
+              child: TextFormField(
+                textAlignVertical: TextAlignVertical.center,
+                controller: searchTextEditingController,
+                decoration: InputDecoration(
+                  hintText: "코스를 검색해보세요",
+                  hintStyle: const TextStyle(color: Colors.grey),
+                  enabledBorder: const UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey),
+                  ),
+                  focusedBorder: const UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black),
+                  ),
+                  filled: true,
+                  prefixIcon: FilterButton(context: context),
+                  suffixIcon: IconButton(
+                    icon: const Icon(Icons.search),
+                    color: Colors.grey,
+                    iconSize: 25,
+                    onPressed: () {
+                      // print("${searchTextEditingController.text} 검색하기");
+                      setState(() {
+                        isSearchResults = true;
+                        Fluttertoast.showToast(
+                          msg:
+                              "방문여부 : $isVisited, 최신순 : $isLatestSelected, 인기순 : $isPopularSelected",
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.CENTER,
+                        );
+                        // isVisited
+                      });
+                    },
+                  ),
+                ),
+                style: const TextStyle(
+                  fontSize: 18,
+                  color: Colors.black,
+                ),
+                onFieldSubmitted: controlSearching,
+              ),
             ),
-            focusedBorder: const UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.white),
-            ),
-            filled: true,
-            prefixIcon: IconButton(
-                icon: const Icon(Icons.tune),
-                color: Colors.grey,
-                iconSize: 25,
-                onPressed: () {
-                  // print("필터 열기");
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const SearchFilter()),
-                  );
-                }),
-            suffixIcon: IconButton(
-              icon: const Icon(Icons.search),
-              color: Colors.grey,
-              iconSize: 25,
-              onPressed: () {
-                // print("${searchTextEditingController.text} 검색하기");
-                setState(() {
-                  isSearchResults = true;
-                });
-              },
-            ),
-          ),
-          style: const TextStyle(
-            fontSize: 18,
-            color: Colors.white,
-          ),
-          onFieldSubmitted: controlSearching,
+            SizedBox(
+              height: 45,
+              width: 400,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IsVisitedCheckBox(
+                    isVisited: isVisited,
+                    isVisitedCheckBoxClick: isVisitedCheckBoxClick,
+                  ),
+                  SortButtonBar(
+                      isLatestSelected: isLatestSelected,
+                      isPopularSelected: isPopularSelected,
+                      isLatestSelectedClick: isLatestSelectedClick,
+                      isPopularSelectedClick: isPopularSelectedClick),
+                ],
+              ),
+            )
+          ],
         ));
   }
 
   displayNoSearchResultScreen() {}
 
   // displayUsersFoundScreen() {}
+}
+
+class SortButtonBar extends StatefulWidget {
+  const SortButtonBar({
+    Key? key,
+    required this.isLatestSelected,
+    required this.isPopularSelected,
+    required this.isLatestSelectedClick,
+    required this.isPopularSelectedClick,
+  }) : super(key: key);
+
+  final isLatestSelected;
+  final isPopularSelected;
+  final isLatestSelectedClick;
+  final isPopularSelectedClick;
+
+  @override
+  State<SortButtonBar> createState() => _SortButtonBarState();
+}
+
+class _SortButtonBarState extends State<SortButtonBar> {
+  late var isLatestSelected = widget.isLatestSelected;
+  late var isPopularSelected = widget.isPopularSelected;
+  late var isLatestSelectedClick = widget.isLatestSelectedClick;
+  late var isPopularSelectedClick = widget.isPopularSelectedClick;
+
+  @override
+  void initState() {
+    super.initState();
+    isLatestSelected = widget.isLatestSelected;
+    isPopularSelected = widget.isPopularSelected;
+    isLatestSelectedClick = widget.isLatestSelectedClick;
+    isPopularSelectedClick = widget.isPopularSelectedClick;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      // color: Colors.amber,
+      height: 45,
+      width: 250,
+      child: ButtonBar(
+        buttonPadding: EdgeInsets.symmetric(horizontal: 10),
+        alignment: MainAxisAlignment.end,
+        children: [
+          ElevatedButton(
+            onPressed: () {
+              isLatestSelectedClick();
+              isLatestSelected = true;
+              isPopularSelected = false;
+            },
+            style: ButtonStyle(
+              minimumSize: MaterialStateProperty.all<Size>(Size(90, 35)),
+              padding: MaterialStateProperty.all(
+                  EdgeInsetsDirectional.symmetric(horizontal: 10)),
+              elevation: MaterialStateProperty.all<double>(0),
+              backgroundColor:
+                  MaterialStateProperty.all<Color>(Colors.transparent),
+              foregroundColor: MaterialStateProperty.all<Color>(
+                  isLatestSelected ? Colors.blue : Colors.grey),
+            ),
+            child: const Text(
+              '최신순',
+              style: TextStyle(
+                fontWeight: FontWeight.w800,
+                fontSize: 16,
+              ),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              isPopularSelectedClick();
+              isLatestSelected = false;
+              isPopularSelected = true;
+            },
+            style: ButtonStyle(
+              minimumSize: MaterialStateProperty.all<Size>(Size(90, 35)),
+              elevation: MaterialStateProperty.all<double>(0),
+              backgroundColor:
+                  MaterialStateProperty.all<Color>(Colors.transparent),
+              foregroundColor: MaterialStateProperty.all<Color>(
+                  isPopularSelected ? Colors.blue : Colors.grey),
+            ),
+            child: const Text(
+              '인기순',
+              style: TextStyle(
+                fontWeight: FontWeight.w800,
+                fontSize: 16,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class FilterButton extends StatelessWidget {
+  const FilterButton({
+    super.key,
+    required this.context,
+  });
+
+  final BuildContext context;
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+        icon: const Icon(Icons.tune),
+        color: Colors.grey,
+        iconSize: 25,
+        onPressed: () {
+          // print("필터 열기");
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const SearchFilter()),
+          );
+        });
+  }
+}
+
+class IsVisitedCheckBox extends StatefulWidget {
+  IsVisitedCheckBox({
+    super.key,
+    required this.isVisitedCheckBoxClick,
+    required this.isVisited,
+  });
+
+  final isVisited;
+  final Function isVisitedCheckBoxClick;
+  @override
+  State<IsVisitedCheckBox> createState() => _IsVisitedCheckBoxState();
+}
+
+class _IsVisitedCheckBoxState extends State<IsVisitedCheckBox> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      // color: Colors.amber,
+      alignment: Alignment.center,
+      child: SizedBox(
+        width: 110,
+        height: 45,
+        child: CheckboxListTile(
+          dense: true,
+          contentPadding: EdgeInsets.all(0),
+          controlAffinity: ListTileControlAffinity.leading,
+          title:
+              Text('방문여부', style: TextStyle(color: Colors.black, fontSize: 16)),
+          value: widget.isVisited,
+          onChanged: (value) {
+            widget.isVisitedCheckBoxClick();
+          },
+          // dense: true,
+          // 체크박스와 텍스트 사이의 거리를 조절하기 위한 패딩
+        ),
+      ),
+    );
+  }
 }
 
 class SearchResult extends StatefulWidget {
