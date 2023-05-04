@@ -25,19 +25,19 @@ public class FileUploadService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    public List<String> uploadImage(List<MultipartFile> multipartFileList) throws IOException {
-        List<String> imagePathList = new ArrayList<>();
-        for (MultipartFile multipartFile : multipartFileList) {
-            String fileName = multipartFile.getOriginalFilename() + "-" + UUID.randomUUID();
-            ObjectMetadata objectMetadata = new ObjectMetadata();
-            objectMetadata.setContentType(multipartFile.getContentType());
-            objectMetadata.setContentLength(multipartFile.getSize());
+    public String uploadImage(MultipartFile multipartFile) {
+        String fileName = multipartFile.getOriginalFilename() + "-" + UUID.randomUUID();
+        ObjectMetadata objectMetadata = new ObjectMetadata();
+        objectMetadata.setContentType(multipartFile.getContentType());
+        objectMetadata.setContentLength(multipartFile.getSize());
 
+        try {
             amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, multipartFile.getInputStream(), objectMetadata)
                     .withCannedAcl(CannedAccessControlList.PublicRead));
-            imagePathList.add(String.valueOf(amazonS3Client.getUrl(bucket, fileName)));
+        } catch (IOException e) {
+            throw new RuntimeException("사진 업로드 도중 오류가 발생하였습니다.");
         }
-        return imagePathList;
+        return String.valueOf(amazonS3Client.getUrl(bucket, fileName));
     }
 
 }
