@@ -42,15 +42,16 @@ public class AuthController {
 
     @PostMapping("kakao/login")
     public ResponseEntity<Map<String, Object>> kakaoLogin(
-            @RequestBody Map<String,Object> requestMap) {
-        String accessToken = (String)requestMap.get("accessToken");
+//            @RequestBody Map<String,Object> requestMap,
+            @RequestBody String accessToken) {
+//        String accessToken = (String)requestMap.get("accessToken");
         logger.info(">> request : accessToken={}", accessToken);
 
         Long userId = oAuthLoginService.kakao(accessToken);
         logger.info("<< response : userId={}",userId);
 
         Map<String, Object> resultMap = oAuthLoginService.getUserProfile(userId, OAuthProvider.KAKAO);
-        logger.info("<< response : userSimpleInfo={}",resultMap.get("userSimpleInfo"));
+        logger.info("<< response : userInfo={}",resultMap.get("userInfo"));
         logger.info("<< response : token={}",resultMap.get("token"));
 
         return new ResponseEntity<>(resultMap,HttpStatus.OK);
@@ -58,15 +59,16 @@ public class AuthController {
 
     @PostMapping("google/login")
     public ResponseEntity<Map<String, Object>> googleLogin(
-            @RequestBody Map<String,Object> requestMap) {
-        String email = (String)requestMap.get("email");
+//            @RequestBody Map<String,Object> requestMap,
+            @RequestBody String email) {
+//        String email = (String)requestMap.get("email");
         logger.info(">> request : email={}", email);
 
         Long userId = oAuthLoginService.google(email);
         logger.info("<< response : userId={}",userId);
 
         Map<String, Object> resultMap = oAuthLoginService.getUserProfile(userId, OAuthProvider.GOOGLE);
-        logger.info("<< response : userSimpleInfo={}",resultMap.get("userSimpleInfo"));
+        logger.info("<< response : userInfo={}",resultMap.get("userInfo"));
         logger.info("<< response : token={}",resultMap.get("token"));
 
         return new ResponseEntity<>(resultMap,HttpStatus.OK);

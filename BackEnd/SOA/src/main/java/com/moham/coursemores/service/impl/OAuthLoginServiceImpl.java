@@ -6,6 +6,7 @@ import com.moham.coursemores.common.auth.oauth.OAuthLoginParams;
 import com.moham.coursemores.common.util.OAuthProvider;
 import com.moham.coursemores.domain.RefreshToken;
 import com.moham.coursemores.domain.User;
+import com.moham.coursemores.dto.profile.UserInfoResDto;
 import com.moham.coursemores.dto.profile.UserSimpleInfoResDto;
 import com.moham.coursemores.dto.token.TokenReissueReqDto;
 import com.moham.coursemores.dto.token.TokenResDto;
@@ -116,18 +117,20 @@ public class OAuthLoginServiceImpl implements OAuthLoginService {
                 .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
 
         Map<String, Object> resultMap = new HashMap<>();
-        UserSimpleInfoResDto userSimpleInfo = null;
+        UserInfoResDto userInfo = null;
 
         // 값이 존재한다면
         if(StringUtils.hasText(user.getNickname())
                 && user.getAge() > 0
                 && StringUtils.hasText(user.getGender()))
-            userSimpleInfo = UserSimpleInfoResDto.builder()
-                    .profileImage(user.getProfileImage())
+            userInfo = UserInfoResDto.builder()
                     .nickname(user.getNickname())
+                    .gender(user.getGender())
+                    .age(user.getAge())
+                    .profileImage(user.getProfileImage())
                     .build();
 
-        resultMap.put("userSimpleInfo",userSimpleInfo);
+        resultMap.put("userInfo",userInfo);
 
         TokenResDto tokenResDto = generateToken(userId, oAuthProvider);
         resultMap.put("token",tokenResDto);
