@@ -3,6 +3,7 @@ package com.moham.coursemores.api;
 import com.moham.coursemores.common.auth.oauth.KakaoLoginParams;
 import com.moham.coursemores.common.util.OAuthProvider;
 import com.moham.coursemores.dto.token.TokenReissueReqDto;
+import com.moham.coursemores.dto.token.TokenResDto;
 import com.moham.coursemores.service.OAuthLoginService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -66,6 +67,20 @@ public class AuthController {
         Map<String, Object> resultMap = oAuthLoginService.getUserProfile(userId, OAuthProvider.GOOGLE);
         logger.info("<< response : userSimpleInfo={}",resultMap.get("userSimpleInfo"));
         logger.info("<< response : token={}",resultMap.get("token"));
+
+        return new ResponseEntity<>(resultMap,HttpStatus.OK);
+    }
+
+    @PostMapping("reissue")
+    public ResponseEntity<Map<String, Object>> reissue(
+            @RequestBody TokenReissueReqDto tokenReissueReqDto) {
+        logger.info(">> request : tokenReissueReqDto={}", tokenReissueReqDto);
+
+        Map<String, Object> resultMap = new HashMap<>();
+
+        String accessToken = oAuthLoginService.reissue(tokenReissueReqDto);
+        resultMap.put("accessToken", accessToken);
+        logger.info("<< response : accessToken={}",accessToken);
 
         return new ResponseEntity<>(resultMap,HttpStatus.OK);
     }
