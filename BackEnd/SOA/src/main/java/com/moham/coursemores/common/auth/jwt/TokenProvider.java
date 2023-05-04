@@ -62,16 +62,16 @@ public class TokenProvider {
         return Long.valueOf(claims.getSubject());
     }
 
-    public boolean validate(String accessToken) { // AccessToken(AppToken) 유효한지 체크
-        return this.parseClaims(accessToken) != null;
+    public boolean validate(String token) { // AccessToken(AppToken) 유효한지 체크
+        return this.parseClaims(token) != null;
     }
 
-    private Claims parseClaims(String accessToken) {
+    private Claims parseClaims(String token) {
         try {
             return Jwts.parserBuilder()
                     .setSigningKey(key)
                     .build()
-                    .parseClaimsJws(accessToken)
+                    .parseClaimsJws(token)
                     .getBody();
         } catch (SecurityException e) {
             log.warn("Invalid JWT signature.");
