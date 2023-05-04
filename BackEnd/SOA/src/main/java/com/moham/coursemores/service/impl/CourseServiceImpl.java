@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -274,20 +275,17 @@ public class CourseServiceImpl implements CourseService {
                     .region(region)
                     .build());
             // 코스의 장소의 이미지 생성
-            try {
-                for (String imagePath : fileUploadService.uploadImage(location.getImageList())) {
-                    if (mainImage == null)
-                        mainImage.set(imagePath);
-                    courseLocationImageRepository.save(CourseLocationImage.builder()
-                            .image(imagePath)
-                            .courseLocation(courseLocation)
-                            .build());
-                }
-            } catch (IOException e) {
-                throw new RuntimeException("사진 업로드 도중 오류가 발생하였습니다.");
+            for (MultipartFile multipartFile: location.getImageList()) {
+                String imagePath = fileUploadService.uploadImage(multipartFile);
+                if (mainImage == null)
+                    mainImage.set(imagePath);
+                courseLocationImageRepository.save(CourseLocationImage.builder()
+                        .image(imagePath)
+                        .courseLocation(courseLocation)
+                        .build());
             }
         });
-        // 코스에 대표 이미지 설정
+        // 코스의 대표 이미지 설정
         course.setMainImage(mainImage.get());
     }
 
