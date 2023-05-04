@@ -82,7 +82,7 @@ public class LikeController {
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
 
-    @PostMapping("course/{commentId}/{userId}")
+    @PostMapping("comment/{commentId}/{userId}")
     public ResponseEntity<Void> addLikeComment(
             @PathVariable Long userId,
             @PathVariable Long commentId) {
@@ -95,7 +95,7 @@ public class LikeController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("course/{commentId}/{userId}")
+    @DeleteMapping("comment/{commentId}/{userId}")
     public ResponseEntity<Void> deleteLikeComment(
             @PathVariable Long userId,
             @PathVariable Long commentId) {
