@@ -18,10 +18,12 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("comment")
@@ -70,10 +72,13 @@ public class CommentController {
     public ResponseEntity<Void> postComment(
             @PathVariable Long courseId,
             @PathVariable Long userId,
-            @RequestBody CommentCreateReqDTO commentCreateReqDTO){
-        logger.info(">> request : courseId = {}, commentCreateReqDTO = {}", courseId, commentCreateReqDTO);
+            @RequestPart CommentCreateReqDTO commentCreateReqDTO,
+            @RequestPart(required = false) List<MultipartFile> imageList) {
+        logger.info(">> request : courseId = {}", courseId);
+        logger.info(">> request : commentCreateReqDTO = {}", commentCreateReqDTO);
+        logger.info(">> request : imageList= {}", imageList);
 
-        commentService.createComment(courseId, userId, commentCreateReqDTO);
+        commentService.createComment(courseId, userId, commentCreateReqDTO, imageList);
         logger.info("<< response : none");
 
         return new ResponseEntity<>(HttpStatus.OK);

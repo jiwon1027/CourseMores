@@ -22,6 +22,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
+    private final FileUploadService fileUploadService;
     private final CommentImageRepository commentImageRepository;
     private final UserRepository userRepository;
     private final CourseRepository courseRepository;
@@ -89,7 +91,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public void createComment(Long courseId, Long userId, CommentCreateReqDTO commentCreateReqDTO) {
+    public void createComment(Long courseId, Long userId, CommentCreateReqDTO commentCreateReqDTO, List<MultipartFile> imageList) {
         // userId의 User 가져오기
         User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
                 .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
@@ -109,11 +111,13 @@ public class CommentServiceImpl implements CommentService {
         commentRepository.save(comment);
 
         // commentImage table에도 사진 추가
-        commentCreateReqDTO.getImageList().forEach(imageUrl ->
-                commentImageRepository.save(CommentImage.builder()
-                        .comment(comment)
-                        .image(imageUrl)
-                        .build()));
+        for(MultipartFile multipartFile : imageList){
+            String imagePath = fileUploadService.uploadImage(multipartFile);
+            commentImageRepository.save(CommentImage.builder()
+                    .image(imagePath)
+                    .comment(comment)
+                    .build());
+        }
 
         // 코스의 댓글 수 증가
         course.increaseCommentCount();
