@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 
 class LoginStatus extends GetxController {
   final isLoggedIn = false.obs;
@@ -31,7 +32,8 @@ class UserInfo extends GetxController {
   final nickname = ''.obs;
   final gender = ''.obs;
   final age = 0.obs;
-  final image = ''.obs;
+  // final image = ''.obs;
+  XFile? profileImage;
   void saveNickname(newNickname) {
     nickname.value = newNickname;
     print(nickname.value);
@@ -47,8 +49,10 @@ class UserInfo extends GetxController {
     print(age.value);
   }
 
-  void saveImage(newImage) {
-    image.value = newImage;
-    print(image.value);
+  void saveImage(XFile? image) {
+    if (image != null) {
+      profileImage = image;
+      print(profileImage);
+    }
   }
 }
