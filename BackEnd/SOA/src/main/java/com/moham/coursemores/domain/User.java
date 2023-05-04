@@ -2,6 +2,7 @@ package com.moham.coursemores.domain;
 
 import com.moham.coursemores.common.util.OAuthProvider;
 import com.moham.coursemores.domain.time.DeleteTimeEntity;
+import com.moham.coursemores.dto.profile.UserInfoCreateReqDto;
 import com.moham.coursemores.dto.profile.UserInfoUpdateReqDto;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -78,11 +79,18 @@ public class User extends DeleteTimeEntity {
 //        this.providerId = providerId;
     }
 
-    public void update(UserInfoUpdateReqDto userInfoUpdateReqDto){
+    public void create(UserInfoCreateReqDto userInfoCreateReqDto, String imageUrl){
+        this.nickname = userInfoCreateReqDto.getNickname();
+        this.age = userInfoCreateReqDto.getAge();
+        this.gender = userInfoCreateReqDto.getGender();
+        this.profileImage = imageUrl;
+    }
+
+    public void update(UserInfoUpdateReqDto userInfoUpdateReqDto, String imageUrl){
         this.nickname = userInfoUpdateReqDto.getNickname();
         this.age = userInfoUpdateReqDto.getAge();
         this.gender = userInfoUpdateReqDto.getGender();
-        this.profileImage = userInfoUpdateReqDto.getProfileImage();
+        this.profileImage = imageUrl;
     }
 
     public void delete(){

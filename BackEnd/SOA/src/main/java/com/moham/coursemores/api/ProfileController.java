@@ -9,13 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -59,10 +54,13 @@ public class ProfileController {
     @PutMapping("{userId}")
     public ResponseEntity<Void> putUserInfo(
             @PathVariable Long userId,
-            @RequestBody UserInfoUpdateReqDto userInfoUpdateReqDto){
-        logger.info(">> request : userId={}, userInfoUpdateReqDto={}", userId, userInfoUpdateReqDto);
+            @RequestPart UserInfoUpdateReqDto userInfoUpdateReqDto,
+            @RequestPart MultipartFile profileImage){
+        logger.info(">> request : userId={}", userId);
+        logger.info(">> request : userInfoUpdateReqDto={}", userInfoUpdateReqDto);
+        logger.info(">> request : profileImage={}", profileImage);
 
-        profileService.updateUserInfo(userId, userInfoUpdateReqDto);
+        profileService.updateUserInfo(userId, userInfoUpdateReqDto, profileImage);
         logger.info("<< response : none");
 
         return new ResponseEntity<>(HttpStatus.OK);

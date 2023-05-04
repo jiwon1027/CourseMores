@@ -9,12 +9,15 @@ import com.moham.coursemores.service.ProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ProfileServiceImpl implements ProfileService {
+
     private final UserRepository userRepository;
+    private final FileUploadService fileUploadService;
 
     @Override
     public UserInfoResDto getMyProfile(Long userId) {
@@ -37,13 +40,16 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     @Transactional
-    public void updateUserInfo(Long userId, UserInfoUpdateReqDto userInfoUpdateReqDto) {
+    public void updateUserInfo(Long userId, UserInfoUpdateReqDto userInfoUpdateReqDto, MultipartFile profileImage) {
         // userId의 User 가져오기
         User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
                 .orElseThrow(()-> new NullPointerException("해당 유저를 찾을 수 없습니다."));
 
-        //userInfoUpdateReqDto 기반으로 user정보 수정
-        user.update(userInfoUpdateReqDto);
+        String imageUrl = "default";
+        if(profileImage != null)
+            imageUrl = fileUploadService.uploadImage(profileImage);
+
+        user.update(userInfoUpdateReqDto, imageUrl);
     }
 
     @Override
