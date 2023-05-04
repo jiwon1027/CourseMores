@@ -6,10 +6,11 @@ import com.moham.coursemores.common.util.SearchUtil;
 import com.moham.coursemores.domain.document.CourseDocument;
 import com.moham.coursemores.domain.document.CourseLocationDocument;
 import com.moham.coursemores.domain.document.HashtagDocument;
-import com.moham.coursemores.service.CourseSearchService;
+import com.moham.coursemores.dto.elasticsearch.IndexDataReqDTO;
+import com.moham.coursemores.dto.elasticsearch.IndexDataResDTO;
+import com.moham.coursemores.service.ElasticSearchService;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +36,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class CourseSearchServiceImpl implements CourseSearchService {
+public class ElasticSearchServiceImpl implements ElasticSearchService {
     private static final ObjectMapper MAPPER = new ObjectMapper();
     private final RestHighLevelClient client;
 
@@ -91,12 +92,10 @@ public class CourseSearchServiceImpl implements CourseSearchService {
         }
     }
 
-    public Map<String, List<String>> search(String value) throws IOException {
+    public IndexDataResDTO search(String value) throws IOException {
         SearchRequest requestCourse = SearchUtil.buildSearchRequest(Indices.COURSE_INDEX, value);
         SearchRequest requestCourseLocation = SearchUtil.buildSearchRequest(Indices.COURSELOCATION_INDEX, value);
         SearchRequest requestHashtag = SearchUtil.buildSearchRequest(Indices.HASHTAG_INDEX, value);
-
-        Map<String, List<String>> map = new HashMap<>();
 
         SearchResponse responseCourse = client.search(requestCourse, RequestOptions.DEFAULT);
         SearchResponse responseCourseLocation = client.search(requestCourseLocation, RequestOptions.DEFAULT);
@@ -107,6 +106,7 @@ public class CourseSearchServiceImpl implements CourseSearchService {
         SearchHit[] searchHitsHashtag = responseHashtag.getHits().getHits();
 
 
+
         List<String> courses = new ArrayList<>();
 
         Map<String, Object> sourceAsMap;
@@ -114,23 +114,26 @@ public class CourseSearchServiceImpl implements CourseSearchService {
             sourceAsMap = hit.getSourceAsMap();
             courses.add((String) sourceAsMap.get("value"));
         }
-        map.put("course", courses);
 
         List<String> courseLocations = new ArrayList<>();
         for (SearchHit hit : searchHitsCourseLocation) {
             sourceAsMap = hit.getSourceAsMap();
-            courses.add((String) sourceAsMap.get("value"));
+            courseLocations.add((String) sourceAsMap.get("value"));
         }
-        map.put("courseLocation", courseLocations);
 
         List<String> hashtags = new ArrayList<>();
         for (SearchHit hit : searchHitsHashtag) {
             sourceAsMap = hit.getSourceAsMap();
-            courses.add((String) sourceAsMap.get("value"));
+            hashtags.add((String) sourceAsMap.get("value"));
         }
-        map.put("hashtag", hashtags);
 
-        return map;
+
+        IndexDataResDTO indexDataResDTO = IndexDataResDTO.builder()
+                .courses(courses)
+                .courseLocations(courseLocations)
+                .hashtags(hashtags)
+                .build();
+        return indexDataResDTO;
 
     }
 

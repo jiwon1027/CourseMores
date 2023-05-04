@@ -2,7 +2,10 @@ package com.moham.coursemores.api;
 
 import com.moham.coursemores.domain.document.CourseDocument;
 import com.moham.coursemores.domain.document.CourseLocationDocument;
-import com.moham.coursemores.service.CourseSearchService;
+import com.moham.coursemores.dto.elasticsearch.IndexDataReqDTO;
+import com.moham.coursemores.dto.elasticsearch.IndexDataResDTO;
+import com.moham.coursemores.dto.elasticsearch.IndexSimpleDataReqDTO;
+import com.moham.coursemores.service.ElasticSearchService;
 import com.moham.coursemores.domain.document.HashtagDocument;
 import java.io.IOException;
 import java.util.HashMap;
@@ -24,14 +27,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("elasticsearch")
 @RequiredArgsConstructor
 public class ElasticSearchController {
-    private final CourseSearchService courseSearchService;
+    private final ElasticSearchService courseSearchService;
     private static final Logger logger = LoggerFactory.getLogger(ElasticSearchController.class);
 
     @PostMapping()
-    public void insert(@RequestBody Map<String, String> map) {
-        String id = map.get("id");
-        String index = map.get("index");
-        String value = map.get("value");
+    public void insert(@RequestBody IndexDataReqDTO indexDataReqDTO) {
+        String id = indexDataReqDTO.getId();
+        String index = indexDataReqDTO.getIndex();
+        String value = indexDataReqDTO.getValue();
 
         logger.info(">> request : index={}, id={}, value={}", id, index, value);
 
@@ -48,24 +51,22 @@ public class ElasticSearchController {
 
     }
     @PostMapping("search")
-    public ResponseEntity<Map<String, Object>> search(@RequestBody Map<String, String> map) throws IOException {
+    public ResponseEntity<IndexDataResDTO> search(@RequestBody Map<String, String> map) throws IOException {
 
         logger.info(">> request : value={}", map.get("value"));
 
-        Map<String, List<String>> result = courseSearchService.search(map.get("value"));
+        IndexDataResDTO result = courseSearchService.search(map.get("value"));
 
-        Map<String, Object> resultMap = new HashMap<>();
-        resultMap.put("result", result);
         logger.info("<< response : result={}",result);
 
-        return new ResponseEntity<>(resultMap, HttpStatus.OK);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @PutMapping()
-    public ResponseEntity<Map<String, Object>> updateIndexData(@RequestBody Map<String, String> map) throws IOException {
-        String index = map.get("index");
-        String id = map.get("id");
-        String value = map.get("value");
+    public ResponseEntity<Map<String, Object>> updateIndexData(@RequestBody IndexDataReqDTO indexDataReqDTO) throws IOException {
+        String id = indexDataReqDTO.getId();
+        String index = indexDataReqDTO.getIndex();
+        String value = indexDataReqDTO.getValue();
 
         logger.info(">> request : index={}, id={}, value={}", id, index, value);
         courseSearchService.updateCourseDocument(index, id, value);
@@ -74,9 +75,9 @@ public class ElasticSearchController {
     }
 
     @DeleteMapping()
-    public ResponseEntity<Map<String, Object>> deleteIndexData(@RequestBody Map<String, String> map) throws IOException {
-        String index = map.get("index");
-        String id = map.get("id");
+    public ResponseEntity<Map<String, Object>> deleteIndexData(@RequestBody IndexSimpleDataReqDTO indexSimpleDataReqDTO) throws IOException {
+        String index = indexSimpleDataReqDTO.getIndex();
+        String id = indexSimpleDataReqDTO.getId();
 
         logger.info(">> request : index={}, id={}", id, index);
         courseSearchService.deleteCoureDocument(index, id);
