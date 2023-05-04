@@ -11,6 +11,7 @@ import 'course_make/make_start.dart' as make;
 import 'login_page.dart' as login;
 import 'package:get/get.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 final loginController = Get.put(LoginStatus());
 final pageController = Get.put(PageNum());
@@ -18,6 +19,7 @@ var pageNum = pageController.pageNum.value;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: 'assets/config/.env');
   KakaoSdk.init(nativeAppKey: '59816c34bd5a0094d4f29bf08b55a34c');
   runApp(GetMaterialApp(theme: style.theme, home: const MyApp()));
 }
