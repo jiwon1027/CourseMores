@@ -5,6 +5,8 @@ import com.moham.coursemores.dto.course.*;
 import com.moham.coursemores.dto.profile.UserSimpleInfoResDto;
 import com.moham.coursemores.repository.*;
 import com.moham.coursemores.service.CourseService;
+import java.io.IOException;
+import java.util.concurrent.atomic.AtomicReference;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,6 +30,7 @@ public class CourseServiceImpl implements CourseService {
     private final UserRepository userRepository;
     private final CourseLocationRepository courseLocationRepository;
     private final CourseLocationImageRepository courseLocationImageRepository;
+    private final FileUploadService fileUploadService;
     private final RegionRepository regionRepository;
     private final HashtagRepository hashtagRepository;
     private final HashtagOfCourseRepository hashtagOfCourseRepository;
@@ -214,7 +217,7 @@ public class CourseServiceImpl implements CourseService {
                 .interestCount(0)
                 .likeCount(0)
                 .commentCount(0)
-                .mainImage(courseCreateReqDto.getLocationList().get(0).getImageList().get(0))
+//                .mainImage(courseCreateReqDto.getLocationList().get(0).getImageList().get(0))
                 .locationName(courseCreateReqDto.getLocationList().get(0).getName())
                 .user(user)
                 .build());
@@ -253,6 +256,8 @@ public class CourseServiceImpl implements CourseService {
                         .build());
             }
         });
+
+        AtomicReference<String> mainImage = null;
         // 코스의 장소 정보 생성
         courseCreateReqDto.getLocationList().forEach(location -> {
             // 코스의 장소의 지역 가져오기
@@ -260,20 +265,30 @@ public class CourseServiceImpl implements CourseService {
                     .orElseThrow(() -> new RuntimeException("해당 지역을 찾을 수 없습니다."));
             // 코스의 장소 저장
             CourseLocation courseLocation = courseLocationRepository.save(CourseLocation.builder()
-                            .name(location.getName())
-                            .title(location.getTitle())
-                            .content(location.getContent())
-                            .latitude(location.getLatitude())
-                            .longitude(location.getLongitude())
-                            .course(course)
-                            .region(region)
+                    .name(location.getName())
+                    .title(location.getTitle())
+                    .content(location.getContent())
+                    .latitude(location.getLatitude())
+                    .longitude(location.getLongitude())
+                    .course(course)
+                    .region(region)
                     .build());
             // 코스의 장소의 이미지 생성
-            location.getImageList().forEach(image -> courseLocationImageRepository.save(CourseLocationImage.builder()
-                            .image(image)
+            try {
+                for (String imagePath : fileUploadService.uploadImage(location.getImageList())) {
+                    if (mainImage == null)
+                        mainImage.set(imagePath);
+                    courseLocationImageRepository.save(CourseLocationImage.builder()
+                            .image(imagePath)
                             .courseLocation(courseLocation)
-                    .build()));
+                            .build());
+                }
+            } catch (IOException e) {
+                throw new RuntimeException("사진 업로드 도중 오류가 발생하였습니다.");
+            }
         });
+        // 코스에 대표 이미지 설정
+        course.setMainImage(mainImage.get());
     }
 
     @Override
