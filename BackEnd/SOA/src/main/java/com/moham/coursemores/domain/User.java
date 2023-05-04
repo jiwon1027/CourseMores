@@ -24,7 +24,7 @@ public class User extends DeleteTimeEntity {
     private Long id;
 
     @NotNull
-    @Column(length = 20)
+    @Column(length = 50)
     private String email;
 
     @NotNull
