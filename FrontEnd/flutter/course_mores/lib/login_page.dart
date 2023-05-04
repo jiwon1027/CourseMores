@@ -33,11 +33,12 @@ void postLogin(accessToken) async {
 
   if (response.statusCode == 200) {
     // 추후에 issignup으로 교체
-    if (response.data['userSimpleInfo'] == null) {
+    if (response.data['userInfo'] == null) {
       tokenController.saveToken(response.data['token']['accessToken'],
           response.data['token']['refreshToken']);
       Get.to(signup.SignUp());
     } else {
+      loginController.changeLoginStatus();
       Get.to(main.MyApp());
     }
   }
@@ -60,12 +61,16 @@ void signInWithGoogle() async {
 
     if (response.statusCode == 200) {
       // 추후에 issignup으로 교체
-      if (response.data['userSimpleInfo'] == null) {
+      if (response.data['userInfo'] == null) {
         tokenController.saveToken(response.data['token']['accessToken'],
             response.data['token']['refreshToken']);
-        Get.to(signup.SignUp());
+        Get.to(() => signup.SignUp());
       } else {
-        Get.to(main.MyApp());
+        loginController.changeLoginStatus();
+        Get.to(
+          () => main.MyApp(),
+          transition: Transition.fadeIn,
+        );
       }
     }
   }
