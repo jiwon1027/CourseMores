@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart' as geocoding;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class CMMap extends StatefulWidget {
   const CMMap({super.key});
@@ -49,18 +51,6 @@ class _CMMapState extends State<CMMap> {
     Position position = await Geolocator.getCurrentPosition();
     LatLng currentPosition = LatLng(position.latitude, position.longitude);
 
-    // 현재 위치 마커 추가
-    // setState(() {
-    //   _markers.add(
-    //     Marker(
-    //       markerId: MarkerId('current-position'),
-    //       position: currentPosition,
-    //       icon:
-    //           BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
-    //     ),
-    //   );
-    // });
-
     // 카메라 이동
     _mapController?.animateCamera(
       CameraUpdate.newCameraPosition(
@@ -72,7 +62,34 @@ class _CMMapState extends State<CMMap> {
     );
   }
 
-  void _onTap(LatLng location) {
+  // void _onTap(LatLng location) async {
+  //   // Add marker
+  //   setState(() {
+  //     _markers.clear();
+  //     _markers.add(
+  //       Marker(
+  //         markerId: MarkerId('selected-location'),
+  //         position: location,
+  //         icon: customIcon,
+  //       ),
+  //     );
+  //   });
+  //   // Get address and show in bottom sheet
+  //   String address = await _getAddress(location.latitude, location.longitude);
+  //   showModalBottomSheet(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return Container(
+  //         height: 100,
+  //         child: Center(
+  //           child: Text(address),
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
+  void _onTap(LatLng location) async {
+    // Add marker
     setState(() {
       _markers.clear();
       _markers.add(
@@ -81,8 +98,71 @@ class _CMMapState extends State<CMMap> {
           position: location,
           icon: customIcon,
         ),
-      ); // _selectedLocation = location;
+      );
     });
+    // Get address and show in bottom sheet
+    String address = await _getAddress(location.latitude, location.longitude);
+    final String apiKey = dotenv.get('GOOGLE_MAP_API_KEY');
+    final String url =
+        "https://maps.googleapis.com/maps/api/streetview?size=400x400&location=${location.latitude},${location.longitude}&fov=90&heading=235&pitch=10&key=$apiKey";
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return SizedBox(
+          height: MediaQuery.of(context).size.height / 2,
+          child: Column(
+            children: [
+              SizedBox(
+                height: 30,
+              ),
+              Expanded(child: SizedBox(height: 200, child: Image.network(url))),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(address),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      // 저장 버튼 클릭 시, _selectedLocation 변수에 현재 선택한 위치 값을 사용할 수 있습니다.
+                      _onSavePressed();
+                    },
+                    icon: const Icon(Icons.save),
+                    label: const Text('해당 위치 저장'),
+                  ),
+                  ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: Icon(Icons.backspace),
+                      label: Text('뒤로 가기'))
+                ],
+              ),
+              SizedBox(
+                height: 20,
+              )
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<String> _getAddress(double lat, double lon) async {
+    final List<geocoding.Placemark> placemarks = await geocoding
+        .placemarkFromCoordinates(lat, lon, localeIdentifier: 'ko');
+    if (placemarks != null && placemarks.isNotEmpty) {
+      final geocoding.Placemark place = placemarks.first;
+      final String thoroughfare = place.thoroughfare ?? '';
+      final String subThoroughfare = place.subThoroughfare ?? '';
+      final String locality = place.locality ?? '';
+      final String subLocality = place.subLocality ?? '';
+      final String administrativeArea = place.administrativeArea ?? '';
+      return '$administrativeArea $locality $subLocality $thoroughfare $subThoroughfare';
+    }
+    return '';
   }
 
   void _onMyLocationButtonPressed() async {
@@ -92,13 +172,55 @@ class _CMMapState extends State<CMMap> {
     _mapController?.animateCamera(cameraUpdate);
   }
 
+  // void _onSavePressed() {
+  //   final selectedMarker = _markers.first;
+  //   final latitude = selectedMarker.position.latitude;
+  //   final longitude = selectedMarker.position.longitude;
+  //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+  //     content: Text('위도: $latitude, 경도: $longitude'),
+  //   ));
+  // }
+
   void _onSavePressed() {
     final selectedMarker = _markers.first;
     final latitude = selectedMarker.position.latitude;
     final longitude = selectedMarker.position.longitude;
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text('위도: $latitude, 경도: $longitude'),
-    ));
+
+    // Show alert dialog to get the name of the location
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        String locationName = '';
+        return AlertDialog(
+          title: Text('이 장소의 이름을 입력하세요.'),
+          content: TextField(
+            onChanged: (value) {
+              locationName = value;
+            },
+          ),
+          actions: [
+            TextButton(
+              child: Text('확인'),
+              onPressed: () {
+                // Save location with the entered name
+                String message =
+                    '위치 이름: $locationName\n위도: $latitude, 경도: $longitude';
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text(message),
+                ));
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('취소'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -152,6 +274,9 @@ class _CMMapState extends State<CMMap> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
+            Text('누르면 마커가 생겨요',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 12),
             Container(
               height: MediaQuery.of(context).size.height / 1.5,
               decoration: BoxDecoration(

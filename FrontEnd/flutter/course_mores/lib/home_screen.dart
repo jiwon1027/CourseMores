@@ -6,6 +6,9 @@ import 'course_search/course_list.dart' as course;
 import 'mypage.dart' as mypage;
 import 'getx_controller.dart';
 import 'main.dart';
+import 'package:dio/dio.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart' as geocoding;
 
 final List<String> imgList = [
   'https://images.unsplash.com/photo-1520342868574-5fa3804e551c?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=6ff92caffcdd63681a35134a6770ed3b&auto=format&fit=crop&w=1951&q=80',
@@ -44,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   // openweathermap의 api키
-  final String apiKey = '0345e074935e928407e8821eb5ed8291';
+  final String apiKey = dotenv.get('OPENWEATHER_API_KEY');
   final String apiBaseUrl = 'https://api.openweathermap.org/data/2.5/weather';
 
   Future<Map<String, dynamic>> getWeatherData(double lat, double lon) async {

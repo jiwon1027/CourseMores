@@ -264,7 +264,7 @@ class _MakeStepperState extends State<MakeStepper> {
                           CrossAxisAlignment.start, // 자식 위젯을 왼쪽 정렬
                       children: [
                         Text(
-                          '내용',
+                          '코스 내용',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 20,
@@ -455,23 +455,73 @@ class _MakeStepperState extends State<MakeStepper> {
         steps: _mySteps,
         type: StepperType.horizontal,
         controlsBuilder: (BuildContext context, ControlsDetails details) {
-          return Row(
-            children: <Widget>[
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: details.onStepCancel,
-                  child: const Text('이전으로'),
+          if (_currentStep == _mySteps.length - 1) {
+            return Row(
+              children: <Widget>[
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: details.onStepCancel,
+                    child: const Text('이전으로'),
+                  ),
                 ),
-              ),
-              SizedBox(width: 16),
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: details.onStepContinue,
-                  child: const Text('다음으로'),
+                SizedBox(width: 16),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Column(
+                              children: [
+                                Lottie.asset(
+                                  'assets/success.json',
+                                  fit: BoxFit.fitWidth,
+                                  width: 300,
+                                ),
+                                Text("코스 작성을 완료했어요!"),
+                              ],
+                            ),
+                            actions: <Widget>[
+                              Center(
+                                child: ElevatedButton(
+                                  child: Text("확인"),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                    Navigator.pop(context);
+                                    Navigator.pop(context);
+                                  },
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                    child: const Text('작성 완료'),
+                  ),
                 ),
-              )
-            ],
-          );
+              ],
+            );
+          } else {
+            return Row(
+              children: <Widget>[
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: details.onStepCancel,
+                    child: const Text('이전으로'),
+                  ),
+                ),
+                SizedBox(width: 16),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: details.onStepContinue,
+                    child: const Text('다음으로'),
+                  ),
+                )
+              ],
+            );
+          }
         },
       ),
     );
@@ -491,6 +541,7 @@ class _Slider1State extends State<Slider1> {
   late double _sliderValue = 3;
 
   Map<int, String> peopleMapping = {
+    0: '상관없음',
     1: '1인',
     2: '2인',
     3: '3인',
@@ -506,7 +557,7 @@ class _Slider1State extends State<Slider1> {
     return SfSlider(
       value: _sliderValue,
       // value: 0,
-      min: 1,
+      min: 0,
       max: 5,
       stepSize: 1,
       shouldAlwaysShowTooltip: true,
@@ -652,7 +703,7 @@ class _MakeHashtagState extends State<MakeHashtag> {
                     // helperStyle: const TextStyle(
                     //   color: Color.fromARGB(255, 74, 137, 92),
                     // ),
-                    hintText: _controller.hasTags ? '' : "Enter tag...",
+                    hintText: _controller.hasTags ? '' : "태그를 입력하세요",
                     errorText: error,
                     // prefixIconConstraints:
                     //     BoxConstraints(maxWidth: _distanceToField * 0.74),
