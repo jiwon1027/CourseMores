@@ -114,12 +114,14 @@ public class CourseController {
     public ResponseEntity<Void> setCourse(
             @PathVariable Long courseId,
             @PathVariable Long userId,
-            @RequestBody CourseUpdateReqDto courseUpdateReqDto) {
+            @RequestPart CourseUpdateReqDto courseUpdateReqDto,
+            @RequestPart(required = false) List<MultipartFile> imageList) {
         logger.info(">> request : courseId={}",courseId);
         logger.info(">> request : userId={}",userId);
         logger.info(">> request : courseUpdateReqDto={}",courseUpdateReqDto);
+        logger.info(">> request : imageList= {}", imageList);
 
-        courseService.setCourse(userId, courseId, courseUpdateReqDto);
+        courseService.setCourse(userId, courseId, courseUpdateReqDto, imageList);
         logger.info("<< response : none");
 
         return new ResponseEntity<>(HttpStatus.OK);

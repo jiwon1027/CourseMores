@@ -13,6 +13,6 @@ public interface CourseService {
     List<CourseDetailResDto> getCourseDetail(Long courseId);
     List<MyCourseResDto> getMyCourseList(Long userId);
     void addCourse(Long userId, CourseCreateReqDto courseCreateReqDto, List<MultipartFile> imageList);
-    void setCourse(Long userId, Long courseId, CourseUpdateReqDto courseUpdateReqDto);
+    void setCourse(Long userId, Long courseId, CourseUpdateReqDto courseUpdateReqDto, List<MultipartFile> imageList);
     void deleteCourse(Long userId, Long courseId);
 }
