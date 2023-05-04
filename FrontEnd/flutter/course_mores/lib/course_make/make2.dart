@@ -257,14 +257,40 @@ class _CourseMakeState extends State<CourseMake> {
                 height: 10,
               ),
               ElevatedButton.icon(
-                  icon: const Icon(Icons.verified),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => MakeStepper()),
-                    );
-                  },
-                  label: const Text('코스 지정 완료')),
+                icon: const Icon(Icons.verified),
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text('정말로 작성이 완료 되었나요?'),
+                        content: const Text('작성하신 내용을 저장하시겠습니까?'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              // TODO: Implement saving logic here
+                              Navigator.of(context).pop();
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => MakeStepper()),
+                              );
+                            },
+                            child: const Text('저장'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text('취소'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+                label: const Text('코스 지정 완료'),
+              ),
             ],
           ),
         ),
@@ -352,7 +378,7 @@ class Item extends StatelessWidget {
                           ElevatedButton.icon(
                             onPressed: () {},
                             icon: Icon(Icons.edit),
-                            label: Text('수정'),
+                            label: Text('추가 정보 작성'),
                             style: ElevatedButton.styleFrom(
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20),
@@ -363,7 +389,7 @@ class Item extends StatelessWidget {
                           ElevatedButton.icon(
                             onPressed: () {},
                             icon: Icon(Icons.delete),
-                            label: Text('삭제'),
+                            label: Text('장소 삭제'),
                             style: ElevatedButton.styleFrom(
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20),
