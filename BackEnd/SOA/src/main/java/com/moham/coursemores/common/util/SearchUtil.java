@@ -1,4 +1,4 @@
-package com.moham.coursemores.common.elasticsearch;
+package com.moham.coursemores.common.util;
 
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.action.search.SearchRequest;

@@ -1,9 +1,12 @@
-package com.moham.coursemores.common.elasticsearch;
+package com.moham.coursemores.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.moham.coursemores.domain.CourseDocument;
-import com.moham.coursemores.domain.CourseLocationDocument;
-import com.moham.coursemores.domain.HashtagDocument;
+import com.moham.coursemores.common.util.Indices;
+import com.moham.coursemores.common.util.SearchUtil;
+import com.moham.coursemores.domain.document.CourseDocument;
+import com.moham.coursemores.domain.document.CourseLocationDocument;
+import com.moham.coursemores.domain.document.HashtagDocument;
+import com.moham.coursemores.service.CourseSearchService;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,7 +28,6 @@ import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.xcontent.XContentType;
-import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.stereotype.Service;
 import org.elasticsearch.action.search.SearchRequest;
 
@@ -33,8 +35,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class CourseSearchServiceImpl implements CourseSearchService{
-    private final ElasticsearchOperations elasticsearchOperations;
+public class CourseSearchServiceImpl implements CourseSearchService {
     private static final ObjectMapper MAPPER = new ObjectMapper();
     private final RestHighLevelClient client;
 
@@ -90,48 +91,47 @@ public class CourseSearchServiceImpl implements CourseSearchService{
         }
     }
 
-    public List<String> search(String value) {
+    public Map<String, List<String>> search(String value) throws IOException {
         SearchRequest requestCourse = SearchUtil.buildSearchRequest(Indices.COURSE_INDEX, value);
         SearchRequest requestCourseLocation = SearchUtil.buildSearchRequest(Indices.COURSELOCATION_INDEX, value);
         SearchRequest requestHashtag = SearchUtil.buildSearchRequest(Indices.HASHTAG_INDEX, value);
 
-        if (requestCourse == null && requestCourseLocation == null && requestHashtag == null) {
-            return Collections.emptyList();
+        Map<String, List<String>> map = new HashMap<>();
+
+        SearchResponse responseCourse = client.search(requestCourse, RequestOptions.DEFAULT);
+        SearchResponse responseCourseLocation = client.search(requestCourseLocation, RequestOptions.DEFAULT);
+        SearchResponse responseHashtag = client.search(requestHashtag, RequestOptions.DEFAULT);
+
+        SearchHit[] searchHitsCourse = responseCourse.getHits().getHits();
+        SearchHit[] searchHitsCourseLocation = responseCourseLocation.getHits().getHits();
+        SearchHit[] searchHitsHashtag = responseHashtag.getHits().getHits();
+
+
+        List<String> courses = new ArrayList<>();
+
+        Map<String, Object> sourceAsMap;
+        for (SearchHit hit : searchHitsCourse) {
+            sourceAsMap = hit.getSourceAsMap();
+            courses.add((String) sourceAsMap.get("value"));
         }
+        map.put("course", courses);
 
-        try {
-            SearchResponse responseCourse = client.search(requestCourse, RequestOptions.DEFAULT);
-            SearchResponse responseCourseLocation = client.search(requestCourseLocation, RequestOptions.DEFAULT);
-            SearchResponse responseHashtag = client.search(requestHashtag, RequestOptions.DEFAULT);
-
-            SearchHit[] searchHitsCourse = responseCourse.getHits().getHits();
-            SearchHit[] searchHitsCourseLocation = responseCourseLocation.getHits().getHits();
-            SearchHit[] searchHitsHashtag = responseHashtag.getHits().getHits();
-
-            List<String> courses = new ArrayList<>();
-
-            Map<String, Object> sourceAsMap;
-            for (SearchHit hit : searchHitsCourse) {
-                sourceAsMap = hit.getSourceAsMap();
-                courses.add((String) sourceAsMap.get("value"));
-            }
-
-            for (SearchHit hit : searchHitsCourseLocation) {
-                sourceAsMap = hit.getSourceAsMap();
-                courses.add((String) sourceAsMap.get("value"));
-            }
-
-            for (SearchHit hit : searchHitsHashtag) {
-                sourceAsMap = hit.getSourceAsMap();
-                courses.add((String) sourceAsMap.get("value"));
-            }
-            return courses;
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return Collections.emptyList();
+        List<String> courseLocations = new ArrayList<>();
+        for (SearchHit hit : searchHitsCourseLocation) {
+            sourceAsMap = hit.getSourceAsMap();
+            courses.add((String) sourceAsMap.get("value"));
         }
+        map.put("courseLocation", courseLocations);
+
+        List<String> hashtags = new ArrayList<>();
+        for (SearchHit hit : searchHitsHashtag) {
+            sourceAsMap = hit.getSourceAsMap();
+            courses.add((String) sourceAsMap.get("value"));
+        }
+        map.put("hashtag", hashtags);
+
+        return map;
+
     }
 
     public void updateCourseDocument(String index, String id, String value) throws IOException {

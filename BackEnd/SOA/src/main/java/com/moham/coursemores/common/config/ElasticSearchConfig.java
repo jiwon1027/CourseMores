@@ -1,4 +1,4 @@
-package com.moham.coursemores.common.elasticsearch;
+package com.moham.coursemores.common.config;
 
 import org.elasticsearch.client.RestHighLevelClient;
 import org.springframework.beans.factory.annotation.Value;
