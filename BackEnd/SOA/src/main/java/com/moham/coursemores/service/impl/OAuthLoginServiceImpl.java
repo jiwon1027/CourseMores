@@ -112,7 +112,7 @@ public class OAuthLoginServiceImpl implements OAuthLoginService {
     }
 
     @Override
-    public Map<String, Object> getUserProfile(Long userId, OAuthProvider oAuthProvider) {
+    public Map<String, Object> getLoginUserInfo(Long userId, OAuthProvider oAuthProvider) {
         User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
                 .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
 

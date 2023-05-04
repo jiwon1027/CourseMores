@@ -13,6 +13,6 @@ public interface OAuthLoginService {
     Long login(OAuthLoginParams params);
     Long kakao(String accessToken);
     Long google(String email);
-    Map<String, Object> getUserProfile(Long userId, OAuthProvider oAuthProvider);
+    Map<String, Object> getLoginUserInfo(Long userId, OAuthProvider oAuthProvider);
     String reissue(TokenReissueReqDto tokenReissueReqDto);
 }
