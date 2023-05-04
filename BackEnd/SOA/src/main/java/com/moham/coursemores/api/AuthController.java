@@ -22,6 +22,7 @@ public class AuthController {
 
     private final OAuthLoginService oAuthLoginService;
 
+    // 삭제될 api입니다
     @PostMapping("kakao")
     public ResponseEntity<Map<String, Object>> loginKakao(
             @RequestBody KakaoLoginParams params) {
@@ -50,29 +51,6 @@ public class AuthController {
         logger.info("<< response : userSimpleInfo={}",resultMap.get("userSimpleInfo"));
         logger.info("<< response : token={}",resultMap.get("token"));
 
-        return new ResponseEntity<>(resultMap,HttpStatus.OK);
-    }
-
-    @GetMapping("{testId}")
-    public ResponseEntity<Map<String, Object>> testGet(
-            @PathVariable int testId) {
-        logger.info(">> request : testId={}", testId);
-        Map<String, Object> resultMap = new HashMap<>();
-        resultMap.put("testId",testId);
-        logger.info("<< response : none");
-
-        return new ResponseEntity<>(resultMap,HttpStatus.OK);
-    }
-    @PostMapping("{testId}")
-    public ResponseEntity<Map<String, Object>> testPost(
-            @PathVariable int testId,
-            @RequestBody String testBody) {
-        logger.info(">> request : testId={}", testId);
-        logger.info(">> request : testBody={}", testBody);
-        Map<String, Object> resultMap = new HashMap<>();
-        resultMap.put("testId",testId);
-        resultMap.put("testBody",testBody);
-        logger.info("<< response : none");
         return new ResponseEntity<>(resultMap,HttpStatus.OK);
     }
 }
