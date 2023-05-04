@@ -9,13 +9,18 @@ import 'sign_up.dart' as signup;
 import 'home_screen.dart' as home;
 import 'main.dart' as main;
 import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-var options = BaseOptions(baseUrl: 'https://coursemores.site/api/');
+String baseURL = dotenv.get('BASE_URL');
+
+final options = BaseOptions(baseUrl: baseURL);
 final dio = Dio(options);
 final tokenController = Get.put(TokenStorage());
 
 void postLogin(accessToken) async {
   print(accessToken);
+  print('555555555555');
+  print(baseURL);
 
   dynamic bodyData = {'accessToken': accessToken};
   print(bodyData);
