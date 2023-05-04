@@ -58,7 +58,8 @@ public class AuthController {
 
     @PostMapping("google/login")
     public ResponseEntity<Map<String, Object>> googleLogin(
-            @RequestBody String email) {
+            @RequestBody Map<String,Object> requestMap) {
+        String email = (String)requestMap.get("email");
         logger.info(">> request : email={}", email);
 
         Long userId = oAuthLoginService.google(email);
