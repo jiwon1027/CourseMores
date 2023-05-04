@@ -257,6 +257,7 @@ public class CourseServiceImpl implements CourseService {
 
 
         int imageIdx = 0;
+        String mainImage = null;
         // 코스의 장소 정보 생성
         for (LocationCreateReqDto location : courseCreateReqDto.getLocationList()) {
             // 코스의 장소의 지역 가져오기
@@ -276,6 +277,8 @@ public class CourseServiceImpl implements CourseService {
             // 코스의 장소의 이미지 생성
             for (int end = imageIdx + location.getNumberOfImage(); imageIdx < end; imageIdx++) {
                 String imagePath = fileUploadService.uploadImage(imageList.get(imageIdx));
+                if (mainImage == null)
+                    mainImage = location.getNumberOfImage() == 0 ? location.getRoadViewImage() : imagePath;
                 courseLocationImageRepository.save(CourseLocationImage.builder()
                         .image(imagePath)
                         .courseLocation(courseLocation)
@@ -283,12 +286,6 @@ public class CourseServiceImpl implements CourseService {
             }
         }
         // 코스의 대표 이미지 설정
-        String mainImage;
-        try {
-            mainImage = course.getCourseLocationList().get(0).getCourseLocationImageList().get(0).getImage();
-        } catch (NullPointerException e){
-            mainImage = course.getCourseLocationList().get(0).getRoadViewImage();
-        }
         course.setMainImage(mainImage);
     }
 
