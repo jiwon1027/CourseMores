@@ -19,6 +19,10 @@ class _SearchState extends State<Search> {
   bool isVisited = false;
   bool isLatestSelected = true;
   bool isPopularSelected = false;
+  TextEditingController searchTextEditingController = TextEditingController();
+
+  var allSelectedThemeList = [];
+  var selectedAddress = [];
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +35,11 @@ class _SearchState extends State<Search> {
     );
   }
 
-  TextEditingController searchTextEditingController = TextEditingController();
+  saveFilter(newSelectedThemeList) {
+    setState(() {
+      allSelectedThemeList = newSelectedThemeList;
+    });
+  }
 
   emptyTheTextFormField() {
     searchTextEditingController.clear();
@@ -44,7 +52,7 @@ class _SearchState extends State<Search> {
       isVisited = !isVisited;
       Fluttertoast.showToast(
         msg:
-            "방문여부 : $isVisited, 최신순 : $isLatestSelected, 인기순 : $isPopularSelected",
+            "방문여부 : $isVisited, 최신순 : $isLatestSelected, 인기순 : $isPopularSelected, 필터 테마 : $allSelectedThemeList, 필터 지역 : $selectedAddress",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.CENTER,
       );
@@ -57,7 +65,7 @@ class _SearchState extends State<Search> {
       isPopularSelected = false;
       Fluttertoast.showToast(
         msg:
-            "방문여부 : $isVisited, 최신순 : $isLatestSelected, 인기순 : $isPopularSelected",
+            "방문여부 : $isVisited, 최신순 : $isLatestSelected, 인기순 : $isPopularSelected, 필터 테마 : $allSelectedThemeList, 필터 지역 : $selectedAddress",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.CENTER,
       );
@@ -70,7 +78,7 @@ class _SearchState extends State<Search> {
       isPopularSelected = true;
       Fluttertoast.showToast(
         msg:
-            "방문여부 : $isVisited, 최신순 : $isLatestSelected, 인기순 : $isPopularSelected",
+            "방문여부 : $isVisited, 최신순 : $isLatestSelected, 인기순 : $isPopularSelected, 필터 테마 : $allSelectedThemeList, 필터 지역 : $selectedAddress",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.CENTER,
       );
@@ -98,7 +106,11 @@ class _SearchState extends State<Search> {
                     borderSide: BorderSide(color: Colors.black),
                   ),
                   filled: true,
-                  prefixIcon: FilterButton(context: context),
+                  prefixIcon: FilterButton(
+                      context: context,
+                      allSelectedThemeList: allSelectedThemeList,
+                      selectedAddress: selectedAddress,
+                      saveFilter: saveFilter),
                   suffixIcon: IconButton(
                     icon: const Icon(Icons.search),
                     color: Colors.grey,
@@ -109,7 +121,7 @@ class _SearchState extends State<Search> {
                         isSearchResults = true;
                         Fluttertoast.showToast(
                           msg:
-                              "방문여부 : $isVisited, 최신순 : $isLatestSelected, 인기순 : $isPopularSelected",
+                              "방문여부 : $isVisited, 최신순 : $isLatestSelected, 인기순 : $isPopularSelected, 필터 테마 : $allSelectedThemeList, 필터 지역 : $selectedAddress",
                           toastLength: Toast.LENGTH_SHORT,
                           gravity: ToastGravity.CENTER,
                         );
@@ -251,9 +263,15 @@ class FilterButton extends StatelessWidget {
   const FilterButton({
     super.key,
     required this.context,
+    required this.allSelectedThemeList,
+    required this.selectedAddress,
+    required this.saveFilter,
   });
 
   final BuildContext context;
+  final allSelectedThemeList;
+  final selectedAddress;
+  final saveFilter;
 
   @override
   Widget build(BuildContext context) {
@@ -265,7 +283,11 @@ class FilterButton extends StatelessWidget {
           // print("필터 열기");
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const SearchFilter()),
+            MaterialPageRoute(
+                builder: (context) => SearchFilter(
+                    allSelectedThemeList: allSelectedThemeList,
+                    selectedAddress: selectedAddress,
+                    saveFilter: saveFilter)),
           );
         });
   }
@@ -536,19 +558,34 @@ class _CourseSearchListState extends State<CourseSearchList> {
 }
 
 class SearchFilter extends StatefulWidget {
-  const SearchFilter({Key? key}) : super(key: key);
+  const SearchFilter(
+      {Key? key,
+      required this.allSelectedThemeList,
+      required this.selectedAddress,
+      required this.saveFilter})
+      : super(key: key);
+
+  final allSelectedThemeList;
+  final selectedAddress;
+  final saveFilter;
 
   @override
   State<SearchFilter> createState() => _SearchFilterState();
 }
 
 class _SearchFilterState extends State<SearchFilter> {
-  var allSelectedTheme = [];
-  var selectedAddress = [];
+  late var allSelectedThemeList = widget.allSelectedThemeList;
+  late var selectedAddress = widget.selectedAddress;
+
+  late var newAllSelectedThemeList = widget.allSelectedThemeList;
+  late var newSelectedAddress = widget.selectedAddress;
+  late var saveFilter = widget.saveFilter;
+
+  final multiSelectController = MultiSelectController();
 
   selectAddress(address) {
     setState(() {
-      selectedAddress = address;
+      newSelectedAddress = address;
     });
   }
 
@@ -561,6 +598,7 @@ class _SearchFilterState extends State<SearchFilter> {
       var card = MultiSelectCard(
         value: theme['text'],
         label: theme['text'],
+        selected: allSelectedThemeList.contains(theme['text']),
         decorations: MultiSelectItemDecorations(
           // 선택 전 테마 스타일
           decoration: BoxDecoration(
@@ -592,86 +630,120 @@ class _SearchFilterState extends State<SearchFilter> {
       );
       cards.add(card);
     }
+
     return Scaffold(
-        appBar: AppBar(
-          // 없어도 <- 모양의 뒤로가기가 기본으로 있으나 < 모양으로 바꾸려고 추가함
-          leading: IconButton(
-            icon: const Icon(
-              Icons.navigate_before,
-              color: Colors.black,
-            ),
-            onPressed: () {
-              Navigator.pop(context);
-              // print("저장 아이템 리스트 : ");
-              // print(allSelectedTheme);
-              // print("선택 지역 : ");
-              // print(selectedAddress);
-            },
-          ),
-          // 알림 아이콘과 텍스트 같이 넣으려고 RichText 사용
-          title: RichText(
-              text: const TextSpan(
-            children: [
-              WidgetSpan(
-                child: Icon(
-                  Icons.tune,
-                  color: Colors.black,
-                ),
-              ),
-              WidgetSpan(
-                child: SizedBox(
-                  width: 5,
-                ),
-              ),
-              TextSpan(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.navigate_before, color: Colors.black),
+          onPressed: () {
+            Fluttertoast.showToast(
+              msg:
+                  "allSelectedTheme : $allSelectedThemeList, selectedAddress : $selectedAddress",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+            );
+            Navigator.pop(context);
+            // print("저장 아이템 리스트 : ");
+            // print(allSelectedTheme);
+            // print("선택 지역 : ");
+            // print(selectedAddress);
+          },
+        ),
+        title: RichText(
+            text: const TextSpan(
+          children: [
+            WidgetSpan(child: Icon(Icons.tune, color: Colors.black)),
+            WidgetSpan(child: SizedBox(width: 5)),
+            TextSpan(
                 text: '검색 필터 설정',
-                style: TextStyle(
-                  fontSize: 22,
-                  color: Colors.black,
+                style: TextStyle(fontSize: 22, color: Colors.black)),
+          ],
+        )),
+        actions: [
+          IconButton(
+              onPressed: () {
+                Fluttertoast.showToast(
+                  msg:
+                      "allSelectedTheme : $allSelectedThemeList, selectedAddress : $selectedAddress",
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.CENTER,
+                );
+                Navigator.pop(context);
+              },
+              icon: const Icon(Icons.close, color: Colors.black)),
+        ],
+      ),
+      // 알림 리스트
+      body: Container(
+        color: const Color.fromARGB(221, 244, 244, 244),
+        child: Column(children: [
+          SizedBox(height: 20),
+          Text("이런 테마는 어때요? 😊", style: TextStyle(fontSize: 20)),
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: MultiSelectContainer(
+              items: cards,
+              controller: multiSelectController,
+              onChange: (allSelectedItems, selectedItem) {
+                // print("선택된 아이템 리스트 : ");
+                // print(allSelectedItems);
+                newAllSelectedThemeList = allSelectedItems;
+                // allSelectedTheme = allSelectedItems;
+              },
+            ),
+          ),
+          SizedBox(height: 20),
+          Text("지역을 선택해보세요 🗺", style: TextStyle(fontSize: 20)),
+          MyDropdown(selectAddress: selectAddress),
+          SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20)),
+                  backgroundColor: Colors.white,
                 ),
+                onPressed: () {
+                  //TODO: 초기화 버튼이 눌렸을 때, 지역 초기화 동작 구현 필요
+                  setState(() {
+                    multiSelectController.deselectAll(); // 선택 취소
+                    newAllSelectedThemeList = [];
+                    Fluttertoast.showToast(
+                      msg:
+                          "allSelectedTheme : $newAllSelectedThemeList, selectedAddress : $selectedAddress",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.CENTER,
+                    );
+                  });
+                },
+                child: Text("초기화", style: TextStyle(color: Colors.black)),
+              ),
+              SizedBox(width: 30),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20)),
+                  backgroundColor: Colors.white,
+                ),
+                onPressed: () {
+                  //TODO: 저장 버튼이 눌렸을 때, 지역 저장 동작 구현 필요
+                  saveFilter(newAllSelectedThemeList);
+                  Fluttertoast.showToast(
+                    msg:
+                        "allSelectedTheme : $newAllSelectedThemeList, selectedAddress : $selectedAddress",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.CENTER,
+                  );
+                },
+                child: Text("저장", style: TextStyle(color: Colors.black)),
               ),
             ],
-          )),
-          // 피그마와 모양 맞추려고 close 아이콘 하나 넣어둠
-          // <와 X 중 하나만 있어도 될 것 같아서 상의 후 삭제 필요
-          actions: [
-            IconButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: const Icon(
-                  Icons.close,
-                  color: Colors.black,
-                )),
-          ],
-        ),
-        // 알림 리스트
-        body: Container(
-            color: const Color.fromARGB(221, 244, 244, 244),
-            child: Column(children: [
-              const Center(
-                child: Padding(
-                  padding: EdgeInsets.only(top: 20),
-                  child: Text("이런 테마는 어때요? 😊", style: TextStyle(fontSize: 20)),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(20),
-                child: MultiSelectContainer(
-                  items: cards,
-                  onChange: (allSelectedItems, selectedItem) {
-                    // print("선택된 아이템 리스트 : ");
-                    // print(allSelectedItems);
-                    allSelectedTheme = allSelectedItems;
-                  },
-                ),
-              ),
-              const Padding(
-                padding: EdgeInsets.only(top: 20),
-                child: Text("지역을 선택해보세요 🗺", style: TextStyle(fontSize: 20)),
-              ),
-              MyDropdown(selectAddress: selectAddress)
-            ])));
+          ),
+        ]),
+      ),
+    );
   }
 }
 
