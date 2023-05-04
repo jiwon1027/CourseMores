@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -37,14 +39,16 @@ public class UserController {
         return new ResponseEntity<>(resultMap,HttpStatus.OK);
     }
 
-    @PostMapping(value = "signup/{userId}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "signup", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<Void> addUserInfo(
             @RequestPart UserInfoCreateReqDto userInfoCreateReqDto,
             @RequestPart(required = false) MultipartFile profileImage,
-            @PathVariable Long userId){
+            @AuthenticationPrincipal User user){
         logger.info(">> request : userInfoCreateReqDto={}", userInfoCreateReqDto);
+        logger.info(">> request : profileImage={}", profileImage);
+        logger.info(">> request : userId={}", user.getUsername());
 
-        userService.addUserInfo(userId,userInfoCreateReqDto,profileImage);
+        userService.addUserInfo(Long.parseLong(user.getUsername()),userInfoCreateReqDto,profileImage);
         logger.info("<< response : none");
 
         return new ResponseEntity<>(HttpStatus.OK);
