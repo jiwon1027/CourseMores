@@ -42,6 +42,8 @@ dependencies {
 	implementation "com.querydsl:querydsl-apt:5.0.0"
 	// https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-s3
 	implementation 'com.amazonaws:aws-java-sdk-s3:1.12.460'
+	// elasticsearch
+	implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
 }
 
 tasks.named('test') {
