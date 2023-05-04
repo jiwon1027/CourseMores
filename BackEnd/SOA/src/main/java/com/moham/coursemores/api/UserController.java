@@ -1,6 +1,7 @@
 package com.moham.coursemores.api;
 
 import com.moham.coursemores.dto.profile.UserInfoCreateReqDto;
+import com.moham.coursemores.dto.profile.UserInfoResDto;
 import com.moham.coursemores.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -40,17 +41,22 @@ public class UserController {
     }
 
     @PostMapping(value = "signup", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<Void> addUserInfo(
+    public ResponseEntity<Map<String,Object>> addUserInfo(
             @RequestPart UserInfoCreateReqDto userInfoCreateReqDto,
             @RequestPart(required = false) MultipartFile profileImage,
             @AuthenticationPrincipal User user){
+        Long userId = Long.parseLong(user.getUsername());
         logger.info(">> request : userInfoCreateReqDto={}", userInfoCreateReqDto);
         logger.info(">> request : profileImage={}", profileImage);
-        logger.info(">> request : userId={}", user.getUsername());
+        logger.info(">> request : userId={}", userId);
 
-        userService.addUserInfo(Long.parseLong(user.getUsername()),userInfoCreateReqDto,profileImage);
-        logger.info("<< response : none");
+        Map<String,Object> resultMap = new HashMap<>();
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        userService.addUserInfo(userId,userInfoCreateReqDto,profileImage);
+        UserInfoResDto userInfo = userService.getUserProfile(userId);
+        resultMap.put("userInfo",userInfo);
+        logger.info("<< response : userInfo={}",userInfo);
+
+        return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
 }
