@@ -1,3 +1,4 @@
+import 'package:coursemores/getx_controller.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'notification/notification.dart' as noti;
@@ -5,6 +6,7 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 import 'package:dio/dio.dart';
+import 'package:get/get.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
@@ -112,6 +114,7 @@ class _ProfileImageState extends State<ProfileImage> {
     if (pickedFile != null) {
       setState(() {
         _pickedFile = pickedFile;
+        userInfoController.saveImage(_pickedFile);
       });
     } else {
       if (kDebugMode) {
@@ -126,6 +129,7 @@ class _ProfileImageState extends State<ProfileImage> {
     if (pickedFile != null) {
       setState(() {
         _pickedFile = pickedFile;
+        userInfoController.saveImage(_pickedFile);
       });
     } else {
       if (kDebugMode) {
@@ -353,6 +357,7 @@ Widget textFormFieldComponent(
         helperStyle: TextStyle(color: Colors.blue)),
     onSaved: (String? inputValue) {
       String nicknameValue = inputValue!;
+      userInfoController.saveNickname(nicknameValue);
       print('닉네임inputvalue!');
     },
     validator: (value) {
@@ -382,6 +387,12 @@ void duplicateCheck(nickname) async {
     print('닉네임 중복 검사!');
     isDuplicate = response.data['isDuplicate'];
   }
+}
+
+final userInfoController = Get.put(UserInfo());
+// UserInfo = {'nickname' : }
+void postSignUp(UserInfo) async {
+  dynamic bodyData = {};
 }
 
 class GenderChoice extends StatefulWidget {
@@ -432,6 +443,7 @@ class _GenderChoiceState extends State<GenderChoice> {
                 onPressed: () {
                   setState(() {
                     _gender = 'M';
+                    userInfoController.saveGender('M');
                   });
                 },
                 style: TextButton.styleFrom(
@@ -448,6 +460,7 @@ class _GenderChoiceState extends State<GenderChoice> {
                 onPressed: () {
                   setState(() {
                     _gender = 'W';
+                    userInfoController.saveGender('W');
                   });
                 },
                 style: TextButton.styleFrom(
@@ -495,6 +508,7 @@ class _AgeRangeState extends State<AgeRange> {
             onChanged: (dynamic newValue) {
               setState(() {
                 _value = newValue;
+                userInfoController.saveAge(_value.toInt());
               });
               print(_value);
             },
@@ -525,7 +539,12 @@ confirmButton() {
   return Padding(
     padding: const EdgeInsets.only(top: 60.0),
     child: ElevatedButton(
-      onPressed: () {},
+      onPressed: () {
+        print(userInfoController.nickname);
+        print(userInfoController.age);
+        print(userInfoController.gender);
+        print(userInfoController.image);
+      },
       child: Text('가입하기'),
     ),
   );
