@@ -12,6 +12,8 @@ import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'main.dart' as main;
+import 'package:fluttertoast/fluttertoast.dart';
+import 'post_signup.dart' as post_signup;
 
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
@@ -549,12 +551,12 @@ confirmButton() {
         print(userInfoController.age);
         print(userInfoController.gender);
         print(userInfoController.profileImage);
-        postSignUp(
-          userInfoController.nickname,
-          userInfoController.age,
-          userInfoController.gender,
+        post_signup.postSignUp(
+          userInfoController.nickname.value,
+          userInfoController.age.value,
+          userInfoController.gender.value,
           userInfoController.profileImage,
-          tokenController.accessToken,
+          tokenController.accessToken.value,
         );
       },
       child: Text('가입하기'),
@@ -562,25 +564,43 @@ confirmButton() {
   );
 }
 
-void postSignUp(nickname, age, gender, image, aToken) async {
-  dynamic userInfoCreateReqDto = {
-    'nickname': nickname,
-    'age': age,
-    'gender': gender,
-  };
-  // FormData formData =
-  dynamic bodyData = json.encode({
-    'UserInfoCreateReqDto': userInfoCreateReqDto,
-    'profileImage': image,
-  });
-  final response = await dio.post('user/signup',
-      data: bodyData,
-      options: Options(headers: {'Authorization': 'Bearer $aToken'}));
-  if (response.statusCode == 200) {
-    Get.to(main.MyApp());
-    print('가입성공!!!');
-  }
-}
+// void postSignUp(nickname, age, gender, image, aToken) async {
+//   dynamic userInfoCreateReqDto = {
+//     'nickname': nickname,
+//     'age': age,
+//     'gender': gender,
+//   };
+//   // FormData formData =
+//   dynamic bodyData = json.encode({
+//     'UserInfoCreateReqDto': userInfoCreateReqDto,
+//     'profileImage': image,
+//   });
+//   final response = await dio.post('user/signup',
+//       data: bodyData,
+//       options: Options(headers: {'Authorization': 'Bearer $aToken'}));
+//   if (response.statusCode == 200) {
+//     Get.to(main.MyApp());
+//     print('가입성공!!!');
+//   }
+// }
+
+// void postSignUp(nickname, age, gender, image, aToken) async {
+//   var formData = FormData.fromMap({
+//     'nickname': nickname,
+//     'age': age,
+//     'gender': gender,
+//     'profileImage':
+//         await MultipartFile.fromFile(image.path, filename: "image.jpg"),
+//   });
+
+//   final response = await dio.post('user/signup',
+//       data: formData,
+//       options: Options(headers: {'Authorization': 'Bearer $aToken'}));
+//   if (response.statusCode == 200) {
+//     Get.to(main.MyApp());
+//     print('가입성공!!!');
+//   }
+// }
 
 boxDeco() {
   return BoxDecoration(
