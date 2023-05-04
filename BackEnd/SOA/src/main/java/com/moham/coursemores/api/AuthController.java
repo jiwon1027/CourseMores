@@ -42,9 +42,8 @@ public class AuthController {
 
     @PostMapping("kakao/login")
     public ResponseEntity<Map<String, Object>> kakaoLogin(
-//            @RequestBody Map<String,Object> requestMap,
-            @RequestBody String accessToken) {
-//        String accessToken = (String)requestMap.get("accessToken");
+            @RequestBody Map<String,Object> requestMap) {
+        String accessToken = (String)requestMap.get("accessToken");
         logger.info(">> request : accessToken={}", accessToken);
 
         Long userId = oAuthLoginService.kakao(accessToken);
@@ -59,9 +58,8 @@ public class AuthController {
 
     @PostMapping("google/login")
     public ResponseEntity<Map<String, Object>> googleLogin(
-//            @RequestBody Map<String,Object> requestMap,
-            @RequestBody String email) {
-//        String email = (String)requestMap.get("email");
+            @RequestBody Map<String,Object> requestMap) {
+        String email = (String)requestMap.get("email");
         logger.info(">> request : email={}", email);
 
         Long userId = oAuthLoginService.google(email);
