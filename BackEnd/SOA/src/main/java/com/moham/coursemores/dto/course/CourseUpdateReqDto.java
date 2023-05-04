@@ -8,8 +8,8 @@ import java.util.List;
 
 @ToString
 @Getter
-@Builder
 public class CourseUpdateReqDto {
+
     private String title;
     private String content;
     private int people;
@@ -18,4 +18,5 @@ public class CourseUpdateReqDto {
     private List<LocationUpdateReqDto> locationList;
     private List<String> hashtagList;
     private List<Long> themeIdList;
+
 }

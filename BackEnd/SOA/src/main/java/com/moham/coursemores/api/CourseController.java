@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("course")
@@ -97,11 +98,13 @@ public class CourseController {
     @PostMapping("{userId}")
     public ResponseEntity<Void> addCourse(
             @PathVariable Long userId,
-            @RequestBody CourseCreateReqDto courseCreateReqDto) {
-        logger.info(">> request : userId={}",userId);
-        logger.info(">> request : courseCreateReqDto={}",courseCreateReqDto);
+            @RequestPart CourseCreateReqDto courseCreateReqDto,
+            @RequestPart(required = false) List<MultipartFile> imageList) {
+        logger.info(">> request : userId={}", userId);
+        logger.info(">> request : courseCreateReqDto={}", courseCreateReqDto);
+        logger.info(">> request : imageList= {}", imageList);
 
-        courseService.addCourse(userId, courseCreateReqDto);
+        courseService.addCourse(userId, courseCreateReqDto, imageList);
         logger.info("<< response : none");
 
         return new ResponseEntity<>(HttpStatus.OK);
@@ -111,12 +114,14 @@ public class CourseController {
     public ResponseEntity<Void> setCourse(
             @PathVariable Long courseId,
             @PathVariable Long userId,
-            @RequestBody CourseUpdateReqDto courseUpdateReqDto) {
+            @RequestPart CourseUpdateReqDto courseUpdateReqDto,
+            @RequestPart(required = false) List<MultipartFile> imageList) {
         logger.info(">> request : courseId={}",courseId);
         logger.info(">> request : userId={}",userId);
         logger.info(">> request : courseUpdateReqDto={}",courseUpdateReqDto);
+        logger.info(">> request : imageList= {}", imageList);
 
-        courseService.setCourse(userId, courseId, courseUpdateReqDto);
+        courseService.setCourse(userId, courseId, courseUpdateReqDto, imageList);
         logger.info("<< response : none");
 
         return new ResponseEntity<>(HttpStatus.OK);
