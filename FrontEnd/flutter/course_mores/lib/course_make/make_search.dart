@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class CMSearch extends StatefulWidget {
   const CMSearch({super.key});
@@ -10,8 +11,9 @@ class CMSearch extends StatefulWidget {
 }
 
 class _CMSearchState extends State<CMSearch> {
+  // final String apiKey = dotenv.get(GOOGLE_MAP_API_KEY);
   final _placesApiClient =
-      GoogleMapsPlaces(apiKey: 'AIzaSyCEfaZrsmBfK6PeG5vBBXwSZ09doSPuXCE');
+      GoogleMapsPlaces(apiKey: dotenv.get('GOOGLE_MAP_API_KEY'));
   final _searchController = TextEditingController();
   List<PlacesSearchResult> _searchResults = [];
 
