@@ -1,7 +1,6 @@
 package com.moham.coursemores.domain;
 
 import com.moham.coursemores.domain.time.DeleteTimeEntity;
-import com.moham.coursemores.dto.comment.CommentUpdateDTO;
 import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -73,9 +72,9 @@ public class Comment extends DeleteTimeEntity {
         this.likeCount = 0;
     }
 
-    public void update(CommentUpdateDTO commentUpdateDTO) {
-        this.content = commentUpdateDTO.getContent();
-        this.people = commentUpdateDTO.getPeople();
+    public void update(String content, int people) {
+        this.content = content;
+        this.people = people;
     }
 
     public void delete() {

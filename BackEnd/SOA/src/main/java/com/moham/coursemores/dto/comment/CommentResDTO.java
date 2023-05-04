@@ -10,11 +10,12 @@ import lombok.ToString;
 @Getter
 @Builder
 public class CommentResDTO {
+
     Long commentId;
     String content;
     int people;
     int likeCount;
-    List<String> imageList;
+    List<CommentImageResDTO> imageList;
     UserSimpleInfoResDto writeUser;
 
 }

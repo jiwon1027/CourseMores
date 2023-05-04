@@ -5,8 +5,9 @@ import com.moham.coursemores.domain.CommentImage;
 import com.moham.coursemores.domain.Course;
 import com.moham.coursemores.domain.User;
 import com.moham.coursemores.dto.comment.CommentCreateReqDTO;
+import com.moham.coursemores.dto.comment.CommentImageResDTO;
 import com.moham.coursemores.dto.comment.CommentResDTO;
-import com.moham.coursemores.dto.comment.CommentUpdateDTO;
+import com.moham.coursemores.dto.comment.CommentUpdateReqDTO;
 import com.moham.coursemores.dto.profile.UserSimpleInfoResDto;
 import com.moham.coursemores.repository.CommentImageRepository;
 import com.moham.coursemores.repository.CourseRepository;
@@ -53,9 +54,12 @@ public class CommentServiceImpl implements CommentService {
                         .content(comment.getContent())
                         .people(comment.getPeople())
                         .likeCount(comment.getLikeCount())
-                        .imageList(commentImageRepository.findByCommentId(comment.getId())
+                        .imageList(comment.getCommentImageList()
                                 .stream()
-                                .map(CommentImage::getImage)
+                                .map(commentImage -> CommentImageResDTO.builder()
+                                        .commentImageId(commentImage.getId())
+                                        .image(commentImage.getImage())
+                                        .build())
                                 .collect(Collectors.toList()))
                         .writeUser(UserSimpleInfoResDto.builder()
                                 .nickname(comment.getUser().getNickname())
@@ -76,9 +80,12 @@ public class CommentServiceImpl implements CommentService {
                         .content(comment.getContent())
                         .people(comment.getPeople())
                         .likeCount(comment.getLikeCount())
-                        .imageList(commentImageRepository.findByCommentId(comment.getId())
+                        .imageList(comment.getCommentImageList()
                                 .stream()
-                                .map(CommentImage::getImage)
+                                .map(commentImage -> CommentImageResDTO.builder()
+                                        .commentImageId(commentImage.getId())
+                                        .image(commentImage.getImage())
+                                        .build())
                                 .collect(Collectors.toList()))
                         .writeUser(UserSimpleInfoResDto.builder()
                                 .nickname(comment.getUser().getNickname())
@@ -125,27 +132,33 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public void updateComment(Long commentId, Long userId, CommentUpdateDTO commentUpdateDTO) {
+    public void updateComment(Long commentId, Long userId, CommentUpdateReqDTO commentUpdateReqDTO, List<MultipartFile> imageList) {
         // userId의 User 가져오기
         User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
                 .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
 
         // commentId의 Comment 가져오기
         Comment comment = commentRepository.findByIdAndUserIdAndDeleteTimeIsNull(commentId, user.getId())
-                .orElseThrow(()-> new RuntimeException("해당 댓글를 찾을 수 없습니다."));
+                .orElseThrow(() -> new RuntimeException("해당 댓글을 찾을 수 없습니다."));
 
         // commentId의 comment가 있다면 comment를 가져와서 수정
-        comment.update(commentUpdateDTO);
+        comment.update(commentUpdateReqDTO.getContent(), commentUpdateReqDTO.getPeople());
 
         // 기존에 있었던 commentImage 삭제
-        commentImageRepository.deleteByCommentId(commentId);
+        for (long courseImageId : commentUpdateReqDTO.getDeleteImageList()) {
+            CommentImage commentImage = commentImageRepository.findById(courseImageId)
+                    .orElseThrow(() -> new RuntimeException("해당 댓글 이미지를 찾을 수 없습니다."));
+            commentImageRepository.delete(commentImage);
+        }
 
         // 이미지 새롭게 추가
-        commentUpdateDTO.getImageList().forEach(imageUrl ->
-                commentImageRepository.save(CommentImage.builder()
-                        .image(imageUrl)
-                        .comment(comment)
-                        .build()));
+        for (MultipartFile multipartFile : imageList) {
+            String imagePath = fileUploadService.uploadImage(multipartFile);
+            commentImageRepository.save(CommentImage.builder()
+                    .image(imagePath)
+                    .comment(comment)
+                    .build());
+        }
     }
 
     @Override

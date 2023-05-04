@@ -2,7 +2,7 @@ package com.moham.coursemores.api;
 
 import com.moham.coursemores.dto.comment.CommentCreateReqDTO;
 import com.moham.coursemores.dto.comment.CommentResDTO;
-import com.moham.coursemores.dto.comment.CommentUpdateDTO;
+import com.moham.coursemores.dto.comment.CommentUpdateReqDTO;
 import com.moham.coursemores.service.CommentService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -88,12 +87,14 @@ public class CommentController {
     public ResponseEntity<Void> putComment(
             @PathVariable Long commentId,
             @PathVariable Long userId,
-            @RequestBody CommentUpdateDTO commentUpdateDTO){
-        logger.info(">> request : commentId = {}, commentUpdateDTO = {}", commentId, commentUpdateDTO);
+            @RequestPart CommentUpdateReqDTO commentUpdateReqDTO,
+            @RequestPart(required = false) List<MultipartFile> imageList){
+        logger.info(">> request : commentId = {}", commentId);
+        logger.info(">> request : commentUpdateReqDTO = {}", commentUpdateReqDTO);
+        logger.info(">> request : imageList= {}", imageList);
 
-        commentService.updateComment(commentId, userId,commentUpdateDTO);
+        commentService.updateComment(commentId, userId, commentUpdateReqDTO, imageList);
         logger.info("<< response : none");
-
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
