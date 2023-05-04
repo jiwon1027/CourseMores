@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:coursemores/getx_controller.dart';
+import 'package:coursemores/login_page.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'notification/notification.dart' as noti;
@@ -7,6 +10,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'main.dart' as main;
 
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
@@ -114,7 +119,9 @@ class _ProfileImageState extends State<ProfileImage> {
     if (pickedFile != null) {
       setState(() {
         _pickedFile = pickedFile;
-        userInfoController.saveImage(_pickedFile);
+        userInfoController.saveImage(pickedFile);
+        print('777777');
+        print(pickedFile);
       });
     } else {
       if (kDebugMode) {
@@ -129,7 +136,7 @@ class _ProfileImageState extends State<ProfileImage> {
     if (pickedFile != null) {
       setState(() {
         _pickedFile = pickedFile;
-        userInfoController.saveImage(_pickedFile);
+        userInfoController.saveImage(pickedFile);
       });
     } else {
       if (kDebugMode) {
@@ -376,12 +383,14 @@ Widget textFormFieldComponent(
   );
 }
 
-var options = BaseOptions(baseUrl: 'https://coursemores.site/api/');
+String baseURL = dotenv.get('BASE_URL');
+
+final options = BaseOptions(baseUrl: baseURL);
 final dio = Dio(options);
 bool? isDuplicate;
 void duplicateCheck(nickname) async {
-  dynamic bodyData = {'nickname': nickname};
-  final response = await dio.post('user/validation', data: bodyData);
+  dynamic nicknameData = json.encode({'nickname': nickname});
+  final response = await dio.post('user/validation', data: nicknameData);
 
   if (response.statusCode == 200) {
     print('닉네임 중복 검사!');
@@ -390,10 +399,6 @@ void duplicateCheck(nickname) async {
 }
 
 final userInfoController = Get.put(UserInfo());
-// UserInfo = {'nickname' : }
-void postSignUp(UserInfo) async {
-  dynamic bodyData = {};
-}
 
 class GenderChoice extends StatefulWidget {
   const GenderChoice({super.key});
@@ -543,11 +548,38 @@ confirmButton() {
         print(userInfoController.nickname);
         print(userInfoController.age);
         print(userInfoController.gender);
-        print(userInfoController.image);
+        print(userInfoController.profileImage);
+        postSignUp(
+          userInfoController.nickname,
+          userInfoController.age,
+          userInfoController.gender,
+          userInfoController.profileImage,
+          tokenController.accessToken,
+        );
       },
       child: Text('가입하기'),
     ),
   );
+}
+
+void postSignUp(nickname, age, gender, image, aToken) async {
+  dynamic userInfoCreateReqDto = {
+    'nickname': nickname,
+    'age': age,
+    'gender': gender,
+  };
+  // FormData formData =
+  dynamic bodyData = json.encode({
+    'UserInfoCreateReqDto': userInfoCreateReqDto,
+    'profileImage': image,
+  });
+  final response = await dio.post('user/signup',
+      data: bodyData,
+      options: Options(headers: {'Authorization': 'Bearer $aToken'}));
+  if (response.statusCode == 200) {
+    Get.to(main.MyApp());
+    print('가입성공!!!');
+  }
 }
 
 boxDeco() {

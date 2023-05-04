@@ -10,6 +10,8 @@ import 'home_screen.dart' as home;
 import 'main.dart' as main;
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'dart:convert';
 
 String baseURL = dotenv.get('BASE_URL');
 
@@ -22,7 +24,7 @@ void postLogin(accessToken) async {
   print('555555555555');
   print(baseURL);
 
-  dynamic bodyData = {'accessToken': accessToken};
+  dynamic bodyData = json.encode({'accessToken': accessToken});
   print(bodyData);
 
   final response = await dio.post('auth/kakao/login', data: bodyData);
@@ -37,6 +39,34 @@ void postLogin(accessToken) async {
       Get.to(signup.SignUp());
     } else {
       Get.to(main.MyApp());
+    }
+  }
+}
+
+void signInWithGoogle() async {
+  final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+  if (googleUser != null) {
+    // print('name = ${googleUser.displayName}');
+    print('email = ${googleUser.email}');
+    // print('id = ${googleUser.id}');
+
+    // dynamic bodyData = {'email': googleUser.email};
+    dynamic bodyData = json.encode({'email': googleUser.email});
+
+    final response = await dio.post('auth/google/login', data: bodyData);
+
+    print(response);
+
+    if (response.statusCode == 200) {
+      // 추후에 issignup으로 교체
+      if (response.data['userSimpleInfo'] == null) {
+        tokenController.saveToken(response.data['token']['accessToken'],
+            response.data['token']['refreshToken']);
+        Get.to(signup.SignUp());
+      } else {
+        Get.to(main.MyApp());
+      }
     }
   }
 }
@@ -81,20 +111,31 @@ class LoginPage extends StatelessWidget {
                   children: [
                     Column(
                       children: [
-                        OutlinedButton(
-                            onPressed: () {
-                              loginController.changeLoginStatus();
-                              Get.to(
-                                main.MyApp(),
-                                transition: Transition.fadeIn,
-                              );
-                            },
-                            child: Text(
-                              '로그인된척하기',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold),
-                            )),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 20.0),
+                          child: SizedBox(
+                            width: 185,
+                            height: 45,
+                            child: ElevatedButton(
+                                onPressed: () {
+                                  loginController.changeLoginStatus();
+                                  Get.to(
+                                    main.MyApp(),
+                                    transition: Transition.fadeIn,
+                                  );
+                                },
+                                style: ElevatedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(5))),
+                                child: Text(
+                                  '게스트로 입장하기',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold),
+                                )),
+                          ),
+                        ),
                         InkWell(
                           onTap: () async {
                             bool isKakaoInstalled =
@@ -144,21 +185,20 @@ class LoginPage extends StatelessWidget {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(top: 20.0),
-                          child: SizedBox(
-                              width: 180,
-                              height: 45,
-                              child: ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              const signup.SignUp(),
-                                        ));
-                                  },
-                                  child: Text('회원가입'))),
-                        ),
+                            padding: const EdgeInsets.only(top: 20.0),
+                            child: InkWell(
+                              onTap: () {
+                                signInWithGoogle();
+                              },
+                              child: SizedBox(
+                                height: 50,
+                                width: 190,
+                                child: Image(
+                                  image: AssetImage('assets/google.png'),
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
+                            )),
                       ],
                     ),
                     // InkWell(
