@@ -5,8 +5,6 @@ import com.moham.coursemores.dto.course.*;
 import com.moham.coursemores.dto.profile.UserSimpleInfoResDto;
 import com.moham.coursemores.repository.*;
 import com.moham.coursemores.service.CourseService;
-import java.io.IOException;
-import java.util.concurrent.atomic.AtomicReference;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -203,7 +201,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     @Transactional
-    public void addCourse(Long userId, CourseCreateReqDto courseCreateReqDto) {
+    public void addCourse(Long userId, CourseCreateReqDto courseCreateReqDto, List<MultipartFile> imageList) {
         // 유저 정보 가져오기
         User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
                 .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
@@ -218,7 +216,6 @@ public class CourseServiceImpl implements CourseService {
                 .interestCount(0)
                 .likeCount(0)
                 .commentCount(0)
-//                .mainImage(courseCreateReqDto.getLocationList().get(0).getImageList().get(0))
                 .locationName(courseCreateReqDto.getLocationList().get(0).getName())
                 .user(user)
                 .build());
@@ -258,9 +255,11 @@ public class CourseServiceImpl implements CourseService {
             }
         });
 
-        AtomicReference<String> mainImage = null;
+
+        int imageIdx = 0;
+        String mainImage = null;
         // 코스의 장소 정보 생성
-        courseCreateReqDto.getLocationList().forEach(location -> {
+        for (LocationCreateReqDto location : courseCreateReqDto.getLocationList()) {
             // 코스의 장소의 지역 가져오기
             Region region = regionRepository.findById(location.getRegionId())
                     .orElseThrow(() -> new RuntimeException("해당 지역을 찾을 수 없습니다."));
@@ -269,29 +268,30 @@ public class CourseServiceImpl implements CourseService {
                     .name(location.getName())
                     .title(location.getTitle())
                     .content(location.getContent())
+                    .roadViewImage(location.getRoadViewImage())
                     .latitude(location.getLatitude())
                     .longitude(location.getLongitude())
                     .course(course)
                     .region(region)
                     .build());
             // 코스의 장소의 이미지 생성
-            for (MultipartFile multipartFile: location.getImageList()) {
-                String imagePath = fileUploadService.uploadImage(multipartFile);
+            for (int end = imageIdx + location.getNumberOfImage(); imageIdx < end; imageIdx++) {
+                String imagePath = fileUploadService.uploadImage(imageList.get(imageIdx));
                 if (mainImage == null)
-                    mainImage.set(imagePath);
+                    mainImage = location.getNumberOfImage() == 0 ? location.getRoadViewImage() : imagePath;
                 courseLocationImageRepository.save(CourseLocationImage.builder()
                         .image(imagePath)
                         .courseLocation(courseLocation)
                         .build());
             }
-        });
+        }
         // 코스의 대표 이미지 설정
-        course.setMainImage(mainImage.get());
+        course.setMainImage(mainImage);
     }
 
     @Override
     @Transactional
-    public void setCourse(Long userId, Long courseId, CourseUpdateReqDto courseUpdateReqDto) {
+    public void setCourse(Long userId, Long courseId, CourseUpdateReqDto courseUpdateReqDto, List<MultipartFile> imageList) {
         // 유저 정보 가져오기
         User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
                 .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
@@ -339,23 +339,38 @@ public class CourseServiceImpl implements CourseService {
                     .theme(theme)
                     .build());
         });
-        // 코스 장소와 장소의 이미지 수정하기
-        courseUpdateReqDto.getLocationList().forEach(updateCourseLocation -> {
+
+
+        int imageIdx = 0;
+        for(LocationUpdateReqDto updateCourseLocation : courseUpdateReqDto.getLocationList()){
             // 코스 장소 불러오기
             CourseLocation courseLocation = courseLocationRepository.findById(updateCourseLocation.getCourseLocationId())
                     .orElseThrow(() -> new RuntimeException("해당 장소를 찾을 수 없습니다."));
             // 코스 장소 수정하기
             courseLocation.update(updateCourseLocation);
-            // 기존 코스 장소 이미지 지우기
-            courseLocationImageRepository.deleteByCourseLocationId(courseLocation.getId());
-            // 코스 장소 이미지 생성
-            updateCourseLocation.getImageList().forEach(image -> {
+            // 이미지 삭제
+            for(long locationImageId : updateCourseLocation.getDeleteImageList()){
+                CourseLocationImage courseLocationImage = courseLocationImageRepository.findById(locationImageId)
+                        .orElseThrow(() -> new RuntimeException("해당 장소 이미지를 찾을 수 없습니다."));
+                courseLocationImageRepository.delete(courseLocationImage);
+            }
+            // 코스의 장소 이미지 추가 생성
+            for (int end = imageIdx + updateCourseLocation.getNumberOfImage(); imageIdx < end; imageIdx++) {
+                String imagePath = fileUploadService.uploadImage(imageList.get(imageIdx));
                 courseLocationImageRepository.save(CourseLocationImage.builder()
+                        .image(imagePath)
                         .courseLocation(courseLocation)
-                        .image(image)
                         .build());
-            });
-        });
+            }
+        }
+        // 코스의 대표 이미지 재설정
+        String mainImage;
+        try {
+            mainImage = course.getCourseLocationList().get(0).getCourseLocationImageList().get(0).getImage();
+        } catch (NullPointerException e){
+            mainImage = course.getCourseLocationList().get(0).getRoadViewImage();
+        }
+        course.setMainImage(mainImage);
     }
 
     @Override

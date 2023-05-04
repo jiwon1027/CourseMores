@@ -45,6 +45,10 @@ public class CourseLocation extends UpdateTimeEntity {
 
     @NotNull
     @Column
+    private String roadViewImage;
+
+    @NotNull
+    @Column
     private double latitude;
 
     @NotNull
@@ -62,12 +66,13 @@ public class CourseLocation extends UpdateTimeEntity {
     private Course course;
 
     @OneToMany(mappedBy = "courseLocation", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CourseLocationImage> courseLocationImageList = new ArrayList<>();
+    private List<CourseLocationImage> courseLocationImageList;
 
     @Builder
     public CourseLocation(String name,
                           String title,
                           String content,
+                          String roadViewImage,
                           double latitude,
                           double longitude,
                           Region region,
@@ -75,6 +80,7 @@ public class CourseLocation extends UpdateTimeEntity {
         this.name = name;
         this.title = title;
         this.content = content;
+        this.roadViewImage = roadViewImage;
         this.latitude = latitude;
         this.longitude = longitude;
         this.region = region;
