@@ -2,6 +2,7 @@ package com.moham.coursemores.api;
 
 import com.moham.coursemores.common.auth.oauth.KakaoLoginParams;
 import com.moham.coursemores.common.util.OAuthProvider;
+import com.moham.coursemores.dto.token.TokenReissueReqDto;
 import com.moham.coursemores.service.OAuthLoginService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -44,10 +45,25 @@ public class AuthController {
         String accessToken = (String)requestMap.get("accessToken");
         logger.info(">> request : accessToken={}", accessToken);
 
-        Long userId = oAuthLoginService.login(accessToken, OAuthProvider.KAKAO);
+        Long userId = oAuthLoginService.kakao(accessToken);
         logger.info("<< response : userId={}",userId);
 
         Map<String, Object> resultMap = oAuthLoginService.getUserProfile(userId, OAuthProvider.KAKAO);
+        logger.info("<< response : userSimpleInfo={}",resultMap.get("userSimpleInfo"));
+        logger.info("<< response : token={}",resultMap.get("token"));
+
+        return new ResponseEntity<>(resultMap,HttpStatus.OK);
+    }
+
+    @PostMapping("google/login")
+    public ResponseEntity<Map<String, Object>> googleLogin(
+            @RequestBody String email) {
+        logger.info(">> request : email={}", email);
+
+        Long userId = oAuthLoginService.google(email);
+        logger.info("<< response : userId={}",userId);
+
+        Map<String, Object> resultMap = oAuthLoginService.getUserProfile(userId, OAuthProvider.GOOGLE);
         logger.info("<< response : userSimpleInfo={}",resultMap.get("userSimpleInfo"));
         logger.info("<< response : token={}",resultMap.get("token"));
 

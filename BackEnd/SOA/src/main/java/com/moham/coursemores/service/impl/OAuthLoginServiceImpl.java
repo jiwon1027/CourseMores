@@ -47,7 +47,7 @@ public class OAuthLoginServiceImpl implements OAuthLoginService {
     }
 
     //////////////////////////////////////////////////////////
-    // 지울 부분
+    // 삭제될 부분입니다
     public OAuthInfoResponse request(OAuthLoginParams params) {
         OAuthApiClient client = clients.get(params.oAuthProvider());
         String accessToken = client.requestAccessToken(params);
@@ -59,21 +59,26 @@ public class OAuthLoginServiceImpl implements OAuthLoginService {
     public Long login(OAuthLoginParams params) {
         OAuthInfoResponse oAuthInfoResponse = request(params);
 
-        return successLogin(oAuthInfoResponse).getId();
+        return successLogin(oAuthInfoResponse.getEmail(), oAuthInfoResponse.getOAuthProvider()).getId();
     }
     //////////////////////////////////////////////////////////
 
     @Override
-    public Long login(String accessToken, OAuthProvider oAuthProvider) {
-        OAuthApiClient client = clients.get(oAuthProvider);
+    public Long kakao(String accessToken) {
+        OAuthApiClient client = clients.get(OAuthProvider.KAKAO);
         OAuthInfoResponse oAuthInfoResponse = client.requestOauthInfo(accessToken);
 
-        return successLogin(oAuthInfoResponse).getId();
+        return successLogin(oAuthInfoResponse.getEmail(), oAuthInfoResponse.getOAuthProvider()).getId();
+    }
+
+    @Override
+    public Long google(String email) {
+        return successLogin(email, OAuthProvider.GOOGLE).getId();
     }
 
     @Override
     public Map<String, Object> getUserProfile(Long userId, OAuthProvider oAuthProvider) {
-        User user = userRepository.findById(userId)
+        User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
                 .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
 
         Map<String, Object> resultMap = new HashMap<>();
@@ -107,15 +112,15 @@ public class OAuthLoginServiceImpl implements OAuthLoginService {
                 .build();
     }
 
-    private User successLogin(OAuthInfoResponse oAuthInfo){
-        Optional<User> user = userRepository.findByEmailAndProviderAndDeleteTimeIsNull(oAuthInfo.getEmail(), oAuthInfo.getOAuthProvider());
+    private User successLogin(String email, OAuthProvider oAuthProvider){
+        Optional<User> user = userRepository.findByEmailAndProviderAndDeleteTimeIsNull(email, oAuthProvider);
 
         // 유저가 존재한다면 로그인 처리
         // 유저가 없다면 회원가입 처리
         return user.orElseGet(() -> userRepository.save(User.builder()
-                .email(oAuthInfo.getEmail())
+                .email(email)
                 .roles("ROLE_USER")
-                .provider(oAuthInfo.getOAuthProvider())
+                .provider(oAuthProvider)
                 .build()));
     }
 }

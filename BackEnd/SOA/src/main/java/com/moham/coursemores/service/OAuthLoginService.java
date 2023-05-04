@@ -10,7 +10,8 @@ import java.util.Map;
 
 public interface OAuthLoginService {
     Long login(OAuthLoginParams params);
-    Long login(String accessToken, OAuthProvider oAuthProvider);
+    Long kakao(String accessToken);
+    Long google(String email);
     Map<String, Object> getUserProfile(Long userId, OAuthProvider oAuthProvider);
     TokenResDto generateToken(Long userId, OAuthProvider oAuthProvider);
 }
