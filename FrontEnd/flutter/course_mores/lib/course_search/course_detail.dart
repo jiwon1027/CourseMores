@@ -196,6 +196,33 @@ class _DetailTapCourseCommentsState extends State<DetailTapCourseComments> {
   late List commentsList =
       course.courseList[courseIndex]['comments_list'] as List;
 
+  bool isCommentLatestSelected = true;
+  bool isCommentPopularSelected = false;
+
+  isCommentLatestSelectedClick() {
+    setState(() {
+      isCommentLatestSelected = true;
+      isCommentPopularSelected = false;
+      Fluttertoast.showToast(
+        msg: "최신순 : $isCommentLatestSelected, 인기순 : $isCommentPopularSelected",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+      );
+    });
+  }
+
+  isCommentPopularSelectedClick() {
+    setState(() {
+      isCommentLatestSelected = false;
+      isCommentPopularSelected = true;
+      Fluttertoast.showToast(
+        msg: "최신순 : $isCommentLatestSelected, 인기순 : $isCommentPopularSelected",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -203,11 +230,109 @@ class _DetailTapCourseCommentsState extends State<DetailTapCourseComments> {
       child: Column(
         children: [
           DetailTapCourseCommentsCreateSection(courseIndex: courseIndex),
+          SortButtonBar(
+              isCommentLatestSelected: isCommentLatestSelected,
+              isCommentPopularSelected: isCommentPopularSelected,
+              isCommentLatestSelectedClick: isCommentLatestSelectedClick,
+              isCommentPopularSelectedClick: isCommentPopularSelectedClick),
           SizedBox(
             height: commentsList.isEmpty ? null : 600,
             child:
                 DetailTapCourseCommentsListSection(commentsList: commentsList),
           )
+        ],
+      ),
+    );
+  }
+}
+
+class SortButtonBar extends StatefulWidget {
+  const SortButtonBar({
+    Key? key,
+    required this.isCommentLatestSelected,
+    required this.isCommentPopularSelected,
+    required this.isCommentLatestSelectedClick,
+    required this.isCommentPopularSelectedClick,
+  }) : super(key: key);
+
+  final isCommentLatestSelected;
+  final isCommentPopularSelected;
+  final isCommentLatestSelectedClick;
+  final isCommentPopularSelectedClick;
+
+  @override
+  State<SortButtonBar> createState() => _SortButtonBarState();
+}
+
+class _SortButtonBarState extends State<SortButtonBar> {
+  late var isCommentLatestSelected = widget.isCommentLatestSelected;
+  late var isCommentPopularSelected = widget.isCommentPopularSelected;
+  late var isCommentLatestSelectedClick = widget.isCommentLatestSelectedClick;
+  late var isCommentPopularSelectedClick = widget.isCommentPopularSelectedClick;
+
+  @override
+  void initState() {
+    super.initState();
+    isCommentLatestSelected = widget.isCommentLatestSelected;
+    isCommentPopularSelected = widget.isCommentPopularSelected;
+    isCommentLatestSelectedClick = widget.isCommentLatestSelectedClick;
+    isCommentPopularSelectedClick = widget.isCommentPopularSelectedClick;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      // color: Colors.amber,
+      height: 40,
+      margin: EdgeInsets.only(top: 10),
+      child: ButtonBar(
+        buttonPadding: EdgeInsets.symmetric(horizontal: 0),
+        alignment: MainAxisAlignment.end,
+        children: [
+          ElevatedButton(
+            onPressed: () {
+              isCommentLatestSelectedClick();
+              isCommentLatestSelected = true;
+              isCommentPopularSelected = false;
+            },
+            style: ButtonStyle(
+              minimumSize: MaterialStateProperty.all<Size>(Size(30, 35)),
+              elevation: MaterialStateProperty.all<double>(0),
+              backgroundColor:
+                  MaterialStateProperty.all<Color>(Colors.transparent),
+              foregroundColor: MaterialStateProperty.all<Color>(
+                  isCommentLatestSelected ? Colors.blue : Colors.grey),
+            ),
+            child: const Text(
+              '최신순',
+              style: TextStyle(
+                fontWeight: FontWeight.w800,
+                fontSize: 16,
+              ),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              isCommentPopularSelectedClick();
+              isCommentLatestSelected = false;
+              isCommentPopularSelected = true;
+            },
+            style: ButtonStyle(
+              minimumSize: MaterialStateProperty.all<Size>(Size(30, 35)),
+              elevation: MaterialStateProperty.all<double>(0),
+              backgroundColor:
+                  MaterialStateProperty.all<Color>(Colors.transparent),
+              foregroundColor: MaterialStateProperty.all<Color>(
+                  isCommentPopularSelected ? Colors.blue : Colors.grey),
+            ),
+            child: const Text(
+              '인기순',
+              style: TextStyle(
+                fontWeight: FontWeight.w800,
+                fontSize: 16,
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -239,7 +364,7 @@ class DetailTapCourseCommentsListSection extends StatelessWidget {
             ),
           )
         : ListView.builder(
-            padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+            padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
             itemCount: commentsList.length,
             itemBuilder: (context, index) {
               return Card(
@@ -291,173 +416,6 @@ class DetailTapCourseCommentsListSection extends StatelessWidget {
                       SizedBox(height: 10),
                       ImageGridView(
                           commentImageList: commentsList[index]['images']),
-
-                      // GridView.builder(
-                      //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      //     crossAxisCount: 3,
-                      //   ),
-                      //   physics: NeverScrollableScrollPhysics(),
-                      //   shrinkWrap: true,
-                      //   itemCount: commentsList[index]['images'].length,
-                      //   itemBuilder: (context, imageIndex) {
-                      //     return InkWell(
-                      //       onTap: () {
-                      //         Navigator.of(context).push(MaterialPageRoute(
-                      //           builder: (context) {
-                      //             return Scaffold(
-                      //               appBar: AppBar(
-                      //                 title: Text('Image'),
-                      //               ),
-                      //               body: Center(
-                      //                 child: Hero(
-                      //                   tag:
-                      //                       'image${commentsList[index]['id']}_$imageIndex',
-                      //                   child: PhotoView(
-                      //                     imageProvider: AssetImage(
-                      //                       commentsList[index]['images']
-                      //                           [imageIndex],
-                      //                     ),
-                      //                   ),
-                      //                 ),
-                      //               ),
-                      //             );
-                      //           },
-                      //         ));
-                      //       },
-                      //       child: Padding(
-                      //         padding: const EdgeInsets.all(2),
-                      //         child: Hero(
-                      //           tag:
-                      //               'image${commentsList[index]['id']}_$imageIndex',
-                      //           child: ClipRRect(
-                      //             borderRadius: BorderRadius.circular(10.0),
-                      //             child: Image.asset(
-                      //               commentsList[index]['images'][imageIndex],
-                      //               fit: BoxFit.cover,
-                      //               width: 100,
-                      //               height: 100,
-                      //             ),
-                      //           ),
-                      //         ),
-                      //       ),
-                      //     );
-                      //   },
-                      // ),
-
-                      // GridView.builder(
-                      //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      //     crossAxisCount: 3,
-                      //   ),
-                      //   physics: NeverScrollableScrollPhysics(),
-                      //   shrinkWrap: true,
-                      //   itemCount: commentsList[index]['images'].length,
-                      //   itemBuilder: (context, imageIndex) {
-                      //     return InkWell(
-                      //       onTap: () {
-                      //         Navigator.of(context).push(MaterialPageRoute(
-                      //           builder: (context) {
-                      //             return Scaffold(
-                      //               appBar: AppBar(
-                      //                 title: Text('Image'),
-                      //               ),
-                      //               body: Center(
-                      //                 child: Hero(
-                      //                   tag:
-                      //                       'image${commentsList[index]['id']}_$imageIndex',
-                      //                   child: Image.asset(
-                      //                     commentsList[index]['images']
-                      //                         [imageIndex],
-                      //                     fit: BoxFit.cover,
-                      //                   ),
-                      //                 ),
-                      //               ),
-                      //             );
-                      //           },
-                      //         ));
-                      //       },
-                      //       child: Padding(
-                      //         padding: const EdgeInsets.all(2),
-                      //         child: Hero(
-                      //           tag:
-                      //               'image${commentsList[index]['id']}_$imageIndex',
-                      //           child: ClipRRect(
-                      //             borderRadius: BorderRadius.circular(10.0),
-                      //             child: Image.asset(
-                      //               commentsList[index]['images'][imageIndex],
-                      //               fit: BoxFit.cover,
-                      //               width: 100,
-                      //               height: 100,
-                      //             ),
-                      //           ),
-                      //         ),
-                      //       ),
-                      //     );
-                      //   },
-                      // ),
-
-                      // GridView.builder(
-                      //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      //     crossAxisCount: 3,
-                      //   ),
-                      //   physics: NeverScrollableScrollPhysics(),
-                      //   shrinkWrap: true,
-                      //   itemCount: commentsList[index]['images'].length,
-                      //   itemBuilder: (context, imageIndex) {
-                      //     return InkWell(
-                      //       onTap: () {
-                      //         Navigator.of(context).push(MaterialPageRoute(
-                      //           builder: (context) {
-                      //             return Scaffold(
-                      //               appBar: AppBar(
-                      //                 title: Text('Image'),
-                      //               ),
-                      //               body: Center(
-                      //                 child: Hero(
-                      //                   tag:
-                      //                       'image${commentsList[index]['id']}_$imageIndex',
-                      //                   child: Image.asset(
-                      //                     commentsList[index]['images']
-                      //                         [imageIndex],
-                      //                     fit: BoxFit.cover,
-                      //                   ),
-                      //                 ),
-                      //               ),
-                      //             );
-                      //           },
-                      //         ));
-                      //       },
-                      //       child: Padding(
-                      //         padding: const EdgeInsets.all(2),
-                      //         child: Hero(
-                      //           tag:
-                      //               'image${commentsList[index]['id']}_$imageIndex',
-                      //           child: ClipRRect(
-                      //             borderRadius: BorderRadius.circular(10.0),
-                      //             child: Image.asset(
-                      //               commentsList[index]['images'][imageIndex],
-                      //               fit: BoxFit.cover,
-                      //               width: 100,
-                      //               height: 100,
-                      //             ),
-                      //           ),
-                      //         ),
-                      //       ),
-                      //     );
-                      //   },
-                      // ),
-
-                      // GridView.builder(
-                      //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      //     crossAxisCount: 2,
-                      //     crossAxisSpacing: 8,
-                      //     mainAxisSpacing: 8,
-                      //   ),
-                      //   itemCount: commentsList[index]['images'].length,
-                      //   itemBuilder: (context, imageIndex) {
-                      //     return Image.asset(
-                      //         commentsList[index]['images'][imageIndex]);
-                      //   },
-                      // )
                     ],
                   ),
                 ),
@@ -738,6 +696,13 @@ class DetailTapCoursePlaces extends StatefulWidget {
 class _DetailTapCoursePlacesState extends State<DetailTapCoursePlaces> {
   late var courseIndex = widget.courseIndex;
   var placeIndex = 0;
+  late CarouselController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = CarouselController();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -746,9 +711,11 @@ class _DetailTapCoursePlacesState extends State<DetailTapCoursePlaces> {
       child: Column(
         children: [
           CarouselSlider.builder(
+            carouselController: _controller,
             options: CarouselOptions(
               height: 250,
-              autoPlay: true,
+              // 자동으로 넘어가게 하려면 autoPlay를 true로 설정할 것
+              autoPlay: false,
               autoPlayInterval: const Duration(seconds: 10),
               enlargeCenterPage: true,
               onPageChanged: (index, reason) {
@@ -756,6 +723,7 @@ class _DetailTapCoursePlacesState extends State<DetailTapCoursePlaces> {
                   placeIndex = index;
                 });
               },
+              enableInfiniteScroll: false,
             ),
             itemCount:
                 (course.courseList[courseIndex]['places'] as List<dynamic>)
@@ -808,6 +776,30 @@ class _DetailTapCoursePlacesState extends State<DetailTapCoursePlaces> {
               ),
             ),
           ),
+          Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children:
+                  (course.courseList[courseIndex]['places'] as List<dynamic>)
+                      .asMap()
+                      .entries
+                      .map((entry) {
+                return GestureDetector(
+                  onTap: () => _controller.animateToPage(entry.key),
+                  child: Container(
+                    width: 12.0,
+                    height: 10.0,
+                    margin:
+                        EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: (Theme.of(context).brightness == Brightness.dark
+                                ? Colors.white
+                                : Colors.black)
+                            .withOpacity(placeIndex == entry.key ? 0.9 : 0.2)),
+                  ),
+                );
+              }).toList()),
+          SizedBox(height: 10),
           Card(
             elevation: 6,
             child: Padding(
