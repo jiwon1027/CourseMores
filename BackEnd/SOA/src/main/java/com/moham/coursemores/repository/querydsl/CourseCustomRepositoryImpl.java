@@ -29,7 +29,7 @@ public class CourseCustomRepositoryImpl implements CourseCustomRepository {
 
         BooleanBuilder builder = new BooleanBuilder();
 
-        if (word != null) {
+        if (word != null && !"".equals(word)) {
             builder.or(course.title.contains(word))
                     .or(course.courseHashtagList.any().hashtag.name.contains(word))
                     .or(course.courseLocationList.any().name.contains(word));
