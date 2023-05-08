@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import './carousel.dart' as carousel;
 // import 'search.dart' as search;
 // import 'package:carousel_slider/carousel_slider.dart';
-import 'carousel.dart' as carousel;
-import 'course_search/course_list.dart' as course;
-import 'mypage.dart' as mypage;
-import 'getx_controller.dart';
-import 'main.dart';
+import 'carousel.dart';
+import '../course_search/course_list.dart' as course;
+import '../mypage/mypage.dart' as mypage;
+import '../getx_controller.dart';
+import '../main.dart';
 import 'package:dio/dio.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart' as geocoding;
@@ -21,9 +22,7 @@ final List<String> imgList = [
 ];
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key, required this.changePageNum});
-
-  final changePageNum;
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -31,7 +30,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   Position? _currentPosition;
-  late Function changePageNum = widget.changePageNum;
+  // late Function changePageNum = widget.changePageNum;
 
   Future<void> _getCurrentLocation() async {
     final permission = await Geolocator.requestPermission();
@@ -177,8 +176,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     ]),
                   ),
                 ),
-                buttonBar1(changePageNum: changePageNum),
-                ButtonBar2(changePageNum: changePageNum),
+                buttonBar1(),
+                ButtonBar2(),
                 popularCourse(),
                 themeList(),
                 reviews(),
@@ -189,7 +188,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-buttonBar1({required Function changePageNum}) {
+buttonBar1() {
   return Padding(
     padding: const EdgeInsets.fromLTRB(0, 15.0, 0, 15.0),
     child: Row(
@@ -206,7 +205,7 @@ buttonBar1({required Function changePageNum}) {
         Container(
           decoration: iconBoxDeco(),
           width: 300.0,
-          child: searchButtonBar(changePageNum: changePageNum),
+          child: searchButtonBar(),
         )
       ],
     ),
@@ -214,9 +213,9 @@ buttonBar1({required Function changePageNum}) {
 }
 
 class ButtonBar2 extends StatefulWidget {
-  const ButtonBar2({super.key, required this.changePageNum});
+  const ButtonBar2({super.key});
 
-  final changePageNum;
+  // final changePageNum;
 
   @override
   State<ButtonBar2> createState() => _ButtonBar2State();
@@ -224,7 +223,7 @@ class ButtonBar2 extends StatefulWidget {
 
 class _ButtonBar2State extends State<ButtonBar2> {
   var pageNum = pageController.pageNum.value;
-  late Function changePageNum = widget.changePageNum;
+  // late Function changePageNum = widget.changePageNum;
 
   @override
   Widget build(BuildContext context) {
@@ -235,9 +234,8 @@ class _ButtonBar2State extends State<ButtonBar2> {
         children: [
           InkWell(
             onTap: () {
-              setState(() {
-                changePageNum(1);
-              });
+              pageController.changePageNum(1);
+              print(pageController.pageNum.value);
             },
             child: Container(
               width: 80.0,
@@ -253,7 +251,8 @@ class _ButtonBar2State extends State<ButtonBar2> {
           ),
           InkWell(
             onTap: () {
-              changePageNum(3);
+              pageController.changePageNum(3);
+              print(pageController.pageNum.value);
             },
             child: Container(
               width: 80.0,
@@ -272,7 +271,8 @@ class _ButtonBar2State extends State<ButtonBar2> {
           ),
           InkWell(
             onTap: () {
-              changePageNum(4);
+              pageController.changePageNum(4);
+              print(pageController.pageNum.value);
             },
             child: Container(
               width: 80.0,
@@ -387,7 +387,7 @@ emptyTheTextFormField() {
 
 controlSearching(str) {}
 
-searchButtonBar({required Function changePageNum}) {
+searchButtonBar() {
   return TextFormField(
     controller: searchTextEditingController,
     decoration: InputDecoration(
@@ -406,7 +406,7 @@ searchButtonBar({required Function changePageNum}) {
         iconSize: 30,
         onPressed: () {
           // print("${searchTextEditingController.text} 검색하기");
-          changePageNum(2);
+          pageController.changePageNum(2);
         },
       ),
     ),
