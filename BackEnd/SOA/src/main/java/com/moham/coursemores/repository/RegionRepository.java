@@ -1,7 +1,12 @@
 package com.moham.coursemores.repository;
 
 import com.moham.coursemores.domain.Region;
+import com.moham.coursemores.repository.querydsl.RegionCustomRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
-public interface RegionRepository extends JpaRepository<Region, Long> {
+import java.util.List;
+
+public interface RegionRepository extends JpaRepository<Region, Long>, RegionCustomRepository {
+    List<Region> findBySido(String sido);
 }

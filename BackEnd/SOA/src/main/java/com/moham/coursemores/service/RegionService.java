@@ -1,9 +1,11 @@
 package com.moham.coursemores.service;
 
-import java.io.FileNotFoundException;
+import com.moham.coursemores.dto.region.GugunResDto;
+
+import java.util.List;
 
 public interface RegionService {
-
     void saveDummy()  throws Exception;
-
+    List<String> getSidoList();
+    List<GugunResDto> getGugunList(String sido);
 }

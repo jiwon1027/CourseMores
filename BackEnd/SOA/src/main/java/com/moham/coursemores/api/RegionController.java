@@ -1,6 +1,8 @@
 package com.moham.coursemores.api;
 
-import com.moham.coursemores.dto.token.TokenReissueReqDto;
+import com.moham.coursemores.service.RegionService;
+import com.moham.coursemores.dto.region.GugunResDto;
+import com.moham.coursemores.repository.RegionRepository;
 import com.moham.coursemores.service.RegionService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -10,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -21,35 +24,39 @@ public class RegionController {
 
     private final RegionService regionService;
 
-//    @GetMapping("dummy")
-//    public ResponseEntity<Void> saveDummyData() throws Exception {
-//        logger.info(">> request : none");
-//
-//        regionService.saveDummy();
-//
-//        logger.info("<< response : none");
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
+    @GetMapping("dummy")
+    public ResponseEntity<Void> saveDummyData() throws Exception {
+        logger.info(">> request : none");
+
+        regionService.saveDummy();
+
+        logger.info("<< response : none");
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
     @GetMapping
-    public ResponseEntity<Map<String, Object>> getRegionBigList() {
+    public ResponseEntity<Map<String, Object>> getSidoList() {
         logger.info(">> request : none");
 
         Map<String, Object> resultMap = new HashMap<>();
 
-        logger.info("<< response : =");
+        List<String> sidoList = regionService.getSidoList();
+        resultMap.put("sidoList",sidoList);
+        logger.info("<< response : sidoList={}",sidoList);
 
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
 
-    @GetMapping("{regionBig}")
-    public ResponseEntity<Map<String, Object>> getRegionSmallList(
-            @PathVariable String regionBig) {
-        logger.info(">> request : regionBig={}",regionBig);
+    @GetMapping("{sido}")
+    public ResponseEntity<Map<String, Object>> getGugunList(
+            @PathVariable String sido) {
+        logger.info(">> request : sido={}",sido);
 
         Map<String, Object> resultMap = new HashMap<>();
 
-        logger.info("<< response : =");
+        List<GugunResDto> gugunList = regionService.getGugunList(sido);
+        resultMap.put("gugunList",gugunList);
+        logger.info("<< response : gugunList={}",gugunList);
 
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
