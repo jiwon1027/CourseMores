@@ -29,8 +29,8 @@ class TokenStorage extends GetxController {
 }
 
 class UserInfo extends GetxController {
-  final nickname = ''.obs;
-  final gender = ''.obs;
+  final nickname = 'default'.obs;
+  final gender = 'default'.obs;
   final age = 0.obs;
   // final image = ''.obs;
   XFile? profileImage;

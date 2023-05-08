@@ -13,21 +13,24 @@ import 'package:get/get.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'main.dart' as main;
 import 'package:fluttertoast/fluttertoast.dart';
-import 'post_signup.dart' as post_signup;
+import 'post_profile_edit.dart' as post_profile_edit;
+import 'getx_controller.dart';
 
-class SignUp extends StatefulWidget {
-  const SignUp({super.key});
+final userInfoController = Get.put(UserInfo());
+
+class ProfileEdit extends StatefulWidget {
+  const ProfileEdit({super.key});
 
   @override
-  State<SignUp> createState() => _SignUpState();
+  State<ProfileEdit> createState() => _ProfileEditState();
 }
 
-class _SignUpState extends State<SignUp> {
+class _ProfileEditState extends State<ProfileEdit> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: const SignUpAppBar(),
+      appBar: const ProfileEditAppBar(),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -60,7 +63,7 @@ class ProfileImage extends StatefulWidget {
 }
 
 class _ProfileImageState extends State<ProfileImage> {
-  XFile? _pickedFile;
+  XFile? _pickedFile = userInfoController.profileImage;
   @override
   Widget build(BuildContext context) {
     final imageSize = MediaQuery.of(context).size.width / 16;
@@ -123,7 +126,7 @@ class _ProfileImageState extends State<ProfileImage> {
         _pickedFile = pickedFile;
         userInfoController.saveImage(pickedFile);
         print('777777');
-        print(pickedFile.path);
+        print(pickedFile);
       });
     } else {
       if (kDebugMode) {
@@ -139,7 +142,6 @@ class _ProfileImageState extends State<ProfileImage> {
       setState(() {
         _pickedFile = pickedFile;
         userInfoController.saveImage(pickedFile);
-        print(pickedFile.path);
       });
     } else {
       if (kDebugMode) {
@@ -312,7 +314,7 @@ class _RegisterNicknameState extends State<RegisterNickname> {
                     key: formKey,
                     child: textFormFieldComponent(
                         false,
-                        '사용할 닉네임을 입력하세요.',
+                        userInfoController.nickname.value,
                         10,
                         2,
                         '최소 2자 이상이어야 합니다.',
@@ -360,6 +362,7 @@ Widget textFormFieldComponent(
     String duplicateError,
     String? helperText) {
   return TextFormField(
+    initialValue: userInfoController.nickname.value,
     obscureText: obscureText,
     decoration: InputDecoration(
         hintText: hintText,
@@ -401,8 +404,6 @@ void duplicateCheck(nickname) async {
   }
 }
 
-final userInfoController = Get.put(UserInfo());
-
 class GenderChoice extends StatefulWidget {
   const GenderChoice({super.key});
 
@@ -411,7 +412,7 @@ class GenderChoice extends StatefulWidget {
 }
 
 class _GenderChoiceState extends State<GenderChoice> {
-  String? _gender;
+  String? _gender = userInfoController.gender.value;
   Color? manColor;
   Color? womanColor;
   Color? manTextColor = Colors.blue;
@@ -496,7 +497,7 @@ class AgeRange extends StatefulWidget {
 }
 
 class _AgeRangeState extends State<AgeRange> {
-  double _value = 0.0;
+  double _value = userInfoController.age.value.toDouble();
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -552,7 +553,7 @@ confirmButton() {
         print(userInfoController.age);
         print(userInfoController.gender);
         print(userInfoController.profileImage);
-        post_signup.postSignUp(
+        post_profile_edit.postProfileEdit(
           userInfoController.nickname.value,
           userInfoController.age.value,
           userInfoController.gender.value,
@@ -560,7 +561,7 @@ confirmButton() {
           tokenController.accessToken.value,
         );
       },
-      child: Text('가입하기'),
+      child: Text('수정하기'),
     ),
   );
 }
@@ -618,8 +619,8 @@ boxDeco() {
   );
 }
 
-class SignUpAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const SignUpAppBar({
+class ProfileEditAppBar extends StatelessWidget implements PreferredSizeWidget {
+  const ProfileEditAppBar({
     super.key,
   });
 

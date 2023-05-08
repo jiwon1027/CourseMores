@@ -18,6 +18,7 @@ String baseURL = dotenv.get('BASE_URL');
 final options = BaseOptions(baseUrl: baseURL);
 final dio = Dio(options);
 final tokenController = Get.put(TokenStorage());
+final userInfoController = Get.put(UserInfo());
 
 void postLogin(accessToken) async {
   print(accessToken);
@@ -39,6 +40,9 @@ void postLogin(accessToken) async {
       Get.to(signup.SignUp());
     } else {
       loginController.changeLoginStatus();
+      userInfoController.saveNickname(response.data['userInfo']['nickname']);
+      userInfoController.saveAge(response.data['userInfo']['age']);
+      userInfoController.saveGender(response.data['userInfo']['gender']);
       Get.to(main.MyApp());
     }
   }
@@ -67,6 +71,11 @@ void signInWithGoogle() async {
         Get.to(() => signup.SignUp());
       } else {
         loginController.changeLoginStatus();
+        userInfoController.saveNickname(response.data['userInfo']['nickname']);
+        userInfoController.saveAge(response.data['userInfo']['age']);
+        userInfoController.saveGender(response.data['userInfo']['gender']);
+        // 이미지는 받을때 type이 경로인가..? null보내면 default string으로?
+
         Get.to(
           () => main.MyApp(),
           transition: Transition.fadeIn,
