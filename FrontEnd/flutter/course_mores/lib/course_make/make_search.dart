@@ -38,14 +38,32 @@ class _CMSearchState extends State<CMSearch> {
     }
   }
 
-  void _onPlaceSelected(PlacesSearchResult place) {
-    // 선택된 장소 정보를 이용하여 페이지 이동 등의 로직을 작성합니다.
+  // void _onPlaceSelected(PlacesSearchResult place) {
+  //   // 선택된 장소 정보를 이용하여 페이지 이동 등의 로직을 작성합니다.
+  //   setState(() {
+  //     _selectedLocation = LatLng(
+  //       place.geometry!.location.lat,
+  //       place.geometry!.location.lng,
+  //     );
+  //   });
+  //   Navigator.pop(context, _selectedLocation);
+  // }
+
+  void _onPlaceSelected(PlacesSearchResult selectedPlace) {
+    if (selectedPlace.geometry == null ||
+        selectedPlace.geometry!.location == null) {
+      // 예외 처리: 선택된 장소에 대한 위치 정보가 없음
+      return;
+    }
+
     setState(() {
       _selectedLocation = LatLng(
-        place.geometry!.location.lat,
-        place.geometry!.location.lng,
+        selectedPlace.geometry!.location.lat,
+        selectedPlace.geometry!.location.lng,
       );
     });
+    Navigator.pop(context, selectedPlace);
+    print(_selectedLocation);
   }
 
   @override

@@ -5,6 +5,10 @@ import 'package:coursemores/course_make/make_search.dart';
 import 'package:flutter_reorderable_list/flutter_reorderable_list.dart' as frl;
 import 'package:flutter/material.dart';
 import './place_edit.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:get/get.dart';
+import '../make_controller.dart';
 
 class CourseMake extends StatefulWidget {
   const CourseMake({Key? key}) : super(key: key);
@@ -13,46 +17,91 @@ class CourseMake extends StatefulWidget {
   State<CourseMake> createState() => _CourseMakeState();
 }
 
-class ItemData {
-  ItemData(this.title, this.key);
-
-  final String title;
-
-  // Each item in reorderable list needs stable and unique key
-  final Key key;
-}
-
 enum DraggingMode {
   iOS,
   android,
 }
 
 class _CourseMakeState extends State<CourseMake> {
+  final courseController = Get.put(CourseController());
+  final LocationController locationController = Get.put(LocationController());
+
   // list of tiles
-  late List<ItemData> _items;
+  late List<LocationData> _items;
+
   _CourseMakeState() {
-    _items = [];
-    for (int i = 0; i < 30; ++i) {
-      String label = "List item $i";
-      if (i == 5) {
-        label += ". This item has a long label and will be wrapped.";
-      }
-      _items.add(ItemData(label, ValueKey(i)));
-    }
+    _items = <LocationData>[];
   }
 
-  // Returns index of item with given key
+  void _addItem(String name, double latitude, double longitude, [Key? key]) {
+    if (_items.length >= 5) {
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: const Text('장소 추가 불가'),
+          content: const Text('장소는 최대 5개까지 추가 가능합니다.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('확인', style: TextStyle(color: Colors.blue)),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+    LocationData locationData = LocationData(
+      key: UniqueKey(),
+      name: name,
+      latitude: latitude,
+      longitude: longitude,
+    );
+    _items.add(locationData);
+  }
+
+  // // 기존 아이템을 수정하는 함수
+  // void _editItem(int index, String title, double latitude, double longitude) {
+  //   setState(() {
+  //     final item = LocationData(
+  //       name: title,
+  //       latitude: latitude,
+  //       longitude: longitude,
+  //       key: _items[index].key,
+  //     );
+  //     _items[index] = item;
+  //   });
+  // }
+  // 기존 아이템을 수정하는 함수
+  // void _editItem(int index, String title, double latitude, double longitude) {
+  //   final locationData = LocationData(
+  //     key: _items[index].key,
+  //     name: title,
+  //     latitude: latitude,
+  //     longitude: longitude,
+  //   );
+  //   final locationController = Get.find<LocationController>();
+  //   locationController.editItem(index, locationData);
+  // }
+  void _editItem(int index, String title, double latitude, double longitude) {
+    final locationData = LocationData(
+      name: title,
+      latitude: latitude,
+      longitude: longitude,
+      key: _items[index].key,
+    );
+    locationController.updateLocation(index, locationData);
+  }
+
+// Returns index of item with given key
   int _indexOfKey(Key key) {
-    return _items.indexWhere((ItemData d) => d.key == key);
+    return _items.indexWhere((LocationData d) => d.key == key);
   }
 
   bool _reorderCallback(Key item, Key newPosition) {
     int draggingIndex = _indexOfKey(item);
     int newPositionIndex = _indexOfKey(newPosition);
-
-    // Uncomment to allow only even target reorder possition
-    // if (newPositionIndex % 2 == 1)
-    //   return false;
 
     final draggedItem = _items[draggingIndex];
     setState(() {
@@ -65,22 +114,26 @@ class _CourseMakeState extends State<CourseMake> {
 
   void _reorderDone(Key item) {
     final draggedItem = _items[_indexOfKey(item)];
-    debugPrint("Reordering finished for ${draggedItem.title}}");
+    debugPrint("Reordering finished for ${draggedItem.name}}");
   }
 
-  void onEdit(ItemData item) {
+  void onEdit(LocationData item) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => EditItemPage(item: item),
+        builder: (context) => EditItemPage(locationData: item),
       ),
     );
   }
 
-  void onDelete(ItemData item) {
-    // TODO: Implement deleting logic here
+  // void onDelete(ItemData item) {
+  //   // TODO: Implement deleting logic here
+  // }
+  void onDelete(LocationData item) {
+    setState(() {
+      _items.remove(item);
+    });
   }
-
   //
   // Reordering works by having ReorderableList widget in hierarchy
   // containing ReorderableItems widgets
@@ -164,32 +217,6 @@ class _CourseMakeState extends State<CourseMake> {
                   child: CustomScrollView(
                     // cacheExtent: 3000,
                     slivers: <Widget>[
-                      // SliverAppBar(
-                      //   actions: <Widget>[
-                      //     PopupMenuButton<DraggingMode>(
-                      //       initialValue: _draggingMode,
-                      //       onSelected: (DraggingMode mode) {
-                      //         setState(() {
-                      //           _draggingMode = mode;
-                      //         });
-                      //       },
-                      //       itemBuilder: (BuildContext context) =>
-                      //           <PopupMenuItem<DraggingMode>>[
-                      //         const PopupMenuItem<DraggingMode>(
-                      //             value: DraggingMode.iOS,
-                      //             child: Text('iOS-like dragging')),
-                      //         const PopupMenuItem<DraggingMode>(
-                      //             value: DraggingMode.android,
-                      //             child: Text('Android-like dragging')),
-                      //       ],
-                      //     ),
-                      //   ],
-                      //   pinned: true,
-                      //   expandedHeight: 150.0,
-                      //   flexibleSpace: const FlexibleSpaceBar(
-                      //     title: Text('Demo'),
-                      //   ),
-                      // ),
                       SliverPadding(
                           padding: EdgeInsets.only(
                               bottom: MediaQuery.of(context).padding.bottom),
@@ -223,10 +250,37 @@ class _CourseMakeState extends State<CourseMake> {
                 children: [
                   ElevatedButton.icon(
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => CMSearch()),
-                        );
+                        if (_items.length >= 5) {
+                          showDialog(
+                            context: context,
+                            builder: (_) => AlertDialog(
+                              title: const Text('장소 추가 불가'),
+                              content: const Text('장소는 최대 5개까지 추가 가능합니다.'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text('확인',
+                                      style: TextStyle(color: Colors.blue)),
+                                ),
+                              ],
+                            ),
+                          );
+                          return;
+                        }
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
+                          return CMSearch();
+                        })).then((selectedPlace) {
+                          if (selectedPlace != null) {
+                            _addItem(
+                                selectedPlace.name,
+                                selectedPlace.geometry!.location.lat,
+                                selectedPlace.geometry!.location.lng,
+                                UniqueKey());
+                          }
+                        });
                       },
                       icon: const Icon(Icons.search),
                       label: const Text(
@@ -237,10 +291,38 @@ class _CourseMakeState extends State<CourseMake> {
                   const SizedBox(width: 16),
                   ElevatedButton.icon(
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => CMMap()),
-                        );
+                        if (_items.length >= 5) {
+                          showDialog(
+                            context: context,
+                            builder: (_) => AlertDialog(
+                              title: const Text('장소 추가 불가'),
+                              content: const Text('장소는 최대 5개까지 추가 가능합니다.'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text('확인',
+                                      style: TextStyle(color: Colors.blue)),
+                                ),
+                              ],
+                            ),
+                          );
+                          return;
+                        }
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
+                          return CMMap();
+                        })).then((data) {
+                          if (data != null) {
+                            _addItem(
+                              data['locationName'],
+                              data['latitude'],
+                              data['longitude'],
+                              UniqueKey(),
+                            );
+                          }
+                        });
                       },
                       icon: const Icon(
                         Icons.location_on,
@@ -256,40 +338,99 @@ class _CourseMakeState extends State<CourseMake> {
               SizedBox(
                 height: 10,
               ),
-              ElevatedButton.icon(
-                icon: const Icon(Icons.verified),
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: const Text('정말로 작성이 완료 되었나요?'),
-                        content: const Text('작성하신 내용을 저장하시겠습니까?'),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              // TODO: Implement saving logic here
-                              Navigator.of(context).pop();
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => MakeStepper()),
-                              );
-                            },
-                            child: const Text('저장'),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      final List<LocationData> items = _items;
+                      if (items.length <= 1) {
+                        showDialog(
+                          context: context,
+                          builder: (_) => const AlertDialog(
+                            title: Text('동선 미리보기'),
+                            content: Text('장소를 2개 이상 선택해주세요.'),
                           ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: const Text('취소'),
+                        );
+                        return;
+                      }
+
+                      showDialog(
+                        context: context,
+                        builder: (_) => Dialog(
+                          child: SizedBox(
+                            height: 400,
+                            width: 300,
+                            child: PreviewRoute(items: items),
                           ),
-                        ],
+                        ),
                       );
                     },
-                  );
-                },
-                label: const Text('코스 지정 완료'),
+                    icon: const Icon(Icons.route),
+                    label: const Text('동선 미리보기'),
+                  ),
+                  const SizedBox(width: 16),
+                  ElevatedButton.icon(
+                    icon: const Icon(Icons.verified),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                    ),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text('정말로 작성이 완료 되었나요?'),
+                            content: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text('작성하신 내용을 저장하시겠습니까?'),
+                                const SizedBox(height: 8),
+                                Text('작성한 장소 ${_items.length}곳:',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.red)),
+                                const SizedBox(height: 8),
+                                Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: _items
+                                      .map((item) => Text(
+                                            '- ${item.name}',
+                                            style: const TextStyle(
+                                                color: Colors.red),
+                                          ))
+                                      .toList(),
+                                ),
+                              ],
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => MakeStepper()),
+                                  );
+                                },
+                                child: const Text('저장'),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('취소'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                    label: const Text('코스 지정 완료'),
+                  ),
+                ],
               ),
             ],
           ),
@@ -310,15 +451,25 @@ class Item extends StatelessWidget {
     required this.onDelete,
   }) : super(key: key);
 
-  final ItemData data;
+  static late List<LocationData> _items;
+  final LocationData data;
   final bool isFirst;
   final bool isLast;
   final DraggingMode draggingMode;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
 
+  static int indexOfKey(Key key) {
+    return _items.indexWhere((LocationData d) => d.key == key);
+  }
+
   Widget _buildChild(BuildContext context, frl.ReorderableItemState state) {
     BoxDecoration decoration;
+
+    final String _apiKey = dotenv.get('GOOGLE_MAP_API_KEY');
+
+    final String _imgUrl =
+        "https://maps.googleapis.com/maps/api/streetview?size=400x400&location=${data.latitude},${data.longitude}&fov=90&heading=235&pitch=10&key=$_apiKey";
 
     if (state == frl.ReorderableItemState.dragProxy ||
         state == frl.ReorderableItemState.dragProxyFinished) {
@@ -369,14 +520,34 @@ class Item extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        data.title,
+                        data.name,
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           ElevatedButton.icon(
-                            onPressed: () {},
+                            onPressed: () {
+                              // 출력할 값들
+                              print('Key: ${data.key}');
+                              print('Name: ${data.name}');
+                              print('Latitude: ${data.latitude}');
+                              print('Longitude: ${data.longitude}');
+                              print('Image: ${data.image}');
+                              print('Title: ${data.title}');
+                              print('Content: ${data.content}');
+                              print('Sido: ${data.sido}');
+                              print('Gugun: ${data.gugun}');
+                              // 페이지 이동
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      EditItemPage(locationData: data),
+                                ),
+                              );
+                              // },
+                            },
                             icon: Icon(Icons.edit),
                             label: Text('추가 정보 작성'),
                             style: ElevatedButton.styleFrom(
@@ -387,7 +558,9 @@ class Item extends StatelessWidget {
                           ),
                           SizedBox(width: 10),
                           ElevatedButton.icon(
-                            onPressed: () {},
+                            onPressed: () {
+                              onDelete();
+                            },
                             icon: Icon(Icons.delete),
                             label: Text('장소 삭제'),
                             style: ElevatedButton.styleFrom(
@@ -420,8 +593,13 @@ class Item extends StatelessWidget {
       height: 120,
       width: double.infinity,
       decoration: BoxDecoration(
+        // image: DecorationImage(
+        //   image: AssetImage('assets/img1.jpg'),
+        //   fit: BoxFit.cover,
+        // ),
         image: DecorationImage(
-          image: AssetImage('assets/img1.jpg'),
+          // image: AssetImage('assets/img1.jpg'),
+          image: NetworkImage(_imgUrl),
           fit: BoxFit.cover,
         ),
       ),
@@ -430,14 +608,7 @@ class Item extends StatelessWidget {
     // For android dragging mode, wrap the entire content in DelayedReorderableListener
     if (draggingMode == DraggingMode.android) {
       content = frl.DelayedReorderableListener(
-        child:
-            // Column(
-            //   children: [
-            //     image,
-            //     content,
-            //   ],
-            // ),
-            Container(
+        child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20.0),
           ),
@@ -451,12 +622,6 @@ class Item extends StatelessWidget {
       );
     }
 
-    // return Column(
-    //   children: [
-    //     image,
-    //     content,
-    //   ],
-    // );
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20.0),
@@ -475,5 +640,38 @@ class Item extends StatelessWidget {
     return frl.ReorderableItem(
         key: data.key, //
         childBuilder: _buildChild);
+  }
+}
+
+class PreviewRoute extends StatelessWidget {
+  const PreviewRoute({
+    Key? key,
+    required this.items,
+  }) : super(key: key);
+
+  final List<LocationData> items;
+
+  @override
+  Widget build(BuildContext context) {
+    final List<LatLng> positions =
+        items.map((item) => LatLng(item.latitude, item.longitude)).toList();
+    return GoogleMap(
+      initialCameraPosition: CameraPosition(
+        target: positions[0], // 첫 번째 장소를 화면 중앙에 띄우기
+        zoom: 15.0,
+      ),
+      markers: Set.from(positions.map((position) => Marker(
+            markerId: MarkerId(position.toString()),
+            position: position,
+          ))),
+      polylines: {
+        Polyline(
+          polylineId: PolylineId('route'),
+          points: positions,
+          color: Colors.blue,
+          width: 5,
+        ),
+      },
+    );
   }
 }
