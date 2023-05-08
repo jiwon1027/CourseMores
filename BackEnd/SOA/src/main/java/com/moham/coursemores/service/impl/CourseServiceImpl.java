@@ -108,20 +108,10 @@ public class CourseServiceImpl implements CourseService {
         // 코스 정보 가져오기
         Course course = courseRepository.findByIdAndDeleteTimeIsNull(courseId)
                 .orElseThrow(()->new RuntimeException("해당 코스를 찾을 수 없습니다."));
-        // 코스 해시태그 이름 가져오기
-        List<String> hashtagList = hashtagOfCourseRepository.findByCourseId(courseId)
-                .stream()
-                .map(hashtagOfCourse -> hashtagOfCourse.getHashtag().getName())
-                .collect(Collectors.toList());
-        // 코스 테마 id 가져오기
-        List<Long> themeIdList = themeOfCourseRepository.findByCourseId(courseId)
-                .stream()
-                .map(themeOfCourse -> themeOfCourse.getTheme().getId())
-                .collect(Collectors.toList());
-        // 코스 작성자 정보 가져오기
-        User user = userRepository.findByIdAndDeleteTimeIsNull(course.getUser().getId())
-                .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
-        // 코스 정보 반환
+
+        if(course.getUser().getDeleteTime() != null)
+            throw new RuntimeException("해당 유저를 찾을 수 없습니다.");
+
         return CourseInfoResDto.builder()
                 .title(course.getTitle())
                 .content(course.getContent())
@@ -132,11 +122,17 @@ public class CourseServiceImpl implements CourseService {
                 .likeCount(course.getLikeCount())
                 .interestCount(course.getInterestCount())
                 .mainImage(course.getMainImage())
-                .hashtagList(hashtagList)
-                .themeIdList(themeIdList)
+                .hashtagList(course.getCourseHashtagList()
+                        .stream()
+                        .map(o -> o.getHashtag().getName())
+                        .collect(Collectors.toList()))
+                .themeList(course.getThemeOfCourseList()
+                        .stream()
+                        .map(o -> o.getTheme().getName())
+                        .collect(Collectors.toList()))
                 .simpleInfoOfWriter(UserSimpleInfoResDto.builder()
-                        .nickname(user.getNickname())
-                        .profileImage(user.getProfileImage())
+                        .nickname(course.getUser().getNickname())
+                        .profileImage(course.getUser().getProfileImage())
                         .build())
                 .build();
     }
@@ -172,31 +168,29 @@ public class CourseServiceImpl implements CourseService {
         // 유저 정보 가져오기
         User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
                 .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
-        // 내 코스 목록 list 생성
-        List<MyCourseResDto> myCourseResDtoList = new ArrayList<>();
+
         // 유저의 코스들을 Dto로 가공하여 list에 담기
-        user.getCourseList().forEach(course -> {
-            // 삭제한 코스인지 확인
-            if(course.getDeleteTime()!=null) return;
-            // 코스의 첫번째 지역
-            Region region = course.getCourseLocationList().get(0).getRegion();
-            // 코스를 Dto로 가공하기
-            myCourseResDtoList.add(MyCourseResDto.builder()
-                    .courseId(course.getId())
-                    .title(course.getTitle())
-                    .content(course.getContent())
-                    .people(course.getPeople())
-                    .visited(course.isVisited())
-                    .likeCount(course.getLikeCount())
-                    .mainImage(course.getMainImage())
-                    .sido(region.getSido())
-                    .gugun(region.getGugun())
-                    .locationName(course.getLocationName())
-                    .commentCount(course.getCommentCount())
-                    .build());
-            });
-        // 내 코스 목록 반환
-        return myCourseResDtoList;
+        return user.getCourseList()
+                .stream()
+                .map(course -> {
+                    // 삭제한 코스인지 확인
+                    if(course.getDeleteTime()!=null) return null;
+                    // 코스를 Dto로 가공하기
+                    return MyCourseResDto.builder()
+                            .courseId(course.getId())
+                            .title(course.getTitle())
+                            .content(course.getContent())
+                            .people(course.getPeople())
+                            .visited(course.isVisited())
+                            .likeCount(course.getLikeCount())
+                            .mainImage(course.getMainImage())
+                            .sido(course.getCourseLocationList().get(0).getRegion().getSido())
+                            .gugun(course.getCourseLocationList().get(0).getRegion().getGugun())
+                            .locationName(course.getLocationName())
+                            .commentCount(course.getCommentCount())
+                            .build();
+                })
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -261,7 +255,7 @@ public class CourseServiceImpl implements CourseService {
         // 코스의 장소 정보 생성
         for (LocationCreateReqDto location : courseCreateReqDto.getLocationList()) {
             // 코스의 장소의 지역 가져오기
-            Region region = regionRepository.findById(location.getRegionId())
+            Region region = regionRepository.findBySidoAndGugun(location.getSido(), location.getGugun())
                     .orElseThrow(() -> new RuntimeException("해당 지역을 찾을 수 없습니다."));
             // 코스의 장소 저장
             CourseLocation courseLocation = courseLocationRepository.save(CourseLocation.builder()

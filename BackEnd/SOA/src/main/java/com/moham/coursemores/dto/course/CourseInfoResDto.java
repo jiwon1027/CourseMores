@@ -20,6 +20,6 @@ public class CourseInfoResDto {
     private int commentCount;
     private String mainImage;
     private List<String> hashtagList;
-    private List<Long> themeIdList;
+    private List<String> themeList;
     private UserSimpleInfoResDto simpleInfoOfWriter;
 }
