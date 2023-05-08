@@ -4,8 +4,10 @@ import 'sign_up.dart' as signup;
 import 'package:animated_button_bar/animated_button_bar.dart';
 import 'course_search/search.dart' as search;
 import 'course_search/course_list.dart' as course;
-// import 'package:get/get.dart';
+import 'package:get/get.dart';
 import 'main.dart';
+import 'package:coursemores/getx_controller.dart';
+import 'profile_edit.dart' as profie_edit;
 
 class MyPage extends StatefulWidget {
   const MyPage({super.key});
@@ -91,6 +93,7 @@ class _MyPageState extends State<MyPage> {
   }
 }
 
+final userInfoController = Get.put(UserInfo());
 profileBox() {
   return Container(
       height: 200.0,
@@ -123,25 +126,25 @@ profileBox() {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
+              children: [
                 Padding(
                   padding: EdgeInsets.fromLTRB(15.0, 20.0, 15.0, 15.0),
                   child: Text(
-                    '닉네임',
+                    userInfoController.nickname.value,
                     style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
                   ),
                 ),
                 Padding(
                   padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 0),
                   child: Text(
-                    '20대',
+                    userInfoController.age.value.toString(),
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                   ),
                 ),
                 Padding(
                   padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
                   child: Text(
-                    '남성',
+                    userInfoController.gender.value,
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                   ),
                 )
@@ -241,7 +244,8 @@ class ModalBottom extends StatelessWidget {
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  const signup.SignUp()));
+                                                  const profie_edit
+                                                      .ProfileEdit()));
                                     },
                                     child: const Center(
                                         child: Text(
@@ -270,6 +274,31 @@ class ModalBottom extends StatelessWidget {
                                           // color: Colors.yellow,
                                           child: Text(
                                         '로그아웃',
+                                        style: TextStyle(
+                                            fontSize: 20, color: Colors.red),
+                                        textAlign: TextAlign.center,
+                                      )),
+                                    )),
+                              ),
+                              Expanded(
+                                child: InkWell(
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                      loginController.changeLoginStatus();
+                                      // 로그아웃 메서드 쓰기..
+                                      print('회원탈퇴!');
+                                      //탈퇴 메서드 쓰기
+                                    },
+                                    child: Container(
+                                      decoration: const BoxDecoration(
+                                          border: Border(
+                                              top: BorderSide(
+                                                  color: Colors.grey,
+                                                  width: 1))),
+                                      child: const Center(
+                                          // color: Colors.yellow,
+                                          child: Text(
+                                        '회원탈퇴',
                                         style: TextStyle(
                                             fontSize: 20, color: Colors.red),
                                         textAlign: TextAlign.center,
