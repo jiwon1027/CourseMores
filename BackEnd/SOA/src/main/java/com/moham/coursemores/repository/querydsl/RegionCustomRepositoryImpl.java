@@ -16,7 +16,7 @@ public class RegionCustomRepositoryImpl implements RegionCustomRepository{
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<String> getRegionBigList() {
+    public List<String> getSidoList() {
         return jpaQueryFactory
                 .select(region.sido)
                 .from(region)

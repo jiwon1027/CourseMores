@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface RegionService {
     void saveDummy()  throws Exception;
-    List<String> getRegionBigList();
+    List<String> getSidoList();
     List<GugunResDto> getGugunList(String sido);
 }

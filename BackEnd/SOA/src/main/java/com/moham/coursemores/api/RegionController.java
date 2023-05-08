@@ -24,26 +24,25 @@ public class RegionController {
 
     private final RegionService regionService;
 
-//    @GetMapping("dummy")
-//    public ResponseEntity<Void> saveDummyData() throws Exception {
-//        logger.info(">> request : none");
-//
-//        regionService.saveDummy();
-//
-//        logger.info("<< response : none");
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
-    private final RegionRepository regionRepository;
+    @GetMapping("dummy")
+    public ResponseEntity<Void> saveDummyData() throws Exception {
+        logger.info(">> request : none");
+
+        regionService.saveDummy();
+
+        logger.info("<< response : none");
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
     @GetMapping
-    public ResponseEntity<Map<String, Object>> getRegionBigList() {
+    public ResponseEntity<Map<String, Object>> getSidoList() {
         logger.info(">> request : none");
 
         Map<String, Object> resultMap = new HashMap<>();
 
-        List<String> regionBigList = regionService.getRegionBigList();
-        resultMap.put("regionBigList",regionBigList);
-        logger.info("<< response : regionBigList={}",regionBigList);
+        List<String> sidoList = regionService.getSidoList();
+        resultMap.put("sidoList",sidoList);
+        logger.info("<< response : sidoList={}",sidoList);
 
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }

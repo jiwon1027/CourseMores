@@ -39,8 +39,9 @@ public class RegionServiceImpl implements RegionService {
 
     }
 
-    public List<String> getRegionBigList() {
-        return regionRepository.getRegionBigList();
+    @Override
+    public List<String> getSidoList() {
+        return regionRepository.getSidoList();
     }
 
     @Override
