@@ -1,7 +1,7 @@
 package com.moham.coursemores.api;
 
-import com.moham.coursemores.dto.token.TokenReissueReqDto;
 import com.moham.coursemores.service.RegionService;
+import com.moham.coursemores.repository.RegionRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -30,6 +31,7 @@ public class RegionController {
 //        logger.info("<< response : none");
 //        return new ResponseEntity<>(HttpStatus.OK);
 //    }
+    private final RegionRepository regionRepository;
 
     @GetMapping
     public ResponseEntity<Map<String, Object>> getRegionBigList() {
@@ -37,7 +39,9 @@ public class RegionController {
 
         Map<String, Object> resultMap = new HashMap<>();
 
-        logger.info("<< response : =");
+        List<String> regionBigList = regionRepository.getRegionBigList();
+        resultMap.put("regionBigList",regionBigList);
+        logger.info("<< response : regionBigList={}",regionBigList);
 
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }

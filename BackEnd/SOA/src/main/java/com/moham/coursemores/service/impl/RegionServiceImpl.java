@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -35,4 +37,7 @@ public class RegionServiceImpl implements RegionService {
 
     }
 
+    public List<String> getRegionBigList() {
+        return regionRepository.getRegionBigList();
+    }
 }
