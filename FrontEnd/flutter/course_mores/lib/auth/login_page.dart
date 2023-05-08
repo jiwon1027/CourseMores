@@ -6,8 +6,8 @@ import 'package:flutter_web_auth/flutter_web_auth.dart';
 import 'package:get/get.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'sign_up.dart' as signup;
-import 'home_screen.dart' as home;
-import 'main.dart' as main;
+import '../home_screen/home_screen.dart' as home;
+import '../main.dart' as main;
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -44,6 +44,8 @@ void postLogin(accessToken) async {
       userInfoController.saveAge(response.data['userInfo']['age']);
       userInfoController.saveGender(response.data['userInfo']['gender']);
       Get.to(main.MyApp());
+      print(loginController.isLoggedIn);
+      print(pageController.pageNum());
     }
   }
 }

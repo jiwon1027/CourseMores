@@ -5,17 +5,16 @@ import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'style.dart' as style;
 import 'notification/notification.dart' as noti;
 import 'course_search/search.dart' as search;
-import 'home_screen.dart' as home;
-import 'mypage.dart' as mypage;
+import 'home_screen/home_screen.dart' as home;
+import 'mypage/mypage.dart' as mypage;
 import 'course_make/make_start.dart' as make;
-import 'login_page.dart' as login;
+import 'auth/login_page.dart' as login;
 import 'package:get/get.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 final loginController = Get.put(LoginStatus());
 final pageController = Get.put(PageNum());
-var pageNum = pageController.pageNum.value;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,27 +31,31 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  changePageNum(index) {
-    setState(() {
-      pageNum = index;
-      Fluttertoast.showToast(
-        msg: "$pageNum번 탭으로 이동",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-      );
-    });
-  }
+  // changePageNum(index) {
+
+  //   setState(() {
+  //     pageNum = index;
+  //     pageController.changePageNum(index);
+  //     Fluttertoast.showToast(
+  //       msg: "$pageNum번 탭으로 이동",
+  //       toastLength: Toast.LENGTH_SHORT,
+  //       gravity: ToastGravity.CENTER,
+  //     );
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
+      var pageNum = pageController.pageNum.value;
+
       // print(pageNum);
       if (loginController.isLoggedIn.value == true) {
         return Scaffold(
             backgroundColor: const Color.fromARGB(255, 240, 240, 240),
             appBar: const CustomAppBar(),
             body: [
-              home.HomeScreen(changePageNum: changePageNum),
+              home.HomeScreen(),
               make.MakeStart(),
               search.Search(),
               Text("관심페이지"),
@@ -63,9 +66,11 @@ class _MyAppState extends State<MyApp> {
                 : FlashyTabBar(
                     selectedIndex: pageNum,
                     showElevation: true,
-                    onItemSelected: (index) => setState(() {
-                      changePageNum(index);
-                    }),
+                    // onItemSelected: (index) => setState(() {
+                    //   changePageNum(index);
+                    // }),
+                    onItemSelected: (index) =>
+                        pageController.changePageNum(index),
                     items: [
                       FlashyTabBarItem(
                         icon: const Icon(Icons.home),

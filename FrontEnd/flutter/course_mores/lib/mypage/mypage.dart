@@ -1,11 +1,12 @@
 // import 'login_page.dart' as login;
+import 'package:coursemores/home_screen/home_screen.dart';
 import 'package:flutter/material.dart';
-import 'sign_up.dart' as signup;
+import '../auth/sign_up.dart' as signup;
 import 'package:animated_button_bar/animated_button_bar.dart';
-import 'course_search/search.dart' as search;
-import 'course_search/course_list.dart' as course;
+import '../course_search/search.dart' as search;
+import '../course_search/course_list.dart' as course;
 import 'package:get/get.dart';
-import 'main.dart';
+import '../main.dart' as main;
 import 'package:coursemores/getx_controller.dart';
 import 'profile_edit.dart' as profie_edit;
 
@@ -216,6 +217,10 @@ class _ButtonBarState extends State<ButtonBar> {
   }
 }
 
+final authController = Get.put(AuthController());
+final loginController = Get.put(LoginStatus());
+final pageController = Get.put(PageNum());
+
 class ModalBottom extends StatelessWidget {
   const ModalBottom({super.key});
 
@@ -260,9 +265,12 @@ class ModalBottom extends StatelessWidget {
                                 child: InkWell(
                                     onTap: () {
                                       Navigator.pop(context);
-                                      loginController.changeLoginStatus();
+                                      authController.logout();
+                                      print(loginController.isLoggedIn.value);
+                                      print(pageController.pageNum.value);
                                       // 로그아웃 메서드 쓰기..
                                       print('logout');
+                                      Get.to(main.MyApp());
                                     },
                                     child: Container(
                                       decoration: const BoxDecoration(
@@ -284,10 +292,10 @@ class ModalBottom extends StatelessWidget {
                                 child: InkWell(
                                     onTap: () {
                                       Navigator.pop(context);
-                                      loginController.changeLoginStatus();
+                                      authController.logout();
                                       // 로그아웃 메서드 쓰기..
                                       print('회원탈퇴!');
-                                      //탈퇴 메서드 쓰기
+                                      Get.to(main.MyApp());
                                     },
                                     child: Container(
                                       decoration: const BoxDecoration(

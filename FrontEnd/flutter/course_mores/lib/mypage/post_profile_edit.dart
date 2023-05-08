@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart' as g;
-import 'main.dart' as main;
+import '../main.dart' as main;
 import 'dart:convert';
 import 'package:http_parser/http_parser.dart';
 
