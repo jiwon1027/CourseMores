@@ -40,7 +40,7 @@ public class CourseCustomRepositoryImpl implements CourseCustomRepository {
         }
 
         if(themeIds.size() > 0 && themeIds.get(0) != 0){
-            themeIds.forEach(id -> builder.and(course.themeOfCourseList.any().theme.id.eq(id)));
+            themeIds.forEach(id -> builder.or(course.themeOfCourseList.any().theme.id.eq(id)));
         }
 
         return builder.getValue();
