@@ -1,36 +1,33 @@
 import 'dart:convert';
 
 import 'package:coursemores/getx_controller.dart';
-import 'package:coursemores/login_page.dart';
+import 'package:coursemores/auth/login_page.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'notification/notification.dart' as noti;
+import '../notification/notification.dart' as noti;
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'main.dart' as main;
+import '../main.dart' as main;
 import 'package:fluttertoast/fluttertoast.dart';
-import 'post_profile_edit.dart' as post_profile_edit;
-import 'getx_controller.dart';
+import 'post_signup.dart' as post_signup;
 
-final userInfoController = Get.put(UserInfo());
-
-class ProfileEdit extends StatefulWidget {
-  const ProfileEdit({super.key});
+class SignUp extends StatefulWidget {
+  const SignUp({super.key});
 
   @override
-  State<ProfileEdit> createState() => _ProfileEditState();
+  State<SignUp> createState() => _SignUpState();
 }
 
-class _ProfileEditState extends State<ProfileEdit> {
+class _SignUpState extends State<SignUp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: const ProfileEditAppBar(),
+      appBar: const SignUpAppBar(),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -63,7 +60,7 @@ class ProfileImage extends StatefulWidget {
 }
 
 class _ProfileImageState extends State<ProfileImage> {
-  XFile? _pickedFile = userInfoController.profileImage;
+  XFile? _pickedFile;
   @override
   Widget build(BuildContext context) {
     final imageSize = MediaQuery.of(context).size.width / 16;
@@ -126,7 +123,7 @@ class _ProfileImageState extends State<ProfileImage> {
         _pickedFile = pickedFile;
         userInfoController.saveImage(pickedFile);
         print('777777');
-        print(pickedFile);
+        print(pickedFile.path);
       });
     } else {
       if (kDebugMode) {
@@ -142,6 +139,7 @@ class _ProfileImageState extends State<ProfileImage> {
       setState(() {
         _pickedFile = pickedFile;
         userInfoController.saveImage(pickedFile);
+        print(pickedFile.path);
       });
     } else {
       if (kDebugMode) {
@@ -314,7 +312,7 @@ class _RegisterNicknameState extends State<RegisterNickname> {
                     key: formKey,
                     child: textFormFieldComponent(
                         false,
-                        userInfoController.nickname.value,
+                        '사용할 닉네임을 입력하세요.',
                         10,
                         2,
                         '최소 2자 이상이어야 합니다.',
@@ -362,7 +360,6 @@ Widget textFormFieldComponent(
     String duplicateError,
     String? helperText) {
   return TextFormField(
-    initialValue: userInfoController.nickname.value,
     obscureText: obscureText,
     decoration: InputDecoration(
         hintText: hintText,
@@ -404,6 +401,8 @@ void duplicateCheck(nickname) async {
   }
 }
 
+final userInfoController = Get.put(UserInfo());
+
 class GenderChoice extends StatefulWidget {
   const GenderChoice({super.key});
 
@@ -412,7 +411,7 @@ class GenderChoice extends StatefulWidget {
 }
 
 class _GenderChoiceState extends State<GenderChoice> {
-  String? _gender = userInfoController.gender.value;
+  String? _gender;
   Color? manColor;
   Color? womanColor;
   Color? manTextColor = Colors.blue;
@@ -497,7 +496,7 @@ class AgeRange extends StatefulWidget {
 }
 
 class _AgeRangeState extends State<AgeRange> {
-  double _value = userInfoController.age.value.toDouble();
+  double _value = 0.0;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -553,7 +552,7 @@ confirmButton() {
         print(userInfoController.age);
         print(userInfoController.gender);
         print(userInfoController.profileImage);
-        post_profile_edit.postProfileEdit(
+        post_signup.postSignUp(
           userInfoController.nickname.value,
           userInfoController.age.value,
           userInfoController.gender.value,
@@ -561,7 +560,7 @@ confirmButton() {
           tokenController.accessToken.value,
         );
       },
-      child: Text('수정하기'),
+      child: Text('가입하기'),
     ),
   );
 }
@@ -619,8 +618,8 @@ boxDeco() {
   );
 }
 
-class ProfileEditAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const ProfileEditAppBar({
+class SignUpAppBar extends StatelessWidget implements PreferredSizeWidget {
+  const SignUpAppBar({
     super.key,
   });
 

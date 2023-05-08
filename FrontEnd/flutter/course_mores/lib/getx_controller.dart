@@ -1,6 +1,20 @@
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
+class AuthController extends GetxController {
+  final loginStatus = Get.put(LoginStatus());
+  final pageNum = Get.put(PageNum());
+  final tokenStorage = Get.put(TokenStorage());
+  final userInfo = Get.put(UserInfo());
+
+  void logout() {
+    loginStatus.changeLoginStatus();
+    pageNum.changePageNum(0);
+    tokenStorage.clearTokens();
+    userInfo.clearUserInfo();
+  }
+}
+
 class LoginStatus extends GetxController {
   final isLoggedIn = false.obs;
 
@@ -25,6 +39,11 @@ class TokenStorage extends GetxController {
     refreshToken.value = rToken;
     print('토큰정보!!');
     print({accessToken, refreshToken});
+  }
+
+  void clearTokens() {
+    accessToken.value = '';
+    refreshToken.value = '';
   }
 }
 
@@ -54,5 +73,12 @@ class UserInfo extends GetxController {
       profileImage = image;
       print(profileImage);
     }
+  }
+
+  void clearUserInfo() {
+    nickname.value = '';
+    gender.value = '';
+    age.value = 0;
+    profileImage = null;
   }
 }

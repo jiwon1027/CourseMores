@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'sign_up.dart' as signup;
 import 'package:animated_button_bar/animated_button_bar.dart';
-import 'search.dart' as search;
+import 'course_search/search.dart' as search;
 import 'course_search/course_list.dart' as course;
 import 'package:get/get.dart';
 import 'main.dart';
