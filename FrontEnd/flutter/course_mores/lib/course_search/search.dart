@@ -656,10 +656,6 @@ class _SearchFilterState extends State<SearchFilter> {
               gravity: ToastGravity.CENTER,
             );
             Navigator.pop(context);
-            // print("저장 아이템 리스트 : ");
-            // print(allSelectedTheme);
-            // print("선택 지역 : ");
-            // print(selectedAddress);
           },
         ),
         title: RichText(
@@ -686,7 +682,6 @@ class _SearchFilterState extends State<SearchFilter> {
               icon: const Icon(Icons.close, color: Colors.black)),
         ],
       ),
-      // 알림 리스트
       body: Container(
         color: const Color.fromARGB(221, 244, 244, 244),
         child: Column(children: [
@@ -698,10 +693,7 @@ class _SearchFilterState extends State<SearchFilter> {
               items: cards,
               controller: multiSelectController,
               onChange: (allSelectedItems, selectedItem) {
-                // print("선택된 아이템 리스트 : ");
-                // print(allSelectedItems);
                 newAllSelectedThemeList = allSelectedItems;
-                // allSelectedTheme = allSelectedItems;
               },
             ),
           ),
@@ -720,7 +712,6 @@ class _SearchFilterState extends State<SearchFilter> {
                   backgroundColor: Colors.white,
                 ),
                 onPressed: () {
-                  //TODO: 초기화 버튼이 눌렸을 때, 지역 초기화 동작 구현 필요
                   setState(() {
                     multiSelectController.deselectAll(); // 선택 취소
                     newAllSelectedThemeList = [];
@@ -743,7 +734,6 @@ class _SearchFilterState extends State<SearchFilter> {
                   backgroundColor: Colors.white,
                 ),
                 onPressed: () {
-                  //TODO: 저장 버튼이 눌렸을 때, 지역 저장 동작 구현 필요
                   saveFilter(newAllSelectedThemeList);
                   saveAddress(selectedAddress);
                   Fluttertoast.showToast(
@@ -779,11 +769,6 @@ class _MyDropdownState extends State<MyDropdown> {
   final List<String> _firstDropdownItems = course.sidoList;
   final Map<String, List<String>> _secondDropdownItems = course.sidoAllList;
 
-  // late var selectedAddress = widget.selectedAddress;
-
-  // late String _selectedFirstDropdownItem = widget.selectedAddress[0];
-  // late String _selectedSecondDropdownItem = widget.selectedAddress[1];
-
   _MyDropdownState(selectAddress);
 
   @override
@@ -792,7 +777,6 @@ class _MyDropdownState extends State<MyDropdown> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         DropdownButton(
-          // value: _selectedFirstDropdownItem,
           value: widget.selectedAddress[0],
           items: _firstDropdownItems.map((String value) {
             return DropdownMenuItem(
@@ -808,12 +792,10 @@ class _MyDropdownState extends State<MyDropdown> {
               widget.selectAddress(
                   [widget.selectedAddress[0], widget.selectedAddress[1]]);
             });
-            // print("$_selectedFirstDropdownItem $_selectedSecondDropdownItem");
           },
         ),
         const SizedBox(width: 15),
         DropdownButton(
-          // value: _selectedSecondDropdownItem,
           value: widget.selectedAddress[1],
           items: _secondDropdownItems[widget.selectedAddress[0]]!
               .map((String value) {
@@ -828,9 +810,6 @@ class _MyDropdownState extends State<MyDropdown> {
               widget.selectAddress(
                   [widget.selectedAddress[0], widget.selectedAddress[1]]);
             });
-            // selectAddress(
-            //     [_selectedFirstDropdownItem, _selectedSecondDropdownItem]);
-            // print("$_selectedFirstDropdownItem $_selectedSecondDropdownItem");
           },
         ),
       ],
