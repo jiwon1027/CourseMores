@@ -55,7 +55,7 @@ public class Course extends DeleteTimeEntity {
     private int commentCount;
 
     @NotNull
-    @Column(length = 500)
+    @Column(length = 1000)
     private String mainImage;
 
     @NotNull

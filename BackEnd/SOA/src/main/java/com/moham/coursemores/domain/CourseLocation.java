@@ -44,7 +44,7 @@ public class CourseLocation extends UpdateTimeEntity {
     private String content;
 
     @NotNull
-    @Column
+    @Column(length = 1000)
     private String roadViewImage;
 
     @NotNull
