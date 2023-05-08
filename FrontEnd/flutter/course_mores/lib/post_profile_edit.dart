@@ -1,11 +1,10 @@
-import 'package:coursemores/post_profile_edit.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart' as g;
 import 'main.dart' as main;
 import 'dart:convert';
 import 'package:http_parser/http_parser.dart';
-import 'getx_controller.dart';
+
 // void postSignUp(nickname, age, gender, image, aToken) async {
 //   dynamic userInfoCreateReqDto = {
 //     'nickname': nickname,
@@ -26,8 +25,6 @@ import 'getx_controller.dart';
 //   }
 // }
 
-final loginController = g.Get.put(LoginStatus());
-
 String baseURL = dotenv.get('BASE_URL');
 
 final options = BaseOptions(baseUrl: baseURL);
@@ -46,11 +43,11 @@ final dio = Dio(options);
 //       };
 // }
 
-void postSignUp(nickname, int age, gender, image, aToken) async {
+void postProfileEdit(nickname, age, gender, image, aToken) async {
   FormData formData;
   if (image != null) {
     formData = FormData.fromMap({
-      'userInfoCreateReqDto': MultipartFile.fromString(
+      'userInfoUpdateReqDto': MultipartFile.fromString(
           jsonEncode({'nickname': nickname, 'age': age, 'gender': gender}),
           contentType: MediaType.parse('application/json')),
       'profileImage': await MultipartFile.fromFile(image.path,
@@ -58,15 +55,14 @@ void postSignUp(nickname, int age, gender, image, aToken) async {
     });
   } else {
     formData = FormData.fromMap({
-      'userInfoCreateReqDto': MultipartFile.fromString(
+      'userInfoUpdateReqDto': MultipartFile.fromString(
           jsonEncode({'nickname': nickname, 'age': age, 'gender': gender}),
           contentType: MediaType.parse('application/json')),
       'profileImage': null,
     });
   }
-
   try {
-    final response = await dio.post('user/signup',
+    final response = await dio.put('profile/5',
         data: formData,
         options: Options(
           headers: {
@@ -74,11 +70,9 @@ void postSignUp(nickname, int age, gender, image, aToken) async {
             'Content-Type': 'multipart/form-data',
           },
         ));
-
     if (response.statusCode == 200) {
-      print('가입성공!!!');
-      loginController.changeLoginStatus();
       g.Get.to(main.MyApp());
+      print('수정!!!');
     }
   } catch (e) {
     // DioError 처리
