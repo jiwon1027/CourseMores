@@ -92,6 +92,7 @@ public class Course extends DeleteTimeEntity {
                   int time,
                   boolean visited,
                   String locationName,
+                  String mainImage,
                   int viewCount,
                   int likeCount,
                   int interestCount,
@@ -107,6 +108,7 @@ public class Course extends DeleteTimeEntity {
         this.likeCount = likeCount;
         this.commentCount = commentCount;
         this.locationName = locationName;
+        this.mainImage = mainImage;
         this.user = user;
     }
 
