@@ -1,6 +1,7 @@
 package com.moham.coursemores.service.impl;
 
 import com.moham.coursemores.domain.Region;
+import com.moham.coursemores.dto.region.GugunResDto;
 import com.moham.coursemores.repository.RegionRepository;
 import com.moham.coursemores.service.RegionService;
 import java.io.BufferedReader;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -39,5 +41,16 @@ public class RegionServiceImpl implements RegionService {
 
     public List<String> getRegionBigList() {
         return regionRepository.getRegionBigList();
+    }
+
+    @Override
+    public List<GugunResDto> getGugunList(String sido) {
+        return regionRepository.findBySido(sido)
+                .stream()
+                .map(region -> GugunResDto.builder()
+                        .gugun(region.getGugun())
+                        .regionId(region.getId())
+                        .build())
+                .collect(Collectors.toList());
     }
 }

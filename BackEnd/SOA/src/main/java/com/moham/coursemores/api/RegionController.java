@@ -1,7 +1,9 @@
 package com.moham.coursemores.api;
 
 import com.moham.coursemores.service.RegionService;
+import com.moham.coursemores.dto.region.GugunResDto;
 import com.moham.coursemores.repository.RegionRepository;
+import com.moham.coursemores.service.RegionService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,21 +41,23 @@ public class RegionController {
 
         Map<String, Object> resultMap = new HashMap<>();
 
-        List<String> regionBigList = regionRepository.getRegionBigList();
+        List<String> regionBigList = regionService.getRegionBigList();
         resultMap.put("regionBigList",regionBigList);
         logger.info("<< response : regionBigList={}",regionBigList);
 
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
 
-    @GetMapping("{regionBig}")
-    public ResponseEntity<Map<String, Object>> getRegionSmallList(
-            @PathVariable String regionBig) {
-        logger.info(">> request : regionBig={}",regionBig);
+    @GetMapping("{sido}")
+    public ResponseEntity<Map<String, Object>> getGugunList(
+            @PathVariable String sido) {
+        logger.info(">> request : sido={}",sido);
 
         Map<String, Object> resultMap = new HashMap<>();
 
-        logger.info("<< response : =");
+        List<GugunResDto> gugunList = regionService.getGugunList(sido);
+        resultMap.put("gugunList",gugunList);
+        logger.info("<< response : gugunList={}",gugunList);
 
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }

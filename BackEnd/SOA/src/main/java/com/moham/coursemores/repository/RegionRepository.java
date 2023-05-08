@@ -8,5 +8,5 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface RegionRepository extends JpaRepository<Region, Long>, RegionCustomRepository {
-
+    List<Region> findBySido(String sido);
 }
