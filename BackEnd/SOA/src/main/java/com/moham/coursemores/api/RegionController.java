@@ -1,6 +1,7 @@
 package com.moham.coursemores.api;
 
 import com.moham.coursemores.dto.token.TokenReissueReqDto;
+import com.moham.coursemores.service.RegionService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +18,18 @@ import java.util.Map;
 public class RegionController {
 
     private static final Logger logger = LoggerFactory.getLogger(RegionController.class);
+
+    private final RegionService regionService;
+
+//    @GetMapping("dummy")
+//    public ResponseEntity<Void> saveDummyData() throws Exception {
+//        logger.info(">> request : none");
+//
+//        regionService.saveDummy();
+//
+//        logger.info("<< response : none");
+//        return new ResponseEntity<>(HttpStatus.OK);
+//    }
 
     @GetMapping
     public ResponseEntity<Map<String, Object>> getRegionBigList() {
