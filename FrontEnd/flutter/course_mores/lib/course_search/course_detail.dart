@@ -9,6 +9,7 @@ import 'package:timelines/timelines.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class CourseDetail extends StatefulWidget {
   const CourseDetail({Key? key, required this.index}) : super(key: key);
@@ -865,6 +866,19 @@ class _DetailTapCourseIntroductionState
 
   late var courseIndex = widget.courseIndex;
 
+  final List<LatLng> _markerPositions = [
+    // LatLng(37.5665, 126.9780), // 서울역
+    // LatLng(37.5547, 126.9707), // 광화문
+    // LatLng(37.5719, 126.9768), // 종로3가
+    // LatLng(37.5659, 126.9774), // 시청
+    // LatLng(37.5702, 126.9832), // 청계천
+    LatLng(37.5033214, 127.0384099), // 이도곰탕
+    LatLng(37.5032488, 127.0387016), // 역삼 상도
+    LatLng(37.5025164, 127.0372225), // 조선부뚜막 역삼점
+    LatLng(37.501945, 127.0360264), // 한앤둘치킨 역삼점
+    LatLng(37.4996299, 127.0358136), // 바스버거 역삼점
+  ];
+
   @override
   Widget build(BuildContext context) {
     return FlipCard(
@@ -902,7 +916,7 @@ class _DetailTapCourseIntroductionState
       back: Container(
         alignment: Alignment.topRight,
         decoration: BoxDecoration(
-          color: Colors.grey.shade100,
+          color: const Color.fromARGB(255, 46, 85, 57),
           borderRadius: BorderRadius.circular(10),
         ),
         margin: const EdgeInsets.fromLTRB(0, 30, 0, 30),
@@ -917,6 +931,10 @@ class _DetailTapCourseIntroductionState
               icon: Icons.image_rounded,
               text: "코스로 보기",
             ),
+            const SizedBox(
+              height: 10,
+            ),
+            Expanded(child: LineMap(markerPositions: _markerPositions)),
           ],
         ),
       ),
@@ -1647,6 +1665,37 @@ class ThumbnailImage extends StatelessWidget {
         width: 130,
         fit: BoxFit.cover,
       ),
+    );
+  }
+}
+
+class LineMap extends StatelessWidget {
+  const LineMap({
+    super.key,
+    required List<LatLng> markerPositions,
+  }) : _markerPositions = markerPositions;
+
+  final List<LatLng> _markerPositions;
+
+  @override
+  Widget build(BuildContext context) {
+    return GoogleMap(
+      initialCameraPosition: CameraPosition(
+        target: _markerPositions[0], // 첫 번째 마커를 화면 중앙에 띄우기
+        zoom: 15.0,
+      ),
+      markers: Set.from(_markerPositions.map((position) => Marker(
+            markerId: MarkerId(position.toString()),
+            position: position,
+          ))),
+      polylines: {
+        Polyline(
+          polylineId: PolylineId('route'),
+          points: _markerPositions,
+          color: Colors.blue,
+          width: 5,
+        ),
+      },
     );
   }
 }

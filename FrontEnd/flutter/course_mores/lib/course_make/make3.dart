@@ -449,6 +449,7 @@ class _MakeStepperState extends State<MakeStepper> {
               _currentStep--;
             } else {
               _currentStep = 0;
+              Navigator.pop(context);
             }
           });
         },
