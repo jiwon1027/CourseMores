@@ -15,6 +15,9 @@ class _CMMapState extends State<CMMap> {
   final Set<Marker> _markers = {};
   late BitmapDescriptor customIcon;
   // LatLng? _selectedLocation;
+  String _locationName = '';
+  double _latitude = 0;
+  double _longitude = 0;
 
   @override
   void initState() {
@@ -62,32 +65,6 @@ class _CMMapState extends State<CMMap> {
     );
   }
 
-  // void _onTap(LatLng location) async {
-  //   // Add marker
-  //   setState(() {
-  //     _markers.clear();
-  //     _markers.add(
-  //       Marker(
-  //         markerId: MarkerId('selected-location'),
-  //         position: location,
-  //         icon: customIcon,
-  //       ),
-  //     );
-  //   });
-  //   // Get address and show in bottom sheet
-  //   String address = await _getAddress(location.latitude, location.longitude);
-  //   showModalBottomSheet(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return Container(
-  //         height: 100,
-  //         child: Center(
-  //           child: Text(address),
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
   void _onTap(LatLng location) async {
     // Add marker
     setState(() {
@@ -172,19 +149,17 @@ class _CMMapState extends State<CMMap> {
     _mapController?.animateCamera(cameraUpdate);
   }
 
-  // void _onSavePressed() {
-  //   final selectedMarker = _markers.first;
-  //   final latitude = selectedMarker.position.latitude;
-  //   final longitude = selectedMarker.position.longitude;
-  //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-  //     content: Text('위도: $latitude, 경도: $longitude'),
-  //   ));
-  // }
-
-  void _onSavePressed() {
+  void _onSavePressed() async {
     final selectedMarker = _markers.first;
     final latitude = selectedMarker.position.latitude;
     final longitude = selectedMarker.position.longitude;
+
+    String address = await _getAddress(latitude, longitude);
+    setState(() {
+      _locationName = address;
+      _latitude = latitude;
+      _longitude = longitude;
+    });
 
     // Show alert dialog to get the name of the location
     showDialog(
@@ -208,7 +183,13 @@ class _CMMapState extends State<CMMap> {
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   content: Text(message),
                 ));
-                Navigator.of(context).pop();
+                // Navigator.of(context).pop();
+                Navigator.pop(context);
+                Navigator.pop(context, {
+                  'locationName': locationName,
+                  'latitude': latitude,
+                  'longitude': longitude,
+                });
               },
             ),
             TextButton(
