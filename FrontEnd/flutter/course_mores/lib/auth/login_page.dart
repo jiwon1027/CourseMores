@@ -39,11 +39,11 @@ void postLogin(accessToken) async {
           response.data['token']['refreshToken']);
       Get.to(signup.SignUp());
     } else {
-      loginController.changeLoginStatus();
+      loginController.changeLoginStatus(true);
       userInfoController.saveNickname(response.data['userInfo']['nickname']);
       userInfoController.saveAge(response.data['userInfo']['age']);
       userInfoController.saveGender(response.data['userInfo']['gender']);
-      Get.to(main.MyApp());
+      Get.replace(main.MyApp());
       print(loginController.isLoggedIn);
       print(pageController.pageNum());
     }
@@ -70,18 +70,15 @@ void signInWithGoogle() async {
       if (response.data['userInfo'] == null) {
         tokenController.saveToken(response.data['token']['accessToken'],
             response.data['token']['refreshToken']);
-        Get.to(() => signup.SignUp());
+        Get.to(signup.SignUp());
       } else {
-        loginController.changeLoginStatus();
+        loginController.changeLoginStatus(true);
         userInfoController.saveNickname(response.data['userInfo']['nickname']);
         userInfoController.saveAge(response.data['userInfo']['age']);
         userInfoController.saveGender(response.data['userInfo']['gender']);
         // 이미지는 받을때 type이 경로인가..? null보내면 default string으로?
 
-        Get.to(
-          () => main.MyApp(),
-          transition: Transition.fadeIn,
-        );
+        Get.replace(main.MyApp());
       }
     }
   }
@@ -134,7 +131,7 @@ class LoginPage extends StatelessWidget {
                             height: 45,
                             child: ElevatedButton(
                                 onPressed: () {
-                                  loginController.changeLoginStatus();
+                                  loginController.changeLoginStatus(true);
                                   Get.to(
                                     main.MyApp(),
                                     transition: Transition.fadeIn,
