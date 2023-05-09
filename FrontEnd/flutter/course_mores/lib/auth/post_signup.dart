@@ -6,6 +6,7 @@ import '../main.dart' as main;
 import 'dart:convert';
 import 'package:http_parser/http_parser.dart';
 import '../getx_controller.dart';
+import 'auth_dio.dart';
 // void postSignUp(nickname, age, gender, image, aToken) async {
 //   dynamic userInfoCreateReqDto = {
 //     'nickname': nickname,
@@ -27,11 +28,6 @@ import '../getx_controller.dart';
 // }
 
 final loginController = g.Get.put(LoginStatus());
-
-String baseURL = dotenv.get('BASE_URL');
-
-final options = BaseOptions(baseUrl: baseURL);
-final dio = Dio(options);
 
 // class UserInfoCreateReqDto {
 //   final String nickname;
@@ -66,11 +62,11 @@ void postSignUp(nickname, int age, gender, image, aToken) async {
   }
 
   try {
+    final dio = await authDio();
     final response = await dio.post('user/signup',
         data: formData,
         options: Options(
           headers: {
-            'Authorization': 'Bearer $aToken',
             'Content-Type': 'multipart/form-data',
           },
         ));
