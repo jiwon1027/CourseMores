@@ -77,6 +77,7 @@ public class CommentController {
         logger.info(">> request : commentCreateReqDTO = {}", commentCreateReqDTO);
         logger.info(">> request : imageList= {}", imageList);
 
+
         commentService.createComment(courseId, userId, commentCreateReqDTO, imageList);
         logger.info("<< response : none");
 

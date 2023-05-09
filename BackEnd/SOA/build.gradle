@@ -44,6 +44,9 @@ dependencies {
 	implementation 'com.amazonaws:aws-java-sdk-s3:1.12.460'
 	// elasticsearch
 	implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
+	//logstash
+	implementation group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: '7.2'
+
 }
 
 tasks.named('test') {
