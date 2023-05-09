@@ -75,7 +75,7 @@ public class CourseServiceImpl implements CourseService {
                         .mainImage(course.getMainImage())
                         .sido(region.getSido())
                         .gugun(region.getGugun())
-                        .locationName(course.getLocationName())
+                        .locationName(course.getLocationName() + " 외 " + (course.getCourseLocationList().size() - 1) + "곳")
 //                        .isInterest(interest.map(Interest::isFlag).orElse(false))
                         .isInterest(isInterest)
                         .build();
@@ -185,7 +185,7 @@ public class CourseServiceImpl implements CourseService {
                             .mainImage(course.getMainImage())
                             .sido(course.getCourseLocationList().get(0).getRegion().getSido())
                             .gugun(course.getCourseLocationList().get(0).getRegion().getGugun())
-                            .locationName(course.getLocationName())
+                            .locationName(course.getLocationName() + " 외 " + (course.getCourseLocationList().size() - 1) + "곳")
                             .commentCount(course.getCommentCount())
                             .build();
                 })
