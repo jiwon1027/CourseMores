@@ -31,11 +31,8 @@ public class InterestServiceImp implements InterestService {
         return interestRepository.findByUserIdAndFlag(userId, true)
                 .stream()
                 .map(interest -> {
-                    Long interestId = interest.getId();
                     // 관심 코스 정보 가져오기
                     Course course = interest.getCourse();
-                    // 코스의 첫 번째 장소 가져오기
-                    Region region = course.getCourseLocationList().get(0).getRegion();
 
                     CoursePreviewResDto coursePreviewResDto = CoursePreviewResDto.builder()
                             .courseId(course.getId())
@@ -46,14 +43,14 @@ public class InterestServiceImp implements InterestService {
                             .likeCount(course.getLikeCount())
                             .commentCount(course.getCommentList().size())
                             .image(course.getImage())
-                            .locationName(course.getLocationName() + " 외 " + (course.getCourseLocationList().size() - 1) + "곳")
-                            .sido(region.getSido())
-                            .gugun(region.getGugun())
+                            .locationName(course.getLocationName() + " 외 " + (course.getLocationSize() - 1) + "곳")
+                            .sido(course.getSido())
+                            .gugun(course.getGugun())
                             .isInterest(true)
                             .build();
 
                     return InterestCourseResDto.builder()
-                            .interestCourseId(interestId)
+                            .interestCourseId(interest.getId())
                             .coursePreviewResDto(coursePreviewResDto)
                             .build();
                 })
