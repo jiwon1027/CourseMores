@@ -1,3 +1,4 @@
+import 'package:coursemores/auth/login_page.dart';
 import 'package:flutter/material.dart';
 import './carousel.dart' as carousel;
 // import 'search.dart' as search;
@@ -5,7 +6,7 @@ import './carousel.dart' as carousel;
 import 'carousel.dart';
 import '../course_search/course_list.dart' as course;
 import '../mypage/mypage.dart' as mypage;
-import '../getx_controller.dart';
+// import '../getx_controller.dart';
 import '../main.dart';
 import 'package:dio/dio.dart';
 import 'package:geolocator/geolocator.dart';
@@ -43,6 +44,21 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _currentPosition = position;
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getHotCourse(tokenController.accessToken);
+  }
+
+  Future<void> getHotCourse(aToken) async {
+    final response = await dio.get('course/hot',
+        options: Options(
+          headers: {'Authorization': 'Bearer $aToken'},
+        ));
+    print('4646464646');
+    print(response);
   }
 
   // openweathermap의 api키
