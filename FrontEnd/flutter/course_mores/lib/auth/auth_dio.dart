@@ -13,6 +13,9 @@ Future<Dio> authDio() async {
 
   dio.options.baseUrl = baseURL;
   dio.interceptors.clear();  
+  print("토큰이 있니?");
+  print(tokenStorage.accessToken);
+  print("그렇구나");
   if(tokenStorage.accessToken.isEmpty){
     print("accessToken is [Empty]!");
     return dio;
@@ -20,7 +23,6 @@ Future<Dio> authDio() async {
   print("accessToken is [Extist]!");
   dio.interceptors.add(InterceptorsWrapper(onRequest: (options, handler) async {
 
-    print("토큰 재요청!!");
     // 기기에 저장된 AccessToken 로드
     final accessToken = tokenStorage.accessToken.value;
 
@@ -57,18 +59,29 @@ Future<Dio> authDio() async {
       }));
 
       // 토큰 갱신 API 요청 시 AccessToken(만료), RefreshToken 포함
-      refreshDio.options.headers['Authorization'] = 'Bearer $accessToken';
-      refreshDio.options.headers['Refresh'] = 'Bearer $refreshToken';
+      var tokenReissueReqDto = {
+        "accessToken" : accessToken,
+        "refreshToken" : refreshToken
+      };
+      // refreshDio.options.headers['Authorization'] = 'Bearer $accessToken';
+      // refreshDio.options.headers['Refresh'] = 'Bearer $refreshToken';
 
+      print("토큰 재요청!!");
       // 토큰 갱신 API 요청
-      final refreshResponse = await refreshDio.get('/auth/reissue');
+      final refreshResponse = await refreshDio.post('/auth/reissue',
+        data: tokenReissueReqDto
+      );
 
       // response로부터 새로 갱신된 AccessToken과 RefreshToken 파싱
-      final newAccessToken = refreshResponse.headers['Authorization']![0];
-      final newRefreshToken = refreshResponse.headers['Refresh']![0];
+      // final newAccessToken = refreshResponse.headers['Authorization']![0];
+      // final newRefreshToken = refreshResponse.headers['Refresh']![0];
+      print("재발급 accessToken!! ");
+      print(refreshResponse.data);
+      print(refreshResponse.data['accessToken']);
+      final newAccessToken = refreshResponse.data['accessToken'];
 
       // 기기에 저장된 AccessToken과 RefreshToken 갱신
-      tokenStorage.saveToken(newAccessToken, newRefreshToken);
+      tokenStorage.saveToken(newAccessToken, refreshToken);
 
       // AccessToken의 만료로 수행하지 못했던 API 요청에 담겼던 AccessToken 갱신
       error.requestOptions.headers['Authorization'] = 'Bearer $newAccessToken';
@@ -78,7 +91,7 @@ Future<Dio> authDio() async {
           options: Options(
               method: error.requestOptions.method,
               headers: error.requestOptions.headers),
-              data: error.requestOptions.data,
+              data: error.requestOptions.data,              
               queryParameters: error.requestOptions.queryParameters);
       
       // API 복사본으로 재요청
