@@ -2,12 +2,17 @@ package com.moham.coursemores.repository.querydsl;
 
 import com.moham.coursemores.domain.Course;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
@@ -18,6 +23,7 @@ import static com.moham.coursemores.domain.QHashtag.hashtag;
 import static com.moham.coursemores.domain.QThemeOfCourse.themeOfCourse;
 import static com.moham.coursemores.domain.QTheme.theme;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -60,6 +66,7 @@ public class CourseCustomRepositoryImpl implements CourseCustomRepository {
                 .where(searchCoursesFilter(word, regionId, themeIds))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
+                .orderBy(getOrderSpecifier(pageable.getSort()).stream().toArray(OrderSpecifier[]::new))
                 .fetch();
 
         //count 만 가져오는 쿼리
@@ -74,6 +81,24 @@ public class CourseCustomRepositoryImpl implements CourseCustomRepository {
                 .where(searchCoursesFilter(word, regionId, themeIds));
 
         return PageableExecutionUtils.getPage(fetch, pageable, count::fetchCount);
+    }
 
+    // 동적 정렬
+    private List<OrderSpecifier> getOrderSpecifier(Sort sort){
+        return sort
+                .stream()
+                .map(order -> {
+                    Order direction = order.isAscending() ? Order.ASC : Order.DESC;
+                    String prop = order.getProperty();
+                    PathBuilder orderByExpression = new PathBuilder(Course.class, "course");
+
+//                    System.out.println("order : "+order);
+//                    System.out.println("디렉션 : "+direction);
+//                    System.out.println("prop : "+prop);
+//                    System.out.println("orderByExpression : "+orderByExpression);
+
+                    return new OrderSpecifier(direction,orderByExpression.get(prop));
+                })
+                .collect(Collectors.toList());
     }
 }

@@ -55,7 +55,6 @@ public class CourseServiceImpl implements CourseService {
         Page<CoursePreviewResDto> result = pageCourse
                 .map(course -> {
                     Region region = course.getCourseLocationList().get(0).getRegion();
-
 //                    Optional<Interest> interest = interestRepository.findByUserIdAndCourseId(user.getId(), course.getId());
                     boolean isInterest = false;
                     for (Interest interest : course.getInterestList()){
@@ -82,13 +81,13 @@ public class CourseServiceImpl implements CourseService {
                         .build();
                 });
 
-        long totalElements = result.getTotalElements();
-        System.out.println("size = "+result.getContent().size());
-        System.out.println("totalElements = "+totalElements);
-        System.out.println("isFirst = "+result.isFirst());
-        System.out.println("isLast = "+result.isLast());
-        System.out.println("isEmpty = "+result.isEmpty());
-        System.out.println("getNumber = "+result.getNumber());
+//        long totalElements = result.getTotalElements();
+//        System.out.println("size = "+result.getContent().size());
+//        System.out.println("totalElements = "+totalElements);
+//        System.out.println("isFirst = "+result.isFirst());
+//        System.out.println("isLast = "+result.isLast());
+//        System.out.println("isEmpty = "+result.isEmpty());
+//        System.out.println("getNumber = "+result.getNumber());
 
         return result;
     }
