@@ -26,7 +26,7 @@ public class FileUploadService {
     private String bucket;
 
     public String uploadImage(MultipartFile multipartFile) {
-        String fileName = multipartFile.getOriginalFilename() + "-" + UUID.randomUUID();
+        String fileName = UUID.randomUUID() + "-" + multipartFile.getOriginalFilename();
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentType(multipartFile.getContentType());
         objectMetadata.setContentLength(multipartFile.getSize());
