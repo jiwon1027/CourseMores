@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,7 +42,9 @@ public class RegionServiceImpl implements RegionService {
 
     @Override
     public List<String> getSidoList() {
-        return regionRepository.getSidoList();
+        List<String> result = regionRepository.getSidoList();
+        result.add(0,"전체");
+        return result;
     }
 
     @Override
