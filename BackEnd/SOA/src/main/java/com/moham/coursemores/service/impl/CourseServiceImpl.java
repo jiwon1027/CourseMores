@@ -5,6 +5,8 @@ import com.moham.coursemores.dto.course.*;
 import com.moham.coursemores.dto.profile.UserSimpleInfoResDto;
 import com.moham.coursemores.repository.*;
 import com.moham.coursemores.service.CourseService;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -211,7 +213,8 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     @Transactional
-    public void addCourse(Long userId, CourseCreateReqDto courseCreateReqDto, List<MultipartFile> imageList) {
+    public Long addCourse(Long userId, CourseCreateReqDto courseCreateReqDto, List<MultipartFile> imageList) {
+
         // 유저 정보 가져오기
         User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
                 .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
@@ -236,6 +239,7 @@ public class CourseServiceImpl implements CourseService {
                 .longitude(firstLocation.getLongitude())
                 .user(user)
                 .build());
+
         // 코스의 테마 생성
         courseCreateReqDto.getThemeIdList().forEach(themeId -> {
             // 테마 정보 가져오기
@@ -290,6 +294,7 @@ public class CourseServiceImpl implements CourseService {
                     .course(course)
                     .region(region)
                     .build());
+
             // 코스의 장소의 이미지 생성
             for (int end = imageIdx + location.getNumberOfImage(); imageIdx < end; imageIdx++) {
                 String imagePath = fileUploadService.uploadImage(imageList.get(imageIdx));
@@ -304,6 +309,8 @@ public class CourseServiceImpl implements CourseService {
                         .build());
             }
         }
+
+        return course.getId();
     }
 
     @Override

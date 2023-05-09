@@ -12,6 +12,5 @@ import java.util.List;
 @Builder
 public class IndexDataResDTO {
     private List<String> courses;
-    private List<String> courseLocations;
     private List<String> hashtags;
 }
