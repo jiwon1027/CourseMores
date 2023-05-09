@@ -27,21 +27,23 @@ public class CourseController {
     @GetMapping("search/{userId}")
     public ResponseEntity<Map<String, Object>> searchCourse(
             @PathVariable Long userId,
-            @RequestParam String word,
-            @RequestParam Long regionId,
-            @RequestParam List<Long> themeIds,
+            @RequestParam(required = false) String word,
+            @RequestParam(required = false) Long regionId,
+            @RequestParam(required = false) List<Long> themeIds,
+            @RequestParam(required = false) int isVisited,
             @RequestParam int page,
             @RequestParam String sortby) {
         logger.info(">> request : userId={}",userId);
         logger.info(">> request : word={}",word);
         logger.info(">> request : regionId={}",regionId);
         logger.info(">> request : themeIds={}",themeIds);
+        logger.info(">> request : isVisited={}",isVisited);
         logger.info(">> request : page={}",page);
         logger.info(">> request : sortby={}",sortby);
 
         Map<String, Object> resultMap = new HashMap<>();
 
-        Page<CoursePreviewResDto> pageCourse = courseService.search(userId, word,regionId,themeIds,page,sortby);
+        Page<CoursePreviewResDto> pageCourse = courseService.search(userId, word,regionId,themeIds,isVisited,page,sortby);
         resultMap.put("courseList", pageCourse.getContent());
         logger.info("<< response : courseList={}",pageCourse.getContent());
         resultMap.put("isFirst", pageCourse.isFirst());

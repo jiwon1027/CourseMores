@@ -31,29 +31,33 @@ public class CourseCustomRepositoryImpl implements CourseCustomRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public Predicate searchCoursesFilter(String word, Long regionId, List<Long> themeIds) {
+    public Predicate searchCoursesFilter(String word, Long regionId, List<Long> themeIds, int isVisited) {
 
         BooleanBuilder builder = new BooleanBuilder();
 
-        if (word != null && !"".equals(word)) {
+        if (word != null && !word.isBlank()) {
             builder.or(course.title.contains(word))
                     .or(course.courseHashtagList.any().hashtag.name.contains(word))
                     .or(course.courseLocationList.any().name.contains(word));
         }
 
-        if (regionId > 0) {
+        if (regionId != null && regionId > 0) {
             builder.and(course.courseLocationList.any().region.id.eq(regionId));
         }
 
-        if(themeIds.size() > 0 && themeIds.get(0) != 0){
+        if(themeIds != null && !themeIds.isEmpty() && themeIds.get(0) != 0){
             themeIds.forEach(id -> builder.or(course.themeOfCourseList.any().theme.id.eq(id)));
+        }
+
+        if(isVisited == 1){
+            builder.and(course.visited.eq(true));
         }
 
         return builder.getValue();
     }
 
     @Override
-    public Page<Course> searchAll(String word, Long regionId, List<Long> themeIds, Pageable pageable) {
+    public Page<Course> searchAll(String word, Long regionId, List<Long> themeIds, int isVisited, Pageable pageable) {
         //content를 가져오는 쿼리는 fetch로 하고
         List<Course> fetch = jpaQueryFactory
                 .selectFrom(course)
@@ -63,7 +67,7 @@ public class CourseCustomRepositoryImpl implements CourseCustomRepository {
 //                .leftJoin(hashtagOfCourse.hashtag, hashtag)
 //                .leftJoin(course.themeOfCourseList, themeOfCourse)
 //                .leftJoin(themeOfCourse.theme, theme)
-                .where(searchCoursesFilter(word, regionId, themeIds))
+                .where(searchCoursesFilter(word, regionId, themeIds, isVisited))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(getOrderSpecifier(pageable.getSort()).stream().toArray(OrderSpecifier[]::new))
@@ -78,7 +82,7 @@ public class CourseCustomRepositoryImpl implements CourseCustomRepository {
 //                .leftJoin(hashtagOfCourse.hashtag, hashtag)
 //                .leftJoin(course.themeOfCourseList, themeOfCourse)
 //                .leftJoin(themeOfCourse.theme, theme)
-                .where(searchCoursesFilter(word, regionId, themeIds));
+                .where(searchCoursesFilter(word, regionId, themeIds, isVisited));
 
         return PageableExecutionUtils.getPage(fetch, pageable, count::fetchCount);
     }
@@ -92,10 +96,10 @@ public class CourseCustomRepositoryImpl implements CourseCustomRepository {
                     String prop = order.getProperty();
                     PathBuilder orderByExpression = new PathBuilder(Course.class, "course");
 
-                    System.out.println("order : "+order);
-                    System.out.println("디렉션 : "+direction);
-                    System.out.println("prop : "+prop);
-                    System.out.println("orderByExpression : "+orderByExpression);
+//                    System.out.println("order : "+order);
+//                    System.out.println("디렉션 : "+direction);
+//                    System.out.println("prop : "+prop);
+//                    System.out.println("orderByExpression : "+orderByExpression);
 
                     return new OrderSpecifier(direction,orderByExpression.get(prop));
                 })
