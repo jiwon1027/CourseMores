@@ -38,7 +38,7 @@ public class CourseServiceImpl implements CourseService {
     private final InterestRepository interestRepository;
 
     @Override
-    public Page<CoursePreviewResDto> search(Long userId, String word, Long regionId, List<Long> themeIds, int page, String sortby) {
+    public Page<CoursePreviewResDto> search(Long userId, String word, Long regionId, List<Long> themeIds, int isVisited, int page, String sortby) {
         User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
                 .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
 
@@ -46,12 +46,12 @@ public class CourseServiceImpl implements CourseService {
         final int size = 10;
 
         // Sort 정렬 기준
-        Sort sort = ("latest".equals(sortby) ?
-                Sort.by("createTime").descending() :
-                Sort.by("likeCount").descending());
+        Sort sort = (sortby == null || "latest".equals(sortby)) ?
+                Sort.by("createTime").ascending() :
+                Sort.by("likeCount").descending();
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        Page<Course> pageCourse = courseRepository.searchAll(word, regionId,themeIds,pageable);
+        Page<Course> pageCourse = courseRepository.searchAll(word, regionId, themeIds, isVisited, pageable);
         Page<CoursePreviewResDto> result = pageCourse
                 .map(course -> {
                     Region region = course.getCourseLocationList().get(0).getRegion();
