@@ -24,6 +24,19 @@ public class CourseController {
 
     private final CourseService courseService;
 
+    @GetMapping("hot")
+    public ResponseEntity<Map<String, Object>> getHotCourse() {
+        logger.info("<< request: none");
+
+        Map<String, Object> resultMap = new HashMap<>();
+
+        List<MainPreviewResDto> courseList = courseService.getHotCourseList();
+        resultMap.put("courseList", courseList);
+        logger.info("<< response : courseLis={}", courseList);
+
+        return new ResponseEntity<>(resultMap, HttpStatus.OK);
+    }
+
     @GetMapping("search/{userId}")
     public ResponseEntity<Map<String, Object>> searchCourse(
             @PathVariable Long userId,

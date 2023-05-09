@@ -7,6 +7,8 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface CourseService {
+
+    List<MainPreviewResDto> getHotCourseList();
     Page<CoursePreviewResDto> search(Long userId, String word, Long regionId, List<Long> themeIds, int isVisited, int page, String sortby);
     void increaseViewCount(Long courseId);
     CourseInfoResDto getCourseInfo(Long courseId);
@@ -15,4 +17,5 @@ public interface CourseService {
     void addCourse(Long userId, CourseCreateReqDto courseCreateReqDto, List<MultipartFile> imageList);
     void setCourse(Long userId, Long courseId, CourseUpdateReqDto courseUpdateReqDto, List<MultipartFile> imageList);
     void deleteCourse(Long userId, Long courseId);
+
 }
