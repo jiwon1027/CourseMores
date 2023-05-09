@@ -47,7 +47,7 @@ public class CourseServiceImpl implements CourseService {
 
         // Sort 정렬 기준
         Sort sort = ("latest".equals(sortby) ?
-                Sort.by("createTime").descending() :
+                Sort.by("createTime").ascending() :
                 Sort.by("likeCount").descending());
         Pageable pageable = PageRequest.of(page, size, sort);
 

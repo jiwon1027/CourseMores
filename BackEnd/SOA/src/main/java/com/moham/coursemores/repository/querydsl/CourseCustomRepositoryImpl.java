@@ -92,10 +92,10 @@ public class CourseCustomRepositoryImpl implements CourseCustomRepository {
                     String prop = order.getProperty();
                     PathBuilder orderByExpression = new PathBuilder(Course.class, "course");
 
-//                    System.out.println("order : "+order);
-//                    System.out.println("디렉션 : "+direction);
-//                    System.out.println("prop : "+prop);
-//                    System.out.println("orderByExpression : "+orderByExpression);
+                    System.out.println("order : "+order);
+                    System.out.println("디렉션 : "+direction);
+                    System.out.println("prop : "+prop);
+                    System.out.println("orderByExpression : "+orderByExpression);
 
                     return new OrderSpecifier(direction,orderByExpression.get(prop));
                 })
