@@ -4,6 +4,7 @@ import 'package:get/get.dart' as g;
 import '../main.dart' as main;
 import 'dart:convert';
 import 'package:http_parser/http_parser.dart';
+import '../auth/auth_dio.dart';
 
 // void postSignUp(nickname, age, gender, image, aToken) async {
 //   dynamic userInfoCreateReqDto = {
@@ -24,11 +25,6 @@ import 'package:http_parser/http_parser.dart';
 //     print('가입성공!!!');
 //   }
 // }
-
-String baseURL = dotenv.get('BASE_URL');
-
-final options = BaseOptions(baseUrl: baseURL);
-final dio = Dio(options);
 
 // class UserInfoCreateReqDto {
 //   final String nickname;
@@ -62,6 +58,7 @@ void postProfileEdit(nickname, age, gender, image, aToken) async {
     });
   }
   try {
+    final dio = await authDio();
     final response = await dio.put('profile/5',
         data: formData,
         options: Options(

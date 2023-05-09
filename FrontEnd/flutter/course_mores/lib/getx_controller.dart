@@ -76,37 +76,95 @@ class TokenStorage extends GetxController {
   }
 }
 
+// class UserInfo extends GetxController {
+//   final nickname = 'default'.obs;
+//   final gender = 'default'.obs;
+//   final age = 0.obs;
+//   // final image = ''.obs;
+//   XFile? profileImage;
+//   void saveNickname(newNickname) {
+//     nickname.value = newNickname;
+//     print(nickname.value);
+//   }
+
+//   void saveGender(newGender) {
+//     gender.value = newGender;
+//     print(gender.value);
+//   }
+
+//   void saveAge(newAge) {
+//     age.value = newAge;
+//     print(age.value);
+//   }
+
+//   void saveImage(XFile? image) {
+//     if (image != null) {
+//       profileImage = image;
+//       print(profileImage);
+//     }
+//   }
+
+//   void clearUserInfo() {
+//     nickname.value = '';
+//     gender.value = '';
+//     age.value = 0;
+//     profileImage = null;
+//   }
+// }
+
 class UserInfo extends GetxController {
   final nickname = 'default'.obs;
   final gender = 'default'.obs;
   final age = 0.obs;
-  // final image = ''.obs;
   XFile? profileImage;
-  void saveNickname(newNickname) {
-    nickname.value = newNickname;
-    print(nickname.value);
-  }
 
-  void saveGender(newGender) {
-    gender.value = newGender;
-    print(gender.value);
-  }
-
-  void saveAge(newAge) {
-    age.value = newAge;
-    print(age.value);
-  }
-
-  void saveImage(XFile? image) {
-    if (image != null) {
-      profileImage = image;
-      print(profileImage);
+  @override
+  void onInit() async {
+    super.onInit();
+    final prefs = await SharedPreferences.getInstance();
+    nickname.value = prefs.getString('nickname') ?? 'default';
+    gender.value = prefs.getString('gender') ?? 'default';
+    age.value = prefs.getInt('age') ?? 0;
+    final imagePath = prefs.getString('profileImage');
+    if (imagePath != null) {
+      profileImage = XFile(imagePath);
     }
   }
 
-  void clearUserInfo() {
-    nickname.value = '';
-    gender.value = '';
+  void saveNickname(newNickname) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('nickname', newNickname);
+    nickname.value = newNickname;
+  }
+
+  void saveGender(newGender) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('gender', newGender);
+    gender.value = newGender;
+  }
+
+  void saveAge(newAge) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setInt('age', newAge);
+    age.value = newAge;
+  }
+
+  void saveImage(XFile? image) async {
+    if (image != null) {
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setString('profileImage', image.path);
+      profileImage = image;
+    }
+  }
+
+  void clearUserInfo() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.remove('nickname');
+    prefs.remove('gender');
+    prefs.remove('age');
+    prefs.remove('profileImage');
+    nickname.value = 'default';
+    gender.value = 'default';
     age.value = 0;
     profileImage = null;
   }
