@@ -1,5 +1,12 @@
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+String baseURL = dotenv.get('BASE_URL');
+
+final options = BaseOptions(baseUrl: baseURL);
+final dio = Dio(options);
 
 class AuthController extends GetxController {
   final loginStatus = Get.put(LoginStatus());
@@ -80,5 +87,27 @@ class UserInfo extends GetxController {
     gender.value = '';
     age.value = 0;
     profileImage = null;
+  }
+}
+
+class MyPageInfo extends GetxController {
+  var status = 'course';
+  List<Map<String, Object>> myCourse = [];
+  List<Map<String, Object>> myReview = [];
+
+  void saveMyCourse(courseList) {
+    myCourse = courseList;
+  }
+
+  void saveMyReview(reviewList) {
+    myReview = reviewList;
+  }
+
+  void statusToReview() {
+    status = 'review';
+  }
+
+  void statusToCourse() {
+    status = 'course';
   }
 }

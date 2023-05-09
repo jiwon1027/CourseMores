@@ -1,4 +1,5 @@
 // import 'login_page.dart' as login;
+import 'package:coursemores/auth/login_page.dart';
 import 'package:coursemores/home_screen/home_screen.dart';
 import 'package:flutter/material.dart';
 import '../auth/sign_up.dart' as signup;
@@ -9,6 +10,14 @@ import 'package:get/get.dart';
 import '../main.dart' as main;
 import 'package:coursemores/getx_controller.dart';
 import 'profile_edit.dart' as profie_edit;
+import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'dart:convert';
+
+String baseURL = dotenv.get('BASE_URL');
+
+final options = BaseOptions(baseUrl: baseURL);
+final dio = Dio(options);
 
 class MyPage extends StatefulWidget {
   const MyPage({super.key});
@@ -17,8 +26,95 @@ class MyPage extends StatefulWidget {
   State<MyPage> createState() => _MyPageState();
 }
 
+final myPageController = Get.put(MyPageInfo());
+
 class _MyPageState extends State<MyPage> {
-  var courseList = course.courseList;
+  List<Map<String, Object>> courseList = myPageController.myCourse;
+  List<Map<String, Object>> reviewList = myPageController.myReview;
+  var status = myPageController.status;
+  @override
+  void initState() {
+    super.initState();
+    fetchData(tokenController.accessToken);
+    print('data 가져오기');
+    print(courseList);
+  }
+
+  Future<void> fetchData(aToken) async {
+    final response = await dio.get('course/5',
+        options: Options(
+          headers: {'Authorization': 'Bearer $aToken'},
+        ));
+    print(response);
+    List<dynamic> data = response.data['myCourseList'];
+    print(data);
+    // final list = (data as List<dynamic>).cast<Map<String, Object>>().toList();
+    // courseList = list;
+    // setState(() {
+    //   courseList = data.map((item) => Map<String, Object>.from(item)).toList();
+    // });
+    myPageController.saveMyCourse(
+        data.map((item) => Map<String, Object>.from(item)).toList());
+    setState(() {
+      courseList = myPageController.myCourse;
+    });
+    print(courseList);
+    print(courseList.length);
+
+    final response2 = await dio.get('comment/5',
+        options: Options(
+          headers: {'Authorization': 'Bearer $aToken'},
+        ));
+    print(response2);
+    List<dynamic> data2 = response2.data['myCommentList'];
+    // print(data);
+    myPageController.saveMyReview(
+        data2.map((item) => Map<String, Object>.from(item)).toList());
+    setState(() {
+      reviewList = myPageController.myReview;
+    });
+    print(reviewList);
+  }
+
+  buttonBar() {
+    return SizedBox(
+      width: 220,
+      height: 60,
+      child: AnimatedButtonBar(
+          radius: 8.0,
+          padding: EdgeInsets.all(8),
+          backgroundColor: Colors.blueGrey.shade50,
+          foregroundColor: Colors.blue,
+          invertedSelection: true,
+          children: [
+            ButtonBarEntry(
+                child: Text(
+                  '내 코스',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                onTap: () {
+                  myPageController.statusToCourse();
+                  setState(() {
+                    status = myPageController.status;
+                  });
+                  print(status);
+                }),
+            ButtonBarEntry(
+                child: Text(
+                  '내 리뷰',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                onTap: () {
+                  myPageController.statusToReview();
+                  setState(() {
+                    status = myPageController.status;
+                  });
+                  print(status);
+                }),
+          ]),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,19 +134,35 @@ class _MyPageState extends State<MyPage> {
                 //               builder: (context) => const login.LoginPage()));
                 //     },
                 //     child: Text('로그인페이지')),
-                ButtonBar(),
-                Text(
-                  '내가 작성한 코스 : 11 개',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15,
-                  ),
-                ),
-                Flexible(
-                  child: search.SearchResult(
-                    courseList: courseList,
-                  ),
-                )
+                buttonBar(),
+                if (status == 'course')
+                  (Text(
+                    '내가 작성한 코스 : ${courseList.length} 개',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                    ),
+                  )),
+                if (status == 'review')
+                  (Text(
+                    '내가 작성한 리뷰 : ${reviewList.length} 개',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                    ),
+                  )),
+                if (status == 'course')
+                  (Flexible(
+                    child: search.SearchResult(
+                      courseList: courseList,
+                    ),
+                  )),
+                if (status == 'review')
+                  (Flexible(
+                    child: search.SearchResult(
+                      courseList: reviewList,
+                    ),
+                  ))
                 // Container(
                 //   margin: const EdgeInsets.only(
                 //       left: 10, right: 10, top: 10, bottom: 5),
@@ -164,7 +276,7 @@ profileBox() {
 
 boxDeco() {
   return BoxDecoration(
-    color: const Color.fromARGB(255, 231, 151, 151),
+    color: Colors.white,
     borderRadius: BorderRadius.circular(20),
     boxShadow: [
       BoxShadow(
@@ -175,46 +287,6 @@ boxDeco() {
       ),
     ],
   );
-}
-
-class ButtonBar extends StatefulWidget {
-  const ButtonBar({super.key});
-
-  @override
-  State<ButtonBar> createState() => _ButtonBarState();
-}
-
-class _ButtonBarState extends State<ButtonBar> {
-  String choice = 'course';
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 220,
-      height: 60,
-      child: AnimatedButtonBar(
-          radius: 20.0,
-          padding: EdgeInsets.all(8),
-          backgroundColor: Colors.blueGrey.shade100,
-          foregroundColor: Colors.blue,
-          innerVerticalPadding: 0,
-          children: [
-            ButtonBarEntry(
-                child: Text('내 코스'),
-                onTap: () {
-                  setState(() {
-                    choice = 'course';
-                  });
-                }),
-            ButtonBarEntry(
-                child: Text('내 리뷰'),
-                onTap: () {
-                  setState(() {
-                    choice = 'review';
-                  });
-                }),
-          ]),
-    );
-  }
 }
 
 final authController = Get.put(AuthController());
