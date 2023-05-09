@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 String baseURL = dotenv.get('BASE_URL');
 
@@ -15,18 +16,39 @@ class AuthController extends GetxController {
   final userInfo = Get.put(UserInfo());
 
   void logout() {
-    loginStatus.changeLoginStatus();
+    loginStatus.changeLoginStatus(false);
     pageNum.changePageNum(0);
     tokenStorage.clearTokens();
     userInfo.clearUserInfo();
   }
 }
 
+// class LoginStatus extends GetxController {
+//   final isLoggedIn = false.obs;
+
+//   void changeLoginStatus() {
+//     isLoggedIn.value = !isLoggedIn.value;
+//   }
+// }
+
 class LoginStatus extends GetxController {
   final isLoggedIn = false.obs;
 
-  void changeLoginStatus() {
-    isLoggedIn.value = !isLoggedIn.value;
+  @override
+  void onInit() {
+    super.onInit();
+    checkLoginStatus();
+  }
+
+  void checkLoginStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    isLoggedIn.value = prefs.getBool('isLoggedIn') ?? false;
+  }
+
+  void changeLoginStatus(bool isLoggedIn) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setBool('isLoggedIn', isLoggedIn);
+    this.isLoggedIn.value = isLoggedIn;
   }
 }
 

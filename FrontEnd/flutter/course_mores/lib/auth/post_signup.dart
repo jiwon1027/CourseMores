@@ -77,8 +77,8 @@ void postSignUp(nickname, int age, gender, image, aToken) async {
 
     if (response.statusCode == 200) {
       print('가입성공!!!');
-      loginController.changeLoginStatus();
-      g.Get.to(main.MyApp());
+      loginController.changeLoginStatus(true);
+      g.Get.replace(main.MyApp());
     }
   } catch (e) {
     // DioError 처리
