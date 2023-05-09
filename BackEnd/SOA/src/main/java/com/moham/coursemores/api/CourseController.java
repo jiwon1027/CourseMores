@@ -30,7 +30,7 @@ public class CourseController {
             @RequestParam(required = false) String word,
             @RequestParam(required = false) Long regionId,
             @RequestParam(required = false) List<Long> themeIds,
-            @RequestParam(required = false) int isVisited,
+            @RequestParam int isVisited,
             @RequestParam int page,
             @RequestParam String sortby) {
         logger.info(">> request : userId={}",userId);
