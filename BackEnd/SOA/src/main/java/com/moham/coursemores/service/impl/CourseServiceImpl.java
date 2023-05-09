@@ -41,7 +41,9 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public List<MainPreviewResDto> getHotCourseList() {
-        List<MainPreviewResDto> result = hotCourseRepository.findAll().stream()
+        // 한 번에 넘길 인기 코스의 수
+        int number = 10;
+        List<MainPreviewResDto> result = hotCourseRepository.findRandomHotCourse(number).stream()
                 .map(hotCourse -> {
                             Course course = hotCourse.getCourse();
                             return MainPreviewResDto.builder()
