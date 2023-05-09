@@ -115,15 +115,18 @@ public class CommentServiceImpl implements CommentService {
                 .course(course)
                 .build();
 
+
         commentRepository.save(comment);
 
-        // commentImage table에도 사진 추가
-        for(MultipartFile multipartFile : imageList){
-            String imagePath = fileUploadService.uploadImage(multipartFile);
-            commentImageRepository.save(CommentImage.builder()
-                    .image(imagePath)
-                    .comment(comment)
-                    .build());
+        if (imageList != null) {
+            // commentImage table에도 사진 추가
+            for(MultipartFile multipartFile : imageList){
+                String imagePath = fileUploadService.uploadImage(multipartFile);
+                commentImageRepository.save(CommentImage.builder()
+                        .image(imagePath)
+                        .comment(comment)
+                        .build());
+            }
         }
 
         // 코스의 댓글 수 증가
@@ -151,14 +154,17 @@ public class CommentServiceImpl implements CommentService {
             commentImageRepository.delete(commentImage);
         }
 
-        // 이미지 새롭게 추가
-        for (MultipartFile multipartFile : imageList) {
-            String imagePath = fileUploadService.uploadImage(multipartFile);
-            commentImageRepository.save(CommentImage.builder()
-                    .image(imagePath)
-                    .comment(comment)
-                    .build());
+        if (imageList != null){
+            // 이미지 새롭게 추가
+            for (MultipartFile multipartFile : imageList) {
+                String imagePath = fileUploadService.uploadImage(multipartFile);
+                commentImageRepository.save(CommentImage.builder()
+                        .image(imagePath)
+                        .comment(comment)
+                        .build());
+            }
         }
+
     }
 
     @Override
