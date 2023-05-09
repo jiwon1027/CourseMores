@@ -196,14 +196,14 @@ buttonBar1() {
       children: [
         Container(
           width: 50.0,
-          decoration: iconBoxDeco(),
+          decoration: boxDeco(),
           child: IconButton(
             onPressed: () {},
             icon: const Icon(Icons.tune),
           ),
         ),
         Container(
-          decoration: iconBoxDeco(),
+          decoration: boxDeco(),
           width: 300.0,
           child: searchButtonBar(),
         )
@@ -238,13 +238,19 @@ class _ButtonBar2State extends State<ButtonBar2> {
               print(pageController.pageNum.value);
             },
             child: Container(
-              width: 80.0,
+              width: 110.0,
               height: 80.0,
-              decoration: iconBoxDeco(),
+              decoration: boxDeco(),
               child: SizedBox(
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const <Widget>[Icon(Icons.route), Text('코스 작성')],
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: const <Widget>[
+                    Icon(Icons.route),
+                    Text(
+                      '코스 작성',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    )
+                  ],
                 ),
               ),
             ),
@@ -255,15 +261,15 @@ class _ButtonBar2State extends State<ButtonBar2> {
               print(pageController.pageNum.value);
             },
             child: Container(
-              width: 80.0,
+              width: 110.0,
               height: 80.0,
-              decoration: iconBoxDeco(),
+              decoration: boxDeco(),
               child: SizedBox(
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: const <Widget>[
                     Icon(Icons.star_outline),
-                    Text('관심 목록')
+                    Text('관심 목록', style: TextStyle(fontWeight: FontWeight.bold))
                   ],
                 ),
               ),
@@ -275,15 +281,15 @@ class _ButtonBar2State extends State<ButtonBar2> {
               print(pageController.pageNum.value);
             },
             child: Container(
-              width: 80.0,
+              width: 110.0,
               height: 80.0,
-              decoration: iconBoxDeco(),
+              decoration: boxDeco(),
               child: SizedBox(
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: const <Widget>[
                     Icon(Icons.account_circle),
-                    Text('마이페이지')
+                    Text('마이페이지', style: TextStyle(fontWeight: FontWeight.bold))
                   ],
                 ),
               ),
@@ -301,9 +307,24 @@ iconBoxDeco() {
       borderRadius: BorderRadius.circular(10));
 }
 
+boxDeco() {
+  return BoxDecoration(
+    color: Colors.white,
+    borderRadius: BorderRadius.circular(20),
+    boxShadow: [
+      BoxShadow(
+        color: Colors.grey.withOpacity(0.5),
+        spreadRadius: 2,
+        blurRadius: 3,
+        offset: const Offset(0, 2), // changes position of shadow
+      ),
+    ],
+  );
+}
+
 popularCourse() {
   return Container(
-    decoration: iconBoxDeco(),
+    decoration: boxDeco(),
     child: const Padding(
       padding: EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0),
       child: SizedBox(
@@ -323,7 +344,7 @@ themeList() {
   return Padding(
     padding: const EdgeInsets.fromLTRB(0, 15.0, 0, 15.0),
     child: Container(
-      decoration: iconBoxDeco(),
+      decoration: boxDeco(),
       child: Padding(
           padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0),
           child: Column(
@@ -368,7 +389,7 @@ themeList() {
 
 reviews() {
   return Container(
-    decoration: iconBoxDeco(),
+    decoration: boxDeco(),
     child: const Padding(
       padding: EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0),
       child: SizedBox(
@@ -393,9 +414,9 @@ searchButtonBar() {
     decoration: InputDecoration(
       hintText: "원하는 코스를 검색해보세요",
       hintStyle: const TextStyle(color: Colors.grey),
-      // enabledBorder: UnderlineInputBorder(
-      //   borderSide: BorderSide(color: Colors.grey),
-      // ),
+      enabledBorder: UnderlineInputBorder(
+        borderSide: BorderSide(color: Colors.transparent),
+      ),
       // focusedBorder: UnderlineInputBorder(
       //   borderSide: BorderSide(color: Colors.white),
       // ),

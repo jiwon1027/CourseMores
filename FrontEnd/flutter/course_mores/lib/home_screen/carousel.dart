@@ -22,8 +22,10 @@ final List<Widget> imageSliders = imgList
                     bottom: 0.0,
                     left: 0.0,
                     right: 0.0,
+                    height: null,
                     child: Container(
-                      decoration: const BoxDecoration(
+                      decoration: BoxDecoration(
+                        color: Colors.black,
                         gradient: LinearGradient(
                           colors: [
                             Color.fromARGB(200, 0, 0, 0),
@@ -34,7 +36,7 @@ final List<Widget> imageSliders = imgList
                         ),
                       ),
                       padding: const EdgeInsets.symmetric(
-                          vertical: 10.0, horizontal: 20.0),
+                          vertical: 10.0, horizontal: 10.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -76,7 +78,7 @@ class CoourseCarousel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 240, 240, 240),
+      backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.fromLTRB(0, 15.0, 0, 0),
         child: Column(
@@ -94,7 +96,7 @@ class CoourseCarousel extends StatelessWidget {
             CarouselSlider(
               options: CarouselOptions(
                 autoPlay: true,
-                aspectRatio: 2.0,
+                // aspectRatio: 2.0,
                 enlargeCenterPage: false,
               ),
               items: imageSliders,
@@ -112,7 +114,7 @@ class ReviewCarousel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 240, 240, 240),
+      backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.fromLTRB(0, 15.0, 0, 0),
         child: Column(
@@ -120,7 +122,7 @@ class ReviewCarousel extends StatelessWidget {
             const Padding(
               padding: EdgeInsets.fromLTRB(0, 0, 0, 15.0),
               child: Text(
-                '사람들의 생생 코멘트 👀',
+                '지금 내 근처의 코스 👀',
                 style: TextStyle(
                     color: Colors.black,
                     fontSize: 20.0,
@@ -130,7 +132,7 @@ class ReviewCarousel extends StatelessWidget {
             CarouselSlider(
               options: CarouselOptions(
                 autoPlay: true,
-                aspectRatio: 2.0,
+                // aspectRatio: 2.0,
                 enlargeCenterPage: false,
               ),
               items: imageSliders,
