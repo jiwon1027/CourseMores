@@ -2,6 +2,7 @@ import 'package:coursemores/getx_controller.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'dart:convert';
 
 String baseURL = dotenv.get('BASE_URL');
 final authController = Get.put(AuthController());
@@ -59,22 +60,19 @@ Future<Dio> authDio() async {
       }));
 
       // 토큰 갱신 API 요청 시 AccessToken(만료), RefreshToken 포함
-      var tokenReissueReqDto = {
+      var tokenReissueReqDto = json.encode({
         "accessToken" : accessToken,
         "refreshToken" : refreshToken
-      };
-      // refreshDio.options.headers['Authorization'] = 'Bearer $accessToken';
-      // refreshDio.options.headers['Refresh'] = 'Bearer $refreshToken';
+      });
 
       print("토큰 재요청!!");
+      print(tokenReissueReqDto);
       // 토큰 갱신 API 요청
       final refreshResponse = await refreshDio.post('/auth/reissue',
         data: tokenReissueReqDto
       );
 
       // response로부터 새로 갱신된 AccessToken과 RefreshToken 파싱
-      // final newAccessToken = refreshResponse.headers['Authorization']![0];
-      // final newRefreshToken = refreshResponse.headers['Refresh']![0];
       print("재발급 accessToken!! ");
       print(refreshResponse.data);
       print(refreshResponse.data['accessToken']);
