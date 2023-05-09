@@ -13,7 +13,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -54,7 +53,6 @@ public class CourseServiceImpl implements CourseService {
         Page<Course> pageCourse = courseRepository.searchAll(word, regionId, themeIds, isVisited, pageable);
         Page<CoursePreviewResDto> result = pageCourse
                 .map(course -> {
-                    Region region = course.getCourseLocationList().get(0).getRegion();
 //                    Optional<Interest> interest = interestRepository.findByUserIdAndCourseId(user.getId(), course.getId());
                     boolean isInterest = false;
                     for (Interest interest : course.getInterestList()){
@@ -72,10 +70,10 @@ public class CourseServiceImpl implements CourseService {
                         .visited(course.isVisited())
                         .likeCount(course.getLikeCount())
                         .commentCount(course.getCommentCount())
-                        .mainImage(course.getMainImage())
-                        .sido(region.getSido())
-                        .gugun(region.getGugun())
-                        .locationName(course.getLocationName() + " 외 " + (course.getCourseLocationList().size() - 1) + "곳")
+                        .image(course.getImage())
+                        .sido(course.getSido())
+                        .gugun(course.getGugun())
+                        .locationName(course.getLocationName() + " 외 " + (course.getLocationSize() - 1) + "곳")
 //                        .isInterest(interest.map(Interest::isFlag).orElse(false))
                         .isInterest(isInterest)
                         .build();
@@ -120,7 +118,7 @@ public class CourseServiceImpl implements CourseService {
                 .viewCount(course.getViewCount())
                 .likeCount(course.getLikeCount())
                 .interestCount(course.getInterestCount())
-                .mainImage(course.getMainImage())
+                .image(course.getImage())
                 .hashtagList(course.getCourseHashtagList()
                         .stream()
                         .map(o -> o.getHashtag().getName())
@@ -182,10 +180,10 @@ public class CourseServiceImpl implements CourseService {
                             .people(course.getPeople())
                             .visited(course.isVisited())
                             .likeCount(course.getLikeCount())
-                            .mainImage(course.getMainImage())
-                            .sido(course.getCourseLocationList().get(0).getRegion().getSido())
-                            .gugun(course.getCourseLocationList().get(0).getRegion().getGugun())
-                            .locationName(course.getLocationName() + " 외 " + (course.getCourseLocationList().size() - 1) + "곳")
+                            .image(course.getImage())
+                            .sido(course.getSido())
+                            .gugun(course.getGugun())
+                            .locationName(course.getLocationName() + " 외 " + (course.getLocationSize() - 1) + "곳")
                             .commentCount(course.getCommentCount())
                             .build();
                 })
@@ -198,6 +196,7 @@ public class CourseServiceImpl implements CourseService {
         // 유저 정보 가져오기
         User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
                 .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
+        LocationCreateReqDto firstLocation = courseCreateReqDto.getLocationList().get(0);
         // 코스 생성
         Course course = courseRepository.save(Course.builder()
                 .title(courseCreateReqDto.getTitle())
@@ -209,7 +208,13 @@ public class CourseServiceImpl implements CourseService {
                 .interestCount(0)
                 .likeCount(0)
                 .commentCount(0)
-                .locationName(courseCreateReqDto.getLocationList().get(0).getName())
+                .image(firstLocation.getRoadViewImage())
+                .locationName(firstLocation.getName())
+                .locationSize(courseCreateReqDto.getLocationList().size())
+                .sido(firstLocation.getSido())
+                .gugun(firstLocation.getGugun())
+                .latitude(firstLocation.getLatitude())
+                .longitude(firstLocation.getLongitude())
                 .user(user)
                 .build());
         // 코스의 테마 생성
@@ -248,9 +253,8 @@ public class CourseServiceImpl implements CourseService {
             }
         });
 
-
         int imageIdx = 0;
-        String mainImage = null;
+        boolean isFirstImage = firstLocation.getNumberOfImage() != 0;
         // 코스의 장소 정보 생성
         for (LocationCreateReqDto location : courseCreateReqDto.getLocationList()) {
             // 코스의 장소의 지역 가져오기
@@ -270,16 +274,17 @@ public class CourseServiceImpl implements CourseService {
             // 코스의 장소의 이미지 생성
             for (int end = imageIdx + location.getNumberOfImage(); imageIdx < end; imageIdx++) {
                 String imagePath = fileUploadService.uploadImage(imageList.get(imageIdx));
-                if (mainImage == null)
-                    mainImage = location.getNumberOfImage() == 0 ? location.getRoadViewImage() : imagePath;
+                // 코스의 대표 이미지 설정
+                if(isFirstImage){
+                    course.setMainImage(imagePath);
+                    isFirstImage = false;
+                }
                 courseLocationImageRepository.save(CourseLocationImage.builder()
                         .image(imagePath)
                         .courseLocation(courseLocation)
                         .build());
             }
         }
-        // 코스의 대표 이미지 설정
-        course.setMainImage(mainImage);
     }
 
     @Override

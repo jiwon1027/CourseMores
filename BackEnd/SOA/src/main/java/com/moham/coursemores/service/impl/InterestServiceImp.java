@@ -7,7 +7,7 @@ import com.moham.coursemores.repository.CourseRepository;
 import com.moham.coursemores.repository.InterestRepository;
 import com.moham.coursemores.repository.UserRepository;
 import com.moham.coursemores.service.InterestService;
-import java.util.ArrayList;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -45,7 +45,7 @@ public class InterestServiceImp implements InterestService {
                             .visited(course.isVisited())
                             .likeCount(course.getLikeCount())
                             .commentCount(course.getCommentList().size())
-                            .mainImage(course.getMainImage())
+                            .image(course.getMainImage())
                             .locationName(course.getLocationName() + " 외 " + (course.getCourseLocationList().size() - 1) + "곳")
                             .sido(region.getSido())
                             .gugun(region.getGugun())

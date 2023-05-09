@@ -22,7 +22,7 @@ public class Course extends DeleteTimeEntity {
     private Long id;
 
     @NotNull
-    @Column(length = 50)
+    @Column
     private String title;
 
     @Column(length = 1000)
@@ -56,11 +56,31 @@ public class Course extends DeleteTimeEntity {
 
     @NotNull
     @Column(length = 1000)
-    private String mainImage;
+    private String image;
 
     @NotNull
-    @Column(length = 50)
+    @Column
     private String locationName;
+
+    @NotNull
+    @Column
+    private double latitude;
+
+    @NotNull
+    @Column
+    private double longitude;
+
+    @NotNull
+    @Column
+    private String sido;
+
+    @NotNull
+    @Column
+    private String gugun;
+
+    @NotNull
+    @Column
+    private int locationSize;
 
     @NotNull
     @ManyToOne(targetEntity = User.class, fetch = FetchType.LAZY)
@@ -91,12 +111,17 @@ public class Course extends DeleteTimeEntity {
                   int people,
                   int time,
                   boolean visited,
-                  String locationName,
-                  String mainImage,
                   int viewCount,
                   int likeCount,
                   int interestCount,
                   int commentCount,
+                  String image,
+                  String locationName,
+                  double latitude,
+                  double longitude,
+                  String sido,
+                  String gugun,
+                  int locationSize,
                   User user){
         this.title = title;
         this.content = content;
@@ -108,12 +133,17 @@ public class Course extends DeleteTimeEntity {
         this.likeCount = likeCount;
         this.commentCount = commentCount;
         this.locationName = locationName;
-        this.mainImage = mainImage;
+        this.image = image;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.sido = sido;
+        this.gugun = gugun;
+        this.locationSize = locationSize;
         this.user = user;
     }
 
-    public void setMainImage(String mainImage) {
-        this.mainImage = mainImage;
+    public void setMainImage(String image) {
+        this.image = image;
     }
 
     public void increaseViewCount(){

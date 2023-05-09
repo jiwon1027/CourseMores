@@ -17,6 +17,6 @@ public class MyCourseResDto {
     private int commentCount;
     private String sido;
     private String gugun;
-    private String mainImage;
+    private String image;
     private String locationName;
 }
