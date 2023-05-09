@@ -25,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class CourseServiceImpl implements CourseService {
 
     private final CourseRepository courseRepository;
+    private final HotCourseRepository hotCourseRepository;
     private final UserRepository userRepository;
     private final CourseLocationRepository courseLocationRepository;
     private final CourseLocationImageRepository courseLocationImageRepository;
@@ -35,6 +36,24 @@ public class CourseServiceImpl implements CourseService {
     private final ThemeRepository themeRepository;
     private final ThemeOfCourseRepository themeOfCourseRepository;
     private final InterestRepository interestRepository;
+
+    @Override
+    public List<MainPreviewResDto> getHotCourseList() {
+        List<MainPreviewResDto> result = hotCourseRepository.findAll().stream()
+                .map(hotCourse -> {
+                            Course course = hotCourse.getCourse();
+                            return MainPreviewResDto.builder()
+                                    .courseId(course.getId())
+                                    .title(course.getTitle())
+                                    .content(course.getContent())
+                                    .image(course.getImage())
+                                    .sido(course.getSido())
+                                    .gugun(course.getGugun())
+                                    .build();
+                        }
+                ).collect(Collectors.toList());
+        return result;
+    }
 
     @Override
     public Page<CoursePreviewResDto> search(Long userId, String word, Long regionId, List<Long> themeIds, int isVisited, int page, String sortby) {
