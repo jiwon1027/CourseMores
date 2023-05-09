@@ -45,7 +45,7 @@ public class InterestServiceImp implements InterestService {
                             .visited(course.isVisited())
                             .likeCount(course.getLikeCount())
                             .commentCount(course.getCommentList().size())
-                            .image(course.getMainImage())
+                            .image(course.getImage())
                             .locationName(course.getLocationName() + " 외 " + (course.getCourseLocationList().size() - 1) + "곳")
                             .sido(region.getSido())
                             .gugun(region.getGugun())
