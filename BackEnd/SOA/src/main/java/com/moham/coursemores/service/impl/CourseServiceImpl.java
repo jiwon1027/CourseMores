@@ -74,13 +74,13 @@ public class CourseServiceImpl implements CourseService {
                 .collect(Collectors.groupingBy(Comment::getCourse, Collectors.counting()));
         interests.forEach(interest -> {
             Course course = interest.getCourse();
-            long cnt = map.getOrDefault(course, 1L);
-            map.put(course, cnt);
+            long cnt = map.getOrDefault(course, 0L);
+            map.put(course, ++cnt);
         });
         courseLikes.forEach(courseLike -> {
             Course course = courseLike.getCourse();
-            long cnt = map.getOrDefault(course, 1L);
-            map.put(course, cnt);
+            long cnt = map.getOrDefault(course, 0L);
+            map.put(course, ++cnt);
         });
 
         hotCourseRepository.deleteAllInBatch(); // 기존의 인기 코스들은 삭제
