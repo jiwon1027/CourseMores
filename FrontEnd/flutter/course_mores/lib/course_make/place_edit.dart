@@ -20,7 +20,7 @@ class EditItemPage extends StatefulWidget {
 }
 
 class _EditItemPageState extends State<EditItemPage> {
-  final TextEditingController _textController = TextEditingController();
+  // final TextEditingController _textController = TextEditingController();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
   final TextEditingController _sidoController = TextEditingController();
@@ -28,27 +28,6 @@ class _EditItemPageState extends State<EditItemPage> {
 
   late LocationData _itemData;
   final LocationData locationData;
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   final LocationController locationController = Get.find();
-  //   final LocationData? data =
-  //       locationController.getLocationData(widget.locationData.key);
-  //   if (data != null) {
-  //     _itemData = data;
-  //     _titleController.text = _itemData.title ?? '';
-  //     _contentController.text = _itemData.content ?? '';
-  //     _sidoController.text = _itemData.sido ?? '';
-  //     _gugunController.text = _itemData.gugun ?? '';
-  //   } else {
-  //     // _itemData가 null인 경우 예외 처리
-  //     print('No data found for the given key');
-  //   }
-  // }
-  // _EditItemPageState(LocationData locationData) {
-  //   _itemData = locationData;
-  // }
 
   @override
   void initState() {
@@ -140,22 +119,8 @@ class _EditItemPageState extends State<EditItemPage> {
               AddTitle(titleController: _titleController),
               SizedBox(height: 20),
               // AddText(textController: _textController),
-              AddText(
-                  textController:
-                      TextEditingController(text: _itemData.content)),
+              AddText(contentController: _contentController),
               SizedBox(height: 10),
-              // ElevatedButton(
-              //   onPressed: () {
-              //     // 이미지 업로드 코드
-              //     Fluttertoast.showToast(
-              //       msg: "작성 내용 : ${_textController.text}",
-              //       toastLength: Toast.LENGTH_SHORT,
-              //       gravity: ToastGravity.CENTER,
-              //     );
-              //     Navigator.pop(context);
-              //   },
-              //   child: Text("저장하기"),
-              // ),
               ElevatedButton(
                 onPressed: () {
                   final updatedLocationData = LocationData(
@@ -163,24 +128,25 @@ class _EditItemPageState extends State<EditItemPage> {
                     name: widget.locationData.name,
                     latitude: widget.locationData.latitude,
                     longitude: widget.locationData.longitude,
-                    image: null,
+                    roadViewImage: widget.locationData.roadViewImage,
+                    numberOfImage: widget.locationData.numberOfImage,
+                    // numberOfImage: _imageList.length,
+                    // numberOfImage: _imageUploaderState.getNumberOfImage(),
                     title: _titleController.text.isNotEmpty
                         ? _titleController.text
                         : null,
-                    content: _textController.text.isNotEmpty
-                        ? _textController.text
+                    content: _contentController.text.isNotEmpty
+                        ? _contentController.text
                         : null,
-                    sido: _sidoController.text.isNotEmpty
-                        ? _sidoController.text
-                        : null,
-                    gugun: _gugunController.text.isNotEmpty
-                        ? _gugunController.text
-                        : null,
+                    sido: widget.locationData.sido,
+                    gugun: widget.locationData.gugun,
                   );
                   _itemData.title = updatedLocationData.title;
                   _itemData.content = updatedLocationData.content;
                   _itemData.sido = updatedLocationData.sido;
                   _itemData.gugun = updatedLocationData.gugun;
+                  _itemData.numberOfImage =
+                      updatedLocationData.numberOfImage; // numberOfImage 업데이트
                   locationController.updateLocationData(updatedLocationData);
                   Navigator.pop(context, updatedLocationData);
                 },
@@ -324,14 +290,14 @@ class AddTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text("요약 정보",
+        Text("요약 정보 (25자 이내)",
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w800,
             )),
         SizedBox(height: 10),
         Container(
-          height: 50,
+          height: 80,
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(10),
@@ -346,10 +312,12 @@ class AddTitle extends StatelessWidget {
           ),
           padding: EdgeInsets.all(10),
           child: TextField(
+            maxLength: 25,
+            maxLines: null, // 여러 줄 입력 가능
             controller: _titleController,
             decoration: InputDecoration(
               border: InputBorder.none,
-              hintText: '이 장소에 대해 간략히 설명해주세요',
+              hintText: '장소에 대해 간략히 설명',
               prefixText: ' ',
               prefixStyle: TextStyle(color: Colors.transparent),
               hintStyle: TextStyle(color: Colors.grey),
@@ -364,10 +332,10 @@ class AddTitle extends StatelessWidget {
 class AddText extends StatelessWidget {
   const AddText({
     super.key,
-    required TextEditingController textController,
-  }) : _textController = textController;
+    required TextEditingController contentController,
+  }) : _contentController = contentController;
 
-  final TextEditingController _textController;
+  final TextEditingController _contentController;
 
   @override
   Widget build(BuildContext context) {
@@ -395,7 +363,8 @@ class AddText extends StatelessWidget {
           ),
           padding: EdgeInsets.all(10),
           child: TextField(
-            controller: _textController,
+            controller: _contentController,
+            maxLines: null, // 여러 줄 입력 가능
             decoration: InputDecoration(
               border: InputBorder.none,
               hintText: '~~자까지 작성할 수 있어요',
@@ -449,6 +418,10 @@ class _ImageUploaderState extends State<ImageUploader> {
   final picker = ImagePicker();
   final int maxImageCount = 5; // 최대 업로드 가능한 이미지 수
 
+  int getNumberOfImage() {
+    return _imageList.length;
+  }
+
   Future getImage() async {
     // ignore: deprecated_member_use
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
@@ -478,12 +451,18 @@ class _ImageUploaderState extends State<ImageUploader> {
         print('선택된 이미지가 없어요.');
       }
     });
+    // _imageList의 길이로 선택된 이미지 개수를 업데이트합니다.
+    final LocationController locationController = Get.find();
+    locationController.numberOfImage.value = _imageList.length;
   }
 
   void _removeImage(int index) {
     setState(() {
       _imageList.removeAt(index);
     });
+    // _imageList의 길이로 선택된 이미지 개수를 업데이트합니다.
+    final LocationController locationController = Get.find();
+    locationController.numberOfImage.value = _imageList.length;
   }
 
   Widget buildGridView() {

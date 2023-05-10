@@ -18,6 +18,8 @@ class _CMMapState extends State<CMMap> {
   String _locationName = '';
   double _latitude = 0;
   double _longitude = 0;
+  String _sido = '';
+  String _gugun = '';
 
   @override
   void initState() {
@@ -142,6 +144,30 @@ class _CMMapState extends State<CMMap> {
     return '';
   }
 
+  // 시도, 구군 정보 따로 저장하는 과정
+  Future<String> _getSido(double lat, double lon) async {
+    final List<geocoding.Placemark> placemarks = await geocoding
+        .placemarkFromCoordinates(lat, lon, localeIdentifier: 'ko');
+    if (placemarks != null && placemarks.isNotEmpty) {
+      final geocoding.Placemark place = placemarks.first;
+      final String administrativeArea = place.administrativeArea ?? '';
+      return '$administrativeArea';
+    }
+    return '';
+  }
+
+  Future<String> _getGugun(double lat, double lon) async {
+    final List<geocoding.Placemark> placemarks = await geocoding
+        .placemarkFromCoordinates(lat, lon, localeIdentifier: 'ko');
+    if (placemarks != null && placemarks.isNotEmpty) {
+      final geocoding.Placemark place = placemarks.first;
+      final String locality = place.locality ?? '';
+      final String subLocality = place.subLocality ?? '';
+      return '$locality $subLocality';
+    }
+    return '';
+  }
+
   void _onMyLocationButtonPressed() async {
     final position = await Geolocator.getCurrentPosition();
     final cameraUpdate = CameraUpdate.newLatLngZoom(
@@ -155,10 +181,14 @@ class _CMMapState extends State<CMMap> {
     final longitude = selectedMarker.position.longitude;
 
     String address = await _getAddress(latitude, longitude);
+    String sido = await _getSido(latitude, longitude);
+    String gugun = await _getGugun(latitude, longitude);
     setState(() {
       _locationName = address;
       _latitude = latitude;
       _longitude = longitude;
+      _sido = sido;
+      _gugun = gugun;
     });
 
     // Show alert dialog to get the name of the location
@@ -189,6 +219,8 @@ class _CMMapState extends State<CMMap> {
                   'locationName': locationName,
                   'latitude': latitude,
                   'longitude': longitude,
+                  'sido': sido,
+                  'gugun': gugun,
                 });
               },
             ),

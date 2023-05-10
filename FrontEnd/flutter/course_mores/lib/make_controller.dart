@@ -25,6 +25,10 @@ class CourseController extends GetxController {
     locationList.clear();
   }
 
+  void addHashtags(List<String> hashtags) {
+    hashtagList.addAll(hashtags);
+  }
+
   // other methods for managing data
 }
 
@@ -91,18 +95,20 @@ class LocationData {
   late String name;
   late double latitude;
   late double longitude;
-  String? image;
+  late String sido;
+  late String gugun;
+  late String roadViewImage;
+  late int numberOfImage;
   String? title;
   String? content;
-  String? sido;
-  String? gugun;
 
   LocationData({
     required this.key,
     required this.name,
     required this.latitude,
     required this.longitude,
-    this.image = '',
+    this.roadViewImage = '',
+    this.numberOfImage = 0,
     this.title = '',
     this.content = '',
     this.sido = '',
