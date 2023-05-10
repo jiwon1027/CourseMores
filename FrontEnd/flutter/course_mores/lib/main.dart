@@ -10,6 +10,7 @@ import 'mypage/mypage.dart' as mypage;
 import 'course_make/make_start.dart' as make;
 import 'auth/login_page.dart' as login;
 import 'package:get/get.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 // import 'auth/auth_dio.dart';
 import 'dart:convert';
@@ -59,6 +60,9 @@ class MyApp extends StatelessWidget {
                 : FlashyTabBar(
                     selectedIndex: pageNum,
                     showElevation: true,
+                    // onItemSelected: (index) => setState(() {
+                    //   changePageNum(index);
+                    // }),
                     onItemSelected: (index) =>
                         pageController.changePageNum(index),
                     items: [

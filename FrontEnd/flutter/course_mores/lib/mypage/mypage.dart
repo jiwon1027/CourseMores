@@ -1,14 +1,14 @@
 import 'package:coursemores/auth/login_page.dart';
+import 'package:draggable_home/draggable_home.dart';
 import 'package:flutter/material.dart';
-// import '../auth/sign_up.dart' as signup;
 import 'package:animated_button_bar/animated_button_bar.dart';
-// import '../course_search/course_list.dart' as course;
 import 'package:get/get.dart';
-// import '../main.dart' as main;
 import '../controller/getx_controller.dart';
 import '../course_search/search.dart';
 import 'profile_edit.dart' as profie_edit;
 import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'dart:convert';
 import '../auth/auth_dio.dart';
 import '../course_search/course_detail.dart' as detail;
 import 'package:cached_network_image/cached_network_image.dart';
@@ -148,101 +148,91 @@ class _MyPageState extends State<MyPage> {
 
   @override
   Widget build(BuildContext context) {
-    return DraggableHome(
-      title: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: const [
-          Text(
-            '마이 페이지',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-          ),
-        ],
-      ),
-      headerWidget: headerWidget(context),
-      headerExpandedHeight: 0.3,
-      body: [
-        SingleChildScrollView(
-          child: Padding(
-              padding: EdgeInsets.all(8),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+    return Scaffold(
+        body: SingleChildScrollView(
+      child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
                 profileBox(),
+                // OutlinedButton(
+                //     onPressed: () {
+                //       Navigator.push(
+                //           context,
+                //           MaterialPageRoute(
+                //               builder: (context) => const login.LoginPage()));
+                //     },
+                //     child: Text('로그인페이지')),
                 buttonBar(),
-                if (status == 'course') MyCourse(),
-                if (status == 'review') my_review.DetailTapCourseCommentsListSection(commentsList: reviewList),
+                if (status == 'course')
+                  (Text(
+                    '내가 작성한 코스 : ${courseList.length} 개',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                    ),
+                  )),
+                if (status == 'review')
+                  (Text(
+                    '내가 작성한 리뷰 : ${reviewList.length} 개',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                    ),
+                  )),
+                if (status == 'course')
+                  (Flexible(
+                    child: search.SearchResult(
+                      courseList: courseList,
+                    ),
+                  )),
+                if (status == 'review')
+                  (Flexible(
+                    child: search.SearchResult(
+                      courseList: reviewList,
+                    ),
+                  ))
+                // Container(
+                //   margin: const EdgeInsets.only(
+                //       left: 10, right: 10, top: 10, bottom: 5),
+                //   padding: const EdgeInsets.all(10),
+                //   decoration: const BoxDecoration(
+                //       boxShadow: [
+                //         BoxShadow(
+                //             // color: Colors.white24,
+                //             color: Color.fromARGB(255, 211, 211, 211),
+                //             blurRadius: 10.0,
+                //             spreadRadius: 1.0,
+                //             offset: Offset(3, 3)),
+                //       ],
+                //       color: Color.fromARGB(255, 255, 255, 255),
+                //       borderRadius: BorderRadius.all(Radius.circular(10))),
+                //   child: Row(
+                //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //     children: [
+                //       Expanded(
+                //           child: SizedBox(
+                //               width: 350,
+                //               child: Row(
+                //                 children: const [
+                //                   search.ThumbnailImage(),
+                //                   SizedBox(
+                //                     width: 10,
+                //                   ),
+                //                   Expanded(
+                //                     child: search.CourseSearchList(
+                //                       // courseList: courseList,
+                //                       index: 1,
+                //                     ),
+                //                   ),
+                //                 ],
+                //               )))
+                //     ],
+                //   ),
+                // ),
               ])),
-        )
-      ],
-      fullyStretchable: false,
-      backgroundColor: Colors.white,
-      appBarColor: Color.fromARGB(255, 80, 170, 208),
-    );
-  }
-}
-
-class MyCourse extends StatelessWidget {
-  MyCourse({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-        child: Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-          children: List.generate(
-        myPageController.myCourse.length,
-        (index) {
-          //   ListView.builder(
-          // shrinkWrap: true,
-          // scrollDirection: Axis.vertical,
-          // padding: EdgeInsets.all(8),
-          // itemCount: myPageController.myCourse.length,
-
-          // index 말고 코스id로??
-          // itemBuilder: (BuildContext context, int index) {
-          return InkWell(
-            onTap: () async {
-              print('mypage 코스리스트 == ${myPageController.myCourse}');
-              int courseId = (myPageController.myCourse[index]['courseId'] as int);
-
-              await searchController.changeNowCourseId(courseId: courseId);
-
-              await detailController.getCourseInfo('코스 소개');
-              await detailController.getIsLikeCourse();
-              await detailController.getIsInterestCourse();
-              await detailController.getCourseDetailList();
-
-              Get.to(() => detail.Detail());
-
-              // Get.to(() => detail.CourseDetail(index: index));
-            },
-            child: Container(
-              margin: EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 5),
-              padding: EdgeInsets.all(10),
-              decoration: const BoxDecoration(boxShadow: [
-                BoxShadow(
-                    color: Color.fromARGB(255, 211, 211, 211),
-                    blurRadius: 10.0,
-                    spreadRadius: 1.0,
-                    offset: Offset(3, 3)),
-              ], color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(10))),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                      child: SizedBox(
-                          width: 300,
-                          child: Row(children: [
-                            ThumbnailImage(index: index),
-                            SizedBox(width: 10),
-                            Expanded(child: MyCourseList(index: index)),
-                          ]))),
-                ],
-              ),
-            ),
-          );
-        },
-      )),
     ));
   }
 }
@@ -572,11 +562,12 @@ class ModalBottom extends StatelessWidget {
                                 child: InkWell(
                                     onTap: () {
                                       Navigator.pop(context);
-                                      print(userInfoController.profileImage);
-                                      Get.to(profie_edit.ProfileEdit());
-                                      // Navigator.push(context,
-                                      //     MaterialPageRoute(builder: (context) => const profie_edit.ProfileEdit()));
-                                      // Get.to(SignUp());
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const profie_edit
+                                                      .ProfileEdit()));
                                     },
                                     child: Center(
                                         child: Text(
@@ -598,12 +589,17 @@ class ModalBottom extends StatelessWidget {
                                       // Get.to(main.MyApp());
                                     },
                                     child: Container(
-                                      decoration:
-                                          BoxDecoration(border: Border(top: BorderSide(color: Colors.grey, width: 1))),
-                                      child: Center(
+                                      decoration: const BoxDecoration(
+                                          border: Border(
+                                              top: BorderSide(
+                                                  color: Colors.grey,
+                                                  width: 1))),
+                                      child: const Center(
+                                          // color: Colors.yellow,
                                           child: Text(
                                         '로그아웃',
-                                        style: TextStyle(fontSize: 16, color: Colors.red),
+                                        style: TextStyle(
+                                            fontSize: 20, color: Colors.red),
                                         textAlign: TextAlign.center,
                                       )),
                                     )),
@@ -618,12 +614,17 @@ class ModalBottom extends StatelessWidget {
                                       Get.to(main.MyApp());
                                     },
                                     child: Container(
-                                      decoration:
-                                          BoxDecoration(border: Border(top: BorderSide(color: Colors.grey, width: 1))),
-                                      child: Center(
+                                      decoration: const BoxDecoration(
+                                          border: Border(
+                                              top: BorderSide(
+                                                  color: Colors.grey,
+                                                  width: 1))),
+                                      child: const Center(
+                                          // color: Colors.yellow,
                                           child: Text(
                                         '회원탈퇴',
-                                        style: TextStyle(fontSize: 16, color: Colors.red),
+                                        style: TextStyle(
+                                            fontSize: 20, color: Colors.red),
                                         textAlign: TextAlign.center,
                                       )),
                                     )),

@@ -49,14 +49,14 @@ void postProfileEdit(nickname, age, gender, image, aToken, isDelete) async {
   if (image != null) {
     formData = FormData.fromMap({
       'userInfoUpdateReqDto': MultipartFile.fromString(
-          jsonEncode({'nickname': nickname, 'age': age, 'gender': gender, 'isDelete': isDelete}),
+          jsonEncode({'nickname': nickname, 'age': age, 'gender': gender}),
           contentType: MediaType.parse('application/json')),
       'profileImage': await MultipartFile.fromFile(image.path, contentType: MediaType("image", "jpg")),
     });
   } else {
     formData = FormData.fromMap({
       'userInfoUpdateReqDto': MultipartFile.fromString(
-          jsonEncode({'nickname': nickname, 'age': age, 'gender': gender, 'isDelete': isDelete}),
+          jsonEncode({'nickname': nickname, 'age': age, 'gender': gender}),
           contentType: MediaType.parse('application/json')),
       'profileImage': null,
     });

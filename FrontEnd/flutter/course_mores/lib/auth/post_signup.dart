@@ -47,16 +47,13 @@ void postSignUp(nickname, int age, gender, image, aToken) async {
   FormData formData;
   if (image != null) {
     formData = FormData.fromMap({
-      'userInfoCreateReqDto': MultipartFile.fromString(
-          jsonEncode({'nickname': nickname, 'age': age, 'gender': gender}),
+      'userInfoCreateReqDto': MultipartFile.fromString(jsonEncode({'nickname': nickname, 'age': age, 'gender': gender}),
           contentType: MediaType.parse('application/json')),
-      'profileImage': await MultipartFile.fromFile(image.path,
-          contentType: MediaType("image", "jpg")),
+      'profileImage': await MultipartFile.fromFile(image.path, contentType: MediaType("image", "jpg")),
     });
   } else {
     formData = FormData.fromMap({
-      'userInfoCreateReqDto': MultipartFile.fromString(
-          jsonEncode({'nickname': nickname, 'age': age, 'gender': gender}),
+      'userInfoCreateReqDto': MultipartFile.fromString(jsonEncode({'nickname': nickname, 'age': age, 'gender': gender}),
           contentType: MediaType.parse('application/json')),
       'profileImage': null,
     });

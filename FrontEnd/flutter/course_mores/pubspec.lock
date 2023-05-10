@@ -881,13 +881,13 @@ packages:
 <<<<<<< HEAD
 <<<<<<< HEAD
   path_provider:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: path_provider
-      sha256: c7edf82217d4b2952b2129a61d3ad60f1075b9299e629e149a8d2e39c2e6aad4
+      sha256: "3087813781ab814e4157b172f1a11c46be20179fcc9bea043e0fba36bc0acaa2"
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.14"
+    version: "2.0.15"
   path_provider_android:
     dependency: transitive
     description:
@@ -906,7 +906,6 @@ packages:
     version: "2.2.2"
 =======
 =======
-=======
 >>>>>>> 5bc8f13 (✨ feat : 마이페이지 코스리스트 연동, 로그인 설정)
 >>>>>>> 40e205d (✨ feat : 마이페이지 코스리스트 연동, 로그인 설정)
 =======
@@ -915,7 +914,6 @@ packages:
 >>>>>>> 5bc8f13 (✨ feat : 마이페이지 코스리스트 연동, 로그인 설정)
 =======
 >>>>>>> 0934f00 (⛏ fix : 버전 충돌, 에러 해결)
->>>>>>> 7484f53 (⛏ fix : 버전 충돌, 에러 해결)
   path_provider_linux:
     dependency: transitive
     description:
@@ -940,17 +938,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.6"
-<<<<<<< HEAD
-  pedantic:
-    dependency: transitive
-    description:
-      name: pedantic
-      sha256: "67fc27ed9639506c856c840ccce7594d0bdcd91bc8d53d6e52359449a1d50602"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.11.1"
-=======
->>>>>>> b0d3243 ( fix : 회원 등록되어있을시 홈으로 가게 수정)
   petitparser:
     dependency: transitive
     description:
@@ -1022,17 +1009,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.2.1"
-<<<<<<< HEAD
-  rxdart:
-    dependency: transitive
-    description:
-      name: rxdart
-      sha256: "0c7c0cedd93788d996e33041ffecda924cc54389199cde4e6a34b440f50044cb"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.27.7"
-=======
->>>>>>> 173e28d (⛏ fix : 로그인 화면 구조 수정)
   scaled_list:
     dependency: "direct main"
     description:
@@ -1230,17 +1206,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.0"
-<<<<<<< HEAD
-  uuid:
-    dependency: transitive
-    description:
-      name: uuid
-      sha256: "648e103079f7c64a36dc7d39369cabb358d377078a051d6ae2ad3aa539519313"
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.0.7"
-=======
->>>>>>> b0d3243 ( fix : 회원 등록되어있을시 홈으로 가게 수정)
   vector_math:
     dependency: transitive
     description:
