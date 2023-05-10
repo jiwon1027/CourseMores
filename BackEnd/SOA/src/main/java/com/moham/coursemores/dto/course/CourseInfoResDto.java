@@ -18,7 +18,8 @@ public class CourseInfoResDto {
     private int likeCount;
     private int interestCount;
     private int commentCount;
-    private String image;
+    private String sido;
+    private String gugun;
     private List<String> hashtagList;
     private List<String> themeList;
     private UserSimpleInfoResDto simpleInfoOfWriter;
