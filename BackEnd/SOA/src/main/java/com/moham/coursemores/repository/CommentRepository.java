@@ -1,6 +1,7 @@
 package com.moham.coursemores.repository;
 
 import com.moham.coursemores.domain.Comment;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Pageable;
@@ -15,5 +16,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     Optional<Comment> findByIdAndUserIdAndDeleteTimeIsNull(Long commentId, Long userId);
 
     Optional<Comment> findByIdAndDeleteTimeIsNull(Long commentId);
+
+    List<Comment> findByDeleteTimeIsNullAndCreateTimeAfter(LocalDateTime localDateTime);
 
 }

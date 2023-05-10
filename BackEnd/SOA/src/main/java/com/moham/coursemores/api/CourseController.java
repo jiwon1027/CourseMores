@@ -43,6 +43,19 @@ public class CourseController {
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
 
+    @GetMapping("hot/calculation")
+    public ResponseEntity<Map<String, Object>> setHotCourse() {
+        logger.info("<< request: none");
+
+        Map<String, Object> resultMap = new HashMap<>();
+
+        List<MainPreviewResDto> courseList = courseService.setHotCourse();
+        resultMap.put("courseList", courseList);
+        logger.info("<< response : courseList={}", courseList);
+
+        return new ResponseEntity<>(resultMap, HttpStatus.OK);
+    }
+
     @GetMapping("search/{userId}")
     public ResponseEntity<Map<String, Object>> searchCourse(
             @PathVariable Long userId,

@@ -5,7 +5,8 @@ import com.moham.coursemores.dto.course.*;
 import com.moham.coursemores.dto.profile.UserSimpleInfoResDto;
 import com.moham.coursemores.repository.*;
 import com.moham.coursemores.service.CourseService;
-import java.util.HashMap;
+import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -38,9 +39,61 @@ public class CourseServiceImpl implements CourseService {
     private final ThemeRepository themeRepository;
     private final ThemeOfCourseRepository themeOfCourseRepository;
     private final InterestRepository interestRepository;
+    private final CourseLikeRepository courseLikeRepository;
+    private final CommentRepository commentRepository;
 
     @Override
     public List<MainPreviewResDto> getHotCourseList() {
+        // 한 번에 넘길 인기 코스의 수
+        int number = 10;
+        List<MainPreviewResDto> result = hotCourseRepository.findRandomHotCourse(number).stream()
+                .map(hotCourse -> {
+                            Course course = hotCourse.getCourse();
+                            return MainPreviewResDto.builder()
+                                    .courseId(course.getId())
+                                    .title(course.getTitle())
+                                    .content(course.getContent())
+                                    .image(course.getImage())
+                                    .sido(course.getSido())
+                                    .gugun(course.getGugun())
+                                    .build();
+                        }
+                ).collect(Collectors.toList());
+        return result;
+    }
+
+    @Override
+    @Transactional
+    public List<MainPreviewResDto> setHotCourse() {
+        LocalDateTime standardTime = LocalDateTime.now().minusWeeks(1); // 인기도의 기간
+        List<Comment> comments = commentRepository.findByDeleteTimeIsNullAndCreateTimeAfter(standardTime); // 기간 동안 댓글 목록
+        List<Interest> interests = interestRepository.findByFlagIsTrueAndRegisterTimeAfter(standardTime); // 기간 동안 관심 목록
+        List<CourseLike> courseLikes = courseLikeRepository.findByFlagIsTrueAndRegisterTimeAfter(standardTime); // 기간 동안 좋아요 목록
+
+        Map<Course, Long> map = comments.stream()
+                .collect(Collectors.groupingBy(Comment::getCourse, Collectors.counting()));
+        interests.forEach(interest -> {
+            Course course = interest.getCourse();
+            long cnt = map.getOrDefault(course, 0L);
+            map.put(course, ++cnt);
+        });
+        courseLikes.forEach(courseLike -> {
+            Course course = courseLike.getCourse();
+            long cnt = map.getOrDefault(course, 0L);
+            map.put(course, ++cnt);
+        });
+
+        hotCourseRepository.deleteAllInBatch(); // 기존의 인기 코스들은 삭제
+        List<Map.Entry<Course, Long>> hotCourses = map.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue(Collections.reverseOrder()))
+                .collect(Collectors.toList());
+
+        int number = 50; // 인기 코스로 저장할 최대 개수
+        for(Map.Entry<Course, Long> hotCourse : hotCourses){
+            hotCourseRepository.save(HotCourse.builder().course(hotCourse.getKey()).build());
+            if(--number == 0)
+                break;
+        }
         List<MainPreviewResDto> result = hotCourseRepository.findAll().stream()
                 .map(hotCourse -> {
                             Course course = hotCourse.getCourse();

@@ -10,6 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -29,5 +30,10 @@ public class HotCourse extends UpdateTimeEntity {
     @OneToOne
     @JoinColumn(name = "course_id")
     private Course course;
+
+    @Builder
+    public HotCourse(Course course) {
+        this.course = course;
+    }
 
 }

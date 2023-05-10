@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 public interface CourseService {
 
     List<MainPreviewResDto> getHotCourseList();
+    List<MainPreviewResDto> setHotCourse();
     Page<CoursePreviewResDto> search(Long userId, String word, Long regionId, List<Long> themeIds, int isVisited, int page, String sortby);
     void increaseViewCount(Long courseId);
     CourseInfoResDto getCourseInfo(Long courseId);
