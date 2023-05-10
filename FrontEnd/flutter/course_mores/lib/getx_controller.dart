@@ -63,18 +63,47 @@ class PageNum extends GetxController {
 class TokenStorage extends GetxController {
   final accessToken = ''.obs;
   final refreshToken = ''.obs;
-  void saveToken(aToken, rToken) {
-    accessToken.value = aToken;
-    refreshToken.value = rToken;
-    print('토큰정보!!');
-    print({accessToken, refreshToken});
+
+  @override
+  void onInit() async {
+    super.onInit();
+    final prefs = await SharedPreferences.getInstance();
+    accessToken.value = prefs.getString('accessToken') ?? '';
+    refreshToken.value = prefs.getString('refreshToken') ?? '';
   }
 
-  void clearTokens() {
+  void saveToken(String aToken, String rToken) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('accessToken', aToken);
+    await prefs.setString('refreshToken', rToken);
+    accessToken.value = aToken;
+    refreshToken.value = rToken;
+  }
+
+  void clearTokens() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('accessToken');
+    await prefs.remove('refreshToken');
     accessToken.value = '';
     refreshToken.value = '';
   }
 }
+
+// class TokenStorage extends GetxController {
+//   final accessToken = ''.obs;
+//   final refreshToken = ''.obs;
+//   void saveToken(aToken, rToken) {
+//     accessToken.value = aToken;
+//     refreshToken.value = rToken;
+//     print('토큰정보!!');
+//     print({accessToken, refreshToken});
+//   }
+
+//   void clearTokens() {
+//     accessToken.value = '';
+//     refreshToken.value = '';
+//   }
+// }
 
 // class UserInfo extends GetxController {
 //   final nickname = 'default'.obs;
