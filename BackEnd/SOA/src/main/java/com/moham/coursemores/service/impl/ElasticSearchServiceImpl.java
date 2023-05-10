@@ -10,9 +10,7 @@ import com.moham.coursemores.dto.elasticsearch.IndexDataReqDTO;
 import com.moham.coursemores.dto.elasticsearch.IndexDataResDTO;
 import com.moham.coursemores.service.ElasticSearchService;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import lombok.RequiredArgsConstructor;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.DocWriteResponse;
@@ -23,16 +21,16 @@ import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.action.update.UpdateResponse;
-
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.reindex.DeleteByQueryRequest;
 import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.xcontent.XContentType;
 import org.springframework.stereotype.Service;
 import org.elasticsearch.action.search.SearchRequest;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -111,23 +109,41 @@ public class ElasticSearchServiceImpl implements ElasticSearchService {
 
             IndexResponse responseCourse = client.index(requestCourse, RequestOptions.DEFAULT);
 
+            // CourselocationDocument
+            for (String courselocation : indexDataReqDTO.getCourselocationList()) {
+                CourseLocationDocument courseLocationDocument = CourseLocationDocument.builder()
+                        .id(indexDataReqDTO.getId())
+                        .value(courselocation)
+                        .build();
+
+                String temp = MAPPER.writeValueAsString(courseLocationDocument);
+
+                IndexRequest requestHashtag = new IndexRequest(Indices.COURSELOCATION_INDEX);
+
+                requestHashtag.id(UUID.randomUUID().toString());
+                requestHashtag.source(temp, XContentType.JSON);
+
+                IndexResponse responseHashtag = client.index(requestHashtag, RequestOptions.DEFAULT);
+            }
+
             // HashtagDocument index
-            indexDataReqDTO.getHashtagList().forEach(hashtag -> {
+            for (String hashtag : indexDataReqDTO.getHashtagList()) {
                 HashtagDocument hashtagDocument = HashtagDocument.builder()
                         .id(indexDataReqDTO.getId())
-                        .value(hashtag).build();
-                try {
-                    String temp = MAPPER.writeValueAsString(hashtagDocument);
+                        .value(hashtag)
+                        .build();
 
-                    IndexRequest request = new IndexRequest(Indices.HASHTAG_INDEX);
-                    request.id(hashtagDocument.getId());
-                    request.source(temp, XContentType.JSON);
+                String temp = MAPPER.writeValueAsString(hashtagDocument);
 
-                    IndexResponse response = client.index(request, RequestOptions.DEFAULT);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            });
+                IndexRequest requestHashtag = new IndexRequest(Indices.HASHTAG_INDEX);
+
+                requestHashtag.id(UUID.randomUUID().toString());
+                requestHashtag.source(temp, XContentType.JSON);
+
+                IndexResponse responseHashtag = client.index(requestHashtag, RequestOptions.DEFAULT);
+            }
+
+
         } catch (final Exception e) {
             e.printStackTrace();
         }
@@ -135,15 +151,19 @@ public class ElasticSearchServiceImpl implements ElasticSearchService {
 
     public IndexDataResDTO search(String value) throws IOException {
         SearchRequest requestCourse = SearchUtil.buildSearchRequest(Indices.COURSE_INDEX, value);
+        SearchRequest requestCourseLocation = SearchUtil.buildSearchRequest(Indices.COURSELOCATION_INDEX, value);
         SearchRequest requestHashtag = SearchUtil.buildSearchRequest(Indices.HASHTAG_INDEX, value);
 
         SearchResponse responseCourse = client.search(requestCourse, RequestOptions.DEFAULT);
+        SearchResponse responseCourseLocation = client.search(requestCourseLocation, RequestOptions.DEFAULT);
         SearchResponse responseHashtag = client.search(requestHashtag, RequestOptions.DEFAULT);
 
         SearchHit[] searchHitsCourse = responseCourse.getHits().getHits();
+        SearchHit[] searchHitsCourseLocation = responseCourseLocation.getHits().getHits();
         SearchHit[] searchHitsHashtag = responseHashtag.getHits().getHits();
 
-        List<String> courses = new ArrayList<>();
+
+        Set<String> courses = new HashSet<>();
 
         Map<String, Object> sourceAsMap;
         for (SearchHit hit : searchHitsCourse) {
@@ -151,15 +171,22 @@ public class ElasticSearchServiceImpl implements ElasticSearchService {
             courses.add((String) sourceAsMap.get("value"));
         }
 
-        List<String> hashtags = new ArrayList<>();
+        Set<String> courseLocations = new HashSet<>();
+        for (SearchHit hit : searchHitsCourseLocation) {
+            sourceAsMap = hit.getSourceAsMap();
+            courseLocations.add((String) sourceAsMap.get("value"));
+        }
+
+
+        Set<String> hashtags = new HashSet<>();
         for (SearchHit hit : searchHitsHashtag) {
             sourceAsMap = hit.getSourceAsMap();
             hashtags.add((String) sourceAsMap.get("value"));
         }
 
-
         IndexDataResDTO indexDataResDTO = IndexDataResDTO.builder()
                 .courses(courses)
+                .courselocations(courseLocations)
                 .hashtags(hashtags)
                 .build();
         return indexDataResDTO;
@@ -167,20 +194,8 @@ public class ElasticSearchServiceImpl implements ElasticSearchService {
     }
 
     public void updateIndex(IndexDataReqDTO indexDataReqDTO) throws IOException {
-
-        UpdateRequest requestCourse = new UpdateRequest(Indices.COURSE_INDEX, indexDataReqDTO.getId());
-        UpdateRequest requestHashtag = new UpdateRequest(Indices.HASHTAG_INDEX, indexDataReqDTO.getId());
-
-        Map<String, Object> jsonMapCourse = new HashMap<>();
-        jsonMapCourse.put("value",indexDataReqDTO.getTitle());
-        requestCourse.doc(jsonMapCourse);
-
-        Map<String, Object> jsonMapHashtag = new HashMap<>();
-        jsonMapHashtag.put("value",indexDataReqDTO.getHashtagList());
-        requestCourse.doc(jsonMapHashtag);
-
-        UpdateResponse responseCourse = client.update(requestCourse, RequestOptions.DEFAULT);
-        UpdateResponse responseHashtag = client.update(requestHashtag, RequestOptions.DEFAULT);
+        deleteIndex(indexDataReqDTO.getId());
+        addIndex(indexDataReqDTO);
 
     }
 
@@ -190,6 +205,8 @@ public class ElasticSearchServiceImpl implements ElasticSearchService {
 
         if ("course".equals(index)) {
             request = new UpdateRequest(Indices.COURSE_INDEX, id);
+        } else if ("courselocation".equals(index)) {
+            request = new UpdateRequest(Indices.COURSELOCATION_INDEX, id);
         } else if ("hashtag".equals(index)) {
             request = new UpdateRequest(Indices.HASHTAG_INDEX, id);
         }
@@ -200,21 +217,27 @@ public class ElasticSearchServiceImpl implements ElasticSearchService {
 
         UpdateResponse response = client.update(request, RequestOptions.DEFAULT);
 
+
     }
 
 
     public void deleteIndex(String id) throws IOException {
+        // CourseTitle
+        DeleteRequest requestCourse = new DeleteRequest(Indices.COURSE_INDEX, id);
+        client.delete(requestCourse, RequestOptions.DEFAULT);
 
-        DeleteRequest request = new DeleteRequest(Indices.COURSE_INDEX, id);
-        DeleteResponse response = client.delete(request, RequestOptions.DEFAULT);
+        // Courselocation
+        DeleteByQueryRequest requestCourselocation = new DeleteByQueryRequest(Indices.COURSELOCATION_INDEX);
+        QueryBuilder queryBuilderCourselocation = QueryBuilders.termQuery("id", id);
+        requestCourselocation.setQuery(queryBuilderCourselocation);
 
-        DeleteRequest requestHashtag = new DeleteRequest(Indices.HASHTAG_INDEX, id);
-        DeleteResponse responseHashtag = client.delete(requestHashtag, RequestOptions.DEFAULT);
+        client.deleteByQuery(requestCourselocation, RequestOptions.DEFAULT);
+        // Hashtag
+        DeleteByQueryRequest requestHashtag = new DeleteByQueryRequest(Indices.HASHTAG_INDEX);
+        QueryBuilder queryBuilderHashtag = QueryBuilders.termQuery("id", id);
+        requestHashtag.setQuery(queryBuilderHashtag);
 
-
-        if (response.getResult() == DocWriteResponse.Result.NOT_FOUND) {
-            throw new ElasticsearchException("Document not found with id " + id + " in index course");
-        }
+        client.deleteByQuery(requestHashtag, RequestOptions.DEFAULT);
     }
 
     @Override

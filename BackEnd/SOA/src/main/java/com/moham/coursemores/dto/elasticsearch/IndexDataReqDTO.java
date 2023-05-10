@@ -12,6 +12,7 @@ import lombok.ToString;
 public class IndexDataReqDTO {
     private String id;
     private String title;
+    private List<String> courselocationList;
     private List<String> hashtagList;
 
 }

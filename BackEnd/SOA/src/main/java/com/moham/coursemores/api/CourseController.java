@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
@@ -129,6 +131,10 @@ public class CourseController {
         elasticSearchService.addIndex(IndexDataReqDTO.builder()
                 .id(Long.toString(courseId))
                 .title(courseCreateReqDto.getTitle())
+                .courselocationList(courseCreateReqDto.getLocationList()
+                        .stream()
+                        .map(locationCreateReqDto -> locationCreateReqDto.getName())
+                        .collect(Collectors.toList()))
                 .hashtagList(courseCreateReqDto.getHashtagList())
                 .build());
 
@@ -154,6 +160,10 @@ public class CourseController {
         elasticSearchService.updateIndex(IndexDataReqDTO.builder()
                 .id(Long.toString(courseId))
                 .title(courseUpdateReqDto.getTitle())
+                .courselocationList(courseUpdateReqDto.getLocationList()
+                        .stream()
+                        .map(locationUpdateReqDto -> locationUpdateReqDto.getName())
+                        .collect(Collectors.toList()))
                 .hashtagList(courseUpdateReqDto.getHashtagList())
                 .build());
 
