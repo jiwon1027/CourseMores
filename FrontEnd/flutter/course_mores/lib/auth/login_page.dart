@@ -1,15 +1,15 @@
-import 'package:coursemores/getx_controller.dart';
+import 'package:coursemores/controller/getx_controller.dart';
 import 'package:coursemores/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_web_auth/flutter_web_auth.dart';
+// import 'package:flutter_web_auth/flutter_web_auth.dart';
 import 'package:get/get.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'sign_up.dart' as signup;
-import '../home_screen/home_screen.dart' as home;
+// import '../home_screen/home_screen.dart' as home;
 import '../main.dart' as main;
-import 'package:dio/dio.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+// import 'package:dio/dio.dart';
+// import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'dart:convert';
 import 'auth_dio.dart';
@@ -30,8 +30,7 @@ void postLogin(accessToken) async {
 
   if (response.statusCode == 200) {
     // 추후에 issignup으로 교체
-    tokenController.saveToken(response.data['token']['accessToken'],
-        response.data['token']['refreshToken']);
+    tokenController.saveToken(response.data['token']['accessToken'], response.data['token']['refreshToken']);
     if (response.data['userInfo'] == null) {
       Get.to(signup.SignUp());
     } else {
@@ -63,8 +62,7 @@ void signInWithGoogle() async {
 
     if (response.statusCode == 200) {
       // 추후에 issignup으로 교체
-      tokenController.saveToken(response.data['token']['accessToken'],
-          response.data['token']['refreshToken']);
+      tokenController.saveToken(response.data['token']['accessToken'], response.data['token']['refreshToken']);
       if (response.data['userInfo'] == null) {
         Get.to(signup.SignUp());
       } else {
@@ -87,9 +85,7 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-          image: DecorationImage(
-              image: AssetImage('assets/background.gif'), fit: BoxFit.cover)),
+      decoration: BoxDecoration(image: DecorationImage(image: AssetImage('assets/background.gif'), fit: BoxFit.cover)),
       child: Scaffold(
           backgroundColor: Colors.transparent,
           body: Center(
@@ -134,38 +130,30 @@ class LoginPage extends StatelessWidget {
                                   );
                                 },
                                 style: ElevatedButton.styleFrom(
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(5))),
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))),
                                 child: Text(
                                   '게스트로 입장하기',
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold),
+                                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                                 )),
                           ),
                         ),
                         InkWell(
                           onTap: () async {
-                            bool isKakaoInstalled =
-                                await isKakaoTalkInstalled();
+                            bool isKakaoInstalled = await isKakaoTalkInstalled();
                             OAuthToken? token;
                             // UserService userService = UserService();
 
                             if (isKakaoInstalled) {
                               try {
-                                token =
-                                    await UserApi.instance.loginWithKakaoTalk();
+                                token = await UserApi.instance.loginWithKakaoTalk();
                                 debugPrint('카카오톡으로 로그인 성공');
                               } catch (error) {
                                 debugPrint('카톡로그인 실패 $error');
-                                if (error is PlatformException &&
-                                    error.code == 'CANCELED') {
+                                if (error is PlatformException && error.code == 'CANCELED') {
                                   return;
                                 }
                                 try {
-                                  token = await UserApi.instance
-                                      .loginWithKakaoAccount();
+                                  token = await UserApi.instance.loginWithKakaoAccount();
                                   debugPrint('카카오계정로그인 성공');
                                 } catch (error) {
                                   debugPrint('카카오계정로그인 실패 $error');
@@ -173,8 +161,7 @@ class LoginPage extends StatelessWidget {
                               }
                             } else {
                               try {
-                                token = await UserApi.instance
-                                    .loginWithKakaoAccount();
+                                token = await UserApi.instance.loginWithKakaoAccount();
                                 debugPrint('카카오계정 로그인 성공');
                               } catch (error) {
                                 debugPrint('카카오계정 로그인 실패 $error');

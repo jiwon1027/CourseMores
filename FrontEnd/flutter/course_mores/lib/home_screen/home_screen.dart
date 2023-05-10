@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import './carousel.dart' as carousel;
 // import 'search.dart' as search;
 // import 'package:carousel_slider/carousel_slider.dart';
-import 'carousel.dart';
+// import 'carousel.dart';
 import '../course_search/course_list.dart' as course;
-import '../mypage/mypage.dart' as mypage;
-// import '../getx_controller.dart';
+// import '../mypage/mypage.dart' as mypage;
+// import '../controller/getx_controller.dart';
 import '../main.dart';
 import 'package:dio/dio.dart';
 import 'package:geolocator/geolocator.dart';
@@ -101,12 +101,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<String> _getAddress(double lat, double lon) async {
-    final List<geocoding.Placemark> placemarks = await geocoding
-        .placemarkFromCoordinates(lat, lon, localeIdentifier: 'ko');
+    final List<geocoding.Placemark> placemarks =
+        await geocoding.placemarkFromCoordinates(lat, lon, localeIdentifier: 'ko');
     if (placemarks != null && placemarks.isNotEmpty) {
       final placemark = placemarks.first;
-      final String address =
-          '${placemark.subLocality} ${placemark.thoroughfare} ';
+      final String address = '${placemark.subLocality} ${placemark.thoroughfare} ';
       return address;
     }
     return '';
@@ -137,11 +136,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
                               final weatherData = snapshot.data!;
-                              final temp =
-                                  weatherData['main']['temp'].toString();
-                              final weather = weatherData['weather'][0]
-                                      ['description']
-                                  .toString();
+                              final temp = weatherData['main']['temp'].toString();
+                              final weather = weatherData['weather'][0]['description'].toString();
                               return Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -160,12 +156,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                     style: TextStyle(fontSize: 24),
                                   ),
                                   FutureBuilder<String>(
-                                    future: _getAddress(
-                                        _currentPosition?.latitude ?? 0,
-                                        _currentPosition?.longitude ?? 0),
+                                    future:
+                                        _getAddress(_currentPosition?.latitude ?? 0, _currentPosition?.longitude ?? 0),
                                     builder: (context, snapshot) {
-                                      if (snapshot.connectionState ==
-                                          ConnectionState.waiting) {
+                                      if (snapshot.connectionState == ConnectionState.waiting) {
                                         return Text('검색중...');
                                       } else if (snapshot.hasData) {
                                         final address = snapshot.data!;
@@ -319,9 +313,7 @@ class _ButtonBar2State extends State<ButtonBar2> {
 }
 
 iconBoxDeco() {
-  return BoxDecoration(
-      border: Border.all(color: Colors.black),
-      borderRadius: BorderRadius.circular(10));
+  return BoxDecoration(border: Border.all(color: Colors.black), borderRadius: BorderRadius.circular(10));
 }
 
 boxDeco() {
@@ -368,10 +360,7 @@ themeList() {
             children: [
               const Text(
                 '이런 테마는 어때요? 😊',
-                style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.bold),
+                style: TextStyle(color: Colors.black, fontSize: 20.0, fontWeight: FontWeight.bold),
               ),
               SizedBox(
                 height: 200.0,
@@ -389,8 +378,7 @@ themeList() {
                               color: Colors.grey.withOpacity(0.5),
                               spreadRadius: 2,
                               blurRadius: 3,
-                              offset: const Offset(
-                                  0, 2), // changes position of shadow
+                              offset: const Offset(0, 2), // changes position of shadow
                             ),
                           ],
                         ),
