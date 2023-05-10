@@ -72,9 +72,11 @@ public class OAuthLoginServiceImpl implements OAuthLoginService {
 
     @Override
     public Long kakao(String accessToken) {
+        System.out.println("kakao 입장 "+accessToken);
         OAuthApiClient client = clients.get(OAuthProvider.KAKAO);
+        System.out.println("client 가져옴 : "+client);
         OAuthInfoResponse oAuthInfoResponse = client.requestOauthInfo(accessToken);
-
+        System.out.println("oAuthInfoResponse : "+oAuthInfoResponse.getEmail()+", "+oAuthInfoResponse.getOAuthProvider());
         return successLogin(oAuthInfoResponse.getEmail(), oAuthInfoResponse.getOAuthProvider()).getId();
     }
 
@@ -150,7 +152,7 @@ public class OAuthLoginServiceImpl implements OAuthLoginService {
 
     private User successLogin(String email, OAuthProvider oAuthProvider){
         Optional<User> user = userRepository.findByEmailAndProviderAndDeleteTimeIsNull(email, oAuthProvider);
-
+        System.out.println("user 가져옴");
         // 유저가 존재한다면 로그인 처리
         // 유저가 없다면 회원가입 처리
         return user.orElseGet(() -> userRepository.save(User.builder()
