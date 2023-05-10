@@ -59,7 +59,7 @@ Future<Dio> authDio() async {
       print("토큰 재요청!!");
       print(tokenReissueReqDto);
       // 토큰 갱신 API 요청
-      final refreshResponse = await refreshDio.post('/auth/reissue', data: tokenReissueReqDto);
+      final refreshResponse = await refreshDio.post('/user/reissue', data: tokenReissueReqDto);
 
       // response로부터 새로 갱신된 AccessToken과 RefreshToken 파싱
       print("재발급 accessToken!! ");
