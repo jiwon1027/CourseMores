@@ -3,6 +3,12 @@ import 'package:syncfusion_flutter_sliders/sliders.dart';
 import 'package:flutter_multi_select_items/flutter_multi_select_items.dart';
 import 'package:textfield_tags/textfield_tags.dart';
 import 'package:lottie/lottie.dart';
+import 'package:get/get.dart';
+import 'make2.dart'; //
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import '../make_controller.dart';
+
+CourseController courseController = Get.find<CourseController>();
 
 class MakeStepper extends StatefulWidget {
   const MakeStepper({super.key});
@@ -12,6 +18,22 @@ class MakeStepper extends StatefulWidget {
 }
 
 class _MakeStepperState extends State<MakeStepper> {
+  // final CourseController courseController = Get.find<CourseController>();
+
+  // TextfieldTagsController hashtagcontroller = TextfieldTagsController();
+  // late TextfieldTagsController hashtagcontroller;
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   hashtagcontroller = TextfieldTagsController();
+  // }
+  late final TextfieldTagsController hashtagcontroller;
+
+  _MakeStepperState() {
+    hashtagcontroller = TextfieldTagsController();
+  }
+
   int _currentStep = 0;
 
   final List<Step> _mySteps = [
@@ -39,37 +61,7 @@ class _MakeStepperState extends State<MakeStepper> {
                 // 모서리 둥글기 설정
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: Container(
-                padding: EdgeInsets.all(16), // 박스 내부 패딩
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start, // 자식 위젯을 왼쪽 정렬
-                  children: [
-                    Text(
-                      '코스 장소',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                      ),
-                    ),
-                    SizedBox(height: 15),
-                    Row(
-                      children: const [
-                        CircleAvatar(
-                          radius: 40,
-                          backgroundImage: AssetImage("assets/img1.jpg"),
-                        ),
-                        SizedBox(
-                          width: 50,
-                        ),
-                        Text(
-                          '이도곰탕 외 3곳',
-                          style: TextStyle(fontSize: 20, color: Colors.cyan),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
+              child: PlaceListBox(),
             ),
           ),
           SizedBox(
@@ -118,6 +110,8 @@ class _MakeStepperState extends State<MakeStepper> {
                       onChanged: (text) {
                         // 사용자의 입력이 변화할 때마다 실행되는 콜백 함수
                         print('User typed: $text');
+                        // CourseController의 title 변수 업데이트
+                        Get.find<CourseController>().title.value = text;
                       },
                     ),
                     Text(
@@ -283,6 +277,7 @@ class _MakeStepperState extends State<MakeStepper> {
                           onChanged: (value) {
                             // 사용자가 입력한 텍스트가 변경될 때마다 호출됩니다.
                             print(value);
+                            Get.find<CourseController>().content.value = value;
                           },
                         ),
                       ],
@@ -313,7 +308,8 @@ class _MakeStepperState extends State<MakeStepper> {
                           ),
                         ),
                         SizedBox(height: 8), // 간격 추가
-                        MakeHashtag()
+                        // MakeHashtag(whatcontroller: hashtagcontroller),
+                        MakeHashtag(),
                       ],
                     ),
                   ),
@@ -430,6 +426,34 @@ class _MakeStepperState extends State<MakeStepper> {
                         child: ElevatedButton(
                           child: Text("확인"),
                           onPressed: () {
+                            // courseController의 모든 값 출력
+                            print(courseController.title.value);
+                            print(courseController.content.value);
+                            print(courseController.people.value);
+                            print(courseController.time.value);
+                            print(courseController.visited.value);
+                            print(courseController.locationList);
+                            print(courseController.hashtagList);
+                            print(courseController.themeIdList);
+                            // 컨트롤러 인스턴스 초기화
+                            courseController.title.value = '';
+                            courseController.content.value = '';
+                            courseController.people.value = 0;
+                            courseController.time.value = 0;
+                            courseController.visited.value = false;
+                            courseController.locationList.clear();
+                            courseController.hashtagList.clear();
+                            courseController.themeIdList.clear();
+                            // courseController의 모든 값 출력
+                            print(courseController.title.value);
+                            print(courseController.content.value);
+                            print(courseController.people.value);
+                            print(courseController.time.value);
+                            print(courseController.visited.value);
+                            print(courseController.locationList);
+                            print(courseController.hashtagList);
+                            print(courseController.themeIdList);
+                            // Navigator를 이용해 적절한 이동 수행
                             Navigator.of(context).pop();
                             Navigator.pop(context);
                             Navigator.pop(context);
@@ -488,6 +512,34 @@ class _MakeStepperState extends State<MakeStepper> {
                                 child: ElevatedButton(
                                   child: Text("확인"),
                                   onPressed: () {
+                                    // courseController의 모든 값 출력
+                                    print(courseController.title.value);
+                                    print(courseController.content.value);
+                                    print(courseController.people.value);
+                                    print(courseController.time.value);
+                                    print(courseController.visited.value);
+                                    print(courseController.locationList);
+                                    print(courseController.hashtagList);
+                                    print(courseController.themeIdList);
+                                    // 컨트롤러 인스턴스 초기화
+                                    courseController.title.value = '';
+                                    courseController.content.value = '';
+                                    courseController.people.value = 0;
+                                    courseController.time.value = 0;
+                                    courseController.visited.value = false;
+                                    courseController.locationList.clear();
+                                    courseController.hashtagList.clear();
+                                    courseController.themeIdList.clear();
+                                    // courseController의 모든 값 출력
+                                    print(courseController.title.value);
+                                    print(courseController.content.value);
+                                    print(courseController.people.value);
+                                    print(courseController.time.value);
+                                    print(courseController.visited.value);
+                                    print(courseController.locationList);
+                                    print(courseController.hashtagList);
+                                    print(courseController.themeIdList);
+                                    // Navigator를 이용해 적절한 이동 수행
                                     Navigator.of(context).pop();
                                     Navigator.pop(context);
                                     Navigator.pop(context);
@@ -517,6 +569,23 @@ class _MakeStepperState extends State<MakeStepper> {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: details.onStepContinue,
+                    // onPressed: () {
+                    //   details.onStepContinue;
+                    //   // 코스 저장여부 확인 코드 시작 check //
+                    //   // GetX에서 CourseController 가져오기
+                    //   CourseController courseController =
+                    //       Get.find<CourseController>();
+
+                    //   // courseController 내부의 값들 출력하기
+                    //   print(courseController.title);
+                    //   print(courseController.locationList);
+                    //   print(courseController.locationList[0].name);
+                    //   print(courseController.locationList[0].title);
+                    //   print(courseController.locationList[0].sido);
+                    //   print(courseController.locationList[0].gugun);
+                    //   print(courseController.locationList[1].content);
+                    //   // 코스 저장여부 확인 코드 끝 check //
+                    // },
                     child: const Text('다음으로'),
                   ),
                 )
@@ -524,6 +593,96 @@ class _MakeStepperState extends State<MakeStepper> {
             );
           }
         },
+      ),
+    );
+  }
+}
+
+class PlaceListBox extends StatefulWidget {
+  const PlaceListBox({Key? key}) : super(key: key);
+
+  @override
+  State<PlaceListBox> createState() => _PlaceListBoxState();
+}
+
+class _PlaceListBoxState extends State<PlaceListBox> {
+  List<LocationData> locations = Get.find<CourseController>().locationList;
+
+  String _getLocationsString() {
+    // List<LocationData> locations = Get.find<CourseController>().locationList;
+    if (locations.isEmpty) {
+      return '장소 없음';
+    }
+    String firstLocation = locations[0].name;
+    int numOfLocations = locations.length;
+    if (numOfLocations == 1) {
+      return firstLocation;
+    }
+    return '$firstLocation';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final String locationsString = _getLocationsString();
+
+    final String _apiKey = dotenv.get('GOOGLE_MAP_API_KEY');
+
+    final String _imgUrl =
+        "https://maps.googleapis.com/maps/api/streetview?size=400x400&location=${locations[0].latitude},${locations[0].longitude}&fov=90&heading=235&pitch=10&key=$_apiKey";
+
+    int numOfLocations = locations.length;
+
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 2,
+            child: Container(
+              height: 120,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(16),
+                  bottomLeft: Radius.circular(16),
+                ),
+                image: DecorationImage(
+                  // image: AssetImage('assets/img1.jpg'),
+                  image: NetworkImage(_imgUrl),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 3,
+            child: Column(
+              children: [
+                Text(
+                  locationsString,
+                  maxLines: 2,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                    color: Colors.blue,
+                  ),
+                ),
+                SizedBox(height: 8),
+                // Text(_address),
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0),
+                  child: Text(
+                    '외 ${numOfLocations - 1}곳',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -573,6 +732,7 @@ class _Slider1State extends State<Slider1> {
       onChanged: (newValue) {
         setState(() {
           _sliderValue = newValue;
+          courseController.people.value = newValue.toInt();
         });
       },
     );
@@ -622,6 +782,7 @@ class _Slider2State extends State<Slider2> {
       onChanged: (newValue) {
         setState(() {
           _sliderValue2 = newValue;
+          courseController.time.value = newValue.toInt();
         });
       },
     );
@@ -632,9 +793,7 @@ class MakeHashtag extends StatefulWidget {
   // const MakeHashtag({
   //   super.key,
   // });
-  const MakeHashtag({
-    Key? key,
-  }) : super(key: key);
+  const MakeHashtag({Key? key}) : super(key: key);
 
   @override
   State<MakeHashtag> createState() => _MakeHashtagState();
@@ -649,6 +808,7 @@ class _MakeHashtagState extends State<MakeHashtag> {
   void initState() {
     super.initState();
     _controller = TextfieldTagsController();
+    // _controller = widget.whatcontroller;
     // WidgetsBinding.instance.addPostFrameCallback((_) {
     // _distanceToField = MediaQuery.of(context).size.width;
     // });
@@ -764,16 +924,33 @@ class _MakeHashtagState extends State<MakeHashtag> {
             });
           },
         ),
-        ElevatedButton(
-          style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all<Color>(
-              const Color.fromARGB(255, 74, 137, 92),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(
+                  const Color.fromARGB(255, 74, 137, 92),
+                ),
+              ),
+              onPressed: () {
+                _controller.clearTags();
+              },
+              child: const Text('태그 초기화'),
             ),
-          ),
-          onPressed: () {
-            _controller.clearTags();
-          },
-          child: const Text('태그 초기화'),
+            SizedBox(
+              width: 15,
+            ),
+            ElevatedButton(
+              onPressed: () {
+                final List<String>? tags = _controller.getTags;
+                if (tags != null) {
+                  Get.find<CourseController>().hashtagList.value = tags;
+                }
+              },
+              child: const Text('태그 저장'),
+            ),
+          ],
         ),
       ],
     );
@@ -782,34 +959,46 @@ class _MakeHashtagState extends State<MakeHashtag> {
 
 class ThemeSelect extends StatefulWidget {
   const ThemeSelect({
-    super.key,
-  });
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<ThemeSelect> createState() => _ThemeSelectState();
 }
 
 class _ThemeSelectState extends State<ThemeSelect> {
-  var themeList = [
-    {"text": "혼자 가기 좋은 😎"},
-    {"text": "특별한 날 🎠"},
-    {"text": "활동적인 🤸‍♀️"},
-    {"text": "힐링 🌈"},
-    {"text": "갓성비 💸"},
-    {"text": "봄놀이 🌸"},
-    {"text": "핫플 🔥"},
-    {"text": "분위기 좋은 🥂"},
-    {"text": "실내 액티비티 🎯"},
-    {"text": "가족과 함께 👪"},
-  ];
+  final Map<int, String> themeMapping = {
+    1: '빛나는 솔로',
+    2: '친구랑',
+    3: '데이트',
+    4: '👪가족과 함께',
+    5: '💸가성비',
+    6: '오락',
+    7: '🎠기념일',
+    8: '맛집',
+    9: '실내',
+    10: '힐링',
+    11: '🔥핫플',
+    12: '활동적인',
+    13: '계절맞춤',
+    14: '공연/전시',
+    15: '전통/레트로',
+    16: '자연',
+    17: '포토존',
+    18: '관광지',
+    19: '이색적인',
+    20: '분위기 있는',
+    21: '단체',
+  };
 
   @override
   Widget build(BuildContext context) {
-    List<MultiSelectCard> cards = [];
-    for (var theme in themeList) {
-      var card = MultiSelectCard(
-        value: theme['text'],
-        label: theme['text'],
+    final List<MultiSelectCard> cards = themeMapping.entries.map((entry) {
+      final int id = entry.key;
+      final String text = entry.value;
+      return MultiSelectCard(
+        value: id,
+        label: text,
         decorations: MultiSelectItemDecorations(
           decoration: BoxDecoration(
             color: Colors.white,
@@ -837,15 +1026,20 @@ class _ThemeSelectState extends State<ThemeSelect> {
           ),
         ),
       );
-      cards.add(card);
-    }
+    }).toList();
+
     return Padding(
       padding: const EdgeInsets.all(20),
       child: MultiSelectContainer(
         items: cards,
-        onChange: (allSelectedItems, selectedItem) {
-          print("선택된 아이템 리스트 : ");
-          print(allSelectedItems);
+        onChange: (List<dynamic> allSelectedItems, dynamic selectedItem) {
+          final List<int> selectedIds = allSelectedItems
+              .whereType<int>()
+              .where(themeMapping.containsKey)
+              .toList();
+          selectedIds.sort();
+          courseController.themeIdList.value = selectedIds;
+          print('선택된 아이템의 id 리스트: $selectedIds');
         },
       ),
     );
@@ -862,27 +1056,9 @@ class CheckVisited extends StatefulWidget {
 }
 
 class _CheckVisitedState extends State<CheckVisited> {
-  late bool _selectedFirst;
-  late bool _selectedSecond;
+  final CourseController courseController = Get.find();
 
-  _CheckVisitedState() {
-    _selectedFirst = false;
-    _selectedSecond = false;
-  }
-
-  void _selectFirst() {
-    setState(() {
-      _selectedFirst = true;
-      _selectedSecond = false;
-    });
-  }
-
-  void _selectSecond() {
-    setState(() {
-      _selectedFirst = false;
-      _selectedSecond = true;
-    });
-  }
+  bool get _isVisited => courseController.visited.value;
 
   @override
   Widget build(BuildContext context) {
@@ -890,30 +1066,34 @@ class _CheckVisitedState extends State<CheckVisited> {
       child: Row(
         children: [
           ElevatedButton.icon(
-            onPressed: _selectedFirst ? null : _selectFirst,
+            onPressed: _isVisited
+                ? null
+                : () {
+                    setState(() {
+                      courseController.visited.value = true;
+                    });
+                  },
             label: Text('다녀왔어요!'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: _selectedFirst ? Colors.green : null,
+              backgroundColor: _isVisited ? Colors.green : null,
             ),
             icon: Icon(Icons.verified),
           ),
           SizedBox(width: 10),
           ElevatedButton.icon(
-              onPressed: _selectedSecond ? null : _selectSecond,
-              label: Text('계획중이에요!'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: _selectedSecond ? Colors.green : null,
-              ),
-              icon: Icon(Icons.tour)),
-          // SizedBox(height: 20),
-          // ElevatedButton(
-          //   onPressed: _selectedFirst || _selectedSecond
-          //       ? () {
-          //           // do something when a selection is made
-          //         }
-          //       : null,
-          //   child: Text('다음'),
-          // ),
+            onPressed: !_isVisited
+                ? null
+                : () {
+                    setState(() {
+                      courseController.visited.value = false;
+                    });
+                  },
+            label: Text('계획중이에요!'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: _isVisited ? null : Colors.green,
+            ),
+            icon: Icon(Icons.tour),
+          ),
         ],
       ),
     );
