@@ -53,7 +53,7 @@ public class AuthController {
 
         TokenResDto tokenResDto = userService.generateToken(userId, OAuthProvider.KAKAO);
         refreshService.save(userId, tokenResDto.getRefreshToken());
-        resultMap.put("tokenResDto",tokenResDto);
+        resultMap.put("token",tokenResDto);
         logger.info("<< response : token={}",tokenResDto);
 
         return new ResponseEntity<>(resultMap,HttpStatus.OK);
@@ -76,7 +76,7 @@ public class AuthController {
 
         TokenResDto tokenResDto = userService.generateToken(userId, OAuthProvider.GOOGLE);
         refreshService.save(userId, tokenResDto.getRefreshToken());
-        resultMap.put("tokenResDto",tokenResDto);
+        resultMap.put("token",tokenResDto);
         logger.info("<< response : token={}",tokenResDto);
 
         return new ResponseEntity<>(resultMap,HttpStatus.OK);
