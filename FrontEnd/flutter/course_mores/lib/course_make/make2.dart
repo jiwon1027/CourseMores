@@ -1,6 +1,7 @@
 import 'package:coursemores/course_make/make3.dart';
 import 'package:coursemores/course_make/make_map.dart';
 import 'package:coursemores/course_make/make_search.dart';
+import 'package:coursemores/course_search/course_list.dart';
 // import 'package:flutter_reorderable_list/flutter_reorderable_list.dart';
 import 'package:flutter_reorderable_list/flutter_reorderable_list.dart' as frl;
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import '../make_controller.dart';
+import 'package:geocoding/geocoding.dart' as geocoding;
 
 class CourseMake extends StatefulWidget {
   const CourseMake({Key? key}) : super(key: key);
@@ -29,11 +31,20 @@ class _CourseMakeState extends State<CourseMake> {
   // list of tiles
   late List<LocationData> _items;
 
+  // @override
+  // void initState() {
+  //   final courseController = Get.put(CourseController());
+  //   final locationController = Get.put(LocationController());
+  //   super.initState();
+  // }
+
   _CourseMakeState() {
     _items = <LocationData>[];
   }
 
-  void _addItem(String name, double latitude, double longitude, [Key? key]) {
+  void _addItem(
+      String name, double latitude, double longitude, String sido, String gugun,
+      [Key? key]) {
     if (_items.length >= 5) {
       showDialog(
         context: context,
@@ -52,13 +63,48 @@ class _CourseMakeState extends State<CourseMake> {
       );
       return;
     }
+
+    final String _apiKey2 = dotenv.get('GOOGLE_MAP_API_KEY');
+
+    final String _imgUrl2 =
+        "https://maps.googleapis.com/maps/api/streetview?size=400x400&location=${latitude},${longitude}&fov=90&heading=235&pitch=10&key=$_apiKey2";
+
     LocationData locationData = LocationData(
       key: UniqueKey(),
       name: name,
       latitude: latitude,
       longitude: longitude,
+      sido: sido,
+      gugun: gugun,
+      roadViewImage: _imgUrl2,
     );
     _items.add(locationData);
+    // CourseController에서 locationList에 locationData를 추가
+    courseController.locationList.add(locationData);
+  }
+
+  // 시도, 구군 정보 따로 저장하는 과정
+  Future<String> _getSido(double lat, double lon) async {
+    final List<geocoding.Placemark> placemarks = await geocoding
+        .placemarkFromCoordinates(lat, lon, localeIdentifier: 'ko');
+    if (placemarks != null && placemarks.isNotEmpty) {
+      final geocoding.Placemark place = placemarks.first;
+      final String administrativeArea = place.administrativeArea ?? '';
+      return '$administrativeArea';
+    }
+    return '';
+  }
+
+  Future<String> _getGugun(double lat, double lon) async {
+    final List<geocoding.Placemark> placemarks = await geocoding
+        .placemarkFromCoordinates(lat, lon, localeIdentifier: 'ko');
+    if (placemarks != null && placemarks.isNotEmpty) {
+      final geocoding.Placemark place = placemarks.first;
+      final String locality = place.locality ?? '';
+      final String subLocality = place.subLocality ?? '';
+      return '$locality $subLocality';
+    }
+    return '';
   }
 
   // // 기존 아이템을 수정하는 함수
@@ -84,12 +130,15 @@ class _CourseMakeState extends State<CourseMake> {
   //   final locationController = Get.find<LocationController>();
   //   locationController.editItem(index, locationData);
   // }
-  void _editItem(int index, String title, double latitude, double longitude) {
+  void _editItem(int index, String title, double latitude, double longitude,
+      String sido, String gugun) {
     final locationData = LocationData(
       name: title,
       latitude: latitude,
       longitude: longitude,
       key: _items[index].key,
+      sido: sido,
+      gugun: gugun,
     );
     locationController.updateLocation(index, locationData);
   }
@@ -108,6 +157,8 @@ class _CourseMakeState extends State<CourseMake> {
       debugPrint("Reordering $item -> $newPosition");
       _items.removeAt(draggingIndex);
       _items.insert(newPositionIndex, draggedItem);
+      courseController.locationList.removeAt(draggingIndex);
+      courseController.locationList.insert(newPositionIndex, draggedItem);
     });
     return true;
   }
@@ -269,16 +320,45 @@ class _CourseMakeState extends State<CourseMake> {
                           );
                           return;
                         }
+                        // Navigator.push(context,
+                        //     MaterialPageRoute(builder: (context) {
+                        //   return CMSearch();
+                        // })).then((selectedPlace) {
+                        //   if (selectedPlace != null) {
+                        //     _addItem(
+                        //         selectedPlace.name,
+                        //         selectedPlace.geometry!.location.lat,
+                        //         selectedPlace.geometry!.location.lng,
+                        //         UniqueKey());
+                        //   }
+                        // });
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) {
                           return CMSearch();
-                        })).then((selectedPlace) {
+                        })).then((selectedPlace) async {
                           if (selectedPlace != null) {
+                            double latitude =
+                                selectedPlace.geometry!.location.lat;
+                            double longitude =
+                                selectedPlace.geometry!.location.lng;
+                            String sido = await _getSido(latitude, longitude);
+                            String gugun = await _getGugun(latitude, longitude);
+                            // LocationData newLocation = LocationData(
+                            //   key: UniqueKey(),
+                            //   name: selectedPlace.name,
+                            //   latitude: latitude,
+                            //   longitude: longitude,
+                            //   sido: sido,
+                            //   gugun: gugun,
+                            // );
                             _addItem(
-                                selectedPlace.name,
-                                selectedPlace.geometry!.location.lat,
-                                selectedPlace.geometry!.location.lng,
-                                UniqueKey());
+                              selectedPlace.name,
+                              latitude,
+                              longitude,
+                              sido,
+                              gugun,
+                              UniqueKey(),
+                            );
                           }
                         });
                       },
@@ -319,6 +399,8 @@ class _CourseMakeState extends State<CourseMake> {
                               data['locationName'],
                               data['latitude'],
                               data['longitude'],
+                              data['sido'],
+                              data['gugun'],
                               UniqueKey(),
                             );
                           }
@@ -376,6 +458,24 @@ class _CourseMakeState extends State<CourseMake> {
                       backgroundColor: Colors.green,
                     ),
                     onPressed: () {
+                      // 코스 저장여부 확인 코드 시작 check //
+                      // GetX에서 CourseController 가져오기
+                      final CourseController courseController =
+                          Get.find<CourseController>();
+
+                      // courseController 내부의 값들 출력하기
+                      print(courseController.title);
+                      print(courseController.locationList);
+                      print(courseController.locationList[0].name);
+                      print(courseController.locationList[0].title);
+                      print(courseController.locationList[0].sido);
+                      print(courseController.locationList[0].gugun);
+                      print(courseController.locationList[1].content);
+                      // print(courseController.locationList[0].name);
+                      // print(courseController.locationList[1].name);
+                      // print(courseController.locationList[2].name);
+                      // print(courseController.locationList[3].name);
+                      // 코스 저장여부 확인 코드 끝 check //
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
@@ -533,7 +633,8 @@ class Item extends StatelessWidget {
                               print('Name: ${data.name}');
                               print('Latitude: ${data.latitude}');
                               print('Longitude: ${data.longitude}');
-                              print('Image: ${data.image}');
+                              print('roadViewImage: ${data.roadViewImage}');
+                              print('numberOfImage: ${data.numberOfImage}');
                               print('Title: ${data.title}');
                               print('Content: ${data.content}');
                               print('Sido: ${data.sido}');

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+// import 'package:geocoding/geocoding.dart' as geocoding;
 
 class CMSearch extends StatefulWidget {
   const CMSearch({super.key});
@@ -38,23 +39,14 @@ class _CMSearchState extends State<CMSearch> {
     }
   }
 
-  // void _onPlaceSelected(PlacesSearchResult place) {
-  //   // 선택된 장소 정보를 이용하여 페이지 이동 등의 로직을 작성합니다.
-  //   setState(() {
-  //     _selectedLocation = LatLng(
-  //       place.geometry!.location.lat,
-  //       place.geometry!.location.lng,
-  //     );
-  //   });
-  //   Navigator.pop(context, _selectedLocation);
-  // }
-
   void _onPlaceSelected(PlacesSearchResult selectedPlace) {
     if (selectedPlace.geometry == null ||
         selectedPlace.geometry!.location == null) {
       // 예외 처리: 선택된 장소에 대한 위치 정보가 없음
       return;
     }
+    // String sido = await _getSido(selectedPlace.latitude, selectedPlace.longitude);
+    // String gugun = await _getGugun(selectedPlace.latitude, selectedPlace.longitude);
 
     setState(() {
       _selectedLocation = LatLng(
