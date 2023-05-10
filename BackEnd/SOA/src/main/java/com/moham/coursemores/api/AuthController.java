@@ -64,9 +64,9 @@ public class AuthController {
 
         Map<String, Object> resultMap = new HashMap<>();
 
-        String accessToken = oAuthLoginService.reissue(tokenReissueReqDto);
-        resultMap.put("accessToken", accessToken);
-        logger.info("<< response : accessToken={}",accessToken);
+//        String accessToken = oAuthLoginService.reissue(tokenReissueReqDto);
+//        resultMap.put("accessToken", accessToken);
+//        logger.info("<< response : accessToken={}",accessToken);
 
         return new ResponseEntity<>(resultMap,HttpStatus.OK);
     }
