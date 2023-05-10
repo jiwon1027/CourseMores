@@ -13,11 +13,7 @@ import 'profile_edit.dart' as profie_edit;
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:convert';
-
-String baseURL = dotenv.get('BASE_URL');
-
-final options = BaseOptions(baseUrl: baseURL);
-final dio = Dio(options);
+import '../auth/auth_dio.dart';
 
 class MyPage extends StatefulWidget {
   const MyPage({super.key});
@@ -41,6 +37,8 @@ class _MyPageState extends State<MyPage> {
   }
 
   Future<void> fetchData(aToken) async {
+    final dio = await authDio();
+
     final response = await dio.get('course/5',
         options: Options(
           headers: {'Authorization': 'Bearer $aToken'},

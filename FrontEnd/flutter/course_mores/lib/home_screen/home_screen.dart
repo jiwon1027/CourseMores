@@ -12,6 +12,7 @@ import 'package:dio/dio.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart' as geocoding;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import '../auth/auth_dio.dart';
 
 final List<String> imgList = [
   'https://images.unsplash.com/photo-1520342868574-5fa3804e551c?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=6ff92caffcdd63681a35134a6770ed3b&auto=format&fit=crop&w=1951&q=80',
@@ -54,6 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> getHotCourse(aToken) async {
+    final dio = await authDio();
     final response = await dio.get('course/hot',
         options: Options(
           headers: {'Authorization': 'Bearer $aToken'},
@@ -68,7 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<Map<String, dynamic>> getWeatherData(double lat, double lon) async {
     try {
-      final dio = Dio();
+      final dio = await authDio();
       final response = await dio.get(apiBaseUrl, queryParameters: {
         'lat': lat.toString(),
         'lon': lon.toString(),

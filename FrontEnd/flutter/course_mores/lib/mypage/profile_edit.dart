@@ -15,6 +15,7 @@ import '../main.dart' as main;
 import 'package:fluttertoast/fluttertoast.dart';
 import 'post_profile_edit.dart' as post_profile_edit;
 import '../getx_controller.dart';
+import '../auth/auth_dio.dart';
 
 final userInfoController = Get.put(UserInfo());
 
@@ -389,12 +390,9 @@ Widget textFormFieldComponent(
   );
 }
 
-String baseURL = dotenv.get('BASE_URL');
-
-final options = BaseOptions(baseUrl: baseURL);
-final dio = Dio(options);
 bool? isDuplicate;
 void duplicateCheck(nickname) async {
+  final dio = await authDio();
   dynamic nicknameData = json.encode({'nickname': nickname});
   final response = await dio.post('user/validation', data: nicknameData);
 

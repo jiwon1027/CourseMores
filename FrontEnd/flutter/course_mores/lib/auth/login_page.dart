@@ -12,19 +12,15 @@ import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'dart:convert';
+import 'auth_dio.dart';
 
-String baseURL = dotenv.get('BASE_URL');
-
-final options = BaseOptions(baseUrl: baseURL);
-final dio = Dio(options);
 final tokenController = Get.put(TokenStorage());
 final userInfoController = Get.put(UserInfo());
 
 void postLogin(accessToken) async {
   print(accessToken);
   print('555555555555');
-  print(baseURL);
-
+  final dio = await authDio();
   dynamic bodyData = json.encode({'accessToken': accessToken});
   print(bodyData);
 
@@ -34,16 +30,16 @@ void postLogin(accessToken) async {
 
   if (response.statusCode == 200) {
     // 추후에 issignup으로 교체
+    tokenController.saveToken(response.data['token']['accessToken'],
+        response.data['token']['refreshToken']);
     if (response.data['userInfo'] == null) {
-      tokenController.saveToken(response.data['token']['accessToken'],
-          response.data['token']['refreshToken']);
       Get.to(signup.SignUp());
     } else {
-      loginController.changeLoginStatus();
+      loginController.changeLoginStatus(true);
       userInfoController.saveNickname(response.data['userInfo']['nickname']);
       userInfoController.saveAge(response.data['userInfo']['age']);
       userInfoController.saveGender(response.data['userInfo']['gender']);
-      Get.to(main.MyApp());
+      Get.replace(main.MyApp());
       print(loginController.isLoggedIn);
       print(pageController.pageNum());
     }
@@ -52,7 +48,7 @@ void postLogin(accessToken) async {
 
 void signInWithGoogle() async {
   final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-
+  final dio = await authDio();
   if (googleUser != null) {
     // print('name = ${googleUser.displayName}');
     print('email = ${googleUser.email}');
@@ -67,21 +63,18 @@ void signInWithGoogle() async {
 
     if (response.statusCode == 200) {
       // 추후에 issignup으로 교체
+      tokenController.saveToken(response.data['token']['accessToken'],
+          response.data['token']['refreshToken']);
       if (response.data['userInfo'] == null) {
-        tokenController.saveToken(response.data['token']['accessToken'],
-            response.data['token']['refreshToken']);
-        Get.to(() => signup.SignUp());
+        Get.to(signup.SignUp());
       } else {
-        loginController.changeLoginStatus();
+        loginController.changeLoginStatus(true);
         userInfoController.saveNickname(response.data['userInfo']['nickname']);
         userInfoController.saveAge(response.data['userInfo']['age']);
         userInfoController.saveGender(response.data['userInfo']['gender']);
         // 이미지는 받을때 type이 경로인가..? null보내면 default string으로?
 
-        Get.to(
-          () => main.MyApp(),
-          transition: Transition.fadeIn,
-        );
+        Get.replace(main.MyApp());
       }
     }
   }
@@ -134,7 +127,7 @@ class LoginPage extends StatelessWidget {
                             height: 45,
                             child: ElevatedButton(
                                 onPressed: () {
-                                  loginController.changeLoginStatus();
+                                  loginController.changeLoginStatus(true);
                                   Get.to(
                                     main.MyApp(),
                                     transition: Transition.fadeIn,

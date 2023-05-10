@@ -1,14 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart' as g;
+import 'auth_dio.dart';
 
-String baseURL = dotenv.get('BASE_URL');
-
-final options = BaseOptions(baseUrl: baseURL);
-final dio = Dio(options);
-
-void withdrawal(aToken) {
+void withdrawal(aToken) async {
   try {
+    final dio = await authDio();
     dio.delete('profile/6',
         options: Options(
           headers: {
