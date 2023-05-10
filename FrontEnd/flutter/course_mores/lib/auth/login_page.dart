@@ -38,7 +38,8 @@ void postLogin(accessToken) async {
       userInfoController.saveNickname(response.data['userInfo']['nickname']);
       userInfoController.saveAge(response.data['userInfo']['age']);
       userInfoController.saveGender(response.data['userInfo']['gender']);
-      Get.replace(main.MyApp());
+      Get.back();
+      // Get.replace(main.MyApp());
       print(loginController.isLoggedIn);
       print(pageController.pageNum());
     }
@@ -124,10 +125,10 @@ class LoginPage extends StatelessWidget {
                             child: ElevatedButton(
                                 onPressed: () {
                                   loginController.changeLoginStatus(true);
-                                  Get.to(
-                                    main.MyApp(),
-                                    transition: Transition.fadeIn,
-                                  );
+                                  // Get.to(
+                                  //   main.MyApp(),
+                                  //   transition: Transition.fadeIn,
+                                  // );
                                 },
                                 style: ElevatedButton.styleFrom(
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))),

@@ -348,6 +348,7 @@ class ModalBottom extends StatelessWidget {
                                       Navigator.pop(context);
                                       Navigator.push(context,
                                           MaterialPageRoute(builder: (context) => const profie_edit.ProfileEdit()));
+                                      Navigator.pop(context);
                                     },
                                     child: const Center(
                                         child: Text(
@@ -365,6 +366,7 @@ class ModalBottom extends StatelessWidget {
                                       loginController.changeLoginStatus();
                                       // 로그아웃 메서드 쓰기..
                                       print('logout');
+                                      Get.to(main.MyApp());
                                     },
                                     child: Container(
                                       decoration: const BoxDecoration(
@@ -385,7 +387,7 @@ class ModalBottom extends StatelessWidget {
                                       loginController.changeLoginStatus();
                                       // 로그아웃 메서드 쓰기..
                                       print('회원탈퇴!');
-                                      //탈퇴 메서드 쓰기
+                                      Get.to(main.MyApp());
                                     },
                                     child: Container(
                                       decoration: const BoxDecoration(
