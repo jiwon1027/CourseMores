@@ -46,7 +46,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
 	//logstash
 	implementation group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: '7.2'
-
+	// redis
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 }
 
 tasks.named('test') {
