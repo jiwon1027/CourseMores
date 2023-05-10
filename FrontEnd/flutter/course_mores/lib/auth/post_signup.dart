@@ -2,7 +2,7 @@
 import 'package:dio/dio.dart';
 // import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart' as g;
-import '../main.dart' as main;
+// import '../main.dart' as main;
 import 'dart:convert';
 import 'package:http_parser/http_parser.dart';
 import '../controller/getx_controller.dart';
@@ -71,7 +71,8 @@ void postSignUp(nickname, int age, gender, image, aToken) async {
     if (response.statusCode == 200) {
       print('가입성공!!!');
       loginController.changeLoginStatus(true);
-      g.Get.replace(main.MyApp());
+      g.Get.back();
+      // g.Get.replace(main.MyApp());
     }
   } catch (e) {
     // DioError 처리

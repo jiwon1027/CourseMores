@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 // import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:get/get.dart' as g;
-import '../main.dart' as main;
+// import 'package:get/get.dart' as g;
+// import '../main.dart' as main;
 import 'dart:convert';
 import 'package:http_parser/http_parser.dart';
 import '../auth/auth_dio.dart';
@@ -65,7 +65,7 @@ void postProfileEdit(nickname, age, gender, image, aToken) async {
           },
         ));
     if (response.statusCode == 200) {
-      g.Get.to(main.MyApp());
+      // g.Get.to(main.MyApp());
       print('수정!!!');
     }
   } catch (e) {
