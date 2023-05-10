@@ -1,28 +1,25 @@
-package com.moham.coursemores.domain;
+package com.moham.coursemores.domain.redis;
 
-import com.moham.coursemores.domain.time.UpdateTimeEntity;
 import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.redis.core.TimeToLive;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-
-@Entity
-@Table(name = "refresh_token")
 @Getter
 @ToString
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class RefreshToken extends UpdateTimeEntity {
+@RedisHash(value = "refreshToken")
+public class RefreshToken {
 
     @Id
-    @Column(name = "refresh_token_key")
-    private String key;
-
-    @NotNull
-    private String value;
+    private Long userId;
+    private String refreshToken;
+    @TimeToLive
+    private Long expiration;
 
     @Builder
-    public RefreshToken(String key, String value) {
-        this.key = key;
-        this.value = value;
+    public RefreshToken(Long userId, String refreshToken, Long expiration){
+        this.userId=userId;
+        this.refreshToken=refreshToken;
+        this.expiration=expiration;
     }
 }

@@ -10,9 +10,12 @@ import org.springframework.security.core.Authentication;
 import java.util.Map;
 
 public interface OAuthLoginService {
-    Long login(OAuthLoginParams params);
     Long kakao(String accessToken);
     Long google(String email);
     Map<String, Object> getLoginUserInfo(Long userId, OAuthProvider oAuthProvider);
     String reissue(TokenReissueReqDto tokenReissueReqDto);
 }
+
+/*
+    Long login(OAuthLoginParams params);
+ */

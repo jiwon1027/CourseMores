@@ -1,9 +1,7 @@
 package com.moham.coursemores.api;
 
-import com.moham.coursemores.common.auth.oauth.KakaoLoginParams;
 import com.moham.coursemores.common.util.OAuthProvider;
 import com.moham.coursemores.dto.token.TokenReissueReqDto;
-import com.moham.coursemores.dto.token.TokenResDto;
 import com.moham.coursemores.service.OAuthLoginService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -24,22 +22,6 @@ public class AuthController {
 
     private final OAuthLoginService oAuthLoginService;
 
-    // 삭제될 api입니다
-    @PostMapping("kakao")
-    public ResponseEntity<Map<String, Object>> loginKakao(
-            @RequestBody KakaoLoginParams params) {
-        logger.info(">> request : params={}", params);
-
-        Long userId = oAuthLoginService.login(params);
-        logger.info("<< response : userId={}",userId);
-
-        Map<String, Object> resultMap = oAuthLoginService.getLoginUserInfo(userId, OAuthProvider.KAKAO);
-        logger.info("<< response : userSimpleInfoResDto={}",resultMap.get("userSimpleInfo"));
-        logger.info("<< response : token={}",resultMap.get("token"));
-
-        return new ResponseEntity<>(resultMap,HttpStatus.OK);
-    }
-
     @PostMapping("kakao/login")
     public ResponseEntity<Map<String, Object>> kakaoLogin(
             @RequestBody Map<String,Object> requestMap) {
@@ -48,6 +30,9 @@ public class AuthController {
 
         Long userId = oAuthLoginService.kakao(accessToken);
         logger.info("<< response : userId={}",userId);
+
+        if(userId == -1L)
+            return new ResponseEntity<>(HttpStatus.OK);
 
         Map<String, Object> resultMap = oAuthLoginService.getLoginUserInfo(userId, OAuthProvider.KAKAO);
         logger.info("<< response : userInfo={}",resultMap.get("userInfo"));
@@ -85,4 +70,23 @@ public class AuthController {
 
         return new ResponseEntity<>(resultMap,HttpStatus.OK);
     }
+
 }
+/*
+
+    // 삭제될 api입니다
+    @PostMapping("kakao")
+    public ResponseEntity<Map<String, Object>> loginKakao(
+            @RequestBody KakaoLoginParams params) {
+        logger.info(">> request : params={}", params);
+
+        Long userId = oAuthLoginService.login(params);
+        logger.info("<< response : userId={}",userId);
+
+        Map<String, Object> resultMap = oAuthLoginService.getLoginUserInfo(userId, OAuthProvider.KAKAO);
+        logger.info("<< response : userSimpleInfoResDto={}",resultMap.get("userSimpleInfo"));
+        logger.info("<< response : token={}",resultMap.get("token"));
+
+        return new ResponseEntity<>(resultMap,HttpStatus.OK);
+    }
+ */
