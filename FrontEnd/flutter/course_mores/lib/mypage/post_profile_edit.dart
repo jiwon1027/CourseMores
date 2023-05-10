@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+// import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart' as g;
 import '../main.dart' as main;
 import 'dart:convert';
@@ -43,16 +43,13 @@ void postProfileEdit(nickname, age, gender, image, aToken) async {
   FormData formData;
   if (image != null) {
     formData = FormData.fromMap({
-      'userInfoUpdateReqDto': MultipartFile.fromString(
-          jsonEncode({'nickname': nickname, 'age': age, 'gender': gender}),
+      'userInfoUpdateReqDto': MultipartFile.fromString(jsonEncode({'nickname': nickname, 'age': age, 'gender': gender}),
           contentType: MediaType.parse('application/json')),
-      'profileImage': await MultipartFile.fromFile(image.path,
-          contentType: MediaType("image", "jpg")),
+      'profileImage': await MultipartFile.fromFile(image.path, contentType: MediaType("image", "jpg")),
     });
   } else {
     formData = FormData.fromMap({
-      'userInfoUpdateReqDto': MultipartFile.fromString(
-          jsonEncode({'nickname': nickname, 'age': age, 'gender': gender}),
+      'userInfoUpdateReqDto': MultipartFile.fromString(jsonEncode({'nickname': nickname, 'age': age, 'gender': gender}),
           contentType: MediaType.parse('application/json')),
       'profileImage': null,
     });

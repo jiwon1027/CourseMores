@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'course_list.dart' as course;
 import '../notification/notification.dart' as noti;
 import 'course_new_comment.dart' as comment;
@@ -22,8 +23,7 @@ class CourseDetail extends StatefulWidget {
 class _CourseDetailState extends State<CourseDetail> {
   late var courseInfo = course.courseList[widget.index];
   late var themes = course.courseList[widget.index]['theme'].toString();
-  late List<String> themeList =
-      themes.substring(1, themes.length - 1).split(", ");
+  late List<String> themeList = themes.substring(1, themes.length - 1).split(", ");
   late var tags = courseInfo['tag'].toString();
   late List<String> tagList = tags.substring(1, tags.length - 1).split(", ");
 
@@ -35,11 +35,7 @@ class _CourseDetailState extends State<CourseDetail> {
       body: ListView(
         children: [
           // 코스 정보 (바뀌지 않을 정보들)
-          DetailCourseInfo(
-              courseInfo: courseInfo,
-              index: index,
-              themeList: themeList,
-              tagList: tagList),
+          DetailCourseInfo(courseInfo: courseInfo, index: index, themeList: themeList, tagList: tagList),
 
           // 좋아요, 즐겨찾기, 공유하기, 가져오기
           DetailLikeBookmarkShareScrap(index: widget.index),
@@ -153,12 +149,10 @@ class _DetailTapsState extends State<DetailTaps> {
                   ),
                   ValueListenableBuilder(
                     valueListenable: _selectedSegment,
-                    builder:
-                        (BuildContext context, dynamic value, Widget? child) {
+                    builder: (BuildContext context, dynamic value, Widget? child) {
                       switch (value) {
                         case '코스 소개':
-                          return DetailTapCourseIntroduction(
-                              courseIndex: index);
+                          return DetailTapCourseIntroduction(courseIndex: index);
                         case '코스 상세':
                           return DetailTapCoursePlaces(courseIndex: index);
                         case '코멘트':
@@ -187,15 +181,13 @@ class DetailTapCourseComments extends StatefulWidget {
   final int courseIndex;
 
   @override
-  State<DetailTapCourseComments> createState() =>
-      _DetailTapCourseCommentsState();
+  State<DetailTapCourseComments> createState() => _DetailTapCourseCommentsState();
 }
 
 class _DetailTapCourseCommentsState extends State<DetailTapCourseComments> {
   late var courseIndex = widget.courseIndex;
 
-  late List commentsList =
-      course.courseList[courseIndex]['comments_list'] as List;
+  late List commentsList = course.courseList[courseIndex]['comments_list'] as List;
 
   bool isCommentLatestSelected = true;
   bool isCommentPopularSelected = false;
@@ -238,8 +230,7 @@ class _DetailTapCourseCommentsState extends State<DetailTapCourseComments> {
               isCommentPopularSelectedClick: isCommentPopularSelectedClick),
           SizedBox(
             height: commentsList.isEmpty ? null : 600,
-            child:
-                DetailTapCourseCommentsListSection(commentsList: commentsList),
+            child: DetailTapCourseCommentsListSection(commentsList: commentsList),
           )
         ],
       ),
@@ -298,11 +289,10 @@ class _SortButtonBarState extends State<SortButtonBar> {
             },
             style: ButtonStyle(
               minimumSize: MaterialStateProperty.all<Size>(Size(30, 35)),
+              padding: MaterialStateProperty.all(EdgeInsetsDirectional.symmetric(horizontal: 10)),
               elevation: MaterialStateProperty.all<double>(0),
-              backgroundColor:
-                  MaterialStateProperty.all<Color>(Colors.transparent),
-              foregroundColor: MaterialStateProperty.all<Color>(
-                  isCommentLatestSelected ? Colors.blue : Colors.grey),
+              backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
+              foregroundColor: MaterialStateProperty.all<Color>(isCommentLatestSelected ? Colors.blue : Colors.grey),
             ),
             child: const Text(
               '최신순',
@@ -320,11 +310,10 @@ class _SortButtonBarState extends State<SortButtonBar> {
             },
             style: ButtonStyle(
               minimumSize: MaterialStateProperty.all<Size>(Size(30, 35)),
+              padding: MaterialStateProperty.all(EdgeInsetsDirectional.symmetric(horizontal: 10)),
               elevation: MaterialStateProperty.all<double>(0),
-              backgroundColor:
-                  MaterialStateProperty.all<Color>(Colors.transparent),
-              foregroundColor: MaterialStateProperty.all<Color>(
-                  isCommentPopularSelected ? Colors.blue : Colors.grey),
+              backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
+              foregroundColor: MaterialStateProperty.all<Color>(isCommentPopularSelected ? Colors.blue : Colors.grey),
             ),
             child: const Text(
               '인기순',
@@ -355,7 +344,6 @@ class DetailTapCourseCommentsListSection extends StatelessWidget {
             margin: EdgeInsets.only(top: 50),
             child: Column(
               children: const [
-                // Icon(Icons.tag_faces, color: Colors.black38, size: 70),
                 Text("☺", style: TextStyle(fontSize: 70)),
                 SizedBox(height: 20),
                 Text("아직 코멘트가 없어요."),
@@ -371,8 +359,7 @@ class DetailTapCourseCommentsListSection extends StatelessWidget {
               return Card(
                 elevation: 6,
                 margin: EdgeInsets.fromLTRB(4, 10, 4, 0),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                 child: Padding(
                   padding: const EdgeInsets.all(15),
                   child: Column(
@@ -415,8 +402,7 @@ class DetailTapCourseCommentsListSection extends StatelessWidget {
                       SizedBox(height: 10),
                       Text('${commentsList[index]['text']}'),
                       SizedBox(height: 10),
-                      ImageGridView(
-                          commentImageList: commentsList[index]['images']),
+                      ImageGridView(commentImageList: commentsList[index]['images']),
                     ],
                   ),
                 ),
@@ -447,13 +433,11 @@ class ImageGridView extends StatelessWidget {
         if (imageIndex == 2 && commentImageList.length > 3) {
           return Stack(
             children: [
-              ImageInkWell(
-                  commentImageList: commentImageList, imageIndex: imageIndex),
+              ImageInkWell(commentImageList: commentImageList, imageIndex: imageIndex),
               Positioned(
                 right: 0,
                 bottom: 0,
                 child: ClipRRect(
-                  // borderRadius: BorderRadius.circular(100.0),
                   child: Container(
                     decoration: BoxDecoration(
                       shape: BoxShape.rectangle,
@@ -478,8 +462,7 @@ class ImageGridView extends StatelessWidget {
             ],
           );
         } else {
-          return ImageInkWell(
-              commentImageList: commentImageList, imageIndex: imageIndex);
+          return ImageInkWell(commentImageList: commentImageList, imageIndex: imageIndex);
         }
       },
     );
@@ -500,14 +483,10 @@ class ImageInkWell extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) {
-            return CommentGallery(
+        Get.to(() => CommentGallery(
               images: commentImageList,
               initialIndex: imageIndex,
-            );
-          },
-        ));
+            ));
       },
       child: Padding(
         padding: const EdgeInsets.all(2),
@@ -590,7 +569,7 @@ class _CommentGalleryState extends State<CommentGallery> {
             top: 50,
             left: 30,
             child: GestureDetector(
-              onTap: () => Navigator.pop(context),
+              onTap: () => Get.back(),
               child: Icon(
                 Icons.arrow_back_ios,
                 color: Colors.white,
@@ -611,9 +590,7 @@ class _CommentGalleryState extends State<CommentGallery> {
                   margin: EdgeInsets.symmetric(horizontal: 2.0),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: _currentIndex == index
-                        ? Colors.grey.shade800
-                        : Colors.grey.shade600,
+                    color: _currentIndex == index ? Colors.grey.shade800 : Colors.grey.shade600,
                   ),
                 );
               }).toList(),
@@ -657,16 +634,11 @@ class DetailTapCourseCommentsCreateSection extends StatelessWidget {
             ),
             TextButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const comment.NewComment()),
-                );
+                Get.to(comment.NewComment());
               },
               style: TextButton.styleFrom(
                 backgroundColor: const Color.fromARGB(255, 115, 81, 255),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(50)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
                 elevation: 2,
                 padding: const EdgeInsets.fromLTRB(20, 3, 20, 3),
               ),
@@ -726,9 +698,7 @@ class _DetailTapCoursePlacesState extends State<DetailTapCoursePlaces> {
               },
               enableInfiniteScroll: false,
             ),
-            itemCount:
-                (course.courseList[courseIndex]['places'] as List<dynamic>)
-                    .length,
+            itemCount: (course.courseList[courseIndex]['places'] as List<dynamic>).length,
             itemBuilder: (context, index, realIndex) => Expanded(
               child: Container(
                 clipBehavior: Clip.antiAlias,
@@ -764,10 +734,7 @@ class _DetailTapCoursePlacesState extends State<DetailTapCoursePlaces> {
                           )),
                           child: Text(
                             "${index + 1}. ${(course.courseList[courseIndex]['places'] as List<dynamic>)[index]['name']}",
-                            style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white),
+                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.white),
                           ),
                         ),
                       ],
@@ -779,23 +746,16 @@ class _DetailTapCoursePlacesState extends State<DetailTapCoursePlaces> {
           ),
           Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children:
-                  (course.courseList[courseIndex]['places'] as List<dynamic>)
-                      .asMap()
-                      .entries
-                      .map((entry) {
+              children: (course.courseList[courseIndex]['places'] as List<dynamic>).asMap().entries.map((entry) {
                 return GestureDetector(
                   onTap: () => _controller.animateToPage(entry.key),
                   child: Container(
                     width: 12.0,
                     height: 10.0,
-                    margin:
-                        EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
+                    margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
                     decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: (Theme.of(context).brightness == Brightness.dark
-                                ? Colors.white
-                                : Colors.black)
+                        color: (Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black)
                             .withOpacity(placeIndex == entry.key ? 0.9 : 0.2)),
                   ),
                 );
@@ -812,17 +772,13 @@ class _DetailTapCoursePlacesState extends State<DetailTapCoursePlaces> {
                     child: Column(
                       children: [
                         ImageGridView(
-                            commentImageList: (course.courseList[courseIndex]
-                                    ['places'] as List<dynamic>)[placeIndex]
+                            commentImageList: (course.courseList[courseIndex]['places'] as List<dynamic>)[placeIndex]
                                 ['images']),
                         SizedBox(height: 15),
                         Text(
                           "${(course.courseList[courseIndex]['places'] as List<dynamic>)[placeIndex]['title']}",
                           // '''테스트 메시지. 테스트 메시지. 테스트 메시지. 테스트 메시지. 테스트 메시지. 테스트 메시지. ㄴ''',
-                          style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black),
+                          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.black),
                         ),
                         SizedBox(height: 10),
                         Text(
@@ -856,12 +812,10 @@ class DetailTapCourseIntroduction extends StatefulWidget {
   final int courseIndex;
 
   @override
-  State<DetailTapCourseIntroduction> createState() =>
-      _DetailTapCourseIntroductionState();
+  State<DetailTapCourseIntroduction> createState() => _DetailTapCourseIntroductionState();
 }
 
-class _DetailTapCourseIntroductionState
-    extends State<DetailTapCourseIntroduction> {
+class _DetailTapCourseIntroductionState extends State<DetailTapCourseIntroduction> {
   GlobalKey<FlipCardState> cardKey = GlobalKey<FlipCardState>();
 
   late var courseIndex = widget.courseIndex;
@@ -955,16 +909,13 @@ class DetailTapCourseIntroductionTimeline extends StatelessWidget {
     return Expanded(
       child: FixedTimeline.tileBuilder(
         theme: TimelineThemeData(
-            connectorTheme: const ConnectorThemeData(
-                color: Color.fromARGB(69, 255, 255, 255), space: 30),
-            indicatorTheme: const IndicatorThemeData(
-                color: Color.fromARGB(255, 141, 233, 127))),
+            connectorTheme: const ConnectorThemeData(color: Color.fromARGB(69, 255, 255, 255), space: 30),
+            indicatorTheme: const IndicatorThemeData(color: Color.fromARGB(255, 141, 233, 127))),
         builder: TimelineTileBuilder.connectedFromStyle(
           contentsAlign: ContentsAlign.alternating,
           contentsBuilder: (context, index) => Padding(
             padding: const EdgeInsets.all(15),
-            child: Text(
-                "${(course.courseList[courseIndex]['places'] as List<dynamic>)[index]['title']}",
+            child: Text("${(course.courseList[courseIndex]['places'] as List<dynamic>)[index]['title']}",
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 18,
@@ -980,8 +931,7 @@ class DetailTapCourseIntroductionTimeline extends StatelessWidget {
                   const ThumbnailImage(),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                        "${(course.courseList[courseIndex]['places'] as List<dynamic>)[index]['name']}",
+                    child: Text("${(course.courseList[courseIndex]['places'] as List<dynamic>)[index]['name']}",
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w800,
@@ -994,8 +944,7 @@ class DetailTapCourseIntroductionTimeline extends StatelessWidget {
           ),
           connectorStyleBuilder: (context, index) => ConnectorStyle.solidLine,
           indicatorStyleBuilder: (context, index) => IndicatorStyle.dot,
-          itemCount: (course.courseList[courseIndex]['places'] as List<dynamic>)
-              .length,
+          itemCount: (course.courseList[courseIndex]['places'] as List<dynamic>).length,
         ),
       ),
     );
@@ -1059,17 +1008,14 @@ class _DetailCourseInfoState extends State<DetailCourseInfo> {
     return Container(
       margin: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 10),
       padding: const EdgeInsets.all(20),
-      decoration: const BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-                // color: Colors.white24,
-                color: Color.fromARGB(255, 211, 211, 211),
-                blurRadius: 10.0,
-                spreadRadius: 1.0,
-                offset: Offset(3, 3)),
-          ],
-          color: Color.fromARGB(255, 255, 255, 255),
-          borderRadius: BorderRadius.all(Radius.circular(10))),
+      decoration: const BoxDecoration(boxShadow: [
+        BoxShadow(
+            // color: Colors.white24,
+            color: Color.fromARGB(255, 211, 211, 211),
+            blurRadius: 10.0,
+            spreadRadius: 1.0,
+            offset: Offset(3, 3)),
+      ], color: Color.fromARGB(255, 255, 255, 255), borderRadius: BorderRadius.all(Radius.circular(10))),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
@@ -1093,8 +1039,7 @@ class _DetailCourseInfoState extends State<DetailCourseInfo> {
                       ),
                       const SizedBox(height: 10),
                       // 지역, 인원 수, 소요시간 라인
-                      DetailAddressPeopleTime(
-                          courseInfo: widget.courseInfo, index: widget.index),
+                      DetailAddressPeopleTime(courseInfo: widget.courseInfo, index: widget.index),
                       const SizedBox(height: 10),
                       // 본문 텍스트 라인
                       Text(
@@ -1133,12 +1078,10 @@ class DetailLikeBookmarkShareScrap extends StatefulWidget {
   final int index;
 
   @override
-  State<DetailLikeBookmarkShareScrap> createState() =>
-      _DetailLikeBookmarkShareScrapState();
+  State<DetailLikeBookmarkShareScrap> createState() => _DetailLikeBookmarkShareScrapState();
 }
 
-class _DetailLikeBookmarkShareScrapState
-    extends State<DetailLikeBookmarkShareScrap> {
+class _DetailLikeBookmarkShareScrapState extends State<DetailLikeBookmarkShareScrap> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -1193,22 +1136,18 @@ class _DetailBookmarkState extends State<DetailBookmark> {
           setState(() {
             if (course.courseList[index]['bookmark'] == true) {
               course.courseList[index]['bookmark'] = false;
-              course.courseList[index]['bookmark_cnt'] =
-                  (course.courseList[index]['bookmark_cnt'] as int) - 1;
+              course.courseList[index]['bookmark_cnt'] = (course.courseList[index]['bookmark_cnt'] as int) - 1;
             } else if (course.courseList[index]['bookmark'] == false) {
               course.courseList[index]['bookmark'] = true;
-              course.courseList[index]['bookmark_cnt'] =
-                  (course.courseList[index]['bookmark_cnt'] as int) + 1;
+              course.courseList[index]['bookmark_cnt'] = (course.courseList[index]['bookmark_cnt'] as int) + 1;
             }
           });
         },
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (course.courseList[index]['bookmark'] == true)
-              const Icon(Icons.bookmark),
-            if (course.courseList[index]['bookmark'] == false)
-              const Icon(Icons.bookmark_outline),
+            if (course.courseList[index]['bookmark'] == true) const Icon(Icons.bookmark),
+            if (course.courseList[index]['bookmark'] == false) const Icon(Icons.bookmark_outline),
             const SizedBox(height: 5),
             Text(
               course.courseList[index]['bookmark_cnt'].toString(),
@@ -1258,10 +1197,8 @@ class _DetailLikesState extends State<DetailLikes> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              if (course.courseList[index]['likes'] == true)
-                const Icon(Icons.favorite),
-              if (course.courseList[index]['likes'] == false)
-                const Icon(Icons.favorite_outline),
+              if (course.courseList[index]['likes'] == true) const Icon(Icons.favorite),
+              if (course.courseList[index]['likes'] == false) const Icon(Icons.favorite_outline),
               const SizedBox(height: 5),
               Text(
                 course.courseList[widget.index]['likes_cnt'].toString(),
@@ -1575,8 +1512,7 @@ class DetailUserVisited extends StatelessWidget {
                       padding: EdgeInsets.all(4.0),
                       child: Icon(Icons.check, size: 14, color: Colors.white),
                     ),
-                    Text("방문",
-                        style: TextStyle(color: Colors.white, fontSize: 12)),
+                    Text("방문", style: TextStyle(color: Colors.white, fontSize: 12)),
                     SizedBox(
                       width: 7,
                     ),
@@ -1598,29 +1534,20 @@ class DetailAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      iconTheme: const IconThemeData(
-        color: Colors.black54, // 아이콘 색깔
-      ),
+      iconTheme: const IconThemeData(color: Colors.black54),
       title: const Text('CourseMores', style: TextStyle(color: Colors.black)),
       centerTitle: true,
       leading: IconButton(
         icon: const Icon(Icons.navigate_before),
         onPressed: () {
-          Navigator.pop(context);
+          Get.back();
         },
       ),
       actions: [
         IconButton(
-          icon: const Icon(
-            Icons.notifications,
-            color: Colors.black,
-          ),
+          icon: const Icon(Icons.notifications, color: Colors.black),
           onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const noti.Notification()),
-            );
+            Get.to(noti.Notification());
           },
         )
       ],

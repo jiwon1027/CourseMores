@@ -1,4 +1,4 @@
-import 'package:coursemores/getx_controller.dart';
+import 'package:coursemores/controller/getx_controller.dart';
 import 'package:flashy_tab_bar2/flashy_tab_bar2.dart';
 import 'package:flutter/material.dart' hide ModalBottomSheetRoute;
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
@@ -10,7 +10,7 @@ import 'mypage/mypage.dart' as mypage;
 import 'course_make/make_start.dart' as make;
 import 'auth/login_page.dart' as login;
 import 'package:get/get.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+// import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 final loginController = Get.put(LoginStatus());
@@ -69,8 +69,7 @@ class _MyAppState extends State<MyApp> {
                     // onItemSelected: (index) => setState(() {
                     //   changePageNum(index);
                     // }),
-                    onItemSelected: (index) =>
-                        pageController.changePageNum(index),
+                    onItemSelected: (index) => pageController.changePageNum(index),
                     items: [
                       FlashyTabBarItem(
                         icon: const Icon(Icons.home),
@@ -118,11 +117,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             color: Colors.black,
           ),
           onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const noti.Notification()),
-            );
+            Get.to(noti.Notification());
           },
         )
       ],

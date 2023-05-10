@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -25,7 +26,7 @@ class _NewCommentState extends State<NewComment> {
             color: Colors.black,
           ),
           onPressed: () {
-            Navigator.pop(context);
+            Get.back();
           },
         ),
         // 알림 아이콘과 텍스트 같이 넣으려고 RichText 사용
@@ -39,15 +40,13 @@ class _NewCommentState extends State<NewComment> {
               size: 20,
             )),
             WidgetSpan(child: SizedBox(width: 5)),
-            TextSpan(
-                text: '코멘트 작성하기',
-                style: TextStyle(fontSize: 18, color: Colors.black)),
+            TextSpan(text: '코멘트 작성하기', style: TextStyle(fontSize: 18, color: Colors.black)),
           ],
         )),
         actions: [
           IconButton(
               onPressed: () {
-                Navigator.pop(context);
+                Get.back();
               },
               icon: const Icon(
                 Icons.close,
@@ -74,7 +73,7 @@ class _NewCommentState extends State<NewComment> {
                     toastLength: Toast.LENGTH_SHORT,
                     gravity: ToastGravity.CENTER,
                   );
-                  Navigator.pop(context);
+                  Get.back();
                 },
                 child: Text("저장하기"),
               ),
@@ -192,7 +191,7 @@ class _ImageUploaderState extends State<ImageUploader> {
                 TextButton(
                   child: Text("확인"),
                   onPressed: () {
-                    Navigator.of(context).pop();
+                    Get.back();
                   },
                 ),
               ],
@@ -275,13 +274,10 @@ class _ImageUploaderState extends State<ImageUploader> {
                 _showSelectionDialog(context);
               } else {
                 Fluttertoast.showToast(
-                  msg: "5개까지만 업로드 가능해요.",
+                  msg: "사진은 최대 5개까지만 업로드 가능해요.",
                   toastLength: Toast.LENGTH_SHORT,
                   gravity: ToastGravity.CENTER,
                 );
-                // ScaffoldMessenger.of(context).showSnackBar(
-                //   SnackBar(content: Text('5개까지만 업로드 가능해요.')),
-                // );
               }
             },
             child: Row(
@@ -296,9 +292,7 @@ class _ImageUploaderState extends State<ImageUploader> {
           SizedBox(height: 20),
           SizedBox(
             height: 80,
-            child: _imageList.isEmpty
-                ? Center(child: Text("이미지를 선택해주세요."))
-                : buildGridView(),
+            child: _imageList.isEmpty ? Center(child: Text("이미지를 선택해주세요.")) : buildGridView(),
           ),
         ],
       ),
@@ -314,7 +308,7 @@ class _ImageUploaderState extends State<ImageUploader> {
           children: <Widget>[
             SimpleDialogOption(
               onPressed: () {
-                Navigator.pop(context);
+                Get.back();
                 _takePicture();
               },
               child: Row(
@@ -328,7 +322,7 @@ class _ImageUploaderState extends State<ImageUploader> {
             ),
             SimpleDialogOption(
               onPressed: () {
-                Navigator.pop(context);
+                Get.back();
                 getImage();
               },
               child: Row(
