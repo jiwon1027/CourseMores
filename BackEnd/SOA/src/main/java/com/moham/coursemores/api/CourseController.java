@@ -1,7 +1,10 @@
 package com.moham.coursemores.api;
 
 import com.moham.coursemores.dto.course.*;
+import com.moham.coursemores.dto.elasticsearch.IndexDataReqDTO;
 import com.moham.coursemores.service.CourseService;
+import com.moham.coursemores.service.ElasticSearchService;
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
@@ -23,6 +28,7 @@ public class CourseController {
     private static final Logger logger = LoggerFactory.getLogger(CourseController.class);
 
     private final CourseService courseService;
+    private final ElasticSearchService elasticSearchService;
 
     @GetMapping("hot")
     public ResponseEntity<Map<String, Object>> getHotCourse() {
@@ -119,7 +125,19 @@ public class CourseController {
         logger.info(">> request : courseCreateReqDto={}", courseCreateReqDto);
         logger.info(">> request : imageList= {}", imageList);
 
-        courseService.addCourse(userId, courseCreateReqDto, imageList);
+        Long courseId = courseService.addCourse(userId, courseCreateReqDto, imageList);
+
+        // elasticsearch index 데이터 추가
+        elasticSearchService.addIndex(IndexDataReqDTO.builder()
+                .id(Long.toString(courseId))
+                .title(courseCreateReqDto.getTitle())
+                .courselocationList(courseCreateReqDto.getLocationList()
+                        .stream()
+                        .map(locationCreateReqDto -> locationCreateReqDto.getName())
+                        .collect(Collectors.toList()))
+                .hashtagList(courseCreateReqDto.getHashtagList())
+                .build());
+
         logger.info("<< response : none");
 
         return new ResponseEntity<>(HttpStatus.OK);
@@ -130,13 +148,25 @@ public class CourseController {
             @PathVariable Long courseId,
             @PathVariable Long userId,
             @RequestPart CourseUpdateReqDto courseUpdateReqDto,
-            @RequestPart(required = false) List<MultipartFile> imageList) {
+            @RequestPart(required = false) List<MultipartFile> imageList) throws IOException {
         logger.info(">> request : courseId={}",courseId);
         logger.info(">> request : userId={}",userId);
         logger.info(">> request : courseUpdateReqDto={}",courseUpdateReqDto);
         logger.info(">> request : imageList= {}", imageList);
 
         courseService.setCourse(userId, courseId, courseUpdateReqDto, imageList);
+
+        // elasticsearch index 데이터 수정
+        elasticSearchService.updateIndex(IndexDataReqDTO.builder()
+                .id(Long.toString(courseId))
+                .title(courseUpdateReqDto.getTitle())
+                .courselocationList(courseUpdateReqDto.getLocationList()
+                        .stream()
+                        .map(locationUpdateReqDto -> locationUpdateReqDto.getName())
+                        .collect(Collectors.toList()))
+                .hashtagList(courseUpdateReqDto.getHashtagList())
+                .build());
+
         logger.info("<< response : none");
 
         return new ResponseEntity<>(HttpStatus.OK);
@@ -145,11 +175,13 @@ public class CourseController {
     @DeleteMapping("{courseId}/{userId}")
     public ResponseEntity<Void> deleteCourse(
             @PathVariable Long courseId,
-            @PathVariable Long userId) {
+            @PathVariable Long userId) throws IOException {
         logger.info(">> request : courseId={}",courseId);
         logger.info(">> request : userId={}",userId);
 
         courseService.deleteCourse(userId,courseId);
+
+        elasticSearchService.deleteIndex(Long.toString(courseId));
         logger.info("<< response : none");
 
         return new ResponseEntity<>(HttpStatus.OK);

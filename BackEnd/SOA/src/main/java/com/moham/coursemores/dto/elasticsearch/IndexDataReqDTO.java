@@ -1,6 +1,7 @@
 package com.moham.coursemores.dto.elasticsearch;
 
 
+import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
@@ -9,7 +10,9 @@ import lombok.ToString;
 @Builder
 @Getter
 public class IndexDataReqDTO {
-    private String index;
     private String id;
-    private String value;
+    private String title;
+    private List<String> courselocationList;
+    private List<String> hashtagList;
+
 }

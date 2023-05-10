@@ -1,6 +1,7 @@
 package com.moham.coursemores.service;
 
 import com.moham.coursemores.dto.course.*;
+import java.util.Map;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -14,7 +15,7 @@ public interface CourseService {
     CourseInfoResDto getCourseInfo(Long courseId);
     List<CourseDetailResDto> getCourseDetail(Long courseId);
     List<MyCourseResDto> getMyCourseList(Long userId);
-    void addCourse(Long userId, CourseCreateReqDto courseCreateReqDto, List<MultipartFile> imageList);
+    Long addCourse(Long userId, CourseCreateReqDto courseCreateReqDto, List<MultipartFile> imageList);
     void setCourse(Long userId, Long courseId, CourseUpdateReqDto courseUpdateReqDto, List<MultipartFile> imageList);
     void deleteCourse(Long userId, Long courseId);
 
