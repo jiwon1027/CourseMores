@@ -93,7 +93,7 @@ class LoginPage extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Column(children: [
+                Column(children: const [
                   Text(
                     'Course',
                     style: TextStyle(

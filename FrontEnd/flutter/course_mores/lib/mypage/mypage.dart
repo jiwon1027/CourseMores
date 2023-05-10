@@ -8,7 +8,7 @@ import '../course_search/search.dart' as search;
 import '../course_search/course_list.dart' as course;
 import 'package:get/get.dart';
 import '../main.dart' as main;
-import 'package:coursemores/getx_controller.dart';
+import '../controller/getx_controller.dart';
 import 'profile_edit.dart' as profie_edit;
 import 'package:dio/dio.dart';
 // import 'package:flutter_dotenv/flutter_dotenv.dart';
