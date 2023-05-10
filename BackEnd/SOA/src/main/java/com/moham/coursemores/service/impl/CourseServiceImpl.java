@@ -7,7 +7,9 @@ import com.moham.coursemores.repository.*;
 import com.moham.coursemores.service.CourseService;
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Map;
+import java.util.Map.Entry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -84,16 +86,20 @@ public class CourseServiceImpl implements CourseService {
         });
 
         hotCourseRepository.deleteAllInBatch(); // 기존의 인기 코스들은 삭제
-        List<Map.Entry<Course, Long>> hotCourses = map.entrySet().stream()
-                .sorted(Map.Entry.comparingByValue(Collections.reverseOrder()))
+        List<Course> hotCourses = map.keySet().stream()
+                .sorted((o1, o2) -> (map.get(o1).equals(map.get(o2))) ? Long.compare(o2.getId(), o1.getId()) : Long.compare(map.get(o2), map.get(o1)))
                 .collect(Collectors.toList());
 
         int number = 50; // 인기 코스로 저장할 최대 개수
-        for(Map.Entry<Course, Long> hotCourse : hotCourses){
-            hotCourseRepository.save(HotCourse.builder().course(hotCourse.getKey()).build());
-            if(--number == 0)
+        for (Course course : hotCourses){
+            hotCourseRepository.save(HotCourse.builder()
+                    .course(course)
+                    .build());
+
+            if (--number == 0)
                 break;
         }
+
         List<MainPreviewResDto> result = hotCourseRepository.findAll().stream()
                 .map(hotCourse -> {
                             Course course = hotCourse.getCourse();
