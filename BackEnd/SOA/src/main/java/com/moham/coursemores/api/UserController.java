@@ -2,6 +2,7 @@ package com.moham.coursemores.api;
 
 import com.moham.coursemores.dto.profile.UserInfoCreateReqDto;
 import com.moham.coursemores.dto.profile.UserInfoResDto;
+import com.moham.coursemores.dto.token.TokenReissueReqDto;
 import com.moham.coursemores.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -59,4 +60,19 @@ public class UserController {
 
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
+
+    @PostMapping("reissue")
+    public ResponseEntity<Map<String, Object>> reissue(
+            @RequestBody TokenReissueReqDto tokenReissueReqDto) {
+        logger.info(">> request : tokenReissueReqDto={}", tokenReissueReqDto);
+
+        Map<String, Object> resultMap = new HashMap<>();
+
+        String accessToken = userService.reissue(tokenReissueReqDto);
+        resultMap.put("accessToken", accessToken);
+        logger.info("<< response : accessToken={}",accessToken);
+
+        return new ResponseEntity<>(resultMap,HttpStatus.OK);
+    }
+
 }
