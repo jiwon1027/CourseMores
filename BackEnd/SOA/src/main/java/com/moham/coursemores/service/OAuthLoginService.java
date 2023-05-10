@@ -12,7 +12,6 @@ import java.util.Map;
 public interface OAuthLoginService {
     Long kakao(String accessToken);
     Long google(String email);
-    Map<String, Object> getLoginUserInfo(Long userId, OAuthProvider oAuthProvider);
 //    String reissue(TokenReissueReqDto tokenReissueReqDto);
 }
 

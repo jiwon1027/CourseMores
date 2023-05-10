@@ -27,7 +27,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional(readOnly = true)
 public class OAuthLoginServiceImpl implements OAuthLoginService {
 
     private final Map<OAuthProvider, OAuthApiClient> clients;
@@ -41,9 +40,6 @@ public class OAuthLoginServiceImpl implements OAuthLoginService {
     @Autowired
     private AuthenticationManagerBuilder authenticationManagerBuilder;
 
-//    @Autowired
-//    private RefreshService refreshService;
-
     public OAuthLoginServiceImpl(List<OAuthApiClient> clients) {
         this.clients = clients.stream().collect(
                 Collectors.toUnmodifiableMap(OAuthApiClient::oAuthProvider, Function.identity())
@@ -51,7 +47,6 @@ public class OAuthLoginServiceImpl implements OAuthLoginService {
     }
 
     @Override
-    @Transactional
     public Long kakao(String accessToken) {
         System.out.println("kakao 입장 "+accessToken);
         OAuthApiClient client = clients.get(OAuthProvider.KAKAO);
@@ -68,7 +63,6 @@ public class OAuthLoginServiceImpl implements OAuthLoginService {
     }
 
     @Override
-    @Transactional
     public Long google(String email) {
         return successLogin(email, OAuthProvider.GOOGLE).getId();
     }
@@ -100,48 +94,6 @@ public class OAuthLoginServiceImpl implements OAuthLoginService {
 //        return newAccessToken;
 //    }
 
-    @Override
-    @Transactional
-    public Map<String, Object> getLoginUserInfo(Long userId, OAuthProvider oAuthProvider) {
-        User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
-                .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
-
-        Map<String, Object> resultMap = new HashMap<>();
-        UserInfoResDto userInfo = null;
-
-        // 값이 존재한다면
-        if(StringUtils.hasText(user.getNickname())
-                && user.getAge() > 0
-                && StringUtils.hasText(user.getGender()))
-            userInfo = UserInfoResDto.builder()
-                    .nickname(user.getNickname())
-                    .gender(user.getGender())
-                    .age(user.getAge())
-                    .profileImage(user.getProfileImage())
-                    .build();
-
-        resultMap.put("userInfo",userInfo);
-
-        TokenResDto tokenResDto = generateToken(userId, oAuthProvider);
-        resultMap.put("token",tokenResDto);
-
-        return resultMap;
-    }
-
-    @Transactional
-    private TokenResDto generateToken(Long userId, OAuthProvider oAuthProvider){
-        String accessToken = tokenProvider.generateAccessToken(Long.toString(userId), oAuthProvider);
-        String refreshToken = tokenProvider.generateRefreshToken();
-
-//        refreshService.save(userId, refreshToken);
-
-        return TokenResDto.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
-    }
-
-    @Transactional
     private User successLogin(String email, OAuthProvider oAuthProvider){
         Optional<User> user = userRepository.findByEmailAndProviderAndDeleteTimeIsNull(email, oAuthProvider);
         System.out.println("user 가져옴");

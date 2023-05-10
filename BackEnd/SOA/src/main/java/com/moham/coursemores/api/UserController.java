@@ -53,7 +53,7 @@ public class UserController {
         Map<String,Object> resultMap = new HashMap<>();
 
         userService.addUserInfo(userId,userInfoCreateReqDto,profileImage);
-        UserInfoResDto userInfo = userService.getUserProfile(userId);
+        UserInfoResDto userInfo = userService.getUserInfo(userId);
         resultMap.put("userInfo",userInfo);
         logger.info("<< response : userInfo={}",userInfo);
 
