@@ -46,7 +46,7 @@ public class OAuthLoginServiceImpl implements OAuthLoginService {
         System.out.println("oAuthInfoResponse : "+oAuthInfoResponse.getEmail()+", "+oAuthInfoResponse.getOAuthProvider());
 
         // 이메일 수집 동의를 하지 않은 경우 -> 에러처리
-        if(oAuthInfoResponse.getEmail() != null){
+        if(oAuthInfoResponse.getEmail() == null){
             return -1L;
         }
 

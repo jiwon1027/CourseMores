@@ -33,19 +33,27 @@ public class AuthController {
         String accessToken = (String)requestMap.get("accessToken");
         logger.info(">> request : accessToken={}", accessToken);
 
+        Map<String, Object> resultMap = new HashMap<>();
+
         Long userId = oAuthLoginService.kakao(accessToken);
         logger.info("<< response : userId={}",userId);
 
-        if(userId == -1L)
-            return new ResponseEntity<>(HttpStatus.OK);
+        if(userId == -1L){
+            resultMap.put("agree",false);
+            logger.info("<< response : agree={}",false);
+            return new ResponseEntity<>(resultMap,HttpStatus.OK);
+        }
 
-        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("agree",true);
+        logger.info("<< response : agree={}",true);
 
         UserInfoResDto userInfo = userService.getUserInfo(userId);
+        resultMap.put("userInfo",userInfo);
         logger.info("<< response : userInfo={}",userInfo);
 
         TokenResDto tokenResDto = userService.generateToken(userId, OAuthProvider.KAKAO);
         refreshService.save(userId, tokenResDto.getRefreshToken());
+        resultMap.put("tokenResDto",tokenResDto);
         logger.info("<< response : token={}",tokenResDto);
 
         return new ResponseEntity<>(resultMap,HttpStatus.OK);
@@ -63,10 +71,12 @@ public class AuthController {
         Map<String, Object> resultMap = new HashMap<>();
 
         UserInfoResDto userInfo = userService.getUserInfo(userId);
+        resultMap.put("userInfo",userInfo);
         logger.info("<< response : userInfo={}",userInfo);
 
         TokenResDto tokenResDto = userService.generateToken(userId, OAuthProvider.GOOGLE);
         refreshService.save(userId, tokenResDto.getRefreshToken());
+        resultMap.put("tokenResDto",tokenResDto);
         logger.info("<< response : token={}",tokenResDto);
 
         return new ResponseEntity<>(resultMap,HttpStatus.OK);
