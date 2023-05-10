@@ -5,6 +5,7 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -31,43 +32,17 @@ public class CourseCustomRepositoryImpl implements CourseCustomRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public Predicate searchCoursesFilter(String word, Long regionId, List<Long> themeIds, int isVisited) {
-
-        BooleanBuilder builder = new BooleanBuilder();
-
-        if (word != null && !word.isBlank()) {
-            builder.or(course.title.contains(word))
-                    .or(course.courseHashtagList.any().hashtag.name.contains(word))
-                    .or(course.courseLocationList.any().name.contains(word));
-        }
-
-        if (regionId != null && regionId > 0) {
-            builder.and(course.courseLocationList.any().region.id.eq(regionId));
-        }
-
-        if(themeIds != null && !themeIds.isEmpty() && themeIds.get(0) != 0){
-            themeIds.forEach(id -> builder.or(course.themeOfCourseList.any().theme.id.eq(id)));
-        }
-
-        if(isVisited == 1){
-            builder.and(course.visited.eq(true));
-        }
-
-        return builder.getValue();
-    }
-
     @Override
     public Page<Course> searchAll(String word, Long regionId, List<Long> themeIds, int isVisited, Pageable pageable) {
         //content를 가져오는 쿼리는 fetch로 하고
         List<Course> fetch = jpaQueryFactory
                 .selectFrom(course)
                 .distinct()
-//                .leftJoin(course.courseLocationList, courseLocation)
-//                .leftJoin(course.courseHashtagList, hashtagOfCourse)
-//                .leftJoin(hashtagOfCourse.hashtag, hashtag)
-//                .leftJoin(course.themeOfCourseList, themeOfCourse)
-//                .leftJoin(themeOfCourse.theme, theme)
-                .where(searchCoursesFilter(word, regionId, themeIds, isVisited))
+//                .where(searchCoursesFilter(word, regionId, themeIds, isVisited))
+                .where(wordContain(word),
+                        regionEq(regionId),
+                        themeContain(themeIds),
+                        isVisited(isVisited))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(getOrderSpecifier(pageable.getSort()).stream().toArray(OrderSpecifier[]::new))
@@ -77,12 +52,11 @@ public class CourseCustomRepositoryImpl implements CourseCustomRepository {
         JPQLQuery<Course> count = jpaQueryFactory
                 .selectFrom(course)
                 .distinct()
-//                .leftJoin(course.courseLocationList, courseLocation)
-//                .leftJoin(course.courseHashtagList, hashtagOfCourse)
-//                .leftJoin(hashtagOfCourse.hashtag, hashtag)
-//                .leftJoin(course.themeOfCourseList, themeOfCourse)
-//                .leftJoin(themeOfCourse.theme, theme)
-                .where(searchCoursesFilter(word, regionId, themeIds, isVisited));
+//                .where(searchCoursesFilter(word, regionId, themeIds, isVisited))
+                .where(wordContain(word),
+                        regionEq(regionId),
+                        themeContain(themeIds),
+                        isVisited(isVisited));
 
         return PageableExecutionUtils.getPage(fetch, pageable, count::fetchCount);
     }
@@ -105,4 +79,59 @@ public class CourseCustomRepositoryImpl implements CourseCustomRepository {
                 })
                 .collect(Collectors.toList());
     }
+
+    private BooleanExpression wordContain(String word) {
+        return (word != null && !word.isBlank()) ?
+                course.title.contains(word)
+                        .or(course.courseHashtagList.any().hashtag.name.contains(word))
+                        .or(course.courseLocationList.any().name.contains(word)) :
+                null;
+    }
+
+    private BooleanExpression regionEq(Long regionId) {
+        return (regionId != null && regionId > 0) ?
+                course.courseLocationList.any().region.id.eq(regionId) :
+                null;
+    }
+
+    private BooleanExpression themeContain(List<Long> themeIds) {
+        return (themeIds != null && !themeIds.isEmpty() && themeIds.get(0) != 0) ?
+                course.themeOfCourseList.any().theme.id.in(themeIds) :
+                null;
+    }
+
+    private BooleanExpression isVisited(int isVisited) {
+        return isVisited == 1 ?
+                course.visited.eq(true) :
+                null;
+    }
+
+//    public Predicate searchCoursesFilter(String word, Long regionId, List<Long> themeIds, int isVisited) {
+//
+//        BooleanBuilder builder = new BooleanBuilder();
+//
+//        if (word != null && !word.isBlank()) {
+//            builder.or(course.title.contains(word))
+//                    .or(course.courseHashtagList.any().hashtag.name.contains(word))
+//                    .or(course.courseLocationList.any().name.contains(word));
+//        }
+//
+//        if (regionId != null && regionId > 0) {
+//            builder.and(course.courseLocationList.any().region.id.eq(regionId));
+//        }
+//
+//        if(themeIds != null && !themeIds.isEmpty() && themeIds.get(0) != 0){
+//            BooleanBuilder themeBuilder = new BooleanBuilder();
+//            themeIds.forEach(id -> themeBuilder.or(course.themeOfCourseList.any().theme.id.eq(id)));
+//            builder.and(themeBuilder.getValue());
+////            themeIds.forEach(id -> builder.or(course.themeOfCourseList.any().theme.id.eq(id)));
+//        }
+//
+//        if(isVisited == 1){
+//            builder.and(course.visited.eq(true));
+//        }
+//
+//        return builder.getValue();
+//    }
+
 }
