@@ -7,7 +7,7 @@ import 'package:animated_button_bar/animated_button_bar.dart';
 import '../course_search/search.dart' as search;
 // import '../course_search/course_list.dart' as course;
 import 'package:get/get.dart';
-import '../main.dart' as main;
+// import '../main.dart' as main;
 import '../controller/getx_controller.dart';
 import 'profile_edit.dart' as profie_edit;
 import 'package:dio/dio.dart';
