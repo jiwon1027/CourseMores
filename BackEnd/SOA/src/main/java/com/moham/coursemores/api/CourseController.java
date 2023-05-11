@@ -129,7 +129,7 @@ public class CourseController {
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
 
-    @GetMapping("{userId}")
+    @GetMapping("my/{userId}")
     public ResponseEntity<Map<String, Object>> getMyCourseList(
             @PathVariable Long userId) {
         logger.info(">> request : userId={}",userId);
@@ -139,6 +139,20 @@ public class CourseController {
         List<MyCourseResDto> myCourseResDtoList = courseService.getMyCourseList(userId);
         resultMap.put("myCourseList", myCourseResDtoList);
         logger.info("<< response : myCourseList={}", myCourseResDtoList);
+
+        return new ResponseEntity<>(resultMap, HttpStatus.OK);
+    }
+
+    @GetMapping("{courseId}")
+    public ResponseEntity<Map<String, Object>> importCourse(
+            @PathVariable Long courseId) {
+        logger.info(">> request : courseId={}",courseId);
+
+        Map<String, Object> resultMap = new HashMap<>();
+
+        List<CourseImportResDto> courseImportResDtoList = courseService.importCourse(courseId);
+        resultMap.put("courseImportList ", courseImportResDtoList);
+        logger.info("<< response : courseImportList={}", courseImportResDtoList);
 
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }

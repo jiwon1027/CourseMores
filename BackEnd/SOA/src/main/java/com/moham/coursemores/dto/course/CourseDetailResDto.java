@@ -17,5 +17,6 @@ public class CourseDetailResDto {
     private double longitude;
     private String sido;
     private String gugun;
-    private List<String> locationImage;
+    private String roadViewImage;
+    private List<String> locationImageList;
 }

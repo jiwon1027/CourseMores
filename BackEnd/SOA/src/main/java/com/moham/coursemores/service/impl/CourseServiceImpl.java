@@ -203,6 +203,7 @@ public class CourseServiceImpl implements CourseService {
                 .interestCount(course.getInterestCount())
                 .sido(course.getSido())
                 .gugun(course.getGugun())
+                .createTime(course.getCreateTime())
                 .hashtagList(course.getCourseHashtagList()
                         .stream()
                         .map(o -> o.getHashtag().getName())
@@ -234,13 +235,30 @@ public class CourseServiceImpl implements CourseService {
                         .longitude(courseLocation.getLongitude())
                         .sido(courseLocation.getRegion().getSido())
                         .gugun(courseLocation.getRegion().getGugun())
-                        .locationImage(courseLocation.getCourseLocationImageList()
+                        .roadViewImage(courseLocation.getRoadViewImage())
+                        .locationImageList(courseLocation.getCourseLocationImageList()
                                 .stream()
                                 .map(CourseLocationImage::getImage)
                                 .collect(Collectors.toList())
                         )
                         .build()
                 )
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<CourseImportResDto> importCourse(Long courseId) {
+        return courseRepository.findById(courseId)
+                .orElseThrow(()->new RuntimeException("해당 코스를 찾을 수 없습니다."))
+                .getCourseLocationList()
+                .stream()
+                .map(location -> CourseImportResDto.builder()
+                        .name(location.getName())
+                        .longitude(location.getLongitude())
+                        .latitude(location.getLatitude())
+                        .sido(location.getRegion().getSido())
+                        .gugun(location.getRegion().getGugun())
+                        .build())
                 .collect(Collectors.toList());
     }
 
@@ -344,7 +362,7 @@ public class CourseServiceImpl implements CourseService {
         // 코스의 장소 정보 생성
         for (LocationCreateReqDto location : courseCreateReqDto.getLocationList()) {
             // 코스의 장소의 지역 가져오기
-            Region region = regionRepository.findBySidoAndGugun(location.getSido(), location.getGugun())
+            Region region = regionRepository.findBySidoAndGugun(location.getSido().trim(), location.getGugun().trim())
                     .orElseThrow(() -> new RuntimeException("해당 지역을 찾을 수 없습니다."));
             // 코스의 장소 저장
             CourseLocation courseLocation = courseLocationRepository.save(CourseLocation.builder()

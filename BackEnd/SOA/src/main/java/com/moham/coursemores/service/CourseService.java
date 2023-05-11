@@ -15,6 +15,7 @@ public interface CourseService {
     void increaseViewCount(Long courseId);
     CourseInfoResDto getCourseInfo(Long courseId);
     List<CourseDetailResDto> getCourseDetail(Long courseId);
+    List<CourseImportResDto> importCourse(Long courseId);
     List<MyCourseResDto> getMyCourseList(Long userId);
     Long addCourse(Long userId, CourseCreateReqDto courseCreateReqDto, List<MultipartFile> imageList);
     void setCourse(Long userId, Long courseId, CourseUpdateReqDto courseUpdateReqDto, List<MultipartFile> imageList);
