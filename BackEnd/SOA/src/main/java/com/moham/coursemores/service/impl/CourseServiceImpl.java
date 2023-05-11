@@ -362,7 +362,7 @@ public class CourseServiceImpl implements CourseService {
         // 코스의 장소 정보 생성
         for (LocationCreateReqDto location : courseCreateReqDto.getLocationList()) {
             // 코스의 장소의 지역 가져오기
-            Region region = regionRepository.findBySidoAndGugun(location.getSido(), location.getGugun())
+            Region region = regionRepository.findBySidoAndGugun(location.getSido().trim(), location.getGugun().trim())
                     .orElseThrow(() -> new RuntimeException("해당 지역을 찾을 수 없습니다."));
             // 코스의 장소 저장
             CourseLocation courseLocation = courseLocationRepository.save(CourseLocation.builder()
