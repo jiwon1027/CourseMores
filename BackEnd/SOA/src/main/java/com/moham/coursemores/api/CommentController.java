@@ -39,7 +39,7 @@ public class CommentController {
             @PathVariable Long userId,
             @RequestParam int page,
             @RequestParam String sortby) {
-        logger.debug("[0/2][GET][/comment/course/{}/{}] >> request : page, sortby\n page = {}\n sortby = {}", courseId, userId, page, sortby);
+        logger.debug("[0/2][GET][/comment/course/{}/{}] << request : page, sortby\n\n page = {}\n\n sortby = {}\n", courseId, userId, page, sortby);
 
         Map<String, Object> resultMap = new HashMap<>();
 
@@ -47,14 +47,14 @@ public class CommentController {
         List<CommentResDTO> commentList = commentService.getCommentList(courseId, page, sortby);
         resultMap.put("commentList", commentList);
 
-        logger.debug("[2/2][GET][/comment/course/{}/{}] << response : commentList\n commentList = {}",courseId, userId, commentList);
+        logger.debug("[2/2][GET][/comment/course/{}/{}] >> response : commentList\n\n commentList = {}\n",courseId, userId, commentList);
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
 
     @GetMapping("{userId}")
     public ResponseEntity<Map<String, Object>> serarchMyCommentList(
             @PathVariable Long userId){
-        logger.debug("[0/2][GET][/comment/{}] >> request : none", userId);
+        logger.debug("[0/2][GET][/comment/{}] << request : none", userId);
 
         Map<String, Object> resultMap = new HashMap<>();
 
@@ -62,7 +62,7 @@ public class CommentController {
         List<CommentResDTO> myCommentList = commentService.getMyCommentList(userId);
         resultMap.put("myCommentList", myCommentList);
 
-        logger.debug("[2/2][GET][/comment/{}] << response : myCommentList\n myCommentList = {}", userId, myCommentList);
+        logger.debug("[2/2][GET][/comment/{}] >> response : myCommentList\n\n myCommentList = {}\n", userId, myCommentList);
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
 
@@ -73,12 +73,12 @@ public class CommentController {
             @PathVariable Long userId,
             @RequestPart CommentCreateReqDTO commentCreateReqDTO,
             @RequestPart(required = false) List<MultipartFile> imageList) {
-        logger.debug("[0/2][POST][/comment/course/{}/{}] >> request : commentCreateReqDTO, imageList\n commentCreateReqDTO = {}\n imageList = {}", courseId, userId, commentCreateReqDTO, imageList);
+        logger.debug("[0/2][POST][/comment/course/{}/{}] << request : commentCreateReqDTO, imageList\n\n commentCreateReqDTO = {}\n\n imageList = {}\n", courseId, userId, commentCreateReqDTO, imageList);
 
         logger.debug("[1/2][POST][/comment/course/{}/{}] ... cs.createComment", courseId, userId);
         commentService.createComment(courseId, userId, commentCreateReqDTO, imageList);
 
-        logger.debug("[2/2][POST][/comment/course/{}/{}] << response : none", courseId, userId);
+        logger.debug("[2/2][POST][/comment/course/{}/{}] >> response : none\n", courseId, userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -88,13 +88,13 @@ public class CommentController {
             @PathVariable Long userId,
             @RequestPart CommentUpdateReqDTO commentUpdateReqDTO,
             @RequestPart(required = false) List<MultipartFile> imageList){
-        logger.debug("[0/2][PUT][/comment/{}/{}] >> request : commentUpdateReqDTO, imageList\n commentUpdateReqDTO = {}\n imageList = {}",
+        logger.debug("[0/2][PUT][/comment/{}/{}] << request : commentUpdateReqDTO, imageList\n\n commentUpdateReqDTO = {}\n\n imageList = {}\n",
                 commentId, userId, commentUpdateReqDTO, imageList);
 
         logger.debug("[1/2][PUT][/comment/{}/{}] ... cs.updateComment",commentId,userId);
         commentService.updateComment(commentId, userId, commentUpdateReqDTO, imageList);
 
-        logger.debug("[2/2][PUT][/comment/{}/{}] << response : none",commentId,userId);
+        logger.debug("[2/2][PUT][/comment/{}/{}] >> response : none\n",commentId,userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -102,12 +102,12 @@ public class CommentController {
     public ResponseEntity<Void> deleteComment(
             @PathVariable Long commentId,
             @PathVariable Long userId){
-        logger.debug("[0/2][DELETE][/comment/{}/{}] >> request : none", commentId,userId);
+        logger.debug("[0/2][DELETE][/comment/{}/{}] << request : none", commentId,userId);
 
         logger.debug("[1/2][DELETE][/comment/{}/{}] ... cs.deleteComment", commentId,userId);
         commentService.deleteComment(commentId, userId);
 
-        logger.debug("[2/2][DELETE][/comment/{}/{}] << response : none", commentId,userId);
+        logger.debug("[2/2][DELETE][/comment/{}/{}] >> response : none\n", commentId,userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

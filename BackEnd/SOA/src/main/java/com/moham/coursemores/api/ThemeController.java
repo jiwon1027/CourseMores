@@ -26,7 +26,7 @@ public class ThemeController {
 
     @GetMapping
     public ResponseEntity<Map<String, Object>> getThemeList() {
-        logger.debug("[0/2][GET][/theme] >> request : none");
+        logger.debug("[0/2][GET][/theme] << request : none");
 
         Map<String, Object> resultMap = new HashMap<>();
 
@@ -34,7 +34,7 @@ public class ThemeController {
         List<ThemeResDto> themeList = themeService.getThemeList();
         resultMap.put("themeList",themeList);
 
-        logger.debug("[2/2][GET][/theme] << response : themeList\n themeList = {}",themeList);
+        logger.debug("[2/2][GET][/theme] >> response : themeList\n\n themeList = {}\n",themeList);
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
 }

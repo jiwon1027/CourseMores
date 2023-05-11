@@ -28,7 +28,7 @@ public class LikeController {
     public ResponseEntity<Map<String, Object>> checkLikeCourse(
             @PathVariable Long userId,
             @PathVariable Long courseId) {
-        logger.debug("[0/2][GET][/like/course/{}/{}] >> request : none", courseId, userId);
+        logger.debug("[0/2][GET][/like/course/{}/{}] << request : none", courseId, userId);
 
         Map<String, Object> resultMap = new HashMap<>();
 
@@ -36,7 +36,7 @@ public class LikeController {
         boolean isLikeCourse = likeService.checkLikeCourse(userId, courseId);
         resultMap.put("isLikeCourse", isLikeCourse);
 
-        logger.debug("[2/2][GET][/like/course/{}/{}] << response : isLikeCourse\n isLikeCourse = {}", courseId, userId, isLikeCourse);
+        logger.debug("[2/2][GET][/like/course/{}/{}] >> response : isLikeCourse\n\n isLikeCourse = {}\n", courseId, userId, isLikeCourse);
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
 
@@ -44,12 +44,12 @@ public class LikeController {
     public ResponseEntity<Void> addLikeCourse(
             @PathVariable Long userId,
             @PathVariable Long courseId) {
-        logger.debug("[0/2][POST][/like/course/{}/{}] >> request : none", courseId, userId);
+        logger.debug("[0/2][POST][/like/course/{}/{}] << request : none", courseId, userId);
 
         logger.debug("[1/2][POST][/like/course/{}/{}] ... ls.addLikeCourse", courseId, userId);
         likeService.addLikeCourse(userId, courseId);
 
-        logger.debug("[2/2][POST][/like/course/{}/{}] << response : none", courseId, userId);
+        logger.debug("[2/2][POST][/like/course/{}/{}] >> response : none\n", courseId, userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -57,12 +57,12 @@ public class LikeController {
     public ResponseEntity<Void> deleteLikeCourse(
             @PathVariable Long userId,
             @PathVariable Long courseId) {
-        logger.debug("[0/2][DELETE][/like/course/{}/{}] >> request : none", courseId, userId);
+        logger.debug("[0/2][DELETE][/like/course/{}/{}] << request : none", courseId, userId);
 
         logger.debug("[1/2][DELETE][/like/course/{}/{}] ... ls.deleteLikeCourse", courseId, userId);
         likeService.deleteLikeCourse(userId, courseId);
 
-        logger.debug("[2/2][DELETE][/like/course/{}/{}] << response : none", courseId, userId);
+        logger.debug("[2/2][DELETE][/like/course/{}/{}] >> response : none\n", courseId, userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -70,7 +70,7 @@ public class LikeController {
     public ResponseEntity<Map<String, Object>> checkLikeComment(
             @PathVariable Long userId,
             @PathVariable Long commentId) {
-        logger.debug("[0/2][GET][/like/comment/{}/{}] >> request : none", commentId, userId);
+        logger.debug("[0/2][GET][/like/comment/{}/{}] << request : none", commentId, userId);
 
         Map<String, Object> resultMap = new HashMap<>();
 
@@ -78,7 +78,7 @@ public class LikeController {
         boolean isLikeComment = likeService.checkLikeComment(userId, commentId);
         resultMap.put("isLikeComment", isLikeComment);
 
-        logger.debug("[2/2][GET][/like/comment/{}/{}] << response : isLikeComment\n isLikeComment = {}", commentId, userId, isLikeComment);
+        logger.debug("[2/2][GET][/like/comment/{}/{}] >> response : isLikeComment\n\n isLikeComment = {}\n", commentId, userId, isLikeComment);
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
 
@@ -86,12 +86,12 @@ public class LikeController {
     public ResponseEntity<Void> addLikeComment(
             @PathVariable Long userId,
             @PathVariable Long commentId) {
-        logger.debug("[0/2][POST][/like/comment/{}/{}] >> request : none", commentId, userId);
+        logger.debug("[0/2][POST][/like/comment/{}/{}] << request : none", commentId, userId);
 
         logger.debug("[1/2][POST][/like/comment/{}/{}] ... ls.addLikeComment", commentId, userId);
         likeService.addLikeComment(userId, commentId);
 
-        logger.debug("[2/2][POST][/like/comment/{}/{}] << response : none", commentId, userId);
+        logger.debug("[2/2][POST][/like/comment/{}/{}] >> response : none\n", commentId, userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -99,12 +99,12 @@ public class LikeController {
     public ResponseEntity<Void> deleteLikeComment(
             @PathVariable Long userId,
             @PathVariable Long commentId) {
-        logger.debug("[0/2][DELETE][/like/comment/{}/{}] >> request : none", commentId, userId);
+        logger.debug("[0/2][DELETE][/like/comment/{}/{}] << request : none", commentId, userId);
 
         logger.debug("[1/2][DELETE][/like/comment/{}/{}] ... ls.deleteLikeComment", commentId, userId);
         likeService.deleteLikeComment(userId, commentId);
 
-        logger.debug("[2/2][DELETE][/like/comment/{}/{}] << response : none", commentId, userId);
+        logger.debug("[2/2][DELETE][/like/comment/{}/{}] >> response : none\n", commentId, userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

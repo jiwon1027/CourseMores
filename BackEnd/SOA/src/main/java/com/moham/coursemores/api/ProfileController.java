@@ -26,7 +26,7 @@ public class ProfileController {
     @GetMapping("{userId}")
     public ResponseEntity<Map<String, Object>> myProfile(
             @PathVariable Long userId) {
-        logger.debug("[0/2][GET][/profile/{}] >> request : none", userId);
+        logger.debug("[0/2][GET][/profile/{}] << request : none", userId);
 
         Map<String, Object> resultMap = new HashMap<>();
 
@@ -34,18 +34,18 @@ public class ProfileController {
         UserInfoResDto userInfoResDto = profileService.getMyProfile(userId);
         resultMap.put("userInfo", userInfoResDto);
 
-        logger.debug("[2/2][GET][/profile/{}] << response : userInfo\n userInfo = {}", userId, userInfoResDto);
+        logger.debug("[2/2][GET][/profile/{}] >> response : userInfo\n\n userInfo = {}\n", userId, userInfoResDto);
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
 
     @PutMapping("{userId}/alram")
     public ResponseEntity<Void> alarmSetting(
             @PathVariable Long userId){
-        logger.debug("[0/?][PUT][/profile/{}/alram] >> request : none", userId);
+        logger.debug("[0/?][PUT][/profile/{}/alram] << request : none", userId);
         
         // 알림 셋팅
 
-        logger.debug("[?/?][PUT][/profile/{}/alram] << response : none", userId);
+        logger.debug("[?/?][PUT][/profile/{}/alram] >> response : none\n", userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -54,35 +54,35 @@ public class ProfileController {
             @PathVariable Long userId,
             @RequestPart UserInfoUpdateReqDto userInfoUpdateReqDto,
             @RequestPart(required = false) MultipartFile profileImage){
-        logger.debug("[0/2][PUT][/profile/{}] >> request : userInfoUpdateReqDto, profileImage\n userInfoUpdateReqDto = {}\n profileImage = {}",
+        logger.debug("[0/2][PUT][/profile/{}] << request : userInfoUpdateReqDto, profileImage\n\n userInfoUpdateReqDto = {}\n\n profileImage = {}\n",
                 userId, userInfoUpdateReqDto, profileImage);
 
         logger.debug("[1/2][PUT][/profile/{}] ...ps.updateUserInfo",userId);
         profileService.updateUserInfo(userId, userInfoUpdateReqDto, profileImage);
 
-        logger.debug("[2/2][PUT][/profile/{}] << response : none", userId);
+        logger.debug("[2/2][PUT][/profile/{}] >> response : none\n", userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("logout")
     public ResponseEntity<Void> logout() {
-        logger.debug("[0/2][GET][/profile/logout] >> request : none");
+        logger.debug("[0/2][GET][/profile/logout] << request : none");
         // 로그아웃 처리
         logger.debug("[1/2][GET][/profile/logout] ...");
 
-        logger.debug("[2/2][GET][/profile/logout] << response : none");
+        logger.debug("[2/2][GET][/profile/logout] >> response : none\n");
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("{userId}")
     public ResponseEntity<Void> deleteUser(
             @PathVariable Long userId){
-        logger.debug("[0/2][DELETE][/profile/{}] >> request : none", userId);
+        logger.debug("[0/2][DELETE][/profile/{}] << request : none", userId);
 
         logger.debug("[1/2][DELETE][/profile/{}] ...ps.deleteUser", userId);
         profileService.deleteUser(userId);
 
-        logger.debug("[2/2][DELETE][/profile/{}] << response : none",userId);
+        logger.debug("[2/2][DELETE][/profile/{}] >> response : none\n",userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

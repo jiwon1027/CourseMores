@@ -30,7 +30,7 @@ public class UserController {
     @GetMapping("validation/nickname/{nickname}")
     public ResponseEntity<Map<String,Object>> deleteUser(
             @PathVariable String nickname){
-        logger.debug("[0/2][GET][/user/validation/nickname/{}] >> request : none",nickname);
+        logger.debug("[0/2][GET][/user/validation/nickname/{}] << request : none",nickname);
 
         Map<String,Object> resultMap = new HashMap<>();
 
@@ -38,7 +38,7 @@ public class UserController {
         boolean isDuplicated = userService.isDuplicatedNickname(nickname);
         resultMap.put("isDuplicated", isDuplicated);
 
-        logger.debug("[2/2][GET][/user/validation/nickname/{}] << response : isDuplicated\n isDuplicated = {}",nickname,isDuplicated);
+        logger.debug("[2/2][GET][/user/validation/nickname/{}] >> response : isDuplicated\n\n isDuplicated = {}\n",nickname,isDuplicated);
         return new ResponseEntity<>(resultMap,HttpStatus.OK);
     }
 
@@ -48,7 +48,7 @@ public class UserController {
             @RequestPart(required = false) MultipartFile profileImage,
             @AuthenticationPrincipal User user){
         Long userId = Long.parseLong(user.getUsername());
-        logger.debug("[0/3][POST][/user/signup] >> request : userId, userInfoCreateReqDto, profileImage\n userId = {} \n userInfoCreateReqDto = {}\n profileImage = {}",
+        logger.debug("[0/3][POST][/user/signup] << request : userId, userInfoCreateReqDto, profileImage\n\n userId = {} \n\n userInfoCreateReqDto = {}\n\n profileImage = {}\n",
                 userId, userInfoCreateReqDto, profileImage);
 
         Map<String,Object> resultMap = new HashMap<>();
@@ -59,7 +59,7 @@ public class UserController {
         UserInfoResDto userInfo = userService.getUserInfo(userId);
         resultMap.put("userInfo",userInfo);
 
-        logger.debug("[3/3][POST][/user/signup] << response : userInfo\n userInfo = {}", userInfo);
+        logger.debug("[3/3][POST][/user/signup] >> response : userInfo\n\n userInfo = {}\n", userInfo);
 
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
@@ -67,7 +67,7 @@ public class UserController {
     @PostMapping("reissue")
     public ResponseEntity<Map<String, Object>> reissue(
             @RequestBody TokenReissueReqDto tokenReissueReqDto) {
-        logger.debug("[0/2][POST][/user/reissue] >> request : tokenReissueReqDto\n tokenReissueReqDto = {}", tokenReissueReqDto);
+        logger.debug("[0/2][POST][/user/reissue] << request : tokenReissueReqDto\n\n tokenReissueReqDto = {}\n", tokenReissueReqDto);
 
         Map<String, Object> resultMap = new HashMap<>();
 
@@ -75,7 +75,7 @@ public class UserController {
         String accessToken = userService.reissue(tokenReissueReqDto);
         resultMap.put("accessToken", accessToken);
 
-        logger.debug("[2/2][POST][/user/reissue] << response : accessToken\n accessToken = {}",accessToken);
+        logger.debug("[2/2][POST][/user/reissue] >> response : accessToken\n\n accessToken = {}\n",accessToken);
         return new ResponseEntity<>(resultMap,HttpStatus.OK);
     }
 

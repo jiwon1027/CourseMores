@@ -26,18 +26,18 @@ public class RegionController {
 
     @GetMapping("dummy")
     public ResponseEntity<Void> saveDummyData() throws Exception {
-        logger.debug("[0/1][GET][/region/dummy] >> request : none");
+        logger.debug("[0/1][GET][/region/dummy] << request : none");
 
         logger.debug("[1/2][GET][/region/dummy] ...rs.saveDummy");
         regionService.saveDummy();
 
-        logger.debug("[2/2][GET][/region/dummy] << response : none");
+        logger.debug("[2/2][GET][/region/dummy] >> response : none\n");
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping
     public ResponseEntity<Map<String, Object>> getSidoList() {
-        logger.debug("[0/2][GET][/region] >> request : none");
+        logger.debug("[0/2][GET][/region] << request : none");
 
         Map<String, Object> resultMap = new HashMap<>();
 
@@ -45,14 +45,14 @@ public class RegionController {
         List<String> sidoList = regionService.getSidoList();
         resultMap.put("sidoList",sidoList);
 
-        logger.debug("[2/2][GET][/region] << response : sidoList\n sidoList = {}",sidoList);
+        logger.debug("[2/2][GET][/region] >> response : sidoList\n\n sidoList = {}\n",sidoList);
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
 
     @GetMapping("{sido}")
     public ResponseEntity<Map<String, Object>> getGugunList(
             @PathVariable String sido) {
-        logger.debug("[0/2][GET][/region/{}] >> request : none",sido);
+        logger.debug("[0/2][GET][/region/{}] << request : none",sido);
 
         Map<String, Object> resultMap = new HashMap<>();
 
@@ -60,7 +60,7 @@ public class RegionController {
         List<GugunResDto> gugunList = regionService.getGugunList(sido);
         resultMap.put("gugunList",gugunList);
 
-        logger.debug("[2/2][GET][/region/{}] << response : gugunList\n gugunList = {}",sido,gugunList);
+        logger.debug("[2/2][GET][/region/{}] >> response : gugunList\n\n gugunList = {}\n",sido,gugunList);
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
 }
