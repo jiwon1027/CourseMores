@@ -7,4 +7,6 @@ public interface NotificationService {
 
     List<NotificationResDto> getMyNotificationList(Long userId);
 
+    void deleteNotification(Long userId, Long notificationId);
+
 }

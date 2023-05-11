@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,6 +36,17 @@ public class NotificationController {
 
         logger.debug("[2/2][GET][/notification/{}] >> response : myNotificationList\n myNotificationList = {}\n", userId, notificationResDtoList);
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
+    }
+
+    @DeleteMapping("{notificationId}/{userId}")
+    public ResponseEntity<Void> deleteInterestCourse(@PathVariable Long notificationId, @PathVariable Long userId) {
+        logger.debug("[0/2][DELETE][/notification/{}/{}] << request : none", notificationId, userId);
+
+        logger.debug("[1/2][DELETE][/notification/{}/{}] ... ns.deleteNotification", notificationId, userId);
+        notificationService.deleteNotification(userId, notificationId);
+
+        logger.debug("[2/2][DELETE][/notification/{}/{}] >> response : none\n", notificationId, userId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }
