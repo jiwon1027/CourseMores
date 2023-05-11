@@ -34,7 +34,7 @@ public class ThemeController {
         List<ThemeResDto> themeList = themeService.getThemeList();
         resultMap.put("themeList",themeList);
 
-        logger.debug("[2/2][GET][/theme] >> response : themeList\n\n themeList = {}\n",themeList);
+        logger.debug("[2/2][GET][/theme] >> response : themeList\n themeList = {}\n",themeList);
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
 }

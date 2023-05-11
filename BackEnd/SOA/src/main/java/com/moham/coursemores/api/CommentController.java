@@ -39,7 +39,7 @@ public class CommentController {
             @PathVariable Long userId,
             @RequestParam int page,
             @RequestParam String sortby) {
-        logger.debug("[0/2][GET][/comment/course/{}/{}] << request : page, sortby\n\n page = {}\n\n sortby = {}\n", courseId, userId, page, sortby);
+        logger.debug("[0/2][GET][/comment/course/{}/{}] << request : page, sortby\n page = {}\n sortby = {}", courseId, userId, page, sortby);
 
         Map<String, Object> resultMap = new HashMap<>();
 
@@ -47,7 +47,7 @@ public class CommentController {
         List<CommentResDTO> commentList = commentService.getCommentList(courseId, page, sortby);
         resultMap.put("commentList", commentList);
 
-        logger.debug("[2/2][GET][/comment/course/{}/{}] >> response : commentList\n\n commentList = {}\n",courseId, userId, commentList);
+        logger.debug("[2/2][GET][/comment/course/{}/{}] >> response : commentList\n commentList = {}\n",courseId, userId, commentList);
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
 
@@ -62,7 +62,7 @@ public class CommentController {
         List<CommentResDTO> myCommentList = commentService.getMyCommentList(userId);
         resultMap.put("myCommentList", myCommentList);
 
-        logger.debug("[2/2][GET][/comment/{}] >> response : myCommentList\n\n myCommentList = {}\n", userId, myCommentList);
+        logger.debug("[2/2][GET][/comment/{}] >> response : myCommentList\n myCommentList = {}\n", userId, myCommentList);
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
 
@@ -73,7 +73,7 @@ public class CommentController {
             @PathVariable Long userId,
             @RequestPart CommentCreateReqDTO commentCreateReqDTO,
             @RequestPart(required = false) List<MultipartFile> imageList) {
-        logger.debug("[0/2][POST][/comment/course/{}/{}] << request : commentCreateReqDTO, imageList\n\n commentCreateReqDTO = {}\n\n imageList = {}\n", courseId, userId, commentCreateReqDTO, imageList);
+        logger.debug("[0/2][POST][/comment/course/{}/{}] << request : commentCreateReqDTO, imageList\n commentCreateReqDTO = {}\n imageList = {}", courseId, userId, commentCreateReqDTO, imageList);
 
         logger.debug("[1/2][POST][/comment/course/{}/{}] ... cs.createComment", courseId, userId);
         commentService.createComment(courseId, userId, commentCreateReqDTO, imageList);
@@ -88,7 +88,7 @@ public class CommentController {
             @PathVariable Long userId,
             @RequestPart CommentUpdateReqDTO commentUpdateReqDTO,
             @RequestPart(required = false) List<MultipartFile> imageList){
-        logger.debug("[0/2][PUT][/comment/{}/{}] << request : commentUpdateReqDTO, imageList\n\n commentUpdateReqDTO = {}\n\n imageList = {}\n",
+        logger.debug("[0/2][PUT][/comment/{}/{}] << request : commentUpdateReqDTO, imageList\n commentUpdateReqDTO = {}\n imageList = {}",
                 commentId, userId, commentUpdateReqDTO, imageList);
 
         logger.debug("[1/2][PUT][/comment/{}/{}] ... cs.updateComment",commentId,userId);

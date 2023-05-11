@@ -37,7 +37,7 @@ public class InterestController {
         List<InterestCourseResDto> interestCourseResDtoList = interestService.getUserInterestCourseList(userId);
         resultMap.put("myInterestCourseList", interestCourseResDtoList);
 
-        logger.debug("[2/2][GET][/interest/{}] >> response : myInterestCourseList\n\n myInterestCourseList = {}\n", userId, interestCourseResDtoList);
+        logger.debug("[2/2][GET][/interest/{}] >> response : myInterestCourseList\n myInterestCourseList = {}\n", userId, interestCourseResDtoList);
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
 
@@ -53,7 +53,7 @@ public class InterestController {
         boolean isInterestCourse = interestService.checkInterest(userId, courseId);
         resultMap.put("isInterestCourse", isInterestCourse);
 
-        logger.debug("[2/2][GET][/interest/course/{}/{}] >> response\n\n isInterestCourse = {}\n", courseId, userId, isInterestCourse);
+        logger.debug("[2/2][GET][/interest/course/{}/{}] >> response\n isInterestCourse = {}\n", courseId, userId, isInterestCourse);
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
 

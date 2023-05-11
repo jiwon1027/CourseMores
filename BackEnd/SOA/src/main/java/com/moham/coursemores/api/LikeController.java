@@ -36,7 +36,7 @@ public class LikeController {
         boolean isLikeCourse = likeService.checkLikeCourse(userId, courseId);
         resultMap.put("isLikeCourse", isLikeCourse);
 
-        logger.debug("[2/2][GET][/like/course/{}/{}] >> response : isLikeCourse\n\n isLikeCourse = {}\n", courseId, userId, isLikeCourse);
+        logger.debug("[2/2][GET][/like/course/{}/{}] >> response : isLikeCourse\n isLikeCourse = {}\n", courseId, userId, isLikeCourse);
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
 
@@ -78,7 +78,7 @@ public class LikeController {
         boolean isLikeComment = likeService.checkLikeComment(userId, commentId);
         resultMap.put("isLikeComment", isLikeComment);
 
-        logger.debug("[2/2][GET][/like/comment/{}/{}] >> response : isLikeComment\n\n isLikeComment = {}\n", commentId, userId, isLikeComment);
+        logger.debug("[2/2][GET][/like/comment/{}/{}] >> response : isLikeComment\n isLikeComment = {}\n", commentId, userId, isLikeComment);
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
 

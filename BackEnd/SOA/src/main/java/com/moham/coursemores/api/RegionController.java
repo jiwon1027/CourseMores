@@ -45,7 +45,7 @@ public class RegionController {
         List<String> sidoList = regionService.getSidoList();
         resultMap.put("sidoList",sidoList);
 
-        logger.debug("[2/2][GET][/region] >> response : sidoList\n\n sidoList = {}\n",sidoList);
+        logger.debug("[2/2][GET][/region] >> response : sidoList\n sidoList = {}\n",sidoList);
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
 
@@ -60,7 +60,7 @@ public class RegionController {
         List<GugunResDto> gugunList = regionService.getGugunList(sido);
         resultMap.put("gugunList",gugunList);
 
-        logger.debug("[2/2][GET][/region/{}] >> response : gugunList\n\n gugunList = {}\n",sido,gugunList);
+        logger.debug("[2/2][GET][/region/{}] >> response : gugunList\n gugunList = {}\n",sido,gugunList);
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
 }
