@@ -53,7 +53,7 @@ public class ProfileController {
     public ResponseEntity<Void> putUserInfo(
             @PathVariable Long userId,
             @RequestPart UserInfoUpdateReqDto userInfoUpdateReqDto,
-            @RequestPart MultipartFile profileImage){
+            @RequestPart(required = false) MultipartFile profileImage){
         logger.debug("[0/2][PUT][/profile/{}] >> request : userInfoUpdateReqDto, profileImage\n userInfoUpdateReqDto = {}\n profileImage = {}",
                 userId, userInfoUpdateReqDto, profileImage);
 
