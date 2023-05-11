@@ -37,7 +37,7 @@ public class Comment extends DeleteTimeEntity {
     private int people;
 
     @NotNull
-    @Column(length = 1000)
+    @Column(length = 5000)
     private String content;
 
     @NotNull

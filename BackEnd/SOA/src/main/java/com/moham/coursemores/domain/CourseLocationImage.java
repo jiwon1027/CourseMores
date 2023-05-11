@@ -19,7 +19,7 @@ public class CourseLocationImage extends CreateTimeEntity {
     private Long id;
 
     @NotNull
-    @Column(length = 500)
+    @Column(length = 1000)
     private String image;
 
     @NotNull

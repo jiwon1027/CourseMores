@@ -24,7 +24,7 @@ public class User extends DeleteTimeEntity {
     private Long id;
 
     @NotNull
-    @Column(length = 50)
+    @Column(length = 100)
     private String email;
 
     @NotNull
@@ -49,7 +49,7 @@ public class User extends DeleteTimeEntity {
     @Column
     private int age;
 
-    @Column
+    @Column(length = 1000)
     private String profileImage;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)

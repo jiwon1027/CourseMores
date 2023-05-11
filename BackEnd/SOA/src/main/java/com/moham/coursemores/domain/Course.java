@@ -25,7 +25,7 @@ public class Course extends DeleteTimeEntity {
     @Column
     private String title;
 
-    @Column(length = 1000)
+    @Column(length = 5000)
     private String content;
 
     @Column

@@ -40,7 +40,7 @@ public class CourseLocation extends UpdateTimeEntity {
     @Column(length = 50)
     private String title;
 
-    @Column(length = 1000)
+    @Column(length = 5000)
     private String content;
 
     @NotNull
