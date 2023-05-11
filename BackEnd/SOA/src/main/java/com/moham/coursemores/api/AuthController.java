@@ -31,31 +31,36 @@ public class AuthController {
     public ResponseEntity<Map<String, Object>> kakaoLogin(
             @RequestBody Map<String,Object> requestMap) {
         String accessToken = (String)requestMap.get("accessToken");
-        logger.info(">> request : accessToken={}", accessToken);
+        logger.debug("[0/6][POST][/auth/kakao/login] >> request : accessToken\n accessToken = {}", accessToken);
 
         Map<String, Object> resultMap = new HashMap<>();
 
+        logger.debug("[1/6][POST][/auth/kakao/login] ... ols.kakao");
         Long userId = oAuthLoginService.kakao(accessToken);
-        logger.info("<< response : userId={}",userId);
 
+        logger.debug("[2/6][POST][/auth/kakao/login] ... userId = {}", userId);
         if(userId == -1L){
             resultMap.put("agree",false);
-            logger.info("<< response : agree={}",false);
+            logger.debug("[3/6][POST][/auth/kakao/login] << response : agree\n agree = {}", false);
             return new ResponseEntity<>(resultMap,HttpStatus.OK);
         }
+        else{
+            resultMap.put("agree",true);
+        }
 
-        resultMap.put("agree",true);
-        logger.info("<< response : agree={}",true);
-
+        logger.debug("[3/6][POST][/auth/kakao/login] ... us.getUserInfo");
         UserInfoResDto userInfo = userService.getUserInfo(userId);
         resultMap.put("userInfo",userInfo);
-        logger.info("<< response : userInfo={}",userInfo);
 
+        logger.debug("[4/6][POST][/auth/kakao/login] ... us.generateToken");
         TokenResDto tokenResDto = userService.generateToken(userId, OAuthProvider.KAKAO);
+
+        logger.debug("[5/6][POST][/auth/kakao/login] ... rs.save");
         refreshService.save(userId, tokenResDto.getRefreshToken());
         resultMap.put("token",tokenResDto);
-        logger.info("<< response : token={}",tokenResDto);
 
+        logger.debug("[6/6][POST][/auth/kakao/login] << response : agree, userInfo, token\n agree = {}\n userInfo = {}\n token = {}",
+                false, userInfo, tokenResDto);
         return new ResponseEntity<>(resultMap,HttpStatus.OK);
     }
 
@@ -63,22 +68,27 @@ public class AuthController {
     public ResponseEntity<Map<String, Object>> googleLogin(
             @RequestBody Map<String,Object> requestMap) {
         String email = (String)requestMap.get("email");
-        logger.info(">> request : email={}", email);
+        logger.debug("[0/6][POST][/auth/google/login] >> request : email\n email = {}", email);
 
+        logger.debug("[1/6][POST][/auth/google/login] ... ols.google");
         Long userId = oAuthLoginService.google(email);
-        logger.info("<< response : userId={}",userId);
+        logger.debug("[2/6][POST][/auth/google/login] ... userId = {}", userId);
 
         Map<String, Object> resultMap = new HashMap<>();
 
+        logger.debug("[3/6][POST][/auth/google/login] ... us.getUserInfo");
         UserInfoResDto userInfo = userService.getUserInfo(userId);
         resultMap.put("userInfo",userInfo);
-        logger.info("<< response : userInfo={}",userInfo);
 
+        logger.debug("[4/6][POST][/auth/google/login] ... us.generateToken");
         TokenResDto tokenResDto = userService.generateToken(userId, OAuthProvider.GOOGLE);
+
+        logger.debug("[5/6][POST][/auth/google/login] ... rs.save");
         refreshService.save(userId, tokenResDto.getRefreshToken());
         resultMap.put("token",tokenResDto);
-        logger.info("<< response : token={}",tokenResDto);
 
+        logger.debug("[6/6][POST][/auth/google/login] << response : userInfo, token\n userInfo = {}\n token = {}",
+                userInfo, tokenResDto);
         return new ResponseEntity<>(resultMap,HttpStatus.OK);
     }
 

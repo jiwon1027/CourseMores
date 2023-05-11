@@ -24,60 +24,78 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("elasticsearch")
 @RequiredArgsConstructor
 public class ElasticSearchController {
-    private final ElasticSearchService courseSearchService;
+
     private static final Logger logger = LoggerFactory.getLogger(ElasticSearchController.class);
 
+    private final ElasticSearchService courseSearchService;
+
+    @PostMapping("search")
+    public ResponseEntity<IndexDataResDTO> search(
+            @RequestBody Map<String, String> map) throws IOException {
+        logger.debug("[0/2][POST][/elasticsearch/search] >> request : value\n value = {}", map.get("value"));
+
+        logger.debug("[1/2][POST][/elasticsearch/search] ... css.search");
+        IndexDataResDTO result = courseSearchService.search(map.get("value"));
+
+        logger.debug("[2/2][POST][/elasticsearch/search] << response : result\n result = {}",result);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
     @PostMapping("cli")
-    public void insertCli(@RequestBody Map<String, String> map) {
+    public ResponseEntity<Void> insertCli(@RequestBody Map<String, String> map) {
         String id = map.get("id");
         String index = map.get("index");
         String value = map.get("value");
-
-        logger.info(">> request : index={}, id={}, value={}", id, index, value);
+        logger.debug("[0/2][POST][/elasticsearch/cli] >> request : id, index, value\n id = {}\n index = {}\n value = {}", id, index, value);
 
         if ("course".equals(index)) {
-            CourseDocument courseDocument = CourseDocument.builder().id(id).value(value).build();
-            courseSearchService.index(courseDocument);
+            logger.debug("[1/2][POST][/elasticsearch/cli] ... css.index");
+            courseSearchService.index(CourseDocument.builder()
+                    .id(id)
+                    .value(value)
+                    .build());
         } else if ("courselocation".equals(index)) {
-            CourseLocationDocument courseLocationDocument = CourseLocationDocument.builder().id(id).value(value).build();
-            courseSearchService.indexLoction(courseLocationDocument);
+            logger.debug("[1/2][POST][/elasticsearch/cli] ... css.indexLoction");
+            courseSearchService.indexLoction(CourseLocationDocument.builder()
+                    .id(id)
+                    .value(value)
+                    .build());
         } else if ("hashtag".equals(index)) {
-            HashtagDocument hashtagDocument = HashtagDocument.builder().id(id).value(value).build();
-            courseSearchService.indexHashtag(hashtagDocument);
+            logger.debug("[1/2][POST][/elasticsearch/cli] ... css.indexHashtag");
+            courseSearchService.indexHashtag(HashtagDocument.builder()
+                    .id(id)
+                    .value(value)
+                    .build());
         }
 
+        logger.debug("[2/2][POST][/elasticsearch/cli] << response : none");
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 
-    @PostMapping()
-    public void insert(@RequestBody IndexDataReqDTO indexDataReqDTO) {
+    @PostMapping
+    public ResponseEntity<Void> insert(@RequestBody IndexDataReqDTO indexDataReqDTO) {
+        logger.debug("[0/2][POST][/elasticsearch] >> request : indexDataReqDTO\n indexDataReqDTO = {}", indexDataReqDTO);
 
-        logger.info(">> request : indexDataReqDTO{}", indexDataReqDTO);
-
+        logger.debug("[1/2][POST][/elasticsearch] ... css.addIndex");
         courseSearchService.addIndex(indexDataReqDTO);
 
+        logger.debug("[2/2][POST][/elasticsearch] << response : none");
+        return new ResponseEntity<>(HttpStatus.OK);
     }
-    @PostMapping("search")
-    public ResponseEntity<IndexDataResDTO> search(@RequestBody Map<String, String> map) throws IOException {
 
-        logger.info(">> request : value={}", map.get("value"));
-
-        IndexDataResDTO result = courseSearchService.search(map.get("value"));
-
-        logger.info("<< response : result={}",result);
-
-        return new ResponseEntity<>(result, HttpStatus.OK);
-    }
 
     @PutMapping("cli")
     public ResponseEntity<Map<String, Object>> updateCli(@RequestBody Map<String, String> map) throws IOException {
         String id = map.get("id");
         String index = map.get("index");
         String value = map.get("value");
+        logger.debug("[0/2][PUT][/elasticsearch/cli] >> request : id, index, value\n id = {}\n index = {}\n value = {}", id, index, value);
 
-        logger.info(">> request : id={}, index={}, value={}", id,index,value);
+        logger.debug("[1/2][PUT][/elasticsearch/cli] ... css.updateCli");
         courseSearchService.updateCli(id, index, value);
 
+        logger.debug("[2/2][PUT][/elasticsearch/cli] << response : none");
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -85,10 +103,12 @@ public class ElasticSearchController {
     public ResponseEntity<Map<String, Object>> deleteCli(@RequestBody Map<String, String> map) throws IOException {
         String id = map.get("id");
         String index = map.get("index");
+        logger.debug("[0/2][DELETE][/elasticsearch/cli] >> request : id, index\n id = {}\n index = {}", id, index);
 
-        logger.info(">> request : id={}, index={}", id,index);
+        logger.debug("[1/2][DELETE][/elasticsearch/cli] ... css.deleteCli");
         courseSearchService.deleteCli(id, index);
 
+        logger.debug("[2/2][DELETE][/elasticsearch/cli] << response : none");
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

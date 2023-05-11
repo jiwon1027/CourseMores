@@ -26,38 +26,41 @@ public class RegionController {
 
     @GetMapping("dummy")
     public ResponseEntity<Void> saveDummyData() throws Exception {
-        logger.info(">> request : none");
+        logger.debug("[0/1][GET][/region/dummy] >> request : none");
 
+        logger.debug("[1/2][GET][/region/dummy] ...rs.saveDummy");
         regionService.saveDummy();
 
-        logger.info("<< response : none");
+        logger.debug("[2/2][GET][/region/dummy] << response : none");
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping
     public ResponseEntity<Map<String, Object>> getSidoList() {
-        logger.info(">> request : none");
+        logger.debug("[0/2][GET][/region] >> request : none");
 
         Map<String, Object> resultMap = new HashMap<>();
 
+        logger.debug("[1/2][GET][/region] ...rs.getSidoList");
         List<String> sidoList = regionService.getSidoList();
         resultMap.put("sidoList",sidoList);
-        logger.info("<< response : sidoList={}",sidoList);
 
+        logger.debug("[2/2][GET][/region] << response : sidoList\n sidoList = {}",sidoList);
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
 
     @GetMapping("{sido}")
     public ResponseEntity<Map<String, Object>> getGugunList(
             @PathVariable String sido) {
-        logger.info(">> request : sido={}",sido);
+        logger.debug("[0/2][GET][/region/{}] >> request : none",sido);
 
         Map<String, Object> resultMap = new HashMap<>();
 
+        logger.debug("[1/2][GET][/region/{}] ...rs.getGugunList",sido);
         List<GugunResDto> gugunList = regionService.getGugunList(sido);
         resultMap.put("gugunList",gugunList);
-        logger.info("<< response : gugunList={}",gugunList);
 
+        logger.debug("[2/2][GET][/region/{}] << response : gugunList\n gugunList = {}",sido,gugunList);
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
 }

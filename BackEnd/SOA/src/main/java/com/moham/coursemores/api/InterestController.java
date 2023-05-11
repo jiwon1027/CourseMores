@@ -29,14 +29,15 @@ public class InterestController {
     @GetMapping("{userId}")
     public ResponseEntity<Map<String, Object>> getUserInterestCourseList(
             @PathVariable Long userId) {
-        logger.info(">> request : userId={}", userId);
+        logger.debug("[0/2][GET][/interest/{}] >> request : none", userId);
 
         Map<String, Object> resultMap = new HashMap<>();
 
+        logger.debug("[1/2][GET][/interest/{}] ... is.getUserInterestCourseList", userId);
         List<InterestCourseResDto> interestCourseResDtoList = interestService.getUserInterestCourseList(userId);
         resultMap.put("myInterestCourseList", interestCourseResDtoList);
-        logger.info("<< response : myInterestCourseList = {}", interestCourseResDtoList);
 
+        logger.debug("[2/2][GET][/interest/{}] << response : myInterestCourseList\n myInterestCourseList = {}", userId, interestCourseResDtoList);
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
 
@@ -44,15 +45,15 @@ public class InterestController {
     public ResponseEntity<Map<String, Object>> checkInterest(
             @PathVariable Long userId,
             @PathVariable Long courseId) {
-        logger.info(">> request : userId={}", userId);
-        logger.info(">> request : courseId={}", courseId);
+        logger.debug("[0/2][GET][/interest/course/{}/{}] >> request : none", courseId, userId);
 
         Map<String, Object> resultMap = new HashMap<>();
 
+        logger.debug("[1/2][GET][/interest/course/{}/{}] ... is.checkInterest", courseId, userId);
         boolean isInterestCourse = interestService.checkInterest(userId, courseId);
         resultMap.put("isInterestCourse", isInterestCourse);
-        logger.info("<< response : isInterestCourse={}", isInterestCourse);
 
+        logger.debug("[2/2][GET][/interest/course/{}/{}] << response\n isInterestCourse = {}", courseId, userId, isInterestCourse);
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
 
@@ -60,12 +61,12 @@ public class InterestController {
     public ResponseEntity<Void> addInterestCourse(
             @PathVariable Long userId,
             @PathVariable Long courseId) {
-        logger.info(">> request : userId={}", userId);
-        logger.info(">> request : courseId={}", courseId);
+        logger.debug("[0/2][POST][/interest/course/{}/{}] >> request : none", courseId, userId);
 
+        logger.debug("[1/2][POST][/interest/course/{}/{}] ... is.addInterestCourse", courseId, userId);
         interestService.addInterestCourse(userId, courseId);
-        logger.info("<< response : none");
 
+        logger.debug("[2/2][POST][/interest/course/{}/{}] << response : none", courseId, userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -73,12 +74,12 @@ public class InterestController {
     public ResponseEntity<Void> deleteInterestCourse(
             @PathVariable Long userId,
             @PathVariable Long courseId) {
-        logger.info(">> request : userId={}", userId);
-        logger.info(">> request : courseId={}", courseId);
+        logger.debug("[0/2][DELETE][/interest/course/{}/{}] >> request : none", courseId, userId);
 
+        logger.debug("[1/2][DELETE][/interest/course/{}/{}] ... is.deleteInterestCourse", courseId, userId);
         interestService.deleteInterestCourse(userId, courseId);
-        logger.info("<< response : none");
 
+        logger.debug("[2/2][DELETE][/interest/course/{}/{}] << response : none", courseId, userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

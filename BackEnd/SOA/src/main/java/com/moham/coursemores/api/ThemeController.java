@@ -26,14 +26,15 @@ public class ThemeController {
 
     @GetMapping
     public ResponseEntity<Map<String, Object>> getThemeList() {
-        logger.info(">> request : none");
+        logger.debug("[0/2][GET][/theme] >> request : none");
 
         Map<String, Object> resultMap = new HashMap<>();
 
+        logger.debug("[1/2][GET][/theme] ...ts.getThemeList");
         List<ThemeResDto> themeList = themeService.getThemeList();
         resultMap.put("themeList",themeList);
-        logger.info("<< response : themeList={}",themeList);
 
+        logger.debug("[2/2][GET][/theme] << response : themeList\n themeList = {}",themeList);
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
 }
