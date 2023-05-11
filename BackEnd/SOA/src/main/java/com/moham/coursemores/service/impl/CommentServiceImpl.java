@@ -4,10 +4,7 @@ import com.moham.coursemores.domain.Comment;
 import com.moham.coursemores.domain.CommentImage;
 import com.moham.coursemores.domain.Course;
 import com.moham.coursemores.domain.User;
-import com.moham.coursemores.dto.comment.CommentCreateReqDTO;
-import com.moham.coursemores.dto.comment.CommentImageResDTO;
-import com.moham.coursemores.dto.comment.CommentResDTO;
-import com.moham.coursemores.dto.comment.CommentUpdateReqDTO;
+import com.moham.coursemores.dto.comment.*;
 import com.moham.coursemores.dto.profile.UserSimpleInfoResDto;
 import com.moham.coursemores.repository.CommentImageRepository;
 import com.moham.coursemores.repository.CourseRepository;
@@ -74,11 +71,11 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<CommentResDTO> getMyCommentList(Long userId) {
+    public List<MyCommentResDto> getMyCommentList(Long userId) {
         // userId가 작성한 댓글 중 deletetime이 null이 아닌 댓글(삭제되지 않은 댓글)
         return commentRepository.findByUserIdAndDeleteTimeIsNull(userId)
                 .stream()
-                .map(comment -> CommentResDTO.builder()
+                .map(comment -> MyCommentResDto.builder()
                         .commentId(comment.getId())
                         .content(comment.getContent())
                         .people(comment.getPeople())
@@ -91,10 +88,8 @@ public class CommentServiceImpl implements CommentService {
                                         .build())
                                 .collect(Collectors.toList()))
                         .createTime(comment.getCreateTime())
-                        .writeUser(UserSimpleInfoResDto.builder()
-                                .nickname(comment.getUser().getNickname())
-                                .profileImage(comment.getUser().getProfileImage())
-                                .build())
+                        .courseId(comment.getCourse().getId())
+                        .courseTitle(comment.getCourse().getTitle())
                         .build()
                 )
                 .collect(Collectors.toList());

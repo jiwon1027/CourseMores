@@ -3,6 +3,7 @@ package com.moham.coursemores.api;
 import com.moham.coursemores.dto.comment.CommentCreateReqDTO;
 import com.moham.coursemores.dto.comment.CommentResDTO;
 import com.moham.coursemores.dto.comment.CommentUpdateReqDTO;
+import com.moham.coursemores.dto.comment.MyCommentResDto;
 import com.moham.coursemores.service.CommentService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +35,7 @@ public class CommentController {
     private final CommentService commentService;
 
     @GetMapping("course/{courseId}/{userId}")
-    public ResponseEntity<Map<String, Object>> searchCommentAll(
+    public ResponseEntity<Map<String, Object>> getCommentAll(
             @PathVariable Long courseId,
             @PathVariable Long userId,
             @RequestParam int page,
@@ -52,14 +53,14 @@ public class CommentController {
     }
 
     @GetMapping("{userId}")
-    public ResponseEntity<Map<String, Object>> serarchMyCommentList(
+    public ResponseEntity<Map<String, Object>> getMyCommentList(
             @PathVariable Long userId){
         logger.debug("[0/2][GET][/comment/{}] << request : none", userId);
 
         Map<String, Object> resultMap = new HashMap<>();
 
         logger.debug("[1/2][GET][/comment/{}] ... cs.getMyCommentList", userId);
-        List<CommentResDTO> myCommentList = commentService.getMyCommentList(userId);
+        List<MyCommentResDto> myCommentList = commentService.getMyCommentList(userId);
         resultMap.put("myCommentList", myCommentList);
 
         logger.debug("[2/2][GET][/comment/{}] >> response : myCommentList\n myCommentList = {}\n", userId, myCommentList);
