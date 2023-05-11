@@ -1,5 +1,9 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import '../controller/getx_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+final homeController = Get.put(HomeScreenInfo());
 
 final List<String> imgList = [
   'https://images.unsplash.com/photo-1520342868574-5fa3804e551c?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=6ff92caffcdd63681a35134a6770ed3b&auto=format&fit=crop&w=1951&q=80',
@@ -10,14 +14,20 @@ final List<String> imgList = [
   'https://images.unsplash.com/photo-1519985176271-adb1088fa94c?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=a0c8d632e977f94e5d312d9893258f59&auto=format&fit=crop&w=1355&q=80'
 ];
 
-final List<Widget> imageSliders = imgList
+final hotCourse = homeController.hotCourse;
+
+final List<Widget> imageSliders = hotCourse
     .map((item) => Container(
           margin: const EdgeInsets.all(5.0),
           child: ClipRRect(
               borderRadius: const BorderRadius.all(Radius.circular(5.0)),
               child: Stack(
                 children: <Widget>[
-                  Image.network(item, fit: BoxFit.cover, width: 1000.0),
+                  Image.network(item['image'].toString(),
+                      // Image.network(
+                      //     'https://images.unsplash.com/photo-1520342868574-5fa3804e551c?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=6ff92caffcdd63681a35134a6770ed3b&auto=format&fit=crop&w=1951&q=80',
+                      fit: BoxFit.cover,
+                      width: 1000.0),
                   Positioned(
                     bottom: 0.0,
                     left: 0.0,
@@ -41,22 +51,22 @@ final List<Widget> imageSliders = imgList
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            ' ${imgList.indexOf(item)}번째 코스',
+                            ' text',
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 20.0,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          const Text('서울시 마포구 연남동',
+                          Text('text',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 10.0,
                               )),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.start,
-                            children: const [
-                              Text('어쩌구 저쩌구',
+                            children: [
+                              Text('text',
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 14.0,
