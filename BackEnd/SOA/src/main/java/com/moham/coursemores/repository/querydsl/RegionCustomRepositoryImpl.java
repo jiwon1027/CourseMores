@@ -1,6 +1,5 @@
 package com.moham.coursemores.repository.querydsl;
 
-import com.moham.coursemores.domain.Region;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -21,7 +20,6 @@ public class RegionCustomRepositoryImpl implements RegionCustomRepository{
                 .select(region.sido)
                 .from(region)
                 .distinct()
-                .groupBy(region.sido)
                 .fetch();
     }
 }
