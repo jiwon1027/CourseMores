@@ -1,7 +1,6 @@
 package com.moham.coursemores.service;
 
 import com.moham.coursemores.dto.course.*;
-import java.util.Map;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -9,8 +8,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface CourseService {
 
-    List<MainPreviewResDto> getHotCourseList();
-    List<MainPreviewResDto> setHotCourse();
+    List<HotPreviewResDto> getHotCourseList();
+    List<HotPreviewResDto> setHotCourse();
+    List<NearPreviewResDto> getCoursesNearby(double latitude, double longitude);
     Page<CoursePreviewResDto> search(Long userId, String word, Long regionId, List<Long> themeIds, int isVisited, int page, String sortby);
     void increaseViewCount(Long courseId);
     CourseInfoResDto getCourseInfo(Long courseId);
