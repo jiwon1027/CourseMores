@@ -36,7 +36,7 @@ public class CourseController {
 
         Map<String, Object> resultMap = new HashMap<>();
 
-        List<MainPreviewResDto> courseList = courseService.getHotCourseList();
+        List<HotPreviewResDto> courseList = courseService.getHotCourseList();
         resultMap.put("courseList", courseList);
         logger.info("<< response : courseLis={}", courseList);
 
@@ -49,9 +49,23 @@ public class CourseController {
 
         Map<String, Object> resultMap = new HashMap<>();
 
-        List<MainPreviewResDto> courseList = courseService.setHotCourse();
+        List<HotPreviewResDto> courseList = courseService.setHotCourse();
         resultMap.put("courseList", courseList);
         logger.info("<< response : courseList={}", courseList);
+
+        return new ResponseEntity<>(resultMap, HttpStatus.OK);
+    }
+
+    @GetMapping("around")
+    public ResponseEntity<Map<String, Object>> aroundCourse(@RequestParam double latitude, @RequestParam double longitude) {
+        logger.info("<< latitude={}, longitude={}", latitude, longitude);
+
+        Map<String, Object> resultMap = new HashMap<>();
+
+        List<NearPreviewResDto> courseList = courseService.getCoursesNearby(latitude, longitude);
+        resultMap.put("courseList", courseList);
+
+        logger.info("<< response : courseList={}, distance={}", courseList, 5);
 
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }

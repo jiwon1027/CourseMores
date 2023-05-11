@@ -6,10 +6,7 @@ import com.moham.coursemores.dto.profile.UserSimpleInfoResDto;
 import com.moham.coursemores.repository.*;
 import com.moham.coursemores.service.CourseService;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Map;
-import java.util.Map.Entry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,7 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -43,15 +39,14 @@ public class CourseServiceImpl implements CourseService {
     private final InterestRepository interestRepository;
     private final CourseLikeRepository courseLikeRepository;
     private final CommentRepository commentRepository;
-
     @Override
-    public List<MainPreviewResDto> getHotCourseList() {
+    public List<HotPreviewResDto> getHotCourseList() {
         // 한 번에 넘길 인기 코스의 수
         int number = 10;
-        List<MainPreviewResDto> result = hotCourseRepository.findRandomHotCourse(number).stream()
+        List<HotPreviewResDto> result = hotCourseRepository.findRandomHotCourse(number).stream()
                 .map(hotCourse -> {
                             Course course = hotCourse.getCourse();
-                            return MainPreviewResDto.builder()
+                            return HotPreviewResDto.builder()
                                     .courseId(course.getId())
                                     .title(course.getTitle())
                                     .content(course.getContent())
@@ -66,7 +61,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     @Transactional
-    public List<MainPreviewResDto> setHotCourse() {
+    public List<HotPreviewResDto> setHotCourse() {
         LocalDateTime standardTime = LocalDateTime.now().minusWeeks(1); // 인기도의 기간
         List<Comment> comments = commentRepository.findByDeleteTimeIsNullAndCreateTimeAfter(standardTime); // 기간 동안 댓글 목록
         List<Interest> interests = interestRepository.findByFlagIsTrueAndRegisterTimeAfter(standardTime); // 기간 동안 관심 목록
@@ -100,10 +95,10 @@ public class CourseServiceImpl implements CourseService {
                 break;
         }
 
-        List<MainPreviewResDto> result = hotCourseRepository.findAll().stream()
+        List<HotPreviewResDto> result = hotCourseRepository.findAll().stream()
                 .map(hotCourse -> {
                             Course course = hotCourse.getCourse();
-                            return MainPreviewResDto.builder()
+                            return HotPreviewResDto.builder()
                                     .courseId(course.getId())
                                     .title(course.getTitle())
                                     .content(course.getContent())
@@ -114,6 +109,14 @@ public class CourseServiceImpl implements CourseService {
                         }
                 ).collect(Collectors.toList());
         return result;
+    }
+
+    @Override
+    public List<NearPreviewResDto> getCoursesNearby(double latitude, double longitude) {
+        Pageable pageable = PageRequest.of(0, 5);
+
+        List<NearPreviewResDto> locationDtoList = courseRepository.findTop5CoursesByLocation(latitude, longitude, pageable);
+        return locationDtoList;
     }
 
     @Override
