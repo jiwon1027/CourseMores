@@ -11,6 +11,7 @@ import com.moham.coursemores.repository.CourseLikeRepository;
 import com.moham.coursemores.repository.CourseRepository;
 import com.moham.coursemores.repository.UserRepository;
 import com.moham.coursemores.service.LikeService;
+import com.moham.coursemores.service.NotificationService;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class LikeServiceImpl implements LikeService {
 
+    private final NotificationService notificationService;
     private final CourseLikeRepository courseLikeRepository;
     private final UserRepository userRepository;
     private final CourseRepository courseRepository;
@@ -53,6 +55,8 @@ public class LikeServiceImpl implements LikeService {
                     .user(user)
                     .course(course)
                     .build());
+            // 코스 작성자에게 알림
+            notificationService.makeNotification(course.getUser().getId(), user.getNickname(), course.getTitle(), 0);
         }
         course.increaseLikeCount();
     }

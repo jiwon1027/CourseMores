@@ -7,6 +7,8 @@ public interface NotificationService {
 
     List<NotificationResDto> getMyNotificationList(Long userId);
 
+    void makeNotification(Long targetUserId, String nickname, String title, int messageType);
+
     void deleteNotification(Long userId, Long notificationId);
 
 }
