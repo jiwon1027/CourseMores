@@ -14,6 +14,8 @@ import 'package:dio/dio.dart';
 // import 'package:flutter_dotenv/flutter_dotenv.dart';
 // import 'dart:convert';
 import '../auth/auth_dio.dart';
+import '../course_search/course_detail.dart' as detail;
+import 'package:cached_network_image/cached_network_image.dart';
 
 class MyPage extends StatefulWidget {
   const MyPage({super.key});
@@ -32,17 +34,25 @@ class _MyPageState extends State<MyPage> {
   void initState() {
     super.initState();
     fetchData(tokenController.accessToken);
-    print('data 가져오기');
+    updateUserInfo();
+    print('mypage data 가져오기');
     print(courseList);
+  }
+
+  Future<void> updateUserInfo() async {
+    final dio = await authDio();
+    final response = await dio.get('profile/5');
+    print('update UserInfo!!');
+    print(response);
+    userInfoController.saveImageUrl(response.data['userInfo']['profileImage']);
   }
 
   Future<void> fetchData(aToken) async {
     final dio = await authDio();
 
-    final response = await dio.get('course/5',
-        options: Options(
-          headers: {'Authorization': 'Bearer $aToken'},
-        ));
+    final response = await dio.get(
+      'course/my/5',
+    );
     print(response);
     List<dynamic> data = response.data['myCourseList'];
     print(data);
@@ -51,7 +61,8 @@ class _MyPageState extends State<MyPage> {
     // setState(() {
     //   courseList = data.map((item) => Map<String, Object>.from(item)).toList();
     // });
-    myPageController.saveMyCourse(data.map((item) => Map<String, Object>.from(item)).toList());
+    myPageController.saveMyCourse(
+        data.map((item) => Map<String, Object>.from(item)).toList());
     setState(() {
       courseList = myPageController.myCourse;
     });
@@ -65,7 +76,8 @@ class _MyPageState extends State<MyPage> {
     print(response2);
     List<dynamic> data2 = response2.data['myCommentList'];
     // print(data);
-    myPageController.saveMyReview(data2.map((item) => Map<String, Object>.from(item)).toList());
+    myPageController.saveMyReview(
+        data2.map((item) => Map<String, Object>.from(item)).toList());
     setState(() {
       reviewList = myPageController.myReview;
     });
@@ -117,86 +129,304 @@ class _MyPageState extends State<MyPage> {
         body: SingleChildScrollView(
       child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-            profileBox(),
-            // OutlinedButton(
-            //     onPressed: () {
-            //       Navigator.push(
-            //           context,
-            //           MaterialPageRoute(
-            //               builder: (context) => const login.LoginPage()));
-            //     },
-            //     child: Text('로그인페이지')),
-            buttonBar(),
-            if (status == 'course')
-              (Text(
-                '내가 작성한 코스 : ${courseList.length} 개',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15,
-                ),
-              )),
-            if (status == 'review')
-              (Text(
-                '내가 작성한 리뷰 : ${reviewList.length} 개',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15,
-                ),
-              )),
-            if (status == 'course')
-              (Flexible(
-                child: search.SearchResult(),
-              )),
-            if (status == 'review')
-              (Flexible(
-                child: search.SearchResult(),
-              ))
-            // Container(
-            //   margin: const EdgeInsets.only(
-            //       left: 10, right: 10, top: 10, bottom: 5),
-            //   padding: const EdgeInsets.all(10),
-            //   decoration: const BoxDecoration(
-            //       boxShadow: [
-            //         BoxShadow(
-            //             // color: Colors.white24,
-            //             color: Color.fromARGB(255, 211, 211, 211),
-            //             blurRadius: 10.0,
-            //             spreadRadius: 1.0,
-            //             offset: Offset(3, 3)),
-            //       ],
-            //       color: Color.fromARGB(255, 255, 255, 255),
-            //       borderRadius: BorderRadius.all(Radius.circular(10))),
-            //   child: Row(
-            //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //     children: [
-            //       Expanded(
-            //           child: SizedBox(
-            //               width: 350,
-            //               child: Row(
-            //                 children: const [
-            //                   search.ThumbnailImage(),
-            //                   SizedBox(
-            //                     width: 10,
-            //                   ),
-            //                   Expanded(
-            //                     child: search.CourseSearchList(
-            //                       // courseList: courseList,
-            //                       index: 1,
-            //                     ),
-            //                   ),
-            //                 ],
-            //               )))
-            //     ],
-            //   ),
-            // ),
-          ])),
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                profileBox(),
+                // OutlinedButton(
+                //     onPressed: () {
+                //       Navigator.push(
+                //           context,
+                //           MaterialPageRoute(
+                //               builder: (context) => const login.LoginPage()));
+                //     },
+                //     child: Text('로그인페이지')),
+                buttonBar(),
+                if (status == 'course')
+                  (Text(
+                    '내가 작성한 코스 : ${courseList.length} 개',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                    ),
+                  )),
+                if (status == 'review')
+                  (Text(
+                    '내가 작성한 리뷰 : ${reviewList.length} 개',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                    ),
+                  )),
+                if (status == 'course')
+                  (Flexible(
+                    child: MyCourse(),
+                  )),
+                if (status == 'review')
+                  (Flexible(
+                    child: MyCourse(),
+                  ))
+                // Container(
+                //   margin: const EdgeInsets.only(
+                //       left: 10, right: 10, top: 10, bottom: 5),
+                //   padding: const EdgeInsets.all(10),
+                //   decoration: const BoxDecoration(
+                //       boxShadow: [
+                //         BoxShadow(
+                //             // color: Colors.white24,
+                //             color: Color.fromARGB(255, 211, 211, 211),
+                //             blurRadius: 10.0,
+                //             spreadRadius: 1.0,
+                //             offset: Offset(3, 3)),
+                //       ],
+                //       color: Color.fromARGB(255, 255, 255, 255),
+                //       borderRadius: BorderRadius.all(Radius.circular(10))),
+                //   child: Row(
+                //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //     children: [
+                //       Expanded(
+                //           child: SizedBox(
+                //               width: 350,
+                //               child: Row(
+                //                 children: const [
+                //                   search.ThumbnailImage(),
+                //                   SizedBox(
+                //                     width: 10,
+                //                   ),
+                //                   Expanded(
+                //                     child: search.CourseSearchList(
+                //                       // courseList: courseList,
+                //                       index: 1,
+                //                     ),
+                //                   ),
+                //                 ],
+                //               )))
+                //     ],
+                //   ),
+                // ),
+              ])),
     ));
+  }
+}
+
+class MyCourse extends StatelessWidget {
+  MyCourse({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Color.fromARGB(221, 244, 244, 244),
+      child: ListView.builder(
+        shrinkWrap: true,
+        scrollDirection: Axis.vertical,
+        padding: EdgeInsets.all(8),
+        itemCount: myPageController.myCourse.length,
+
+        // index 말고 코스id로??
+        itemBuilder: (BuildContext context, int index) {
+          return InkWell(
+            onTap: () {
+              Get.to(() => detail.CourseDetail(index: index));
+            },
+            child: Container(
+              margin: EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 5),
+              padding: EdgeInsets.all(10),
+              decoration: const BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                        color: Color.fromARGB(255, 211, 211, 211),
+                        blurRadius: 10.0,
+                        spreadRadius: 1.0,
+                        offset: Offset(3, 3)),
+                  ],
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(Radius.circular(10))),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                      child: SizedBox(
+                          width: 300,
+                          child: Row(children: [
+                            ThumbnailImage(index: index),
+                            SizedBox(width: 10),
+                            Expanded(child: MyCourseList(index: index)),
+                          ]))),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class MyCourseList extends StatelessWidget {
+  MyCourseList({super.key, required this.index});
+  final int index;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      "${myPageController.myCourse[index]['title']}",
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      softWrap: true,
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  if (myPageController.myCourse[index]["visited"] == true)
+                    Container(
+                      decoration: BoxDecoration(
+                        color: const Color.fromARGB(255, 107, 211, 66),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Row(
+                        children: const [
+                          Padding(
+                            padding: EdgeInsets.all(4.0),
+                            child: Icon(Icons.check,
+                                size: 14, color: Colors.white),
+                          ),
+                          Text("방문",
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 12)),
+                          SizedBox(width: 7),
+                        ],
+                      ),
+                    )
+                ],
+              ),
+            ),
+            if (myPageController.myCourse[index]["interest"] == true)
+              Icon(Icons.bookmark, size: 24),
+            if (myPageController.myCourse[index]["interest"] == false)
+              Icon(Icons.bookmark_outline_rounded, size: 24),
+          ],
+        ),
+        SizedBox(height: 2),
+        Row(
+          children: [
+            Icon(Icons.map, size: 12, color: Colors.black54),
+            SizedBox(width: 3),
+            Text(
+              "${myPageController.myCourse[index]["sido"].toString()} ${myPageController.myCourse[index]["gugun"].toString()}",
+              style: TextStyle(fontSize: 12, color: Colors.black54),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+              softWrap: true,
+            ),
+            SizedBox(width: 8),
+            Icon(Icons.people, size: 12, color: Colors.black54),
+            SizedBox(width: 3),
+            Text(
+              "${myPageController.myCourse[index]['people'].toString()}명",
+              style: TextStyle(fontSize: 12, color: Colors.black54),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+              softWrap: true,
+            ),
+          ],
+        ),
+        SizedBox(height: 6),
+        Text(
+          "${myPageController.myCourse[index]['content']}",
+          style: TextStyle(fontSize: 14),
+          overflow: TextOverflow.ellipsis,
+          maxLines: 1,
+          softWrap: true,
+        ),
+        SizedBox(height: 5),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              "${myPageController.myCourse[index]['locationName']}",
+              style: TextStyle(fontSize: 12, color: Colors.black45),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+              softWrap: true,
+            ),
+            SizedBox(width: 8),
+            Row(
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.favorite, size: 14),
+                    SizedBox(width: 3),
+                    Text(myPageController.myCourse[index]["likeCount"]
+                        .toString()),
+                  ],
+                ),
+                SizedBox(width: 8),
+                Row(
+                  children: [
+                    Icon(Icons.comment, size: 14),
+                    SizedBox(width: 3),
+                    Text(myPageController.myCourse[index]["commentCount"]
+                        .toString()),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class ThumbnailImage extends StatelessWidget {
+  const ThumbnailImage({super.key, required this.index});
+
+  final index;
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(10),
+      child: CachedNetworkImage(
+        imageUrl: myPageController.myCourse[index]['image'].toString(),
+        placeholder: (context, url) => CircularProgressIndicator(),
+        errorWidget: (context, url, error) => Icon(Icons.error),
+        height: 80,
+        width: 80,
+        fit: BoxFit.cover,
+      ),
+      // child: Image(
+      //   image: AssetImage(courseList[widget.index]['image']),
+      //   // image: AssetImage('assets/img1.jpg'),
+      //   height: 80,
+      //   width: 80,
+      //   fit: BoxFit.cover,
+      // ),
+    );
   }
 }
 
 final userInfoController = Get.put(UserInfo());
 profileBox() {
+  final profileImageUrl;
+  if (userInfoController.imageUrl.value == 'default') {
+    profileImageUrl =
+        'https://media.istockphoto.com/id/1316947194/vector/messenger-profile-icon-on-white-isolated-background-vector-illustration.jpg?s=612x612&w=0&k=20&c=1iQ926GXQTJkopoZAdYXgU17NCDJIRUzx6bhzgLm9ps=';
+  } else {
+    profileImageUrl = userInfoController.imageUrl.value;
+  }
   return Container(
       height: 200.0,
       decoration: boxDeco(),
@@ -218,9 +448,9 @@ profileBox() {
                 ),
                 borderRadius: BorderRadius.circular(120),
               ),
-              child: const CircleAvatar(
+              child: CircleAvatar(
                 radius: 60,
-                backgroundImage: AssetImage("assets/img2.png"),
+                backgroundImage: NetworkImage(profileImageUrl),
               ),
             ),
           ),
@@ -306,9 +536,13 @@ class ModalBottom extends StatelessWidget {
                                 child: InkWell(
                                     onTap: () {
                                       Navigator.pop(context);
-                                      Navigator.push(context,
-                                          MaterialPageRoute(builder: (context) => const profie_edit.ProfileEdit()));
-                                      Navigator.pop(context);
+                                      print(userInfoController.profileImage);
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const profie_edit
+                                                      .ProfileEdit()));
                                     },
                                     child: const Center(
                                         child: Text(
@@ -332,12 +566,16 @@ class ModalBottom extends StatelessWidget {
                                     },
                                     child: Container(
                                       decoration: const BoxDecoration(
-                                          border: Border(top: BorderSide(color: Colors.grey, width: 1))),
+                                          border: Border(
+                                              top: BorderSide(
+                                                  color: Colors.grey,
+                                                  width: 1))),
                                       child: const Center(
                                           // color: Colors.yellow,
                                           child: Text(
                                         '로그아웃',
-                                        style: TextStyle(fontSize: 20, color: Colors.red),
+                                        style: TextStyle(
+                                            fontSize: 20, color: Colors.red),
                                         textAlign: TextAlign.center,
                                       )),
                                     )),
@@ -353,12 +591,16 @@ class ModalBottom extends StatelessWidget {
                                     },
                                     child: Container(
                                       decoration: const BoxDecoration(
-                                          border: Border(top: BorderSide(color: Colors.grey, width: 1))),
+                                          border: Border(
+                                              top: BorderSide(
+                                                  color: Colors.grey,
+                                                  width: 1))),
                                       child: const Center(
                                           // color: Colors.yellow,
                                           child: Text(
                                         '회원탈퇴',
-                                        style: TextStyle(fontSize: 20, color: Colors.red),
+                                        style: TextStyle(
+                                            fontSize: 20, color: Colors.red),
                                         textAlign: TextAlign.center,
                                       )),
                                     )),

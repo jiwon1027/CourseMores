@@ -28,7 +28,7 @@ import 'auth_dio.dart';
 // }
 
 final loginController = g.Get.put(LoginStatus());
-
+final userInfoController = g.Get.put(UserInfo());
 // class UserInfoCreateReqDto {
 //   final String nickname;
 //   final int age;
@@ -46,13 +46,16 @@ void postSignUp(nickname, int age, gender, image, aToken) async {
   FormData formData;
   if (image != null) {
     formData = FormData.fromMap({
-      'userInfoCreateReqDto': MultipartFile.fromString(jsonEncode({'nickname': nickname, 'age': age, 'gender': gender}),
+      'userInfoCreateReqDto': MultipartFile.fromString(
+          jsonEncode({'nickname': nickname, 'age': age, 'gender': gender}),
           contentType: MediaType.parse('application/json')),
-      'profileImage': await MultipartFile.fromFile(image.path, contentType: MediaType("image", "jpg")),
+      'profileImage': await MultipartFile.fromFile(image.path,
+          contentType: MediaType("image", "jpg")),
     });
   } else {
     formData = FormData.fromMap({
-      'userInfoCreateReqDto': MultipartFile.fromString(jsonEncode({'nickname': nickname, 'age': age, 'gender': gender}),
+      'userInfoCreateReqDto': MultipartFile.fromString(
+          jsonEncode({'nickname': nickname, 'age': age, 'gender': gender}),
           contentType: MediaType.parse('application/json')),
       'profileImage': null,
     });
@@ -71,6 +74,11 @@ void postSignUp(nickname, int age, gender, image, aToken) async {
     if (response.statusCode == 200) {
       print('가입성공!!!');
       loginController.changeLoginStatus(true);
+      userInfoController.saveNickname(response.data['userInfo']['nickname']);
+      userInfoController.saveAge(response.data['userInfo']['age']);
+      userInfoController.saveGender(response.data['userInfo']['gender']);
+      userInfoController
+          .saveImageUrl(response.data['userInfo']['profileImage']);
       g.Get.back();
       // g.Get.replace(main.MyApp());
     }
