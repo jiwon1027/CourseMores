@@ -42,9 +42,7 @@ public class RegionServiceImpl implements RegionService {
 
     @Override
     public List<String> getSidoList() {
-        List<String> result = regionRepository.getSidoList();
-        result.add(0,"전체");
-        return result;
+        return regionRepository.getSidoList();
     }
 
     @Override
