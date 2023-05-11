@@ -15,6 +15,7 @@ import com.moham.coursemores.repository.UserRepository;
 import com.moham.coursemores.service.CommentService;
 import com.moham.coursemores.repository.CommentRepository;
 
+import com.moham.coursemores.service.NotificationService;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -30,8 +31,9 @@ import org.springframework.web.multipart.MultipartFile;
 @Transactional(readOnly = true)
 public class CommentServiceImpl implements CommentService {
 
-    private final CommentRepository commentRepository;
     private final FileUploadService fileUploadService;
+    private final NotificationService notificationService;
+    private final CommentRepository commentRepository;
     private final CommentImageRepository commentImageRepository;
     private final UserRepository userRepository;
     private final CourseRepository courseRepository;
@@ -128,7 +130,8 @@ public class CommentServiceImpl implements CommentService {
                         .build());
             }
         }
-
+        // 코스 작성자에게 알림
+        notificationService.makeNotification(course.getUser().getId(), user.getNickname(), course.getTitle(), 1);
         // 코스의 댓글 수 증가
         course.increaseCommentCount();
     }
