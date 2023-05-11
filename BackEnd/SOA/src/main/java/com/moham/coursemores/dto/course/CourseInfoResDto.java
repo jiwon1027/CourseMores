@@ -3,6 +3,7 @@ package com.moham.coursemores.dto.course;
 import com.moham.coursemores.dto.profile.UserSimpleInfoResDto;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @ToString
@@ -20,6 +21,7 @@ public class CourseInfoResDto {
     private int commentCount;
     private String sido;
     private String gugun;
+    private LocalDateTime createTime;
     private List<String> hashtagList;
     private List<String> themeList;
     private UserSimpleInfoResDto simpleInfoOfWriter;

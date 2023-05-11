@@ -203,6 +203,7 @@ public class CourseServiceImpl implements CourseService {
                 .interestCount(course.getInterestCount())
                 .sido(course.getSido())
                 .gugun(course.getGugun())
+                .createTime(course.getCreateTime())
                 .hashtagList(course.getCourseHashtagList()
                         .stream()
                         .map(o -> o.getHashtag().getName())
