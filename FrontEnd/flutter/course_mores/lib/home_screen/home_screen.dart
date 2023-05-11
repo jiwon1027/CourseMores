@@ -1,4 +1,5 @@
 import 'package:coursemores/auth/login_page.dart';
+import '../controller/getx_controller.dart';
 import 'package:flutter/material.dart';
 import './carousel.dart' as carousel;
 // import 'search.dart' as search;
@@ -12,6 +13,7 @@ import 'package:dio/dio.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart' as geocoding;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import '../auth/auth_dio.dart';
 
 final List<String> imgList = [
   'https://images.unsplash.com/photo-1520342868574-5fa3804e551c?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=6ff92caffcdd63681a35134a6770ed3b&auto=format&fit=crop&w=1951&q=80',
@@ -21,6 +23,9 @@ final List<String> imgList = [
   'https://images.unsplash.com/photo-1508704019882-f9cf40e475b4?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=8c6e5e3aba713b17aa1fe71ab4f0ae5b&auto=format&fit=crop&w=1352&q=80',
   'https://images.unsplash.com/photo-1519985176271-adb1088fa94c?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=a0c8d632e977f94e5d312d9893258f59&auto=format&fit=crop&w=1355&q=80'
 ];
+
+final homeController = Get.put(HomeScreenInfo());
+var hotCourse;
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -32,7 +37,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   Position? _currentPosition;
   // late Function changePageNum = widget.changePageNum;
-
+  List<Map<String, Object>> hotCourse = homeController.hotCourse;
   Future<void> _getCurrentLocation() async {
     final permission = await Geolocator.requestPermission();
     if (permission == LocationPermission.denied) {
@@ -50,17 +55,29 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    getHotCourse(tokenController.accessToken);
+    getHotCourse();
+    // getNearCourse();
   }
 
-  Future<void> getHotCourse(aToken) async {
+  Future<void> getHotCourse() async {
     final dio = await authDio();
-    final response = await dio.get('course/hot',
-        options: Options(
-          headers: {'Authorization': 'Bearer $aToken'},
-        ));
+    final response = await dio.get(
+      'course/hot',
+    );
     print('4646464646');
     print(response);
+
+    List<dynamic> data = response.data['courseList'];
+    hotCourse = data.map((item) => Map<String, Object>.from(item)).toList();
+    // homeController.saveHotCourse(
+    //     data.map((item) => Map<String, Object>.from(item)).toList());
+    // setState(() {
+    //   hotCourse = homeController.hotCourse;
+    // });
+    print('홈에서 받아온 hotcourse');
+    print(hotCourse);
+    print(_currentPosition?.latitude);
+    print(_currentPosition?.longitude);
   }
 
   // openweathermap의 api키
@@ -101,15 +118,35 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<String> _getAddress(double lat, double lon) async {
-    final List<geocoding.Placemark> placemarks =
-        await geocoding.placemarkFromCoordinates(lat, lon, localeIdentifier: 'ko');
+    final List<geocoding.Placemark> placemarks = await geocoding
+        .placemarkFromCoordinates(lat, lon, localeIdentifier: 'ko');
     if (placemarks != null && placemarks.isNotEmpty) {
       final placemark = placemarks.first;
-      final String address = '${placemark.subLocality} ${placemark.thoroughfare} ';
+      final String address =
+          '${placemark.subLocality} ${placemark.thoroughfare} ';
       return address;
     }
     return '';
   }
+
+  // Future<void> getNearCourse() async {
+  //   final dio = await authDio();
+  //   final response = await dio.get(
+  //     '/course/around?latitude=${_currentPosition?.latitude}&longitude=${_currentPosition?.longitude}',
+  //   );
+  //   print('777777777777');
+  //   print(response);
+
+  //   // List<dynamic> data = response.data['courseList'];
+  //   // hotCourse = data.map((item) => Map<String, Object>.from(item)).toList();
+  //   // // homeController.saveHotCourse(
+  //   // //     data.map((item) => Map<String, Object>.from(item)).toList());
+  //   // // setState(() {
+  //   // //   hotCourse = homeController.hotCourse;
+  //   // // });
+  //   // print('홈에서 받아온 hotcourse');
+  //   // print(hotCourse);
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -136,8 +173,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
                               final weatherData = snapshot.data!;
-                              final temp = weatherData['main']['temp'].toString();
-                              final weather = weatherData['weather'][0]['description'].toString();
+                              final temp =
+                                  weatherData['main']['temp'].toString();
+                              final weather = weatherData['weather'][0]
+                                      ['description']
+                                  .toString();
                               return Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -156,10 +196,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                     style: TextStyle(fontSize: 24),
                                   ),
                                   FutureBuilder<String>(
-                                    future:
-                                        _getAddress(_currentPosition?.latitude ?? 0, _currentPosition?.longitude ?? 0),
+                                    future: _getAddress(
+                                        _currentPosition?.latitude ?? 0,
+                                        _currentPosition?.longitude ?? 0),
                                     builder: (context, snapshot) {
-                                      if (snapshot.connectionState == ConnectionState.waiting) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
                                         return Text('검색중...');
                                       } else if (snapshot.hasData) {
                                         final address = snapshot.data!;
@@ -192,6 +234,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 popularCourse(),
                 themeList(),
                 reviews(),
+                // Image.network(
+                //   hotCourse[1]['image'].toString(),
+                //   width: 200,
+                //   height: 200,
+                //   fit: BoxFit.cover,
+                // )
               ],
             ),
           ),
@@ -313,7 +361,9 @@ class _ButtonBar2State extends State<ButtonBar2> {
 }
 
 iconBoxDeco() {
-  return BoxDecoration(border: Border.all(color: Colors.black), borderRadius: BorderRadius.circular(10));
+  return BoxDecoration(
+      border: Border.all(color: Colors.black),
+      borderRadius: BorderRadius.circular(10));
 }
 
 boxDeco() {
@@ -360,7 +410,10 @@ themeList() {
             children: [
               const Text(
                 '이런 테마는 어때요? 😊',
-                style: TextStyle(color: Colors.black, fontSize: 20.0, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.bold),
               ),
               SizedBox(
                 height: 200.0,
@@ -378,7 +431,8 @@ themeList() {
                               color: Colors.grey.withOpacity(0.5),
                               spreadRadius: 2,
                               blurRadius: 3,
-                              offset: const Offset(0, 2), // changes position of shadow
+                              offset: const Offset(
+                                  0, 2), // changes position of shadow
                             ),
                           ],
                         ),

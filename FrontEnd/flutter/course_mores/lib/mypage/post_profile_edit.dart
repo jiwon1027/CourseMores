@@ -1,10 +1,12 @@
+import 'package:coursemores/auth/login_page.dart';
 import 'package:dio/dio.dart';
 // import 'package:flutter_dotenv/flutter_dotenv.dart';
-// import 'package:get/get.dart' as g;
-// import '../main.dart' as main;
+import 'package:get/get.dart' as g;
+import '../main.dart' as main;
 import 'dart:convert';
 import 'package:http_parser/http_parser.dart';
 import '../auth/auth_dio.dart';
+// import '../home_screen/home_screen.dart' as home;
 
 // void postSignUp(nickname, age, gender, image, aToken) async {
 //   dynamic userInfoCreateReqDto = {
@@ -40,16 +42,20 @@ import '../auth/auth_dio.dart';
 // }
 
 void postProfileEdit(nickname, age, gender, image, aToken) async {
+  print('image===$image');
   FormData formData;
   if (image != null) {
     formData = FormData.fromMap({
-      'userInfoUpdateReqDto': MultipartFile.fromString(jsonEncode({'nickname': nickname, 'age': age, 'gender': gender}),
+      'userInfoUpdateReqDto': MultipartFile.fromString(
+          jsonEncode({'nickname': nickname, 'age': age, 'gender': gender}),
           contentType: MediaType.parse('application/json')),
-      'profileImage': await MultipartFile.fromFile(image.path, contentType: MediaType("image", "jpg")),
+      'profileImage': await MultipartFile.fromFile(image.path,
+          contentType: MediaType("image", "jpg")),
     });
   } else {
     formData = FormData.fromMap({
-      'userInfoUpdateReqDto': MultipartFile.fromString(jsonEncode({'nickname': nickname, 'age': age, 'gender': gender}),
+      'userInfoUpdateReqDto': MultipartFile.fromString(
+          jsonEncode({'nickname': nickname, 'age': age, 'gender': gender}),
           contentType: MediaType.parse('application/json')),
       'profileImage': null,
     });
@@ -67,6 +73,8 @@ void postProfileEdit(nickname, age, gender, image, aToken) async {
     if (response.statusCode == 200) {
       // g.Get.to(main.MyApp());
       print('수정!!!');
+      g.Get.back();
+      g.Get.to(main.MyApp());
     }
   } catch (e) {
     // DioError 처리

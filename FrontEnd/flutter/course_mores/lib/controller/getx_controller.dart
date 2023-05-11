@@ -146,6 +146,7 @@ class UserInfo extends GetxController {
   final gender = 'default'.obs;
   final age = 0.obs;
   XFile? profileImage;
+  final imageUrl = 'default'.obs;
 
   @override
   void onInit() async {
@@ -154,6 +155,7 @@ class UserInfo extends GetxController {
     nickname.value = prefs.getString('nickname') ?? 'default';
     gender.value = prefs.getString('gender') ?? 'default';
     age.value = prefs.getInt('age') ?? 0;
+    imageUrl.value = prefs.getString('imageUrl') ?? 'default';
     final imagePath = prefs.getString('profileImage');
     if (imagePath != null) {
       profileImage = XFile(imagePath);
@@ -186,16 +188,29 @@ class UserInfo extends GetxController {
     }
   }
 
+  void saveImageUrl(newImageUrl) async {
+    if (newImageUrl != null) {
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setString('imageUrl', newImageUrl);
+      imageUrl.value = newImageUrl;
+    } else {
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setString('imageUrl', 'default');
+    }
+  }
+
   void clearUserInfo() async {
     final prefs = await SharedPreferences.getInstance();
     prefs.remove('nickname');
     prefs.remove('gender');
     prefs.remove('age');
     prefs.remove('profileImage');
+    prefs.remove('imageUrl');
     nickname.value = 'default';
     gender.value = 'default';
     age.value = 0;
     profileImage = null;
+    imageUrl.value = 'default';
   }
 }
 
@@ -218,5 +233,22 @@ class MyPageInfo extends GetxController {
 
   void statusToCourse() {
     status = 'course';
+  }
+}
+
+class HomeScreenInfo extends GetxController {
+  List<Map<String, Object>> hotCourse = [];
+  List<Map<String, Object>> nearCourse = [];
+
+  void saveHotCourse(courseList) {
+    hotCourse = courseList;
+    print('hotCourse불러오기');
+    print(hotCourse);
+  }
+
+  void saveNearCourse(courseList) {
+    nearCourse = courseList;
+    print('nearCourse불러오기');
+    print(nearCourse);
   }
 }

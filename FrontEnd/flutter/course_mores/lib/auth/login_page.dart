@@ -29,19 +29,39 @@ void postLogin(accessToken) async {
   print(response);
 
   if (response.statusCode == 200) {
-    // 추후에 issignup으로 교체
-    tokenController.saveToken(response.data['token']['accessToken'], response.data['token']['refreshToken']);
-    if (response.data['userInfo'] == null) {
-      Get.to(signup.SignUp());
+    tokenController.saveToken(response.data['token']['accessToken'],
+        response.data['token']['refreshToken']);
+    if (response.data['agree'] == false) {
+      Get.dialog(
+        AlertDialog(
+          title: Text('Error'),
+          content: Text('이메일 수집동의항목에 체크해주세요'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Get.back(); // close the dialog
+              },
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
     } else {
-      loginController.changeLoginStatus(true);
-      userInfoController.saveNickname(response.data['userInfo']['nickname']);
-      userInfoController.saveAge(response.data['userInfo']['age']);
-      userInfoController.saveGender(response.data['userInfo']['gender']);
-      Get.back();
-      // Get.replace(main.MyApp());
-      print(loginController.isLoggedIn);
-      print(pageController.pageNum());
+      if (response.data['userInfo'] == null) {
+        Get.to(signup.SignUp());
+      } else {
+        loginController.changeLoginStatus(true);
+        userInfoController.saveNickname(response.data['userInfo']['nickname']);
+        userInfoController.saveAge(response.data['userInfo']['age']);
+        userInfoController.saveGender(response.data['userInfo']['gender']);
+        userInfoController
+            .saveImageUrl(response.data['userInfo']['profileImage']);
+        Get.back();
+        // Get.replace(main.MyApp());
+        print(loginController.isLoggedIn);
+        print(pageController.pageNum());
+      }
     }
   }
 }
@@ -63,7 +83,8 @@ void signInWithGoogle() async {
 
     if (response.statusCode == 200) {
       // 추후에 issignup으로 교체
-      tokenController.saveToken(response.data['token']['accessToken'], response.data['token']['refreshToken']);
+      tokenController.saveToken(response.data['token']['accessToken'],
+          response.data['token']['refreshToken']);
       if (response.data['userInfo'] == null) {
         Get.to(signup.SignUp());
       } else {
@@ -86,7 +107,9 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(image: DecorationImage(image: AssetImage('assets/background.gif'), fit: BoxFit.cover)),
+      decoration: BoxDecoration(
+          image: DecorationImage(
+              image: AssetImage('assets/background.gif'), fit: BoxFit.cover)),
       child: Scaffold(
           backgroundColor: Colors.transparent,
           body: Center(
@@ -131,30 +154,38 @@ class LoginPage extends StatelessWidget {
                                   // );
                                 },
                                 style: ElevatedButton.styleFrom(
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))),
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(5))),
                                 child: Text(
                                   '게스트로 입장하기',
-                                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold),
                                 )),
                           ),
                         ),
                         InkWell(
                           onTap: () async {
-                            bool isKakaoInstalled = await isKakaoTalkInstalled();
+                            bool isKakaoInstalled =
+                                await isKakaoTalkInstalled();
                             OAuthToken? token;
                             // UserService userService = UserService();
 
                             if (isKakaoInstalled) {
                               try {
-                                token = await UserApi.instance.loginWithKakaoTalk();
+                                token =
+                                    await UserApi.instance.loginWithKakaoTalk();
                                 debugPrint('카카오톡으로 로그인 성공');
                               } catch (error) {
                                 debugPrint('카톡로그인 실패 $error');
-                                if (error is PlatformException && error.code == 'CANCELED') {
+                                if (error is PlatformException &&
+                                    error.code == 'CANCELED') {
                                   return;
                                 }
                                 try {
-                                  token = await UserApi.instance.loginWithKakaoAccount();
+                                  token = await UserApi.instance
+                                      .loginWithKakaoAccount();
                                   debugPrint('카카오계정로그인 성공');
                                 } catch (error) {
                                   debugPrint('카카오계정로그인 실패 $error');
@@ -162,7 +193,8 @@ class LoginPage extends StatelessWidget {
                               }
                             } else {
                               try {
-                                token = await UserApi.instance.loginWithKakaoAccount();
+                                token = await UserApi.instance
+                                    .loginWithKakaoAccount();
                                 debugPrint('카카오계정 로그인 성공');
                               } catch (error) {
                                 debugPrint('카카오계정 로그인 실패 $error');
