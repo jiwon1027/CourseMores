@@ -362,8 +362,8 @@ public class CourseServiceImpl implements CourseService {
         // 코스의 장소 정보 생성
         for (LocationCreateReqDto location : courseCreateReqDto.getLocationList()) {
             // 코스의 장소의 지역 가져오기
-            Region region = regionRepository.findBySidoAndGugun(location.getSido().trim(), location.getGugun().trim())
-                    .orElseThrow(() -> new RuntimeException("해당 지역을 찾을 수 없습니다."));
+            Region region = getRegion(location.getSido(), location.getGugun());
+
             // 코스의 장소 저장
             CourseLocation courseLocation = courseLocationRepository.save(CourseLocation.builder()
                     .name(location.getName())
@@ -489,5 +489,32 @@ public class CourseServiceImpl implements CourseService {
                 .orElseThrow(() -> new RuntimeException("해당 코스를 찾을 수 없습니다."));
         // 코스 삭제
         course.delete();
+    }
+
+    private Region getRegion(String sido, String gugun){
+        final String ALL = "전체";
+        sido = sido == null ? ALL : regionRepository.existsBySido(sido) ? sido : ALL;
+        gugun = gugun == null ? ALL : regionRepository.existsByGugun(gugun) ? gugun : ALL;
+
+        if(ALL.equals(sido)) { // 시도 : 전체
+            if(ALL.equals(gugun)) { // 구군 : 전체
+                return regionRepository.findBySidoAndGugun(ALL, ALL)
+                        .orElseThrow(() -> new RuntimeException("해당 지역을 찾을 수 없습니다."));
+            }
+            else{ // 구군 : 유효
+                return regionRepository.findByGugun(gugun)
+                        .orElseThrow(() -> new RuntimeException("해당 지역을 찾을 수 없습니다."));
+            }
+        }
+        else {// 시도 : 유효
+            if(ALL.equals(gugun)) { // 구군 : 전체
+                return regionRepository.findBySidoAndGugun(sido,ALL)
+                        .orElseThrow(() -> new RuntimeException("해당 지역을 찾을 수 없습니다."));
+            }
+            else{ // 구군 : 유효
+                return regionRepository.findBySidoAndGugun(sido, gugun)
+                        .orElseThrow(() -> new RuntimeException("해당 지역을 찾을 수 없습니다."));
+            }
+        }
     }
 }
