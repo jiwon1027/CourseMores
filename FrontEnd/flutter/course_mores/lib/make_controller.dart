@@ -1,8 +1,12 @@
-import 'package:get/get.dart';
+import 'package:get/get.dart' as g;
+import 'dart:convert';
 import 'package:flutter/widgets.dart';
+import 'package:dio/dio.dart';
+import './auth/auth_dio.dart';
+import 'package:http_parser/http_parser.dart';
 
 // 코스 작성하는 getX controller
-class CourseController extends GetxController {
+class CourseController extends g.GetxController {
   var title = ''.obs;
   var content = ''.obs;
   var people = 0.obs;
@@ -29,13 +33,94 @@ class CourseController extends GetxController {
     hashtagList.addAll(hashtags);
   }
 
-  // other methods for managing data
+  // Map<String, dynamic> toCreateReqDto() {
+  //   return {
+  //     'title': title.value,
+  //     'content': content.value,
+  //     'people': people.value,
+  //     'time': time.value,
+  //     'visited': visited.value,
+  //     'locationList': locationList.value
+  //         .map((location) => location.toCreateReqDto())
+  //         .toList(),
+  //     'hashtagList': hashtagList.value,
+  //     'themeIdList': themeIdList.value,
+  //   };
+  // }
+  void postCourse() async {
+    final url = 'https://coursemores.site/api/course/1';
+    final List<Map<String, dynamic>> locationDataList = [];
+    FormData formData;
+
+    // locationList의 데이터를 LocationCreateReqDto로 변환
+    for (final locationData in locationList) {
+      locationDataList.add({
+        'latitude': locationData.latitude,
+        'longitude': locationData.longitude,
+        'name': locationData.name,
+        'title': locationData.title,
+        'content': locationData.content,
+        'sido': locationData.sido,
+        'gugun': locationData.gugun,
+        'roadViewImage': locationData.roadViewImage,
+        'numberOfImage': locationData.numberOfImage,
+      });
+    }
+
+    // 출력확인
+    print(locationDataList);
+
+    formData = FormData.fromMap({
+      'courseCreateReqDto': MultipartFile.fromString(
+          jsonEncode({
+            'title': title.value,
+            'content': content.value,
+            'people': people.value,
+            'time': time.value,
+            'visited': visited.value,
+            'locationList': locationDataList,
+            'hashtagList': hashtagList,
+            'themeIdList': themeIdList,
+          }),
+          contentType: MediaType.parse('application/json')),
+      // 'imageList': await MultipartFile.fromFile(image.path,
+      //     contentType: MediaType("image", "jpg")),
+      'imageList': null,
+    });
+
+    // 출력확인
+    print(formData.fields);
+    print(formData.files);
+
+    try {
+      final dio = await authDio();
+      final response = await dio.post(url,
+          data: formData,
+          options: Options(
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          ));
+      if (response.statusCode == 200) {
+        print('POST 요청 성공');
+      }
+    } catch (e) {
+      if (e is DioError) {
+        print('Dio Error Status Code: ${e.response?.statusCode}');
+        print('Dio Error Message: ${e.response?.statusMessage}');
+        print('Dio Server Error Message: ${e.response?.data}');
+      } else {
+        // DioError가 아닌 다른 예외 처리
+      }
+    }
+  }
 }
+//////////
 
 // 코스 작성시 장소 개별 getX controller
-class LocationController extends GetxController {
+class LocationController extends g.GetxController {
   final CourseController courseController =
-      Get.find(); // GetX에서 CourseController 가져오기
+      g.Get.find(); // GetX에서 CourseController 가져오기
 
   var latitude = 0.0.obs;
   var longitude = 0.0.obs;
