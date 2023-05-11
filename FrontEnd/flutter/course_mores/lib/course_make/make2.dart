@@ -1,7 +1,7 @@
 import 'package:coursemores/course_make/make3.dart';
 import 'package:coursemores/course_make/make_map.dart';
 import 'package:coursemores/course_make/make_search.dart';
-import 'package:coursemores/course_search/course_list.dart';
+// import 'package:coursemores/course_search/course_list.dart';
 // import 'package:flutter_reorderable_list/flutter_reorderable_list.dart';
 import 'package:flutter_reorderable_list/flutter_reorderable_list.dart' as frl;
 import 'package:flutter/material.dart';
@@ -84,13 +84,26 @@ class _CourseMakeState extends State<CourseMake> {
   }
 
   // 시도, 구군 정보 따로 저장하는 과정
+  // Future<String> _getSido(double lat, double lon) async {
+  //   final List<geocoding.Placemark> placemarks = await geocoding
+  //       .placemarkFromCoordinates(lat, lon, localeIdentifier: 'ko');
+  //   if (placemarks != null && placemarks.isNotEmpty) {
+  //     final geocoding.Placemark place = placemarks.first;
+  //     final String administrativeArea = place.administrativeArea ?? '';
+  //     return '$administrativeArea';
+  //   }
+  //   return '';
+  // }
   Future<String> _getSido(double lat, double lon) async {
     final List<geocoding.Placemark> placemarks = await geocoding
         .placemarkFromCoordinates(lat, lon, localeIdentifier: 'ko');
     if (placemarks != null && placemarks.isNotEmpty) {
       final geocoding.Placemark place = placemarks.first;
       final String administrativeArea = place.administrativeArea ?? '';
-      return '$administrativeArea';
+      if (administrativeArea.isNotEmpty) {
+        return administrativeArea;
+      }
+      return '전체';
     }
     return '';
   }
@@ -102,7 +115,13 @@ class _CourseMakeState extends State<CourseMake> {
       final geocoding.Placemark place = placemarks.first;
       final String locality = place.locality ?? '';
       final String subLocality = place.subLocality ?? '';
-      return '$locality $subLocality';
+      if (locality.isNotEmpty) {
+        return locality.trim();
+      } else if (subLocality.isNotEmpty) {
+        return subLocality.trim();
+      } else {
+        return '전체';
+      }
     }
     return '';
   }
@@ -343,14 +362,6 @@ class _CourseMakeState extends State<CourseMake> {
                                 selectedPlace.geometry!.location.lng;
                             String sido = await _getSido(latitude, longitude);
                             String gugun = await _getGugun(latitude, longitude);
-                            // LocationData newLocation = LocationData(
-                            //   key: UniqueKey(),
-                            //   name: selectedPlace.name,
-                            //   latitude: latitude,
-                            //   longitude: longitude,
-                            //   sido: sido,
-                            //   gugun: gugun,
-                            // );
                             _addItem(
                               selectedPlace.name,
                               latitude,
@@ -467,9 +478,21 @@ class _CourseMakeState extends State<CourseMake> {
                       print(courseController.title);
                       print(courseController.locationList);
                       print(courseController.locationList[0].name);
+                      print(courseController.locationList[1].name);
+                      print(courseController.locationList[2].name);
+                      print(courseController.locationList[3].name);
+                      // print(courseController.locationList[4].name);
                       print(courseController.locationList[0].title);
                       print(courseController.locationList[0].sido);
+                      print(courseController.locationList[1].sido);
+                      print(courseController.locationList[2].sido);
+                      print(courseController.locationList[3].sido);
+                      print(courseController.locationList[4].sido);
                       print(courseController.locationList[0].gugun);
+                      print(courseController.locationList[1].gugun);
+                      print(courseController.locationList[2].gugun);
+                      print(courseController.locationList[3].gugun);
+                      print(courseController.locationList[4].gugun);
                       print(courseController.locationList[1].content);
                       // print(courseController.locationList[0].name);
                       // print(courseController.locationList[1].name);
@@ -756,23 +779,59 @@ class PreviewRoute extends StatelessWidget {
   Widget build(BuildContext context) {
     final List<LatLng> positions =
         items.map((item) => LatLng(item.latitude, item.longitude)).toList();
-    return GoogleMap(
-      initialCameraPosition: CameraPosition(
-        target: positions[0], // 첫 번째 장소를 화면 중앙에 띄우기
-        zoom: 15.0,
-      ),
-      markers: Set.from(positions.map((position) => Marker(
-            markerId: MarkerId(position.toString()),
-            position: position,
-          ))),
-      polylines: {
-        Polyline(
-          polylineId: PolylineId('route'),
-          points: positions,
-          color: Colors.blue,
-          width: 5,
-        ),
-      },
-    );
+    final List<Future<BitmapDescriptor>> futures = [
+      BitmapDescriptor.fromAssetImage(
+          ImageConfiguration(size: Size(24, 24)), 'assets/marker1.png'),
+      BitmapDescriptor.fromAssetImage(
+          ImageConfiguration(size: Size(24, 24)), 'assets/marker2.png'),
+      BitmapDescriptor.fromAssetImage(
+          ImageConfiguration(size: Size(24, 24)), 'assets/marker3.png'),
+      BitmapDescriptor.fromAssetImage(
+          ImageConfiguration(size: Size(24, 24)), 'assets/marker4.png'),
+      BitmapDescriptor.fromAssetImage(
+          ImageConfiguration(size: Size(24, 24)), 'assets/marker5.png'),
+    ];
+    final Future<List<BitmapDescriptor>> markersFuture = Future.wait(futures);
+    return FutureBuilder<List<BitmapDescriptor>>(
+        future: markersFuture,
+        builder: (BuildContext context,
+            AsyncSnapshot<List<BitmapDescriptor>> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Container(
+              color: Colors.grey,
+              child: Center(child: CircularProgressIndicator()),
+            );
+          } else if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          } else if (!snapshot.hasData) {
+            return Text('Error: no data');
+          }
+          final List<BitmapDescriptor> markerIcons = snapshot.data!;
+          final List<Marker> markers = positions.asMap().entries.map((entry) {
+            final index = entry.key;
+            final position = entry.value;
+            final icon = markerIcons[index];
+            return Marker(
+              markerId: MarkerId('marker$index'),
+              position: position,
+              icon: icon,
+            );
+          }).toList();
+          return GoogleMap(
+            initialCameraPosition: CameraPosition(
+              target: positions[0], // 첫 번째 장소를 화면 중앙에 띄우기
+              zoom: 15.0,
+            ),
+            markers: Set.from(markers),
+            polylines: {
+              Polyline(
+                polylineId: PolylineId('route'),
+                points: positions,
+                color: Colors.blue,
+                width: 5,
+              ),
+            },
+          );
+        });
   }
 }

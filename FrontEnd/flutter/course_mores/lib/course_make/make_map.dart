@@ -145,13 +145,26 @@ class _CMMapState extends State<CMMap> {
   }
 
   // 시도, 구군 정보 따로 저장하는 과정
+  // Future<String> _getSido(double lat, double lon) async {
+  //   final List<geocoding.Placemark> placemarks = await geocoding
+  //       .placemarkFromCoordinates(lat, lon, localeIdentifier: 'ko');
+  //   if (placemarks != null && placemarks.isNotEmpty) {
+  //     final geocoding.Placemark place = placemarks.first;
+  //     final String administrativeArea = place.administrativeArea ?? '';
+  //     return '$administrativeArea';
+  //   }
+  //   return '';
+  // }
   Future<String> _getSido(double lat, double lon) async {
     final List<geocoding.Placemark> placemarks = await geocoding
         .placemarkFromCoordinates(lat, lon, localeIdentifier: 'ko');
     if (placemarks != null && placemarks.isNotEmpty) {
       final geocoding.Placemark place = placemarks.first;
       final String administrativeArea = place.administrativeArea ?? '';
-      return '$administrativeArea';
+      if (administrativeArea.isNotEmpty) {
+        return administrativeArea;
+      }
+      return '전체';
     }
     return '';
   }
@@ -163,7 +176,13 @@ class _CMMapState extends State<CMMap> {
       final geocoding.Placemark place = placemarks.first;
       final String locality = place.locality ?? '';
       final String subLocality = place.subLocality ?? '';
-      return '$locality $subLocality';
+      if (locality.isNotEmpty) {
+        return locality.trim();
+      } else if (subLocality.isNotEmpty) {
+        return subLocality.trim();
+      } else {
+        return '전체';
+      }
     }
     return '';
   }
