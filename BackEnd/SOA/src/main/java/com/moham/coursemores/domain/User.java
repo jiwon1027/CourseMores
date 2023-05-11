@@ -54,7 +54,7 @@ public class User extends DeleteTimeEntity {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Course> courseList; // 유저가 작성한 코스 목록
-    
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> commentList; // 유저가 작성한 댓글 목록
 
@@ -66,6 +66,9 @@ public class User extends DeleteTimeEntity {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommentLike> commentLikeList; // 유저의 댓글 좋아요 목록
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Notification> notificationList; // 유저의 알림 목록
 
     @Builder
     public User(String email
