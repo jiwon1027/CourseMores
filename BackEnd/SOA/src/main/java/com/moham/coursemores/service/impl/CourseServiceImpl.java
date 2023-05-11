@@ -245,6 +245,22 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    public List<CourseImportResDto> importCourse(Long courseId) {
+        return courseRepository.findById(courseId)
+                .orElseThrow(()->new RuntimeException("해당 코스를 찾을 수 없습니다."))
+                .getCourseLocationList()
+                .stream()
+                .map(location -> CourseImportResDto.builder()
+                        .name(location.getName())
+                        .longitude(location.getLongitude())
+                        .latitude(location.getLatitude())
+                        .sido(location.getRegion().getSido())
+                        .gugun(location.getRegion().getGugun())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public List<MyCourseResDto> getMyCourseList(Long userId) {
         // 유저 정보 가져오기
         User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
