@@ -395,12 +395,15 @@ Widget textFormFieldComponent(
 bool? isDuplicate;
 void duplicateCheck(nickname) async {
   final dio = await authDio();
-  dynamic nicknameData = json.encode({'nickname': nickname});
-  final response = await dio.post('user/validation', data: nicknameData);
+  // dynamic nicknameData = json.encode({'nickname': nickname});
+  final response = await dio.get(
+    'user/validation/nickname/$nickname',
+  );
 
   if (response.statusCode == 200) {
     print('닉네임 중복 검사!');
-    isDuplicate = response.data['isDuplicate'];
+    isDuplicate = response.data['isDuplicated'];
+    print('중복여부=$isDuplicate');
   }
 }
 
