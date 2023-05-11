@@ -5,6 +5,7 @@ import com.moham.coursemores.dto.comment.CommentResDTO;
 import com.moham.coursemores.dto.comment.CommentUpdateReqDTO;
 import com.moham.coursemores.dto.comment.MyCommentResDto;
 import com.moham.coursemores.service.CommentService;
+import com.moham.coursemores.service.NotificationService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -33,6 +34,7 @@ public class CommentController {
     private static final Logger logger = LoggerFactory.getLogger(CommentController.class);
 
     private final CommentService commentService;
+    private final NotificationService notificationService;
 
     @GetMapping("course/{courseId}/{userId}")
     public ResponseEntity<Map<String, Object>> getCommentAll(
@@ -74,12 +76,15 @@ public class CommentController {
             @PathVariable Long userId,
             @RequestPart CommentCreateReqDTO commentCreateReqDTO,
             @RequestPart(required = false) List<MultipartFile> imageList) {
-        logger.debug("[0/2][POST][/comment/course/{}/{}] << request : commentCreateReqDTO, imageList\n commentCreateReqDTO = {}\n imageList = {}", courseId, userId, commentCreateReqDTO, imageList);
+        logger.debug("[0/3][POST][/comment/course/{}/{}] << request : commentCreateReqDTO, imageList\n commentCreateReqDTO = {}\n imageList = {}", courseId, userId, commentCreateReqDTO, imageList);
 
-        logger.debug("[1/2][POST][/comment/course/{}/{}] ... cs.createComment", courseId, userId);
+        logger.debug("[1/3][POST][/comment/course/{}/{}] ... cs.createComment", courseId, userId);
         commentService.createComment(courseId, userId, commentCreateReqDTO, imageList);
 
-        logger.debug("[2/2][POST][/comment/course/{}/{}] >> response : none\n", courseId, userId);
+        logger.debug("[2/3][POST][/comment/course/{}/{}] ... ns.makeNotification", courseId, userId);
+        notificationService.makeNotification(userId, courseId, 1);
+
+        logger.debug("[3/3][POST][/comment/course/{}/{}] >> response : none\n", courseId, userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

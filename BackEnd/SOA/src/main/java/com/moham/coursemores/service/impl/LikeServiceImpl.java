@@ -11,7 +11,6 @@ import com.moham.coursemores.repository.CourseLikeRepository;
 import com.moham.coursemores.repository.CourseRepository;
 import com.moham.coursemores.repository.UserRepository;
 import com.moham.coursemores.service.LikeService;
-import com.moham.coursemores.service.NotificationService;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class LikeServiceImpl implements LikeService {
 
-    private final NotificationService notificationService;
     private final CourseLikeRepository courseLikeRepository;
     private final UserRepository userRepository;
     private final CourseRepository courseRepository;
@@ -38,15 +36,16 @@ public class LikeServiceImpl implements LikeService {
 
     @Override
     @Transactional
-    public void addLikeCourse(Long userId, Long courseId) {
+    public boolean addLikeCourse(Long userId, Long courseId) {
         Course course = courseRepository.findByIdAndDeleteTimeIsNull(courseId)
                 .orElseThrow(() -> new RuntimeException("해당 코스를 찾을 수 없습니다."));
 
         Optional<CourseLike> courseLike = courseLikeRepository.findByUserIdAndCourseId(userId, courseId);
-
+        boolean alarm;
         if (courseLike.isPresent()) {
             // 코스 좋아요 객체가 존재한다면 좋아요 등록일시를 설정해준다.
             courseLike.get().register();
+            alarm = false;
         } else {
             // 코스 좋아요 객체가 존재하지 않으면 새로 생성해준다.
             User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
@@ -55,10 +54,10 @@ public class LikeServiceImpl implements LikeService {
                     .user(user)
                     .course(course)
                     .build());
-            // 코스 작성자에게 알림
-            notificationService.makeNotification(course.getUser().getId(), user.getNickname(), course.getTitle(), 0);
+            alarm = true;
         }
         course.increaseLikeCount();
+        return alarm;
     }
 
     @Override

@@ -4,9 +4,11 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
+import com.moham.coursemores.domain.Course;
 import com.moham.coursemores.domain.User;
 import com.moham.coursemores.domain.redis.FirebaseToken;
 import com.moham.coursemores.dto.notification.NotificationResDto;
+import com.moham.coursemores.repository.CourseRepository;
 import com.moham.coursemores.repository.FirebaseTokenRedisRepository;
 import com.moham.coursemores.repository.NotificationRepository;
 import com.moham.coursemores.repository.UserRepository;
@@ -29,6 +31,7 @@ public class NotificationServiceImpl implements NotificationService {
     private final NotificationRepository notificationRepository;
     private final UserRepository userRepository;
     private final FirebaseTokenRedisRepository firebaseTokenRedisRepository;
+    private final CourseRepository courseRepository;
 
     @Override
     public List<NotificationResDto> getMyNotificationList(Long userId) {
@@ -44,15 +47,22 @@ public class NotificationServiceImpl implements NotificationService {
     @Async
     @Override
     @Transactional
-    public void makeNotification(Long targetUserId, String nickname, String title, int messageType) {
-        User targetUser = userRepository.findByIdAndDeleteTimeIsNull(targetUserId)
+    public void makeNotification(Long userId, Long courseId, int messageType) {
+        User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
                 .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new RuntimeException("해당 코스를 찾을 수 없습니다."));
+
+        User targetUser = course.getUser();
+        String nickname = user.getNickname();
+        String title = course.getTitle();
+
         notificationRepository.save(com.moham.coursemores.domain.Notification.builder()
                 .user(targetUser)
                 .messageType(messageType)
                 .message(nickname + "님이 " + title + " 코스에 " + (messageType == 0 ? "좋아요를 눌렀" : "댓글을 남겼" + "습니다."))
                 .build());
-        sendNotification(targetUserId, nickname, title, messageType);
+        sendNotification(targetUser.getId(), nickname, title, messageType);
     }
 
     @Override
@@ -67,7 +77,6 @@ public class NotificationServiceImpl implements NotificationService {
         notification.delete();
     }
 
-    @Async
     public void sendNotification(Long userId, String nickname, String title, int messageType) {
         FirebaseToken fireBaseToken = firebaseTokenRedisRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("해당 FirebaseToken을 찾을 수 없습니다."));

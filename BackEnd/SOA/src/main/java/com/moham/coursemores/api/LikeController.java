@@ -1,6 +1,7 @@
 package com.moham.coursemores.api;
 
 import com.moham.coursemores.service.LikeService;
+import com.moham.coursemores.service.NotificationService;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ public class LikeController {
     private static final Logger logger = LoggerFactory.getLogger(LikeController.class);
 
     private final LikeService likeService;
+    private final NotificationService notificationService;
 
     @GetMapping("course/{courseId}/{userId}")
     public ResponseEntity<Map<String, Object>> checkLikeCourse(
@@ -44,12 +46,16 @@ public class LikeController {
     public ResponseEntity<Void> addLikeCourse(
             @PathVariable Long userId,
             @PathVariable Long courseId) {
-        logger.debug("[0/2][POST][/like/course/{}/{}] << request : none", courseId, userId);
+        logger.debug("[0/3][POST][/like/course/{}/{}] << request : none", courseId, userId);
 
-        logger.debug("[1/2][POST][/like/course/{}/{}] ... ls.addLikeCourse", courseId, userId);
-        likeService.addLikeCourse(userId, courseId);
+        logger.debug("[1/3][POST][/like/course/{}/{}] ... ls.addLikeCourse", courseId, userId);
+        boolean alarm = likeService.addLikeCourse(userId, courseId);
 
-        logger.debug("[2/2][POST][/like/course/{}/{}] >> response : none\n", courseId, userId);
+        logger.debug("[2/3][POST][/like/course/{}/{}] ... ns.makeNotification", courseId, userId);
+        if (alarm)
+            notificationService.makeNotification(userId, courseId, 0);
+
+        logger.debug("[3/3][POST][/like/course/{}/{}] >> response : none\n", courseId, userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
