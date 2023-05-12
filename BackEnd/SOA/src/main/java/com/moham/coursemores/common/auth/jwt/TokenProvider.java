@@ -13,6 +13,7 @@ import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -64,7 +65,7 @@ public class TokenProvider {
 
     public Long extractMemberId(String accessToken) {
         Claims claims = parseClaims(accessToken);
-        return Long.valueOf(claims.getSubject());
+        return Long.valueOf(Objects.requireNonNull(claims).getSubject());
     }
 
     public boolean validate(String token) { // AccessToken(AppToken) 유효한지 체크
@@ -96,7 +97,7 @@ public class TokenProvider {
         if (validate(accessToken)) {
             Claims claims = parseClaims(accessToken);
             Collection<? extends GrantedAuthority> authorities =
-                    Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
+                    Arrays.stream(Objects.requireNonNull(claims).get(AUTHORITIES_KEY).toString().split(","))
                             .map(SimpleGrantedAuthority::new)
                             .collect(Collectors.toList());
             User principal = new User(claims.getSubject(), "", authorities);

@@ -17,6 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.security.auth.message.AuthException;
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -77,29 +80,22 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String reissue(TokenReissueReqDto tokenReissueReqDto) {
-        // 1. Refresh Token 검증
-        if (!tokenProvider.validate(tokenReissueReqDto.getRefreshToken())) {
-            throw new RuntimeException("해당 Refresh Token이 유효하지 않습니다.");
-        }
-
-        // 2. Access Token 에서 Member ID 가져오기
         Long userId = tokenProvider.extractMemberId(tokenReissueReqDto.getAccessToken());
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("해당 사용자를 찾을 수 없습니다."));
+        Optional<User> user = userRepository.findById(userId);
+        if(user.isEmpty()){
+            return "401";
+        }
 
         // 3. 저장소에서 Member ID 를 기반으로 Refresh Token 값 가져옴
-        RefreshToken originRefreshToken = refreshService.get(userId); // 로그아웃 시 DB에서 리프레쉬 토큰을 제거한다는 가정하에
+        Optional<RefreshToken> originRefreshToken = refreshService.get(userId); // 로그아웃 시 DB에서 리프레쉬 토큰을 제거한다는 가정하에
 
         // 4. Refresh Token 일치하는지 검사
-        if (!originRefreshToken.getRefreshToken().equals(tokenReissueReqDto.getRefreshToken())) {
-            throw new RuntimeException("해당 Refresh Token이 일치하지 않습니다.");
+        if (originRefreshToken.isPresent() && !originRefreshToken.get().getRefreshToken().equals(tokenReissueReqDto.getRefreshToken())) {
+            return "401";
         }
 
-        // 5. 새로운 accessToken 생성
-        String newAccessToken = tokenProvider.generateAccessToken(Long.toString(userId), user.getProvider());
-
         // 토큰 발급
-        return newAccessToken;
+        return tokenProvider.generateAccessToken(Long.toString(userId), user.get().getProvider());
     }
 
 }

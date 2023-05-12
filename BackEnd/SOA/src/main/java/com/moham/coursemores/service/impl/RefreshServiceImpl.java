@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -28,9 +30,8 @@ public class RefreshServiceImpl implements RefreshService {
     }
 
     @Override
-    public RefreshToken get(Long userId) {
-        return repository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("해당 리프레쉬 토큰을 찾을 수 없습니다."));
+    public Optional<RefreshToken> get(Long userId) {
+        return repository.findById(userId);
     }
 
     @Override
