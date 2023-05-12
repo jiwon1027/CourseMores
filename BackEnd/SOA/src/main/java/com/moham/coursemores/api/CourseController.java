@@ -53,7 +53,7 @@ public class CourseController {
         Map<String, Object> resultMap = new HashMap<>();
 
         logger.debug("[1/2][GET][/course/hot]... cs.getHotCourseList");
-        List<HotPreviewResDto> courseList = courseService.getHotCourseList();
+        final List<HotPreviewResDto> courseList = courseService.getHotCourseList();
         resultMap.put("courseList", courseList);
 
         logger.debug("[2/2][GET][/course/hot] >> response : courseList\n courseList = {}\n", courseList);

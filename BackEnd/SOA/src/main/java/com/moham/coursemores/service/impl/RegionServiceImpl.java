@@ -24,13 +24,12 @@ public class RegionServiceImpl implements RegionService {
     @Override
     @Transactional
     public void saveDummy() {
-        FileReader fr;
-        BufferedReader br = null;
         String data;
 
-        try {
-            fr = new FileReader("src/main/resources/AdministrativeDistrict.csv");
-            br = new BufferedReader(fr);
+        try (
+            FileReader fr = new FileReader("src/main/resources/AdministrativeDistrict.csv");
+            BufferedReader br = new BufferedReader(fr);
+        ) {
             br.readLine(); // 행정구역 분류가 저장되지 않도록 한 줄 버리기
             while ((data = br.readLine()) != null) {
                 String[] info = data.split(",");
@@ -42,14 +41,6 @@ public class RegionServiceImpl implements RegionService {
             }
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            if (br != null) {
-                try {
-                    br.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
         }
 
     }

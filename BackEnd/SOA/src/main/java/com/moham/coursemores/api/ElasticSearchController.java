@@ -28,14 +28,17 @@ public class ElasticSearchController {
     private static final Logger logger = LoggerFactory.getLogger(ElasticSearchController.class);
 
     private final ElasticSearchService courseSearchService;
+    private final String VALUE = "value";
+    private final String INDEX = "index";
+    private final String ID = "id";
 
     @PostMapping("search")
     public ResponseEntity<IndexDataResDTO> search(
             @RequestBody Map<String, String> map) throws IOException {
-        logger.debug("[0/2][POST][/elasticsearch/search] << request : value\n value = {}", map.get("value"));
+        logger.debug("[0/2][POST][/elasticsearch/search] << request : value\n value = {}", map.get(VALUE));
 
         logger.debug("[1/2][POST][/elasticsearch/search] ... css.search");
-        IndexDataResDTO result = courseSearchService.search(map.get("value"));
+        IndexDataResDTO result = courseSearchService.search(map.get(VALUE));
 
         logger.debug("[2/2][POST][/elasticsearch/search] >> response : result\n result = {}\n", result);
         return new ResponseEntity<>(result, HttpStatus.OK);
@@ -43,9 +46,9 @@ public class ElasticSearchController {
 
     @PostMapping("cli")
     public ResponseEntity<Void> insertCli(@RequestBody Map<String, String> map) {
-        String id = map.get("id");
-        String index = map.get("index");
-        String value = map.get("value");
+        String id = map.get(ID);
+        String index = map.get(INDEX);
+        String value = map.get(VALUE);
         logger.debug("[0/2][POST][/elasticsearch/cli] << request : id, index, value\n id = {}\n index = {}\n value = {}", id, index, value);
 
         if ("course".equals(index)) {
@@ -87,9 +90,9 @@ public class ElasticSearchController {
 
     @PutMapping("cli")
     public ResponseEntity<Map<String, Object>> updateCli(@RequestBody Map<String, String> map) throws IOException {
-        String id = map.get("id");
-        String index = map.get("index");
-        String value = map.get("value");
+        String id = map.get(ID);
+        String index = map.get(INDEX);
+        String value = map.get(VALUE);
         logger.debug("[0/2][PUT][/elasticsearch/cli] << request : id, index, value\n id = {}\n index = {}\n value = {}", id, index, value);
 
         logger.debug("[1/2][PUT][/elasticsearch/cli] ... css.updateCli");
@@ -101,8 +104,8 @@ public class ElasticSearchController {
 
     @DeleteMapping("cli")
     public ResponseEntity<Map<String, Object>> deleteCli(@RequestBody Map<String, String> map) throws IOException {
-        String id = map.get("id");
-        String index = map.get("index");
+        String id = map.get(ID);
+        String index = map.get(INDEX);
         logger.debug("[0/2][DELETE][/elasticsearch/cli] << request : id, index\n id = {}\n index = {}", id, index);
 
         logger.debug("[1/2][DELETE][/elasticsearch/cli] ... css.deleteCli");
