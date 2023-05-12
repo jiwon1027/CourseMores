@@ -332,7 +332,7 @@ public class CourseServiceImpl implements CourseService {
                 .content(courseCreateReqDto.getContent())
                 .people(courseCreateReqDto.getPeople())
                 .time(courseCreateReqDto.getTime())
-                .visited(courseCreateReqDto.isVisited())
+                .visited(courseCreateReqDto.getVisited())
                 .viewCount(0)
                 .interestCount(0)
                 .likeCount(0)

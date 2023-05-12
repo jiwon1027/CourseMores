@@ -192,7 +192,7 @@ public class Course extends DeleteTimeEntity {
         this.content = courseUpdateReqDto.getContent();
         this.people = courseUpdateReqDto.getPeople();
         this.time = courseUpdateReqDto.getTime();
-        this.visited = courseUpdateReqDto.isVisited();
+        this.visited = courseUpdateReqDto.getVisited();
         this.locationName = courseUpdateReqDto.getLocationList().get(0).getName();
     }
 
