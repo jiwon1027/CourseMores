@@ -24,11 +24,10 @@ public class User extends DeleteTimeEntity {
     private Long id;
 
     @NotNull
-    @Column(length = 100)
     private String email;
 
     @NotNull
-    @Column(length = 15)
+    @Column(length = 50)
     private String roles;
 
     @NotNull
@@ -40,7 +39,7 @@ public class User extends DeleteTimeEntity {
 //    @Column
 //    private String providerId;
 
-    @Column(length = 20)
+    @Column(length = 50)
     private String nickname;
 
     @Column(length = 1)

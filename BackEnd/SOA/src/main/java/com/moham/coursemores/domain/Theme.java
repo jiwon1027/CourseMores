@@ -27,7 +27,7 @@ public class Theme extends UpdateTimeEntity {
     private Long id;
 
     @NotNull
-    @Column(length = 20)
+    @Column(length = 50)
     private String name;
 
     @OneToMany(mappedBy = "theme", cascade = CascadeType.ALL, orphanRemoval = true)
