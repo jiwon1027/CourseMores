@@ -245,11 +245,13 @@ class HomeScreenInfo extends GetxController {
     hotCourse = courseList;
     print('hotCourse불러오기');
     print(hotCourse);
+    update();
   }
 
   void saveNearCourse(courseList) {
     nearCourse = courseList;
     print('nearCourse불러오기');
     print(nearCourse);
+    update();
   }
 }

@@ -14,6 +14,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 final loginController = Get.put(LoginStatus());
 final pageController = Get.put(PageNum());
+final tokenStorage = Get.put(TokenStorage());
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,12 +45,21 @@ class _MyAppState extends State<MyApp> {
   // }
 
   @override
+  void initState() {
+    super.initState();
+    tokenStorage.onInit();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Obx(() {
       var pageNum = pageController.pageNum.value;
 
       // print(pageNum);
       if (loginController.isLoggedIn.value == true) {
+        // 백에 accesstoken 재발급받는 api 요청..
+        // 컨트롤러에 response 저장
+
         return Scaffold(
             backgroundColor: const Color.fromARGB(255, 240, 240, 240),
             appBar: const CustomAppBar(),
@@ -68,7 +78,8 @@ class _MyAppState extends State<MyApp> {
                     // onItemSelected: (index) => setState(() {
                     //   changePageNum(index);
                     // }),
-                    onItemSelected: (index) => pageController.changePageNum(index),
+                    onItemSelected: (index) =>
+                        pageController.changePageNum(index),
                     items: [
                       FlashyTabBarItem(
                         icon: const Icon(Icons.home),
