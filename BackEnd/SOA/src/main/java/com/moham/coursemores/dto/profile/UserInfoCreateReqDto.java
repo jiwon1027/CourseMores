@@ -11,7 +11,7 @@ import lombok.ToString;
 public class UserInfoCreateReqDto {
 
     @NotBlank(message = "닉네임은 필수 입력 값입니다.")
-    @Size(max = 20, message = "닉네임은 20글자 이하여야 합니다.")
+    @Size(max = 50, message = "닉네임은 50글자 이하여야 합니다.")
     private String nickname;
     @NotNull(message = "나이는 필수 입력 값입니다.")
     private Integer age;
