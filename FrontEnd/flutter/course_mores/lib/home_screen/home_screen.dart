@@ -1,3 +1,5 @@
+// import 'package:coursemores/auth/login_page.dart';
+// import 'package:coursemores/mypage/mypage.dart';
 import '../controller/getx_controller.dart';
 import 'package:flutter/material.dart';
 import '../course_search/search.dart' as search;
@@ -9,7 +11,7 @@ import './carousel.dart' as carousel;
 import '../course_search/course_list.dart' as course;
 // import '../mypage/mypage.dart' as mypage;
 // import '../controller/getx_controller.dart';
-import '../main.dart';
+// import '../main.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart' as geocoding;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -26,6 +28,7 @@ final List<String> imgList = [
 ];
 
 final homeController = Get.put(HomeScreenInfo());
+final pageController = Get.put(PageNum());
 var hotCourse;
 
 class HomeScreen extends StatefulWidget {
@@ -56,30 +59,34 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    getHotCourse();
+
+    // getHotCourse();
     // getNearCourse();
   }
 
-  Future<void> getHotCourse() async {
-    final dio = await authDio();
-    final response = await dio.get(
-      'course/hot',
-    );
-    print('4646464646');
-    print(response);
+  // Future<void> getHotCourse() async {
+  //   print('여기서의 토큰 = ${tokenController.accessToken}');
+  //   final dio = await authDio();
+  //   final response = await dio.get(
+  //     'course/hot',
+  //   );
+  //   print('4646464646');
+  //   print(response);
 
-    List<dynamic> data = response.data['courseList'];
-    hotCourse = data.map((item) => Map<String, Object>.from(item)).toList();
-    // homeController.saveHotCourse(
-    //     data.map((item) => Map<String, Object>.from(item)).toList());
-    // setState(() {
-    //   hotCourse = homeController.hotCourse;
-    // });
-    print('홈에서 받아온 hotcourse');
-    print(hotCourse);
-    print(_currentPosition?.latitude);
-    print(_currentPosition?.longitude);
-  }
+  //   List<dynamic> data = response.data['courseList'];
+  //   hotCourse = data.map((item) => Map<String, Object>.from(item)).toList();
+  //   homeController.saveHotCourse(hotCourse);
+  //   // homeController.saveHotCourse(
+  //   //     data.map((item) => Map<String, Object>.from(item)).toList());
+  //   // setState(() {
+  //   //   hotCourse = homeController.hotCourse;
+  //   // });
+  //   print('홈에서 받아온 hotcourse');
+  //   print(homeController.hotCourse);
+  //   print(_currentPosition?.latitude);
+  //   print(_currentPosition?.longitude);
+  //   print(homeController.hotCourse[0]['image'].toString());
+  // }
 
   // openweathermap의 api키
   final String apiKey = dotenv.get('OPENWEATHER_API_KEY');
@@ -119,11 +126,12 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<String> _getAddress(double lat, double lon) async {
-    final List<geocoding.Placemark> placemarks =
-        await geocoding.placemarkFromCoordinates(lat, lon, localeIdentifier: 'ko');
+    final List<geocoding.Placemark> placemarks = await geocoding
+        .placemarkFromCoordinates(lat, lon, localeIdentifier: 'ko');
     if (placemarks.isNotEmpty) {
       final placemark = placemarks.first;
-      final String address = '${placemark.subLocality} ${placemark.thoroughfare} ';
+      final String address =
+          '${placemark.subLocality} ${placemark.thoroughfare} ';
       return address;
     }
     return '';
@@ -173,8 +181,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
                               final weatherData = snapshot.data!;
-                              final temp = weatherData['main']['temp'].toString();
-                              final weather = weatherData['weather'][0]['description'].toString();
+                              final temp =
+                                  weatherData['main']['temp'].toString();
+                              final weather = weatherData['weather'][0]
+                                      ['description']
+                                  .toString();
                               return Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -193,10 +204,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                     style: TextStyle(fontSize: 24),
                                   ),
                                   FutureBuilder<String>(
-                                    future:
-                                        _getAddress(_currentPosition?.latitude ?? 0, _currentPosition?.longitude ?? 0),
+                                    future: _getAddress(
+                                        _currentPosition?.latitude ?? 0,
+                                        _currentPosition?.longitude ?? 0),
                                     builder: (context, snapshot) {
-                                      if (snapshot.connectionState == ConnectionState.waiting) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
                                         return Text('검색중...');
                                       } else if (snapshot.hasData) {
                                         final address = snapshot.data!;
@@ -356,7 +369,9 @@ class _ButtonBar2State extends State<ButtonBar2> {
 }
 
 iconBoxDeco() {
-  return BoxDecoration(border: Border.all(color: Colors.black), borderRadius: BorderRadius.circular(10));
+  return BoxDecoration(
+      border: Border.all(color: Colors.black),
+      borderRadius: BorderRadius.circular(10));
 }
 
 boxDeco() {
@@ -375,6 +390,7 @@ boxDeco() {
 }
 
 popularCourse() {
+  print(homeController.hotCourse);
   return Container(
     decoration: boxDeco(),
     child: const Padding(
@@ -403,7 +419,10 @@ themeList() {
             children: const [
               Text(
                 '이런 테마는 어때요? 😊',
-                style: TextStyle(color: Colors.black, fontSize: 20.0, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.bold),
               ),
 
               SearchFilterTheme(),
