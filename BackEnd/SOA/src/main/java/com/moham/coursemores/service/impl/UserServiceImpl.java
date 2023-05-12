@@ -90,7 +90,7 @@ public class UserServiceImpl implements UserService {
         Optional<RefreshToken> originRefreshToken = refreshService.get(userId); // 로그아웃 시 DB에서 리프레쉬 토큰을 제거한다는 가정하에
 
         // 4. Refresh Token 일치하는지 검사
-        if (originRefreshToken.isPresent() && !originRefreshToken.get().getRefreshToken().equals(tokenReissueReqDto.getRefreshToken())) {
+        if (originRefreshToken.isEmpty() || !originRefreshToken.get().getRefreshToken().equals(tokenReissueReqDto.getRefreshToken())) {
             return "401";
         }
 

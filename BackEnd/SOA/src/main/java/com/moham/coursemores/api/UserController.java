@@ -79,8 +79,10 @@ public class UserController {
 
         logger.debug("[1/2][POST][/user/reissue] ...us.reissue");
         String accessToken = userService.reissue(tokenReissueReqDto);
-        if("401".equals(accessToken))
+        if("401".equals(accessToken)){
+            logger.debug("[2/2][POST][/user/reissue] >> response : 401 error");
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
         resultMap.put("accessToken", accessToken);
 
         logger.debug("[2/2][POST][/user/reissue] >> response : accessToken\n accessToken = {}\n", accessToken);
