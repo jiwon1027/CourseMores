@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="true" scanPeriod="30 seconds">
     <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <charset>UTF-8</charset>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <pattern>%-5level %d{HH:mm:ss:SSS} {%thread} %logger{36} - %msg%n</pattern>
         </encoder>
