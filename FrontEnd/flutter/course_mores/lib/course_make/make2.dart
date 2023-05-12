@@ -9,7 +9,7 @@ import './place_edit.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
-import '../make_controller.dart';
+import '../controller/make_controller.dart';
 import 'package:geocoding/geocoding.dart' as geocoding;
 
 class CourseMake extends StatefulWidget {
@@ -42,7 +42,9 @@ class _CourseMakeState extends State<CourseMake> {
     _items = <LocationData>[];
   }
 
-  void _addItem(String name, double latitude, double longitude, String sido, String gugun, [Key? key]) {
+  void _addItem(
+      String name, double latitude, double longitude, String sido, String gugun,
+      [Key? key]) {
     if (_items.length >= 5) {
       showDialog(
         context: context,
@@ -93,8 +95,8 @@ class _CourseMakeState extends State<CourseMake> {
   //   return '';
   // }
   Future<String> _getSido(double lat, double lon) async {
-    final List<geocoding.Placemark> placemarks =
-        await geocoding.placemarkFromCoordinates(lat, lon, localeIdentifier: 'ko');
+    final List<geocoding.Placemark> placemarks = await geocoding
+        .placemarkFromCoordinates(lat, lon, localeIdentifier: 'ko');
     // if (placemarks != null && placemarks.isNotEmpty) {
     if (placemarks.isNotEmpty) {
       final geocoding.Placemark place = placemarks.first;
@@ -108,8 +110,8 @@ class _CourseMakeState extends State<CourseMake> {
   }
 
   Future<String> _getGugun(double lat, double lon) async {
-    final List<geocoding.Placemark> placemarks =
-        await geocoding.placemarkFromCoordinates(lat, lon, localeIdentifier: 'ko');
+    final List<geocoding.Placemark> placemarks = await geocoding
+        .placemarkFromCoordinates(lat, lon, localeIdentifier: 'ko');
     // if (placemarks != null && placemarks.isNotEmpty) {
     if (placemarks.isNotEmpty) {
       final geocoding.Placemark place = placemarks.first;
@@ -269,7 +271,8 @@ class _CourseMakeState extends State<CourseMake> {
               ),
               const Text(
                 '장소는 최대 5개까지 추가할 수 있어요',
-                style: TextStyle(color: Color.fromARGB(255, 92, 67, 67), fontSize: 18),
+                style: TextStyle(
+                    color: Color.fromARGB(255, 92, 67, 67), fontSize: 18),
               ),
               SizedBox(
                 height: 10,
@@ -284,7 +287,8 @@ class _CourseMakeState extends State<CourseMake> {
                     // cacheExtent: 3000,
                     slivers: <Widget>[
                       SliverPadding(
-                          padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
+                          padding: EdgeInsets.only(
+                              bottom: MediaQuery.of(context).padding.bottom),
                           sliver: SliverList(
                             delegate: SliverChildBuilderDelegate(
                               (BuildContext context, int index) {
@@ -326,7 +330,8 @@ class _CourseMakeState extends State<CourseMake> {
                                   onPressed: () {
                                     Navigator.of(context).pop();
                                   },
-                                  child: const Text('확인', style: TextStyle(color: Colors.blue)),
+                                  child: const Text('확인',
+                                      style: TextStyle(color: Colors.blue)),
                                 ),
                               ],
                             ),
@@ -345,12 +350,15 @@ class _CourseMakeState extends State<CourseMake> {
                         //         UniqueKey());
                         //   }
                         // });
-                        Navigator.push(context, MaterialPageRoute(builder: (context) {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
                           return CMSearch();
                         })).then((selectedPlace) async {
                           if (selectedPlace != null) {
-                            double latitude = selectedPlace.geometry!.location.lat;
-                            double longitude = selectedPlace.geometry!.location.lng;
+                            double latitude =
+                                selectedPlace.geometry!.location.lat;
+                            double longitude =
+                                selectedPlace.geometry!.location.lng;
                             String sido = await _getSido(latitude, longitude);
                             String gugun = await _getGugun(latitude, longitude);
                             _addItem(
@@ -367,7 +375,8 @@ class _CourseMakeState extends State<CourseMake> {
                       icon: const Icon(Icons.search),
                       label: const Text(
                         '검색 추가',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 18),
                       )),
                   const SizedBox(width: 16),
                   ElevatedButton.icon(
@@ -383,14 +392,16 @@ class _CourseMakeState extends State<CourseMake> {
                                   onPressed: () {
                                     Navigator.of(context).pop();
                                   },
-                                  child: const Text('확인', style: TextStyle(color: Colors.blue)),
+                                  child: const Text('확인',
+                                      style: TextStyle(color: Colors.blue)),
                                 ),
                               ],
                             ),
                           );
                           return;
                         }
-                        Navigator.push(context, MaterialPageRoute(builder: (context) {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
                           return CMMap();
                         })).then((data) {
                           if (data != null) {
@@ -411,7 +422,8 @@ class _CourseMakeState extends State<CourseMake> {
                       ),
                       label: const Text(
                         '마커 추가',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 18),
                       )),
                 ],
               ),
@@ -458,7 +470,8 @@ class _CourseMakeState extends State<CourseMake> {
                     onPressed: () {
                       // 코스 저장여부 확인 코드 시작 check //
                       // GetX에서 CourseController 가져오기
-                      final CourseController courseController = Get.find<CourseController>();
+                      final CourseController courseController =
+                          Get.find<CourseController>();
 
                       // courseController 내부의 값들 출력하기
                       print(courseController.title);
@@ -466,19 +479,19 @@ class _CourseMakeState extends State<CourseMake> {
                       print(courseController.locationList[0].name);
                       print(courseController.locationList[1].name);
                       print(courseController.locationList[2].name);
-                      print(courseController.locationList[3].name);
+                      // print(courseController.locationList[3].name);
                       // print(courseController.locationList[4].name);
                       print(courseController.locationList[0].title);
                       print(courseController.locationList[0].sido);
                       print(courseController.locationList[1].sido);
                       print(courseController.locationList[2].sido);
-                      print(courseController.locationList[3].sido);
-                      print(courseController.locationList[4].sido);
+                      // print(courseController.locationList[3].sido);
+                      // print(courseController.locationList[4].sido);
                       print(courseController.locationList[0].gugun);
                       print(courseController.locationList[1].gugun);
                       print(courseController.locationList[2].gugun);
-                      print(courseController.locationList[3].gugun);
-                      print(courseController.locationList[4].gugun);
+                      // print(courseController.locationList[3].gugun);
+                      // print(courseController.locationList[4].gugun);
                       print(courseController.locationList[1].content);
                       // print(courseController.locationList[0].name);
                       // print(courseController.locationList[1].name);
@@ -497,7 +510,9 @@ class _CourseMakeState extends State<CourseMake> {
                                 const Text('작성하신 내용을 저장하시겠습니까?'),
                                 const SizedBox(height: 8),
                                 Text('작성한 장소 ${_items.length}곳:',
-                                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red)),
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.red)),
                                 const SizedBox(height: 8),
                                 Column(
                                   mainAxisSize: MainAxisSize.min,
@@ -505,7 +520,8 @@ class _CourseMakeState extends State<CourseMake> {
                                   children: _items
                                       .map((item) => Text(
                                             '- ${item.name}',
-                                            style: const TextStyle(color: Colors.red),
+                                            style: const TextStyle(
+                                                color: Colors.red),
                                           ))
                                       .toList(),
                                 ),
@@ -517,7 +533,8 @@ class _CourseMakeState extends State<CourseMake> {
                                   Navigator.of(context).pop();
                                   Navigator.push(
                                     context,
-                                    MaterialPageRoute(builder: (context) => MakeStepper()),
+                                    MaterialPageRoute(
+                                        builder: (context) => MakeStepper()),
                                   );
                                 },
                                 child: const Text('저장'),
@@ -576,7 +593,8 @@ class Item extends StatelessWidget {
     final String imgUrl =
         "https://maps.googleapis.com/maps/api/streetview?size=400x400&location=${data.latitude},${data.longitude}&fov=90&heading=235&pitch=10&key=$apiKey";
 
-    if (state == frl.ReorderableItemState.dragProxy || state == frl.ReorderableItemState.dragProxyFinished) {
+    if (state == frl.ReorderableItemState.dragProxy ||
+        state == frl.ReorderableItemState.dragProxyFinished) {
       // slightly transparent background white dragging (just like on iOS)
       decoration = const BoxDecoration(color: Color(0xD0FFFFFF));
     } else {
@@ -618,7 +636,8 @@ class Item extends StatelessWidget {
               Expanded(
                 flex: 5,
                 child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 14.0, horizontal: 14.0),
+                  padding:
+                      EdgeInsets.symmetric(vertical: 14.0, horizontal: 14.0),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -646,7 +665,8 @@ class Item extends StatelessWidget {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => EditItemPage(locationData: data),
+                                  builder: (context) =>
+                                      EditItemPage(locationData: data),
                                 ),
                               );
                               // },
@@ -756,18 +776,25 @@ class PreviewRoute extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<LatLng> positions = items.map((item) => LatLng(item.latitude, item.longitude)).toList();
+    final List<LatLng> positions =
+        items.map((item) => LatLng(item.latitude, item.longitude)).toList();
     final List<Future<BitmapDescriptor>> futures = [
-      BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(24, 24)), 'assets/marker1.png'),
-      BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(24, 24)), 'assets/marker2.png'),
-      BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(24, 24)), 'assets/marker3.png'),
-      BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(24, 24)), 'assets/marker4.png'),
-      BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(24, 24)), 'assets/marker5.png'),
+      BitmapDescriptor.fromAssetImage(
+          ImageConfiguration(size: Size(24, 24)), 'assets/marker1.png'),
+      BitmapDescriptor.fromAssetImage(
+          ImageConfiguration(size: Size(24, 24)), 'assets/marker2.png'),
+      BitmapDescriptor.fromAssetImage(
+          ImageConfiguration(size: Size(24, 24)), 'assets/marker3.png'),
+      BitmapDescriptor.fromAssetImage(
+          ImageConfiguration(size: Size(24, 24)), 'assets/marker4.png'),
+      BitmapDescriptor.fromAssetImage(
+          ImageConfiguration(size: Size(24, 24)), 'assets/marker5.png'),
     ];
     final Future<List<BitmapDescriptor>> markersFuture = Future.wait(futures);
     return FutureBuilder<List<BitmapDescriptor>>(
         future: markersFuture,
-        builder: (BuildContext context, AsyncSnapshot<List<BitmapDescriptor>> snapshot) {
+        builder: (BuildContext context,
+            AsyncSnapshot<List<BitmapDescriptor>> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Container(
               color: Colors.grey,

@@ -1,4 +1,4 @@
-import 'package:coursemores/make_controller.dart';
+import 'package:coursemores/controller/make_controller.dart';
 import 'package:flutter/material.dart';
 // import './make2.dart';
 import 'dart:io';
@@ -15,7 +15,8 @@ class EditItemPage extends StatefulWidget {
   final LocationData locationData;
 
   @override
-  State<EditItemPage> createState() => _EditItemPageState(locationData: locationData);
+  State<EditItemPage> createState() =>
+      _EditItemPageState(locationData: locationData);
 }
 
 class _EditItemPageState extends State<EditItemPage> {
@@ -31,14 +32,11 @@ class _EditItemPageState extends State<EditItemPage> {
   @override
   void initState() {
     super.initState();
-    // ignore: unused_local_variable
     final LocationController locationController = Get.find();
     _titleController.text = _itemData.title ?? '';
     _contentController.text = _itemData.content ?? '';
-    // _sidoController.text = _itemData.sido ?? '';
-    // _gugunController.text = _itemData.gugun ?? '';
-    _sidoController.text = _itemData.sido;
-    _gugunController.text = _itemData.gugun;
+    _sidoController.text = _itemData.sido ?? '';
+    _gugunController.text = _itemData.gugun ?? '';
   }
 
   _EditItemPageState({required this.locationData}) {
@@ -47,7 +45,6 @@ class _EditItemPageState extends State<EditItemPage> {
 
   @override
   Widget build(BuildContext context) {
-    // ignore: unused_local_variable
     final CourseController courseController = Get.find();
     final LocationController locationController = Get.find();
     return Scaffold(
@@ -135,8 +132,12 @@ class _EditItemPageState extends State<EditItemPage> {
                     numberOfImage: widget.locationData.numberOfImage,
                     // numberOfImage: _imageList.length,
                     // numberOfImage: _imageUploaderState.getNumberOfImage(),
-                    title: _titleController.text.isNotEmpty ? _titleController.text : null,
-                    content: _contentController.text.isNotEmpty ? _contentController.text : null,
+                    title: _titleController.text.isNotEmpty
+                        ? _titleController.text
+                        : null,
+                    content: _contentController.text.isNotEmpty
+                        ? _contentController.text
+                        : null,
                     sido: widget.locationData.sido,
                     gugun: widget.locationData.gugun,
                   );
@@ -144,8 +145,14 @@ class _EditItemPageState extends State<EditItemPage> {
                   _itemData.content = updatedLocationData.content;
                   _itemData.sido = updatedLocationData.sido;
                   _itemData.gugun = updatedLocationData.gugun;
-                  _itemData.numberOfImage = updatedLocationData.numberOfImage; // numberOfImage 업데이트
+                  _itemData.numberOfImage = updatedLocationData.numberOfImage;
+
                   locationController.updateLocationData(updatedLocationData);
+                  // 프린트 테스트 for images
+                  print('33333333333333');
+                  print(_itemData.numberOfImage);
+                  print(_itemData.temporaryImageList);
+                  //
                   Navigator.pop(context, updatedLocationData);
                 },
                 child: Text("저장하기"),
@@ -188,8 +195,9 @@ class _PlaceNameState extends State<PlaceName> {
   }
 
   Future<void> _getAddress() async {
-    final List<geocoding.Placemark> placemarks =
-        await geocoding.placemarkFromCoordinates(widget.latitude, widget.longitude, localeIdentifier: 'ko');
+    final List<geocoding.Placemark> placemarks = await geocoding
+        .placemarkFromCoordinates(widget.latitude, widget.longitude,
+            localeIdentifier: 'ko');
 
     if (placemarks.isNotEmpty) {
       final geocoding.Placemark place = placemarks.first;
@@ -200,7 +208,8 @@ class _PlaceNameState extends State<PlaceName> {
       final String administrativeArea = place.administrativeArea ?? '';
 
       setState(() {
-        _address = '$administrativeArea $locality $subLocality $thoroughfare $subThoroughfare';
+        _address =
+            '$administrativeArea $locality $subLocality $thoroughfare $subThoroughfare';
       });
     } else {
       setState(() {
@@ -410,12 +419,12 @@ class ImageUploader extends StatefulWidget {
 }
 
 class _ImageUploaderState extends State<ImageUploader> {
-  final List<File> _imageList = [];
+  final List<XFile> _temporaryImageList = []; // 수정된 부분
   final picker = ImagePicker();
   final int maxImageCount = 5; // 최대 업로드 가능한 이미지 수
 
   int getNumberOfImage() {
-    return _imageList.length;
+    return _temporaryImageList.length;
   }
 
   Future getImage() async {
@@ -424,8 +433,9 @@ class _ImageUploaderState extends State<ImageUploader> {
 
     setState(() {
       if (pickedFile != null) {
-        if (_imageList.length < maxImageCount) {
-          _imageList.add(File(pickedFile.path));
+        if (_temporaryImageList.length < maxImageCount) {
+          // _temporaryImageList.add(File(pickedFile.path));
+          _temporaryImageList.add(XFile(pickedFile.path));
         } else {
           showDialog(
             context: context,
@@ -449,22 +459,26 @@ class _ImageUploaderState extends State<ImageUploader> {
     });
     // _imageList의 길이로 선택된 이미지 개수를 업데이트합니다.
     final LocationController locationController = Get.find();
-    locationController.numberOfImage.value = _imageList.length;
+    locationController.numberOfImage.value =
+        locationController.numberOfImage.value + 1; // numberOfImage 증가
+    print(_temporaryImageList);
   }
 
   void _removeImage(int index) {
     setState(() {
-      _imageList.removeAt(index);
+      _temporaryImageList.removeAt(index);
     });
-    // _imageList의 길이로 선택된 이미지 개수를 업데이트합니다.
+
     final LocationController locationController = Get.find();
-    locationController.numberOfImage.value = _imageList.length;
+    locationController.numberOfImage.value =
+        locationController.numberOfImage.value - 1; // numberOfImage 감소
+    print(_temporaryImageList);
   }
 
   Widget buildGridView() {
     return GridView.count(
       crossAxisCount: 5,
-      children: List.generate(_imageList.length, (index) {
+      children: List.generate(_temporaryImageList.length, (index) {
         return Stack(
           children: [
             Container(
@@ -473,7 +487,8 @@ class _ImageUploaderState extends State<ImageUploader> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
                 image: DecorationImage(
-                  image: FileImage(_imageList[index]),
+                  // image: FileImage(_temporaryImageList[index]),
+                  image: FileImage(File(_temporaryImageList[index].path)),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -509,8 +524,19 @@ class _ImageUploaderState extends State<ImageUploader> {
     if (imageFile == null) return;
 
     setState(() {
-      _imageList.add(File(imageFile.path));
+      // _temporaryImageList.add(File(imageFile.path));
+      _temporaryImageList.add(imageFile);
     });
+
+    // _imageList의 길이로 선택된 이미지 개수를 업데이트합니다.
+    final LocationController locationController = Get.find();
+    locationController.numberOfImage.value =
+        locationController.numberOfImage.value + 1;
+
+    print('7777777777777777777777');
+    print(_temporaryImageList);
+    print(locationController.numberOfImage);
+    // print(locationController._temporaryImageList);
   }
 
   @override
@@ -521,7 +547,7 @@ class _ImageUploaderState extends State<ImageUploader> {
         children: [
           ElevatedButton(
             onPressed: () {
-              if (_imageList.length < 5) {
+              if (_temporaryImageList.length < 5) {
                 _showSelectionDialog(context);
               } else {
                 Fluttertoast.showToast(
@@ -546,7 +572,9 @@ class _ImageUploaderState extends State<ImageUploader> {
           SizedBox(height: 20),
           SizedBox(
             height: 80,
-            child: _imageList.isEmpty ? Center(child: Text("이미지를 선택해주세요.")) : buildGridView(),
+            child: _temporaryImageList.isEmpty
+                ? Center(child: Text("이미지를 선택해주세요."))
+                : buildGridView(),
           ),
         ],
       ),
