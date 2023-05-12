@@ -10,7 +10,6 @@ import 'mypage/mypage.dart' as mypage;
 import 'course_make/make_start.dart' as make;
 import 'auth/login_page.dart' as login;
 import 'package:get/get.dart';
-// import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 final loginController = Get.put(LoginStatus());

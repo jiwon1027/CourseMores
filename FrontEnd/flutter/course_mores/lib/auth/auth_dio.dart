@@ -3,14 +3,18 @@ import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:convert';
+import '../controller/search_controller.dart';
 
 String baseURL = dotenv.get('BASE_URL');
 final authController = Get.put(AuthController());
+final searchController = Get.put(SearchController());
 final tokenStorage = Get.put(TokenStorage());
 
 Future<Dio> authDio() async {
   var dio = Dio();
 
+  searchController.getThemeList();
+  searchController.getSidoList();
   dio.options.baseUrl = baseURL;
   dio.interceptors.clear();
   print("토큰이 있니?");
