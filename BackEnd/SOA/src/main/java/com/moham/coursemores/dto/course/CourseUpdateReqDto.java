@@ -12,6 +12,7 @@ import lombok.ToString;
 public class CourseUpdateReqDto {
 
     @NotBlank(message = "제목은 필수 입력 값입니다.")
+    @Size(max = 50, message = "제목은 공백 포함 50자 이하여야 합니다.")
     private String title;
     @Size(max = 5000, message = "내용은 공백 포함 5000자 이하여야 합니다.")
     private String content;
