@@ -17,7 +17,7 @@ public class ElasticSearchConfig extends AbstractElasticsearchConfiguration {
         final ClientConfiguration config = ClientConfiguration.builder()
                 .connectedTo("coursemores.site:9200")
                 .build();
-        return RestClients.create(config).rest();
+        RestHighLevelClient client = RestClients.create(config).rest();
+        return client;
     }
-
 }
