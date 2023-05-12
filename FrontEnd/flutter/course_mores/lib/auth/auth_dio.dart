@@ -46,7 +46,8 @@ Future<Dio> authDio() async {
 
       refreshDio.options.baseUrl = baseURL;
       refreshDio.interceptors.clear();
-      refreshDio.interceptors.add(InterceptorsWrapper(onError: (error, handler) async {
+      refreshDio.interceptors
+          .add(InterceptorsWrapper(onError: (error, handler) async {
         // 다시 인증 오류가 발생했을 경우: RefreshToken의 만료
         if (error.response?.statusCode == 401) {
           // 기기의 자동 로그인 정보 삭제
@@ -59,12 +60,14 @@ Future<Dio> authDio() async {
       }));
 
       // 토큰 갱신 API 요청 시 AccessToken(만료), RefreshToken 포함
-      var tokenReissueReqDto = json.encode({"accessToken": accessToken, "refreshToken": refreshToken});
+      var tokenReissueReqDto = json
+          .encode({"accessToken": accessToken, "refreshToken": refreshToken});
 
       print("토큰 재요청!!");
       print(tokenReissueReqDto);
       // 토큰 갱신 API 요청
-      final refreshResponse = await refreshDio.post('/user/reissue', data: tokenReissueReqDto);
+      final refreshResponse =
+          await refreshDio.post('/user/reissue', data: tokenReissueReqDto);
 
       // response로부터 새로 갱신된 AccessToken과 RefreshToken 파싱
       print("재발급 accessToken!! ");
@@ -80,7 +83,9 @@ Future<Dio> authDio() async {
 
       // 수행하지 못했던 API 요청 복사본 생성
       final clonedRequest = await dio.request(error.requestOptions.path,
-          options: Options(method: error.requestOptions.method, headers: error.requestOptions.headers),
+          options: Options(
+              method: error.requestOptions.method,
+              headers: error.requestOptions.headers),
           data: error.requestOptions.data,
           queryParameters: error.requestOptions.queryParameters);
 

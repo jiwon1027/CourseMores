@@ -37,32 +37,36 @@ final List<Widget> imageSliders = hotCourse
                       decoration: BoxDecoration(
                         color: Colors.black,
                         gradient: LinearGradient(
-                          colors: const [Color.fromARGB(200, 0, 0, 0), Color.fromARGB(0, 0, 0, 0)],
+                          colors: const [
+                            Color.fromARGB(200, 0, 0, 0),
+                            Color.fromARGB(0, 0, 0, 0)
+                          ],
                           begin: Alignment.bottomCenter,
                           end: Alignment.topCenter,
                         ),
                       ),
-                      padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 10.0, horizontal: 10.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            ' text',
+                            '${item['title']}',
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 20.0,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          Text('text',
+                          Text('${item['sido']} ${item['gugun']}',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 10.0,
                               )),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.start,
-                            children: const [
-                              Text('text',
+                            children: [
+                              Text('content',
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 14.0,
@@ -93,7 +97,10 @@ class CoourseCarousel extends StatelessWidget {
               padding: EdgeInsets.fromLTRB(0, 0, 0, 15.0),
               child: Text(
                 '최근 인기 코스 🔥',
-                style: TextStyle(color: Colors.black, fontSize: 20.0, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.bold),
               ),
             ),
             CarouselSlider(
@@ -126,7 +133,10 @@ class ReviewCarousel extends StatelessWidget {
               padding: EdgeInsets.fromLTRB(0, 0, 0, 15.0),
               child: Text(
                 '지금 내 근처의 코스 👀',
-                style: TextStyle(color: Colors.black, fontSize: 20.0, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.bold),
               ),
             ),
             CarouselSlider(

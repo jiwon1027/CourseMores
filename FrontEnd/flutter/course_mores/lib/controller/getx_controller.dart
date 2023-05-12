@@ -49,6 +49,7 @@ class LoginStatus extends GetxController {
     final prefs = await SharedPreferences.getInstance();
     prefs.setBool('isLoggedIn', isLoggedIn);
     this.isLoggedIn.value = isLoggedIn;
+    print(this.isLoggedIn);
   }
 }
 
@@ -72,7 +73,7 @@ class TokenStorage extends GetxController {
     refreshToken.value = prefs.getString('refreshToken') ?? '';
   }
 
-  void saveToken(String aToken, String rToken) async {
+  Future<void> saveToken(String aToken, String rToken) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('accessToken', aToken);
     await prefs.setString('refreshToken', rToken);

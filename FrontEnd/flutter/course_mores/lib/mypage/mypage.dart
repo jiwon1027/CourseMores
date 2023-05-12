@@ -16,6 +16,7 @@ import 'package:dio/dio.dart';
 import '../auth/auth_dio.dart';
 import '../course_search/course_detail.dart' as detail;
 import 'package:cached_network_image/cached_network_image.dart';
+import 'my_review.dart' as myReview;
 
 class MyPage extends StatefulWidget {
   const MyPage({super.key});
@@ -33,6 +34,7 @@ class _MyPageState extends State<MyPage> {
   @override
   void initState() {
     super.initState();
+    status = 'course';
     fetchData(tokenController.accessToken);
     updateUserInfo();
     print('mypage data 가져오기');
@@ -41,7 +43,7 @@ class _MyPageState extends State<MyPage> {
 
   Future<void> updateUserInfo() async {
     final dio = await authDio();
-    final response = await dio.get('profile/5');
+    final response = await dio.get('profile/');
     print('update UserInfo!!');
     print(response);
     userInfoController.saveImageUrl(response.data['userInfo']['profileImage']);
@@ -51,7 +53,7 @@ class _MyPageState extends State<MyPage> {
     final dio = await authDio();
 
     final response = await dio.get(
-      'course/my/5',
+      'course/my',
     );
     print(response);
     List<dynamic> data = response.data['myCourseList'];
@@ -61,21 +63,23 @@ class _MyPageState extends State<MyPage> {
     // setState(() {
     //   courseList = data.map((item) => Map<String, Object>.from(item)).toList();
     // });
-    myPageController.saveMyCourse(data.map((item) => Map<String, Object>.from(item)).toList());
+    myPageController.saveMyCourse(
+        data.map((item) => Map<String, Object>.from(item)).toList());
     setState(() {
       courseList = myPageController.myCourse;
     });
     print(courseList);
     print(courseList.length);
 
-    final response2 = await dio.get('comment/5',
+    final response2 = await dio.get('comment/',
         options: Options(
           headers: {'Authorization': 'Bearer $aToken'},
         ));
     print(response2);
     List<dynamic> data2 = response2.data['myCommentList'];
     // print(data);
-    myPageController.saveMyReview(data2.map((item) => Map<String, Object>.from(item)).toList());
+    myPageController.saveMyReview(
+        data2.map((item) => Map<String, Object>.from(item)).toList());
     setState(() {
       reviewList = myPageController.myReview;
     });
@@ -127,80 +131,87 @@ class _MyPageState extends State<MyPage> {
         body: SingleChildScrollView(
       child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-            profileBox(),
-            // OutlinedButton(
-            //     onPressed: () {
-            //       Navigator.push(
-            //           context,
-            //           MaterialPageRoute(
-            //               builder: (context) => const login.LoginPage()));
-            //     },
-            //     child: Text('로그인페이지')),
-            buttonBar(),
-            if (status == 'course')
-              (Text(
-                '내가 작성한 코스 : ${courseList.length} 개',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15,
-                ),
-              )),
-            if (status == 'review')
-              (Text(
-                '내가 작성한 리뷰 : ${reviewList.length} 개',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15,
-                ),
-              )),
-            if (status == 'course')
-              (Flexible(
-                child: MyCourse(),
-              )),
-            if (status == 'review')
-              (Flexible(
-                child: MyCourse(),
-              ))
-            // Container(
-            //   margin: const EdgeInsets.only(
-            //       left: 10, right: 10, top: 10, bottom: 5),
-            //   padding: const EdgeInsets.all(10),
-            //   decoration: const BoxDecoration(
-            //       boxShadow: [
-            //         BoxShadow(
-            //             // color: Colors.white24,
-            //             color: Color.fromARGB(255, 211, 211, 211),
-            //             blurRadius: 10.0,
-            //             spreadRadius: 1.0,
-            //             offset: Offset(3, 3)),
-            //       ],
-            //       color: Color.fromARGB(255, 255, 255, 255),
-            //       borderRadius: BorderRadius.all(Radius.circular(10))),
-            //   child: Row(
-            //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //     children: [
-            //       Expanded(
-            //           child: SizedBox(
-            //               width: 350,
-            //               child: Row(
-            //                 children: const [
-            //                   search.ThumbnailImage(),
-            //                   SizedBox(
-            //                     width: 10,
-            //                   ),
-            //                   Expanded(
-            //                     child: search.CourseSearchList(
-            //                       // courseList: courseList,
-            //                       index: 1,
-            //                     ),
-            //                   ),
-            //                 ],
-            //               )))
-            //     ],
-            //   ),
-            // ),
-          ])),
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                profileBox(),
+                // OutlinedButton(
+                //     onPressed: () {
+                //       Navigator.push(
+                //           context,
+                //           MaterialPageRoute(
+                //               builder: (context) => const login.LoginPage()));
+                //     },
+                //     child: Text('로그인페이지')),
+                buttonBar(),
+                if (status == 'course')
+                  (Text(
+                    '내가 작성한 코스 : ${courseList.length} 개',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                    ),
+                  )),
+                if (status == 'review')
+                  (Text(
+                    '내가 작성한 리뷰 : ${reviewList.length} 개',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                    ),
+                  )),
+                if (status == 'course')
+                  (Flexible(
+                    child: MyCourse(),
+                  )),
+                if (status == 'review')
+                  (Flexible(
+                    child: SizedBox(
+                      height: reviewList.isEmpty ? null : 600,
+                      child: myReview.DetailTapCourseCommentsListSection(
+                          commentsList: reviewList),
+                    ),
+                  ))
+                // Container(
+                //   margin: const EdgeInsets.only(
+                //       left: 10, right: 10, top: 10, bottom: 5),
+                //   padding: const EdgeInsets.all(10),
+                //   decoration: const BoxDecoration(
+                //       boxShadow: [
+                //         BoxShadow(
+                //             // color: Colors.white24,
+                //             color: Color.fromARGB(255, 211, 211, 211),
+                //             blurRadius: 10.0,
+                //             spreadRadius: 1.0,
+                //             offset: Offset(3, 3)),
+                //       ],
+                //       color: Color.fromARGB(255, 255, 255, 255),
+                //       borderRadius: BorderRadius.all(Radius.circular(10))),
+                //   child: Row(
+                //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //     children: [
+                //       Expanded(
+                //           child: SizedBox(
+                //               width: 350,
+                //               child: Row(
+                //                 children: const [
+                //                   search.ThumbnailImage(),
+                //                   SizedBox(
+                //                     width: 10,
+                //                   ),
+                //                   Expanded(
+                //                     child: search.CourseSearchList(
+                //                       // courseList: courseList,
+                //                       index: 1,
+                //                     ),
+                //                   ),
+                //                 ],
+                //               )))
+                //     ],
+                //   ),
+                // ),
+              ])),
     ));
   }
 }
@@ -222,7 +233,8 @@ class MyCourse extends StatelessWidget {
         itemBuilder: (BuildContext context, int index) {
           return InkWell(
             onTap: () async {
-              await searchController.changeNowCourseId(courseId: searchController.courseList[index]['courseId']);
+              await searchController.changeNowCourseId(
+                  courseId: searchController.courseList[index]['courseId']);
 
               await detailController.getCourseInfo();
               await detailController.getIsLikeCourse();
@@ -236,13 +248,16 @@ class MyCourse extends StatelessWidget {
             child: Container(
               margin: EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 5),
               padding: EdgeInsets.all(10),
-              decoration: const BoxDecoration(boxShadow: [
-                BoxShadow(
-                    color: Color.fromARGB(255, 211, 211, 211),
-                    blurRadius: 10.0,
-                    spreadRadius: 1.0,
-                    offset: Offset(3, 3)),
-              ], color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(10))),
+              decoration: const BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                        color: Color.fromARGB(255, 211, 211, 211),
+                        blurRadius: 10.0,
+                        spreadRadius: 1.0,
+                        offset: Offset(3, 3)),
+                  ],
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(Radius.circular(10))),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -282,7 +297,8 @@ class MyCourseList extends StatelessWidget {
                   Expanded(
                     child: Text(
                       "${myPageController.myCourse[index]['title']}",
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
                       softWrap: true,
@@ -299,9 +315,12 @@ class MyCourseList extends StatelessWidget {
                         children: const [
                           Padding(
                             padding: EdgeInsets.all(4.0),
-                            child: Icon(Icons.check, size: 14, color: Colors.white),
+                            child: Icon(Icons.check,
+                                size: 14, color: Colors.white),
                           ),
-                          Text("방문", style: TextStyle(color: Colors.white, fontSize: 12)),
+                          Text("방문",
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 12)),
                           SizedBox(width: 7),
                         ],
                       ),
@@ -309,8 +328,10 @@ class MyCourseList extends StatelessWidget {
                 ],
               ),
             ),
-            if (myPageController.myCourse[index]["interest"] == true) Icon(Icons.bookmark, size: 24),
-            if (myPageController.myCourse[index]["interest"] == false) Icon(Icons.bookmark_outline_rounded, size: 24),
+            if (myPageController.myCourse[index]["interest"] == true)
+              Icon(Icons.bookmark, size: 24),
+            if (myPageController.myCourse[index]["interest"] == false)
+              Icon(Icons.bookmark_outline_rounded, size: 24),
           ],
         ),
         SizedBox(height: 2),
@@ -363,7 +384,8 @@ class MyCourseList extends StatelessWidget {
                   children: [
                     Icon(Icons.favorite, size: 14),
                     SizedBox(width: 3),
-                    Text(myPageController.myCourse[index]["likeCount"].toString()),
+                    Text(myPageController.myCourse[index]["likeCount"]
+                        .toString()),
                   ],
                 ),
                 SizedBox(width: 8),
@@ -371,7 +393,8 @@ class MyCourseList extends StatelessWidget {
                   children: [
                     Icon(Icons.comment, size: 14),
                     SizedBox(width: 3),
-                    Text(myPageController.myCourse[index]["commentCount"].toString()),
+                    Text(myPageController.myCourse[index]["commentCount"]
+                        .toString()),
                   ],
                 ),
               ],
@@ -530,8 +553,12 @@ class ModalBottom extends StatelessWidget {
                                     onTap: () {
                                       Navigator.pop(context);
                                       print(userInfoController.profileImage);
-                                      Navigator.push(context,
-                                          MaterialPageRoute(builder: (context) => const profie_edit.ProfileEdit()));
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const profie_edit
+                                                      .ProfileEdit()));
                                     },
                                     child: const Center(
                                         child: Text(
@@ -555,12 +582,16 @@ class ModalBottom extends StatelessWidget {
                                     },
                                     child: Container(
                                       decoration: const BoxDecoration(
-                                          border: Border(top: BorderSide(color: Colors.grey, width: 1))),
+                                          border: Border(
+                                              top: BorderSide(
+                                                  color: Colors.grey,
+                                                  width: 1))),
                                       child: const Center(
                                           // color: Colors.yellow,
                                           child: Text(
                                         '로그아웃',
-                                        style: TextStyle(fontSize: 20, color: Colors.red),
+                                        style: TextStyle(
+                                            fontSize: 20, color: Colors.red),
                                         textAlign: TextAlign.center,
                                       )),
                                     )),
@@ -576,12 +607,16 @@ class ModalBottom extends StatelessWidget {
                                     },
                                     child: Container(
                                       decoration: const BoxDecoration(
-                                          border: Border(top: BorderSide(color: Colors.grey, width: 1))),
+                                          border: Border(
+                                              top: BorderSide(
+                                                  color: Colors.grey,
+                                                  width: 1))),
                                       child: const Center(
                                           // color: Colors.yellow,
                                           child: Text(
                                         '회원탈퇴',
-                                        style: TextStyle(fontSize: 20, color: Colors.red),
+                                        style: TextStyle(
+                                            fontSize: 20, color: Colors.red),
                                         textAlign: TextAlign.center,
                                       )),
                                     )),
