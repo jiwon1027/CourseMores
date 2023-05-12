@@ -54,7 +54,7 @@ public class JwtFilter extends OncePerRequestFilter {
         String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
 //        Optional<Cookie> refreshToken = CookieUtil.getCookie(request,"refreshToken");
 
-        logger.info("[accessToken] = {}", bearerToken);
+        logger.debug("--- [Filter] accessToken = {} ---", bearerToken);
 //        if(refreshToken.isPresent())
 //            logger.debug(">> refreshToken={}", refreshToken.get().getValue());
 
