@@ -16,7 +16,7 @@ public class MyCommentResDto {
     String content;
     int people;
     int likeCount;
-    List<CommentImageResDTO> imageList;
+    List<String> imageList;
     LocalDateTime createTime;
     Long courseId;
     String courseTitle;
