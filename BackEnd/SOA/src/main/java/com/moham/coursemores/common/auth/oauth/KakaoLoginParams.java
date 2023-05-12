@@ -11,6 +11,7 @@ import org.springframework.util.MultiValueMap;
 @ToString
 @NoArgsConstructor
 public class KakaoLoginParams implements OAuthLoginParams {
+
     private String authorizationCode;
 
     @Override
@@ -24,4 +25,5 @@ public class KakaoLoginParams implements OAuthLoginParams {
         body.add("code", authorizationCode);
         return body;
     }
+
 }

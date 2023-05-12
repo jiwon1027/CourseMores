@@ -8,9 +8,15 @@ import com.moham.coursemores.dto.token.TokenResDto;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface UserService {
+
     UserInfoResDto getUserInfo(Long userId);
+
     TokenResDto generateToken(Long userId, OAuthProvider oAuthProvider);
+
     boolean isDuplicatedNickname(String nickname);
+
     void addUserInfo(Long userId, UserInfoCreateReqDto userInfoCreateReqDto, MultipartFile profileImage);
+
     String reissue(TokenReissueReqDto tokenReissueReqDto);
+
 }

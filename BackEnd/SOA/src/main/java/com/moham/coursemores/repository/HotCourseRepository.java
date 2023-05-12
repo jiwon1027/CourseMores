@@ -1,7 +1,6 @@
 package com.moham.coursemores.repository;
 
 import com.moham.coursemores.domain.HotCourse;
-import com.querydsl.core.annotations.QueryEmbedded;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

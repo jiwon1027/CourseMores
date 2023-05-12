@@ -8,6 +8,8 @@ import lombok.ToString;
 @Getter
 @Builder
 public class ThemeResDto {
+
     Long themeId;
     String name;
+
 }

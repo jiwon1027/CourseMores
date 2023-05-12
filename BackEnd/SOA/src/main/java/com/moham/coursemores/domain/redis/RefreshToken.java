@@ -1,6 +1,8 @@
 package com.moham.coursemores.domain.redis;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.ToString;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.TimeToLive;
@@ -17,9 +19,9 @@ public class RefreshToken {
     private Long expiration;
 
     @Builder
-    public RefreshToken(Long userId, String refreshToken, Long expiration){
-        this.userId=userId;
-        this.refreshToken=refreshToken;
-        this.expiration=expiration;
+    public RefreshToken(Long userId, String refreshToken, Long expiration) {
+        this.userId = userId;
+        this.refreshToken = refreshToken;
+        this.expiration = expiration;
     }
 }

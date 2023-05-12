@@ -5,7 +5,6 @@ import com.moham.coursemores.common.util.Indices;
 import javax.persistence.Id;
 import lombok.Builder;
 import lombok.Getter;
-
 import lombok.ToString;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
@@ -26,6 +25,5 @@ public class CourseLocationDocument {
     private String id;
     @Field(type = FieldType.Text)
     private String value;
-
 
 }

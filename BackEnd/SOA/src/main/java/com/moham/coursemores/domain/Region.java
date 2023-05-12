@@ -1,13 +1,21 @@
 package com.moham.coursemores.domain;
 
 import com.moham.coursemores.domain.time.UpdateTimeEntity;
-import lombok.*;
-
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
-@Table(name="region")
+@Table(name = "region")
 @Getter
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -28,8 +36,9 @@ public class Region extends UpdateTimeEntity {
 
     @Builder
     public Region(String sido,
-                  String gugun){
+            String gugun) {
         this.sido = sido;
         this.gugun = gugun;
     }
+
 }

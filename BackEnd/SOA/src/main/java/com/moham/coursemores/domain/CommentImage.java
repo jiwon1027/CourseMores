@@ -1,5 +1,6 @@
 package com.moham.coursemores.domain;
 
+import com.moham.coursemores.domain.time.CreateTimeEntity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,9 +11,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-
-import com.moham.coursemores.domain.time.CreateTimeEntity;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Table(name = "comment_image")
@@ -37,7 +40,7 @@ public class CommentImage extends CreateTimeEntity {
 
     @Builder
     public CommentImage(String image,
-                        Comment comment){
+            Comment comment) {
         this.image = image;
         this.comment = comment;
     }

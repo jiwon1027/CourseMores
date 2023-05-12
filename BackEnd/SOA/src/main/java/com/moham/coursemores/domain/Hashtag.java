@@ -1,14 +1,25 @@
 package com.moham.coursemores.domain;
 
 import com.moham.coursemores.domain.time.UpdateTimeEntity;
-import lombok.*;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
-@Table(name="hashtag")
+@Table(name = "hashtag")
 @Getter
 @ToString
 @AllArgsConstructor
@@ -31,4 +42,5 @@ public class Hashtag extends UpdateTimeEntity {
     public Hashtag(String name) {
         this.name = name;
     }
+
 }

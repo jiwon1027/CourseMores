@@ -6,10 +6,22 @@ import com.moham.coursemores.dto.profile.UserInfoCreateReqDto;
 import com.moham.coursemores.dto.profile.UserInfoUpdateReqDto;
 import java.time.LocalDateTime;
 import java.util.List;
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Table(name = "user")
@@ -71,31 +83,32 @@ public class User extends DeleteTimeEntity {
 
     @Builder
     public User(String email
-            ,String roles
-            ,OAuthProvider provider
+            , String roles
+            , OAuthProvider provider
 //                ,String providerId
-    ){
+    ) {
         this.email = email;
         this.roles = roles;
         this.provider = provider;
 //        this.providerId = providerId;
     }
 
-    public void create(UserInfoCreateReqDto userInfoCreateReqDto, String imageUrl){
+    public void create(UserInfoCreateReqDto userInfoCreateReqDto, String imageUrl) {
         this.nickname = userInfoCreateReqDto.getNickname();
         this.age = userInfoCreateReqDto.getAge();
         this.gender = userInfoCreateReqDto.getGender();
         this.profileImage = imageUrl;
     }
 
-    public void update(UserInfoUpdateReqDto userInfoUpdateReqDto, String imageUrl){
+    public void update(UserInfoUpdateReqDto userInfoUpdateReqDto, String imageUrl) {
         this.nickname = userInfoUpdateReqDto.getNickname();
         this.age = userInfoUpdateReqDto.getAge();
         this.gender = userInfoUpdateReqDto.getGender();
         this.profileImage = imageUrl;
     }
 
-    public void delete(){
+    public void delete() {
         this.deleteTime = LocalDateTime.now();
     }
+
 }

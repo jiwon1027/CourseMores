@@ -4,14 +4,17 @@ import com.moham.coursemores.domain.Comment;
 import com.moham.coursemores.domain.CommentImage;
 import com.moham.coursemores.domain.Course;
 import com.moham.coursemores.domain.User;
-import com.moham.coursemores.dto.comment.*;
+import com.moham.coursemores.dto.comment.CommentCreateReqDTO;
+import com.moham.coursemores.dto.comment.CommentImageResDTO;
+import com.moham.coursemores.dto.comment.CommentResDTO;
+import com.moham.coursemores.dto.comment.CommentUpdateReqDTO;
+import com.moham.coursemores.dto.comment.MyCommentResDto;
 import com.moham.coursemores.dto.profile.UserSimpleInfoResDto;
 import com.moham.coursemores.repository.CommentImageRepository;
+import com.moham.coursemores.repository.CommentRepository;
 import com.moham.coursemores.repository.CourseRepository;
 import com.moham.coursemores.repository.UserRepository;
 import com.moham.coursemores.service.CommentService;
-import com.moham.coursemores.repository.CommentRepository;
-
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -99,7 +102,7 @@ public class CommentServiceImpl implements CommentService {
 
         //courseId의 Course 가져오기
         Course course = courseRepository.findByIdAndDeleteTimeIsNull(courseId)
-                .orElseThrow(()-> new RuntimeException("해당 코스를 찾을 수 없습니다."));
+                .orElseThrow(() -> new RuntimeException("해당 코스를 찾을 수 없습니다."));
 
         // courseId의 course가 있다면 course + DTO를 기반으로 새로운 댓글 생성
         Comment comment = Comment.builder()
@@ -109,12 +112,11 @@ public class CommentServiceImpl implements CommentService {
                 .course(course)
                 .build();
 
-
         commentRepository.save(comment);
 
         if (imageList != null) {
             // commentImage table에도 사진 추가
-            for(MultipartFile multipartFile : imageList){
+            for (MultipartFile multipartFile : imageList) {
                 String imagePath = fileUploadService.uploadImage(multipartFile);
                 commentImageRepository.save(CommentImage.builder()
                         .image(imagePath)
@@ -147,7 +149,7 @@ public class CommentServiceImpl implements CommentService {
             commentImageRepository.delete(commentImage);
         }
 
-        if (imageList != null){
+        if (imageList != null) {
             // 이미지 새롭게 추가
             for (MultipartFile multipartFile : imageList) {
                 String imagePath = fileUploadService.uploadImage(multipartFile);
@@ -169,7 +171,7 @@ public class CommentServiceImpl implements CommentService {
 
         // commentId의 Comment 가져오기
         Comment comment = commentRepository.findByIdAndUserIdAndDeleteTimeIsNull(commentId, user.getId())
-                .orElseThrow(()-> new RuntimeException("해당 댓글를 찾을 수 없습니다."));
+                .orElseThrow(() -> new RuntimeException("해당 댓글를 찾을 수 없습니다."));
 
         // commentId의 comment가 있다면 comment를 가져와서 수정
         comment.delete();
@@ -177,4 +179,5 @@ public class CommentServiceImpl implements CommentService {
         // 코스의 댓글 수 감소
         comment.getCourse().decreaseCommentCount();
     }
+
 }

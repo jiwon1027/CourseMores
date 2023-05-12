@@ -13,10 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class RefreshServiceImpl implements RefreshService {
 
+    private final RefreshTokenRedisRepository repository;
     @Value("${token.refresh.expire}")
     private long REFRESH_TOKEN_EXPIRE_TIME;
-
-    private final RefreshTokenRedisRepository repository;
 
     @Override
     @Transactional
@@ -31,7 +30,7 @@ public class RefreshServiceImpl implements RefreshService {
     @Override
     public RefreshToken get(Long userId) {
         return repository.findById(userId)
-                .orElseThrow(()->new RuntimeException("해당 리프레쉬 토큰을 찾을 수 없습니다."));
+                .orElseThrow(() -> new RuntimeException("해당 리프레쉬 토큰을 찾을 수 없습니다."));
     }
 
     @Override
@@ -39,4 +38,5 @@ public class RefreshServiceImpl implements RefreshService {
     public void delete(RefreshToken refreshToken) {
         repository.delete(refreshToken);
     }
+
 }

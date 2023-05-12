@@ -12,7 +12,6 @@ public class LocationUpdateReqDto {
     private String name;
     private String title;
     private String content;
-
     private List<Long> deleteImageList;
     private int numberOfImage;
 

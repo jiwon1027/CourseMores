@@ -1,5 +1,8 @@
 package com.moham.coursemores.repository.querydsl;
 
+import static com.moham.coursemores.domain.QCourse.course;
+import static com.moham.coursemores.domain.QRegion.region;
+
 import com.moham.coursemores.domain.Course;
 import com.moham.coursemores.domain.Region;
 import com.querydsl.core.types.Order;
@@ -8,18 +11,14 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
-
-import static com.moham.coursemores.domain.QCourse.course;
-import static com.moham.coursemores.domain.QRegion.region;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -59,7 +58,7 @@ public class CourseCustomRepositoryImpl implements CourseCustomRepository {
     }
 
     // 동적 정렬
-    private List<OrderSpecifier> getOrderSpecifier(Sort sort){
+    private List<OrderSpecifier> getOrderSpecifier(Sort sort) {
         return sort
                 .stream()
                 .map(order -> {
@@ -72,7 +71,7 @@ public class CourseCustomRepositoryImpl implements CourseCustomRepository {
 //                    System.out.println("prop : "+prop);
 //                    System.out.println("orderByExpression : "+orderByExpression);
 
-                    return new OrderSpecifier(direction,orderByExpression.get(prop));
+                    return new OrderSpecifier(direction, orderByExpression.get(prop));
                 })
                 .collect(Collectors.toList());
     }
@@ -86,23 +85,22 @@ public class CourseCustomRepositoryImpl implements CourseCustomRepository {
     }
 
     private BooleanExpression regionEq(Long regionId) {
-        if(regionId == null || regionId == 0) return null;
+        if (regionId == null || regionId == 0)
+            return null;
 
         Region temp = jpaQueryFactory
                 .selectFrom(region)
                 .where(region.id.eq(regionId))
                 .fetchOne();
 
-        if(temp == null || ALL.equals(temp.getSido())){
+        if (temp == null || ALL.equals(temp.getSido())) {
             return null;
-        }
-        else if(ALL.equals(temp.getGugun())){
+        } else if (ALL.equals(temp.getGugun())) {
             // 코스의 첫번째 장소의 지역이 같을 경우만
             return course.sido.eq(temp.getSido());
 //            // 코스의 모든 장소들 중 하나라도 지역이 포함되어 있는지
 //            return course.courseLocationList.any().region.sido.eq(temp.getSido());
-        }
-        else{
+        } else {
             return course.gugun.eq(temp.getGugun());
         }
     }

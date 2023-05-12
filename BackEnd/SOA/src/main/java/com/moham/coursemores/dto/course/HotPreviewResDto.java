@@ -19,4 +19,5 @@ public class HotPreviewResDto {
     private String image; // 대표 사진
     private String sido; // 시도
     private String gugun; // 구군
+
 }

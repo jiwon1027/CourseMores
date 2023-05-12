@@ -10,7 +10,11 @@ import com.moham.coursemores.dto.elasticsearch.IndexDataReqDTO;
 import com.moham.coursemores.dto.elasticsearch.IndexDataResDTO;
 import com.moham.coursemores.service.ElasticSearchService;
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.DocWriteResponse;
@@ -18,6 +22,7 @@ import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.action.update.UpdateResponse;
@@ -30,11 +35,11 @@ import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.xcontent.XContentType;
 import org.springframework.stereotype.Service;
-import org.elasticsearch.action.search.SearchRequest;
 
 @Service
 @RequiredArgsConstructor
 public class ElasticSearchServiceImpl implements ElasticSearchService {
+
     private static final ObjectMapper MAPPER = new ObjectMapper();
     private final RestHighLevelClient client;
 
@@ -89,7 +94,6 @@ public class ElasticSearchServiceImpl implements ElasticSearchService {
             return false;
         }
     }
-
 
 
     public void addIndex(IndexDataReqDTO indexDataReqDTO) {
@@ -162,7 +166,6 @@ public class ElasticSearchServiceImpl implements ElasticSearchService {
         SearchHit[] searchHitsCourseLocation = responseCourseLocation.getHits().getHits();
         SearchHit[] searchHitsHashtag = responseHashtag.getHits().getHits();
 
-
         Set<String> courses = new HashSet<>();
 
         Map<String, Object> sourceAsMap;
@@ -176,7 +179,6 @@ public class ElasticSearchServiceImpl implements ElasticSearchService {
             sourceAsMap = hit.getSourceAsMap();
             courseLocations.add((String) sourceAsMap.get("value"));
         }
-
 
         Set<String> hashtags = new HashSet<>();
         for (SearchHit hit : searchHitsHashtag) {
@@ -212,7 +214,7 @@ public class ElasticSearchServiceImpl implements ElasticSearchService {
         }
 
         Map<String, Object> jsonMap = new HashMap<>();
-        jsonMap.put("value",value);
+        jsonMap.put("value", value);
         request.doc(jsonMap);
 
         UpdateResponse response = client.update(request, RequestOptions.DEFAULT);
@@ -259,4 +261,5 @@ public class ElasticSearchServiceImpl implements ElasticSearchService {
             throw new ElasticsearchException("Document not found with id " + id + " in index course");
         }
     }
+
 }

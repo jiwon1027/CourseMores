@@ -21,17 +21,13 @@ import org.springframework.web.client.RestTemplate;
 public class KakaoApiClient implements OAuthApiClient {
 
     private static final String GRANT_TYPE = "authorization_code";
-
+    private final RestTemplate restTemplate;
     @Value("${oauth.kakao.url.auth}")
     private String authUrl;
-
     @Value("${oauth.kakao.url.api}")
     private String apiUrl;
-
     @Value("${oauth.kakao.client-id}")
     private String clientId;
-
-    private final RestTemplate restTemplate;
 
     @Override
     public OAuthProvider oAuthProvider() {
@@ -53,7 +49,7 @@ public class KakaoApiClient implements OAuthApiClient {
 
         KakaoTokens response = restTemplate.postForObject(url, request, KakaoTokens.class);
 
-        System.out.println("requestAccessToken : response = "+response);
+        System.out.println("requestAccessToken : response = " + response);
         assert response != null;
         return response.getAccessToken();
     }
@@ -70,8 +66,9 @@ public class KakaoApiClient implements OAuthApiClient {
         body.add("property_keys", "[\"kakao_account.email\"]");
 
         HttpEntity<?> request = new HttpEntity<>(body, httpHeaders);
-        System.out.println("requestOauthInfo : request = "+request);
+        System.out.println("requestOauthInfo : request = " + request);
 
         return restTemplate.postForObject(url, request, KakaoInfoResponse.class);
     }
+
 }

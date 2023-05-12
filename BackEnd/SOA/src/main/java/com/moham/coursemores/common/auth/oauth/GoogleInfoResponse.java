@@ -13,12 +13,6 @@ public class GoogleInfoResponse implements OAuthInfoResponse {
     @JsonProperty("google")
     private GoogleAccount googleAccount;
 
-    @Getter
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    static class GoogleAccount {
-        private String email;
-    }
-
     @Override
     public String getEmail() {
         return googleAccount.email;
@@ -28,4 +22,11 @@ public class GoogleInfoResponse implements OAuthInfoResponse {
     public OAuthProvider getOAuthProvider() {
         return OAuthProvider.KAKAO;
     }
+
+    @Getter
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    static class GoogleAccount {
+        private String email;
+    }
+
 }

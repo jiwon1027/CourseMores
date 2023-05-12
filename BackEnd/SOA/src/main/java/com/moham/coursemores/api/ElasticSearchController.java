@@ -2,10 +2,10 @@ package com.moham.coursemores.api;
 
 import com.moham.coursemores.domain.document.CourseDocument;
 import com.moham.coursemores.domain.document.CourseLocationDocument;
+import com.moham.coursemores.domain.document.HashtagDocument;
 import com.moham.coursemores.dto.elasticsearch.IndexDataReqDTO;
 import com.moham.coursemores.dto.elasticsearch.IndexDataResDTO;
 import com.moham.coursemores.service.ElasticSearchService;
-import com.moham.coursemores.domain.document.HashtagDocument;
 import java.io.IOException;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +37,7 @@ public class ElasticSearchController {
         logger.debug("[1/2][POST][/elasticsearch/search] ... css.search");
         IndexDataResDTO result = courseSearchService.search(map.get("value"));
 
-        logger.debug("[2/2][POST][/elasticsearch/search] >> response : result\n result = {}\n",result);
+        logger.debug("[2/2][POST][/elasticsearch/search] >> response : result\n result = {}\n", result);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -111,4 +111,5 @@ public class ElasticSearchController {
         logger.debug("[2/2][DELETE][/elasticsearch/cli] >> response : none\n");
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
 }

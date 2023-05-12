@@ -14,7 +14,6 @@ public class LocationCreateReqDto {
     private String content;
     private String sido;
     private String gugun;
-
     private String roadViewImage;
     private int numberOfImage;
 

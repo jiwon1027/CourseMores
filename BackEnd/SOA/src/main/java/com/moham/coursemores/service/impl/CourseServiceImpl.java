@@ -1,12 +1,50 @@
 package com.moham.coursemores.service.impl;
 
-import com.moham.coursemores.domain.*;
-import com.moham.coursemores.dto.course.*;
+import com.moham.coursemores.domain.Comment;
+import com.moham.coursemores.domain.Course;
+import com.moham.coursemores.domain.CourseLike;
+import com.moham.coursemores.domain.CourseLocation;
+import com.moham.coursemores.domain.CourseLocationImage;
+import com.moham.coursemores.domain.Hashtag;
+import com.moham.coursemores.domain.HashtagOfCourse;
+import com.moham.coursemores.domain.HotCourse;
+import com.moham.coursemores.domain.Interest;
+import com.moham.coursemores.domain.Region;
+import com.moham.coursemores.domain.Theme;
+import com.moham.coursemores.domain.ThemeOfCourse;
+import com.moham.coursemores.domain.User;
+import com.moham.coursemores.dto.course.CourseCreateReqDto;
+import com.moham.coursemores.dto.course.CourseDetailResDto;
+import com.moham.coursemores.dto.course.CourseImportResDto;
+import com.moham.coursemores.dto.course.CourseInfoResDto;
+import com.moham.coursemores.dto.course.CoursePreviewResDto;
+import com.moham.coursemores.dto.course.CourseUpdateReqDto;
+import com.moham.coursemores.dto.course.HotPreviewResDto;
+import com.moham.coursemores.dto.course.LocationCreateReqDto;
+import com.moham.coursemores.dto.course.LocationUpdateReqDto;
+import com.moham.coursemores.dto.course.MyCourseResDto;
+import com.moham.coursemores.dto.course.NearPreviewResDto;
 import com.moham.coursemores.dto.profile.UserSimpleInfoResDto;
-import com.moham.coursemores.repository.*;
+import com.moham.coursemores.repository.CommentRepository;
+import com.moham.coursemores.repository.CourseLikeRepository;
+import com.moham.coursemores.repository.CourseLocationImageRepository;
+import com.moham.coursemores.repository.CourseLocationRepository;
+import com.moham.coursemores.repository.CourseRepository;
+import com.moham.coursemores.repository.HashtagOfCourseRepository;
+import com.moham.coursemores.repository.HashtagRepository;
+import com.moham.coursemores.repository.HotCourseRepository;
+import com.moham.coursemores.repository.InterestRepository;
+import com.moham.coursemores.repository.RegionRepository;
+import com.moham.coursemores.repository.ThemeOfCourseRepository;
+import com.moham.coursemores.repository.ThemeRepository;
+import com.moham.coursemores.repository.UserRepository;
 import com.moham.coursemores.service.CourseService;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,10 +52,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -54,8 +88,8 @@ public class CourseServiceImpl implements CourseService {
                                     .title(course.getTitle())
                                     .content(course.getContent())
                                     .image(course.getImage())
-                                    .sido(ALL.equals(course.getSido())?"대한민국":course.getSido())
-                                    .gugun(ALL.equals(course.getGugun())?"":course.getGugun())
+                                    .sido(ALL.equals(course.getSido()) ? "대한민국" : course.getSido())
+                                    .gugun(ALL.equals(course.getGugun()) ? "" : course.getGugun())
                                     .build();
                         }
                 ).collect(Collectors.toList());
@@ -89,7 +123,7 @@ public class CourseServiceImpl implements CourseService {
                 .collect(Collectors.toList());
 
         int number = 50; // 인기 코스로 저장할 최대 개수
-        for (Course course : hotCourses){
+        for (Course course : hotCourses) {
             hotCourseRepository.save(HotCourse.builder()
                     .course(course)
                     .build());
@@ -126,28 +160,28 @@ public class CourseServiceImpl implements CourseService {
                 .map(course -> {
 //                    Optional<Interest> interest = interestRepository.findByUserIdAndCourseId(user.getId(), course.getId());
                     boolean isInterest = false;
-                    for (Interest interest : course.getInterestList()){
-                        if(Objects.equals(interest.getUser().getId(), user.getId())){
+                    for (Interest interest : course.getInterestList()) {
+                        if (Objects.equals(interest.getUser().getId(), user.getId())) {
                             isInterest = interest.isFlag();
                             break;
                         }
                     }
 
                     return CoursePreviewResDto.builder()
-                        .courseId(course.getId())
-                        .title(course.getTitle())
-                        .content(course.getContent())
-                        .people(course.getPeople())
-                        .visited(course.isVisited())
-                        .likeCount(course.getLikeCount())
-                        .commentCount(course.getCommentCount())
-                        .image(course.getImage())
-                        .sido(ALL.equals(course.getSido())?"대한민국":course.getSido())
-                        .gugun(ALL.equals(course.getGugun())?"":course.getGugun())
-                        .locationName(course.getLocationName() + " 외 " + (course.getLocationSize() - 1) + "곳")
+                            .courseId(course.getId())
+                            .title(course.getTitle())
+                            .content(course.getContent())
+                            .people(course.getPeople())
+                            .visited(course.isVisited())
+                            .likeCount(course.getLikeCount())
+                            .commentCount(course.getCommentCount())
+                            .image(course.getImage())
+                            .sido(ALL.equals(course.getSido()) ? "대한민국" : course.getSido())
+                            .gugun(ALL.equals(course.getGugun()) ? "" : course.getGugun())
+                            .locationName(course.getLocationName() + " 외 " + (course.getLocationSize() - 1) + "곳")
 //                        .isInterest(interest.map(Interest::isFlag).orElse(false))
-                        .isInterest(isInterest)
-                        .build();
+                            .isInterest(isInterest)
+                            .build();
                 });
 
 //        long totalElements = result.getTotalElements();
@@ -175,9 +209,9 @@ public class CourseServiceImpl implements CourseService {
     public CourseInfoResDto getCourseInfo(Long courseId) {
         // 코스 정보 가져오기
         Course course = courseRepository.findByIdAndDeleteTimeIsNull(courseId)
-                .orElseThrow(()->new RuntimeException("해당 코스를 찾을 수 없습니다."));
+                .orElseThrow(() -> new RuntimeException("해당 코스를 찾을 수 없습니다."));
 
-        if(course.getUser().getDeleteTime() != null)
+        if (course.getUser().getDeleteTime() != null)
             throw new RuntimeException("해당 유저를 찾을 수 없습니다.");
 
         return CourseInfoResDto.builder()
@@ -189,8 +223,8 @@ public class CourseServiceImpl implements CourseService {
                 .viewCount(course.getViewCount())
                 .likeCount(course.getLikeCount())
                 .interestCount(course.getInterestCount())
-                .sido(ALL.equals(course.getSido())?"대한민국":course.getSido())
-                .gugun(ALL.equals(course.getGugun())?"":course.getGugun())
+                .sido(ALL.equals(course.getSido()) ? "대한민국" : course.getSido())
+                .gugun(ALL.equals(course.getGugun()) ? "" : course.getGugun())
                 .createTime(course.getCreateTime())
                 .hashtagList(course.getCourseHashtagList()
                         .stream()
@@ -210,7 +244,7 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public List<CourseDetailResDto> getCourseDetail(Long courseId) {
         // 해당 코스가 존재하는지 확인
-        if(!courseRepository.existsByIdAndDeleteTimeIsNull(courseId))
+        if (!courseRepository.existsByIdAndDeleteTimeIsNull(courseId))
             throw new RuntimeException("해당 코스를 찾을 수 없습니다.");
         // 코스 정보 반환
         return courseLocationRepository.findByCourseId(courseId)
@@ -221,8 +255,8 @@ public class CourseServiceImpl implements CourseService {
                         .content(courseLocation.getContent())
                         .latitude(courseLocation.getLatitude())
                         .longitude(courseLocation.getLongitude())
-                        .sido(ALL.equals(courseLocation.getRegion().getSido())?"대한민국":courseLocation.getRegion().getSido())
-                        .gugun(ALL.equals(courseLocation.getRegion().getGugun())?"":courseLocation.getRegion().getGugun())
+                        .sido(ALL.equals(courseLocation.getRegion().getSido()) ? "대한민국" : courseLocation.getRegion().getSido())
+                        .gugun(ALL.equals(courseLocation.getRegion().getGugun()) ? "" : courseLocation.getRegion().getGugun())
                         .roadViewImage(courseLocation.getRoadViewImage())
                         .locationImageList(courseLocation.getCourseLocationImageList()
                                 .stream()
@@ -237,15 +271,15 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public List<CourseImportResDto> importCourse(Long courseId) {
         return courseRepository.findById(courseId)
-                .orElseThrow(()->new RuntimeException("해당 코스를 찾을 수 없습니다."))
+                .orElseThrow(() -> new RuntimeException("해당 코스를 찾을 수 없습니다."))
                 .getCourseLocationList()
                 .stream()
                 .map(location -> CourseImportResDto.builder()
                         .name(location.getName())
                         .longitude(location.getLongitude())
                         .latitude(location.getLatitude())
-                        .sido(ALL.equals(location.getRegion().getSido())?"대한민국":location.getRegion().getSido())
-                        .gugun(ALL.equals(location.getRegion().getGugun())?"":location.getRegion().getGugun())
+                        .sido(ALL.equals(location.getRegion().getSido()) ? "대한민국" : location.getRegion().getSido())
+                        .gugun(ALL.equals(location.getRegion().getGugun()) ? "" : location.getRegion().getGugun())
                         .build())
                 .collect(Collectors.toList());
     }
@@ -261,7 +295,8 @@ public class CourseServiceImpl implements CourseService {
                 .stream()
                 .map(course -> {
                     // 삭제한 코스인지 확인
-                    if(course.getDeleteTime()!=null) return null;
+                    if (course.getDeleteTime() != null)
+                        return null;
                     // 코스를 Dto로 가공하기
                     return MyCourseResDto.builder()
                             .courseId(course.getId())
@@ -271,8 +306,8 @@ public class CourseServiceImpl implements CourseService {
                             .visited(course.isVisited())
                             .likeCount(course.getLikeCount())
                             .image(course.getImage())
-                            .sido(ALL.equals(course.getSido())?"대한민국":course.getSido())
-                            .gugun(ALL.equals(course.getGugun())?"":course.getGugun())
+                            .sido(ALL.equals(course.getSido()) ? "대한민국" : course.getSido())
+                            .gugun(ALL.equals(course.getGugun()) ? "" : course.getGugun())
                             .locationName(course.getLocationName() + " 외 " + (course.getLocationSize() - 1) + "곳")
                             .commentCount(course.getCommentCount())
                             .build();
@@ -313,7 +348,7 @@ public class CourseServiceImpl implements CourseService {
         courseCreateReqDto.getThemeIdList().forEach(themeId -> {
             // 테마 정보 가져오기
             Theme theme = themeRepository.findById(themeId)
-                            .orElseThrow(() -> new RuntimeException("해당 테마를 찾을 수 없습니다."));
+                    .orElseThrow(() -> new RuntimeException("해당 테마를 찾을 수 없습니다."));
             // 코스의 테마 저장
             themeOfCourseRepository.save(ThemeOfCourse.builder()
                     .course(course)
@@ -321,10 +356,10 @@ public class CourseServiceImpl implements CourseService {
                     .build());
         });
         // 코스의 해시태그 생성
-        courseCreateReqDto.getHashtagList().forEach(hashtagName ->{
+        courseCreateReqDto.getHashtagList().forEach(hashtagName -> {
             Optional<Hashtag> hashtag = hashtagRepository.findByName(hashtagName);
             // 해시태그가 이미 존재한다면
-            if(hashtag.isPresent()){
+            if (hashtag.isPresent()) {
                 // 코스의 해시태그 생성
                 hashtagOfCourseRepository.save(HashtagOfCourse.builder()
                         .course(course)
@@ -332,7 +367,7 @@ public class CourseServiceImpl implements CourseService {
                         .build());
             }
             // 해시태그가 없다면
-            else{
+            else {
                 // 해시태그를 생성하고
                 Hashtag newHashtag = hashtagRepository.save(Hashtag.builder()
                         .name(hashtagName)
@@ -368,7 +403,7 @@ public class CourseServiceImpl implements CourseService {
             for (int end = imageIdx + location.getNumberOfImage(); imageIdx < end; imageIdx++) {
                 String imagePath = fileUploadService.uploadImage(imageList.get(imageIdx));
                 // 코스의 대표 이미지 설정
-                if(isFirstImage){
+                if (isFirstImage) {
                     course.setMainImage(imagePath);
                     isFirstImage = false;
                 }
@@ -399,7 +434,7 @@ public class CourseServiceImpl implements CourseService {
         courseUpdateReqDto.getHashtagList().forEach(hashtag -> {
             Optional<Hashtag> beforeHashtag = hashtagRepository.findByName(hashtag);
             // 해시태그가 이미 존재한다면
-            if(beforeHashtag.isPresent()){
+            if (beforeHashtag.isPresent()) {
                 // 코스의 해시태그 생성
                 hashtagOfCourseRepository.save(HashtagOfCourse.builder()
                         .course(course)
@@ -407,7 +442,7 @@ public class CourseServiceImpl implements CourseService {
                         .build());
             }
             // 해시태그가 없다면
-            else{
+            else {
                 // 해시태그를 생성하고
                 Hashtag newHashtag = hashtagRepository.save(Hashtag.builder()
                         .name(hashtag)
@@ -433,16 +468,15 @@ public class CourseServiceImpl implements CourseService {
                     .build());
         });
 
-
         int imageIdx = 0;
-        for(LocationUpdateReqDto updateCourseLocation : courseUpdateReqDto.getLocationList()){
+        for (LocationUpdateReqDto updateCourseLocation : courseUpdateReqDto.getLocationList()) {
             // 코스 장소 불러오기
             CourseLocation courseLocation = courseLocationRepository.findById(updateCourseLocation.getCourseLocationId())
                     .orElseThrow(() -> new RuntimeException("해당 장소를 찾을 수 없습니다."));
             // 코스 장소 수정하기
             courseLocation.update(updateCourseLocation);
             // 이미지 삭제
-            for(long locationImageId : updateCourseLocation.getDeleteImageList()){
+            for (long locationImageId : updateCourseLocation.getDeleteImageList()) {
                 CourseLocationImage courseLocationImage = courseLocationImageRepository.findById(locationImageId)
                         .orElseThrow(() -> new RuntimeException("해당 장소 이미지를 찾을 수 없습니다."));
                 courseLocationImageRepository.delete(courseLocationImage);
@@ -460,7 +494,7 @@ public class CourseServiceImpl implements CourseService {
         String mainImage;
         try {
             mainImage = course.getCourseLocationList().get(0).getCourseLocationImageList().get(0).getImage();
-        } catch (NullPointerException e){
+        } catch (NullPointerException e) {
             mainImage = course.getCourseLocationList().get(0).getRoadViewImage();
         }
         course.setMainImage(mainImage);
@@ -473,39 +507,38 @@ public class CourseServiceImpl implements CourseService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
         // 코스 찾기
-        Course course = courseRepository.findByIdAndUserId(courseId,user.getId())
+        Course course = courseRepository.findByIdAndUserId(courseId, user.getId())
                 .orElseThrow(() -> new RuntimeException("해당 코스를 찾을 수 없습니다."));
         // 코스 삭제
         course.delete();
     }
 
-    private String initSido(String sido){
+    private String initSido(String sido) {
         return sido == null ? ALL : regionRepository.existsBySido(sido.trim()) ? sido.trim() : ALL;
     }
-    private String initGugun(String gugun){
+
+    private String initGugun(String gugun) {
         return gugun == null ? ALL : regionRepository.existsByGugun(gugun.trim()) ? gugun.trim() : ALL;
     }
 
-    private Region getRegion(String sido, String gugun){
-        if(ALL.equals(sido)) { // 시도 : 전체
-            if(ALL.equals(gugun)) { // 구군 : 전체
+    private Region getRegion(String sido, String gugun) {
+        if (ALL.equals(sido)) { // 시도 : 전체
+            if (ALL.equals(gugun)) { // 구군 : 전체
                 return regionRepository.findBySidoAndGugun(ALL, ALL)
                         .orElseThrow(() -> new RuntimeException("해당 지역을 찾을 수 없습니다."));
-            }
-            else{ // 구군 : 유효
+            } else { // 구군 : 유효
                 return regionRepository.findByGugun(gugun)
                         .orElseThrow(() -> new RuntimeException("해당 지역을 찾을 수 없습니다."));
             }
-        }
-        else {// 시도 : 유효
-            if(ALL.equals(gugun)) { // 구군 : 전체
-                return regionRepository.findBySidoAndGugun(sido,ALL)
+        } else {// 시도 : 유효
+            if (ALL.equals(gugun)) { // 구군 : 전체
+                return regionRepository.findBySidoAndGugun(sido, ALL)
                         .orElseThrow(() -> new RuntimeException("해당 지역을 찾을 수 없습니다."));
-            }
-            else{ // 구군 : 유효
+            } else { // 구군 : 유효
                 return regionRepository.findBySidoAndGugun(sido, gugun)
                         .orElseThrow(() -> new RuntimeException("해당 지역을 찾을 수 없습니다."));
             }
         }
     }
+
 }

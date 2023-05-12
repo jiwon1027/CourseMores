@@ -3,16 +3,21 @@ package com.moham.coursemores.api;
 import com.moham.coursemores.dto.profile.UserInfoResDto;
 import com.moham.coursemores.dto.profile.UserInfoUpdateReqDto;
 import com.moham.coursemores.service.ProfileService;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequestMapping("profile")
@@ -40,9 +45,9 @@ public class ProfileController {
 
     @PutMapping("{userId}/alram")
     public ResponseEntity<Void> alarmSetting(
-            @PathVariable Long userId){
+            @PathVariable Long userId) {
         logger.debug("[0/?][PUT][/profile/{}/alram] << request : none", userId);
-        
+
         // 알림 셋팅
 
         logger.debug("[?/?][PUT][/profile/{}/alram] >> response : none\n", userId);
@@ -53,11 +58,11 @@ public class ProfileController {
     public ResponseEntity<Void> putUserInfo(
             @PathVariable Long userId,
             @RequestPart UserInfoUpdateReqDto userInfoUpdateReqDto,
-            @RequestPart(required = false) MultipartFile profileImage){
+            @RequestPart(required = false) MultipartFile profileImage) {
         logger.debug("[0/2][PUT][/profile/{}] << request : userInfoUpdateReqDto, profileImage\n userInfoUpdateReqDto = {}\n profileImage = {}",
                 userId, userInfoUpdateReqDto, profileImage);
 
-        logger.debug("[1/2][PUT][/profile/{}] ...ps.updateUserInfo",userId);
+        logger.debug("[1/2][PUT][/profile/{}] ...ps.updateUserInfo", userId);
         profileService.updateUserInfo(userId, userInfoUpdateReqDto, profileImage);
 
         logger.debug("[2/2][PUT][/profile/{}] >> response : none\n", userId);
@@ -76,13 +81,14 @@ public class ProfileController {
 
     @DeleteMapping("{userId}")
     public ResponseEntity<Void> deleteUser(
-            @PathVariable Long userId){
+            @PathVariable Long userId) {
         logger.debug("[0/2][DELETE][/profile/{}] << request : none", userId);
 
         logger.debug("[1/2][DELETE][/profile/{}] ...ps.deleteUser", userId);
         profileService.deleteUser(userId);
 
-        logger.debug("[2/2][DELETE][/profile/{}] >> response : none\n",userId);
+        logger.debug("[2/2][DELETE][/profile/{}] >> response : none\n", userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
 }

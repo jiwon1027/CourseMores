@@ -12,6 +12,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 public class NearPreviewResDto {
+
     private Long courseId; // 코스 id
     private String title; // 제목
     private String content; // 내용
@@ -19,4 +20,5 @@ public class NearPreviewResDto {
     private String sido; // 시도
     private String gugun; // 구군
     private double distance; // 거리
+
 }

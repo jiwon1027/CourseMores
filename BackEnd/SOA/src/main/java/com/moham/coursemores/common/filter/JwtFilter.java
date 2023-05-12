@@ -1,9 +1,11 @@
 package com.moham.coursemores.common.filter;
 
-import javax.servlet.http.Cookie;
-
 import com.moham.coursemores.common.auth.jwt.TokenProvider;
-import com.moham.coursemores.common.util.CookieUtil;
+import java.io.IOException;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,22 +14,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Optional;
-
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
     public static final String AUTHORIZATION_HEADER = "Authorization";
     public static final String BEARER_PREFIX = "Bearer ";
-
-    private final TokenProvider tokenProvider;
     private static final Logger logger = LoggerFactory.getLogger(JwtFilter.class);
-
+    private final TokenProvider tokenProvider;
 
     // 실제 필터링 로직은 doFilterInternal 에 들어감
     // JWT 토큰의 인증 정보를 현재 쓰레드의 SecurityContext 에 저장하는 역할 수행
@@ -36,7 +29,7 @@ public class JwtFilter extends OncePerRequestFilter {
             throws IOException, ServletException {
 
         // response
-        HttpServletResponse res = (HttpServletResponse)response;
+        HttpServletResponse res = (HttpServletResponse) response;
 
         // 1. Request Header 에서 토큰을 꺼냄
         String accessToken = resolveToken(request);
@@ -70,4 +63,5 @@ public class JwtFilter extends OncePerRequestFilter {
         }
         return null;
     }
+
 }

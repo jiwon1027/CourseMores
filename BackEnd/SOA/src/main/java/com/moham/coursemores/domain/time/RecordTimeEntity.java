@@ -1,12 +1,11 @@
 package com.moham.coursemores.domain.time;
 
-import lombok.Getter;
-import lombok.ToString;
-
+import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
+import lombok.Getter;
+import lombok.ToString;
 
 @Getter
 @ToString
@@ -19,4 +18,5 @@ public abstract class RecordTimeEntity extends CreateTimeEntity {
 
     @Column
     protected LocalDateTime releaseTime;
+
 }

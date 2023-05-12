@@ -6,15 +6,17 @@ import com.moham.coursemores.dto.token.TokenResDto;
 import com.moham.coursemores.service.OAuthLoginService;
 import com.moham.coursemores.service.RefreshService;
 import com.moham.coursemores.service.UserService;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
-import java.util.Map;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("auth")
@@ -29,8 +31,8 @@ public class AuthController {
 
     @PostMapping("kakao/login")
     public ResponseEntity<Map<String, Object>> kakaoLogin(
-            @RequestBody Map<String,Object> requestMap) {
-        String accessToken = (String)requestMap.get("accessToken");
+            @RequestBody Map<String, Object> requestMap) {
+        String accessToken = (String) requestMap.get("accessToken");
         logger.debug("[0/6][POST][/auth/kakao/login] << request : accessToken\n accessToken = {}", accessToken);
 
         Map<String, Object> resultMap = new HashMap<>();
@@ -39,35 +41,34 @@ public class AuthController {
         Long userId = oAuthLoginService.kakao(accessToken);
 
         logger.debug("[2/6][POST][/auth/kakao/login] ... userId = {}", userId);
-        if(userId == -1L){
-            resultMap.put("agree",false);
+        if (userId == -1L) {
+            resultMap.put("agree", false);
             logger.debug("[3/6][POST][/auth/kakao/login] >> response : agree\n agree = {}\n", false);
-            return new ResponseEntity<>(resultMap,HttpStatus.OK);
-        }
-        else{
-            resultMap.put("agree",true);
+            return new ResponseEntity<>(resultMap, HttpStatus.OK);
+        } else {
+            resultMap.put("agree", true);
         }
 
         logger.debug("[3/6][POST][/auth/kakao/login] ... us.getUserInfo");
         UserInfoResDto userInfo = userService.getUserInfo(userId);
-        resultMap.put("userInfo",userInfo);
+        resultMap.put("userInfo", userInfo);
 
         logger.debug("[4/6][POST][/auth/kakao/login] ... us.generateToken");
         TokenResDto tokenResDto = userService.generateToken(userId, OAuthProvider.KAKAO);
 
         logger.debug("[5/6][POST][/auth/kakao/login] ... rs.save");
         refreshService.save(userId, tokenResDto.getRefreshToken());
-        resultMap.put("token",tokenResDto);
+        resultMap.put("token", tokenResDto);
 
         logger.debug("[6/6][POST][/auth/kakao/login] >> response : agree, userInfo, token\n agree = {}\n userInfo = {}\n token = {}\n",
                 false, userInfo, tokenResDto);
-        return new ResponseEntity<>(resultMap,HttpStatus.OK);
+        return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
 
     @PostMapping("google/login")
     public ResponseEntity<Map<String, Object>> googleLogin(
-            @RequestBody Map<String,Object> requestMap) {
-        String email = (String)requestMap.get("email");
+            @RequestBody Map<String, Object> requestMap) {
+        String email = (String) requestMap.get("email");
         logger.debug("[0/6][POST][/auth/google/login] << request : email\n email = {}", email);
 
         logger.debug("[1/6][POST][/auth/google/login] ... ols.google");
@@ -78,18 +79,18 @@ public class AuthController {
 
         logger.debug("[3/6][POST][/auth/google/login] ... us.getUserInfo");
         UserInfoResDto userInfo = userService.getUserInfo(userId);
-        resultMap.put("userInfo",userInfo);
+        resultMap.put("userInfo", userInfo);
 
         logger.debug("[4/6][POST][/auth/google/login] ... us.generateToken");
         TokenResDto tokenResDto = userService.generateToken(userId, OAuthProvider.GOOGLE);
 
         logger.debug("[5/6][POST][/auth/google/login] ... rs.save");
         refreshService.save(userId, tokenResDto.getRefreshToken());
-        resultMap.put("token",tokenResDto);
+        resultMap.put("token", tokenResDto);
 
         logger.debug("[6/6][POST][/auth/google/login] >> response : userInfo, token\n userInfo = {}\n token = {}\n",
                 userInfo, tokenResDto);
-        return new ResponseEntity<>(resultMap,HttpStatus.OK);
+        return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
 
 }

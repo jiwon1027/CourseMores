@@ -1,8 +1,7 @@
 package com.moham.coursemores.domain;
 
 import com.moham.coursemores.domain.time.UpdateTimeEntity;
-
-import java.util.ArrayList;
+import com.moham.coursemores.dto.course.LocationUpdateReqDto;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -17,9 +16,11 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-
-import com.moham.coursemores.dto.course.LocationUpdateReqDto;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Table(name = "course_location")
@@ -70,13 +71,13 @@ public class CourseLocation extends UpdateTimeEntity {
 
     @Builder
     public CourseLocation(String name,
-                          String title,
-                          String content,
-                          String roadViewImage,
-                          double latitude,
-                          double longitude,
-                          Region region,
-                          Course course){
+            String title,
+            String content,
+            String roadViewImage,
+            double latitude,
+            double longitude,
+            Region region,
+            Course course) {
         this.name = name;
         this.title = title;
         this.content = content;
@@ -87,9 +88,10 @@ public class CourseLocation extends UpdateTimeEntity {
         this.course = course;
     }
 
-    public void update(LocationUpdateReqDto locationUpdateReqDto){
-        this.name=locationUpdateReqDto.getName();
-        this.title=locationUpdateReqDto.getTitle();
-        this.content=locationUpdateReqDto.getContent();
+    public void update(LocationUpdateReqDto locationUpdateReqDto) {
+        this.name = locationUpdateReqDto.getName();
+        this.title = locationUpdateReqDto.getTitle();
+        this.content = locationUpdateReqDto.getContent();
     }
+
 }

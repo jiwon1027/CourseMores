@@ -26,5 +26,4 @@ public class HashtagDocument {
     @Field(type = FieldType.Text)
     private String value;
 
-
 }

@@ -8,6 +8,8 @@ import lombok.ToString;
 @Getter
 @Builder
 public class GugunResDto {
+
     Long regionId;
     String gugun;
+
 }

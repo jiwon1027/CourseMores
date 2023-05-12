@@ -8,6 +8,8 @@ import lombok.ToString;
 @Getter
 @Builder
 public class TokenResDto {
+
     String accessToken;
     String refreshToken;
+
 }

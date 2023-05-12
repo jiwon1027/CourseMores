@@ -8,6 +8,7 @@ import lombok.ToString;
 @Getter
 @Builder
 public class MyCourseResDto {
+
     private Long courseId;
     private String title;
     private String content;
@@ -19,4 +20,5 @@ public class MyCourseResDto {
     private String gugun;
     private String image;
     private String locationName;
+
 }

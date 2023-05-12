@@ -1,9 +1,19 @@
 package com.moham.coursemores.common.auth.jwt;
 
 import com.moham.coursemores.common.util.OAuthProvider;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import java.security.Key;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -13,16 +23,11 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
-import java.security.Key;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.stream.Collectors;
-
 @Slf4j
 @Component
 public class TokenProvider {
 
+    private final Key key;
     @Value("${token.authorities.key}")
     private String AUTHORITIES_KEY;
     @Value("${token.access.expire}")
@@ -30,14 +35,12 @@ public class TokenProvider {
     @Value("${token.refresh.expire}")
     private long REFRESH_TOKEN_EXPIRE_TIME;
 
-    private final Key key;
-
     public TokenProvider(@Value("${jwt.secret}") String secretKey) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public long get_REFRESH_TOKEN_EXPIRE_TIME(){
+    public long get_REFRESH_TOKEN_EXPIRE_TIME() {
         return REFRESH_TOKEN_EXPIRE_TIME;
     }
 
@@ -90,7 +93,7 @@ public class TokenProvider {
     }
 
     public Authentication getAuthentication(String accessToken) {
-        if(validate(accessToken)) {
+        if (validate(accessToken)) {
             Claims claims = parseClaims(accessToken);
             Collection<? extends GrantedAuthority> authorities =
                     Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
@@ -102,4 +105,5 @@ public class TokenProvider {
             throw new RuntimeException("해당 토큰은 권한 정보가 없습니다.");
         }
     }
+
 }

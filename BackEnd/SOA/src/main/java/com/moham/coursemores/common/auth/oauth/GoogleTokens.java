@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class GoogleTokens {
+
     @JsonProperty("access_token")
     private String accessToken;
 
@@ -18,4 +19,5 @@ public class GoogleTokens {
 
     @JsonProperty("expires_in")
     private String expiresIn;
+
 }

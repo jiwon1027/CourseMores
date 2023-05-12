@@ -1,16 +1,15 @@
 package com.moham.coursemores.repository.querydsl;
 
+import static com.moham.coursemores.domain.QRegion.region;
+
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
-import static com.moham.coursemores.domain.QRegion.region;
-
 @Repository
 @RequiredArgsConstructor
-public class RegionCustomRepositoryImpl implements RegionCustomRepository{
+public class RegionCustomRepositoryImpl implements RegionCustomRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
@@ -22,4 +21,5 @@ public class RegionCustomRepositoryImpl implements RegionCustomRepository{
                 .distinct()
                 .fetch();
     }
+
 }

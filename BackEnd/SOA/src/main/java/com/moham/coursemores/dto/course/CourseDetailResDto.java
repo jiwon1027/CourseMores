@@ -1,15 +1,15 @@
 package com.moham.coursemores.dto.course;
 
+import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
-
-import java.util.List;
 
 @ToString
 @Getter
 @Builder
 public class CourseDetailResDto {
+
     private String name;
     private String title;
     private String content;
@@ -19,4 +19,5 @@ public class CourseDetailResDto {
     private String gugun;
     private String roadViewImage;
     private List<String> locationImageList;
+
 }

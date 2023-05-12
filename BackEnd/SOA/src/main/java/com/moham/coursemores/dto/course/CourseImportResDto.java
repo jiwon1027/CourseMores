@@ -8,6 +8,7 @@ import lombok.ToString;
 @Getter
 @Builder
 public class CourseImportResDto {
+
     double latitude;
     double longitude;
     String name;

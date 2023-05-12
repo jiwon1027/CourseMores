@@ -10,6 +10,7 @@ import lombok.ToString;
 @Builder
 @Getter
 public class IndexDataReqDTO {
+
     private String id;
     private String title;
     private List<String> courselocationList;

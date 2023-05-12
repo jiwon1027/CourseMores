@@ -10,7 +10,6 @@ import lombok.ToString;
 public class CommentImageResDTO {
 
     private long commentImageId;
-
     private String image;
 
 }

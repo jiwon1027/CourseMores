@@ -6,13 +6,11 @@ import com.moham.coursemores.repository.RegionRepository;
 import com.moham.coursemores.service.RegionService;
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -55,4 +53,5 @@ public class RegionServiceImpl implements RegionService {
                         .build())
                 .collect(Collectors.toList());
     }
+
 }

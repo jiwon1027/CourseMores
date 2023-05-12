@@ -27,4 +27,5 @@ public class KakaoTokens {
 
     @JsonProperty("scope")
     private String scope;
+
 }

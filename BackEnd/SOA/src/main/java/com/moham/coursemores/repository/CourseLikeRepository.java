@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface CourseLikeRepository extends JpaRepository<CourseLike, Long> {
 
     Optional<CourseLike> findByUserIdAndCourseId(Long userId, Long courseId);
+
     List<CourseLike> findByFlagIsTrueAndRegisterTimeAfter(LocalDateTime standardTime);
 
 }

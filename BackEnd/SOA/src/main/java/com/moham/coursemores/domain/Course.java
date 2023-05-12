@@ -1,13 +1,26 @@
 package com.moham.coursemores.domain;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-
 import com.moham.coursemores.domain.time.DeleteTimeEntity;
 import com.moham.coursemores.dto.course.CourseUpdateReqDto;
-import lombok.*;
+import java.time.LocalDateTime;
+import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Table(name = "course")
@@ -107,22 +120,22 @@ public class Course extends DeleteTimeEntity {
 
     @Builder
     public Course(String title,
-                  String content,
-                  int people,
-                  int time,
-                  boolean visited,
-                  int viewCount,
-                  int likeCount,
-                  int interestCount,
-                  int commentCount,
-                  String image,
-                  String locationName,
-                  double latitude,
-                  double longitude,
-                  String sido,
-                  String gugun,
-                  int locationSize,
-                  User user){
+            String content,
+            int people,
+            int time,
+            boolean visited,
+            int viewCount,
+            int likeCount,
+            int interestCount,
+            int commentCount,
+            String image,
+            String locationName,
+            double latitude,
+            double longitude,
+            String sido,
+            String gugun,
+            int locationSize,
+            User user) {
         this.title = title;
         this.content = content;
         this.people = people;
@@ -146,7 +159,7 @@ public class Course extends DeleteTimeEntity {
         this.image = image;
     }
 
-    public void increaseViewCount(){
+    public void increaseViewCount() {
         this.viewCount++;
     }
 
@@ -166,15 +179,15 @@ public class Course extends DeleteTimeEntity {
         this.likeCount--;
     }
 
-    public void increaseCommentCount(){
+    public void increaseCommentCount() {
         this.commentCount++;
     }
 
-    public void decreaseCommentCount(){
+    public void decreaseCommentCount() {
         this.commentCount--;
     }
 
-    public void update(CourseUpdateReqDto courseUpdateReqDto){
+    public void update(CourseUpdateReqDto courseUpdateReqDto) {
         this.title = courseUpdateReqDto.getTitle();
         this.content = courseUpdateReqDto.getContent();
         this.people = courseUpdateReqDto.getPeople();
@@ -183,7 +196,8 @@ public class Course extends DeleteTimeEntity {
         this.locationName = courseUpdateReqDto.getLocationList().get(0).getName();
     }
 
-    public void delete(){
+    public void delete() {
         this.deleteTime = LocalDateTime.now();
     }
+
 }

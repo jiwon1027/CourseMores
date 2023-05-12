@@ -9,6 +9,7 @@ import org.springframework.util.MultiValueMap;
 @Getter
 @NoArgsConstructor
 public class GoogleLoginParams implements OAuthLoginParams {
+
     private String authorizationCode;
 
     @Override
@@ -22,4 +23,5 @@ public class GoogleLoginParams implements OAuthLoginParams {
         body.add("code", authorizationCode);
         return body;
     }
+
 }

@@ -6,6 +6,8 @@ import lombok.ToString;
 @ToString
 @Getter
 public class TokenReissueReqDto {
+
     String accessToken;
     String refreshToken;
+
 }

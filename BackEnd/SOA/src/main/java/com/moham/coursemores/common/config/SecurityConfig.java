@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 @Configuration
 @EnableWebSecurity
 @Component
-public class SecurityConfig{
+public class SecurityConfig {
 
     private final TokenProvider tokenProvider;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
@@ -59,4 +59,5 @@ public class SecurityConfig{
 
         return http.build();
     }
+
 }

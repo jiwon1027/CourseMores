@@ -32,7 +32,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
 
-        if(StringUtils.hasText(user.getNickname())
+        if (StringUtils.hasText(user.getNickname())
                 && user.getAge() > 0
                 && StringUtils.hasText(user.getGender()))
             return UserInfoResDto.builder()
@@ -69,7 +69,7 @@ public class UserServiceImpl implements UserService {
 
         String imageUrl = "default";
         // 선택한 이미지가 있다면 업로드
-        if(profileImage != null)
+        if (profileImage != null)
             imageUrl = fileUploadService.uploadImage(profileImage);
 
         user.create(userInfoCreateReqDto, imageUrl);
@@ -96,7 +96,7 @@ public class UserServiceImpl implements UserService {
         }
 
         // 5. 새로운 accessToken 생성
-        String newAccessToken = tokenProvider.generateAccessToken(Long.toString(userId),user.getProvider());
+        String newAccessToken = tokenProvider.generateAccessToken(Long.toString(userId), user.getProvider());
 
         // 토큰 발급
         return newAccessToken;

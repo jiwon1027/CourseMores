@@ -8,8 +8,10 @@ import lombok.ToString;
 @Getter
 @Builder
 public class UserInfoResDto {
+
     String nickname;
     int age;
     String gender;
     String profileImage;
+
 }
