@@ -2,8 +2,9 @@ import 'package:get/get.dart' as g;
 import 'dart:convert';
 import 'package:flutter/widgets.dart';
 import 'package:dio/dio.dart';
-import './auth/auth_dio.dart';
+import '../auth/auth_dio.dart';
 import 'package:http_parser/http_parser.dart';
+import 'package:image_picker/image_picker.dart';
 
 // 코스 작성하는 getX controller
 class CourseController extends g.GetxController {
@@ -33,24 +34,28 @@ class CourseController extends g.GetxController {
     hashtagList.addAll(hashtags);
   }
 
-  // Map<String, dynamic> toCreateReqDto() {
-  //   return {
-  //     'title': title.value,
-  //     'content': content.value,
-  //     'people': people.value,
-  //     'time': time.value,
-  //     'visited': visited.value,
-  //     'locationList': locationList.value
-  //         .map((location) => location.toCreateReqDto())
-  //         .toList(),
-  //     'hashtagList': hashtagList.value,
-  //     'themeIdList': themeIdList.value,
-  //   };
+  // List<XFile> getCombinedImages() {
+  //   final List<XFile> combinedImages = [];
+  //   for (final locationData in locationList) {
+  //     combinedImages.addAll(locationData.temporaryImageList);
+  //   }
+  //   return combinedImages;
   // }
+  List<XFile> getCombinedImages() {
+    List<XFile> combinedImages = [];
+    for (var location in locationList) {
+      combinedImages.addAll(location._temporaryImageList);
+    }
+    return combinedImages;
+  }
+
   void postCourse() async {
     // final url = 'https://coursemores.site/api/course/1';
+    // final url = 'https://coursemores.site/api/course/';
     final List<Map<String, dynamic>> locationDataList = [];
     FormData formData;
+
+    final List<XFile> combinedImages = getCombinedImages();
 
     // locationList의 데이터를 LocationCreateReqDto로 변환
     for (final locationData in locationList) {
@@ -67,11 +72,27 @@ class CourseController extends g.GetxController {
       });
     }
 
+    // FormData에서 imageList를 생성
+    List<MultipartFile> imageFileList = [];
+    int imageIndex = 0;
+    for (var locationData in locationList) {
+      for (var i = 0; i < locationData.numberOfImage; i++) {
+        imageFileList.add(await MultipartFile.fromFile(
+          combinedImages[imageIndex++].path,
+          contentType: MediaType("image", "jpg"),
+        ));
+      }
+    }
+
     // 출력확인
     print(locationDataList);
+    print('11111111111111');
+    print(combinedImages);
 
-    formData = FormData.fromMap({
-      'courseCreateReqDto': MultipartFile.fromString(
+    // 이미지가 없는 경우
+    if (imageFileList.isEmpty) {
+      formData = FormData.fromMap({
+        'courseCreateReqDto': MultipartFile.fromString(
           jsonEncode({
             'title': title.value,
             'content': content.value,
@@ -82,11 +103,29 @@ class CourseController extends g.GetxController {
             'hashtagList': hashtagList,
             'themeIdList': themeIdList,
           }),
-          contentType: MediaType.parse('application/json')),
-      // 'imageList': await MultipartFile.fromFile(image.path,
-      //     contentType: MediaType("image", "jpg")),
-      'imageList': null,
-    });
+          contentType: MediaType.parse('application/json'),
+        ),
+        'imageList': null,
+      });
+    } else {
+      // 이미지가 있는 경우
+      formData = FormData.fromMap({
+        'courseCreateReqDto': MultipartFile.fromString(
+          jsonEncode({
+            'title': title.value,
+            'content': content.value,
+            'people': people.value,
+            'time': time.value,
+            'visited': visited.value,
+            'locationList': locationDataList,
+            'hashtagList': hashtagList,
+            'themeIdList': themeIdList,
+          }),
+          contentType: MediaType.parse('application/json'),
+        ),
+        'imageList': imageFileList,
+      });
+    }
 
     // 출력확인
     print(formData.fields);
@@ -94,7 +133,7 @@ class CourseController extends g.GetxController {
 
     try {
       final dio = await authDio();
-      final response = await dio.post("course/1",
+      final response = await dio.post("course",
           data: formData,
           options: Options(
             headers: {
@@ -119,7 +158,8 @@ class CourseController extends g.GetxController {
 
 // 코스 작성시 장소 개별 getX controller
 class LocationController extends g.GetxController {
-  final CourseController courseController = g.Get.find(); // GetX에서 CourseController 가져오기
+  final CourseController courseController =
+      g.Get.find(); // GetX에서 CourseController 가져오기
 
   var latitude = 0.0.obs;
   var longitude = 0.0.obs;
@@ -139,14 +179,16 @@ class LocationController extends g.GetxController {
   }
 
   void updateLocationData(LocationData locationData) {
-    int index = courseController.locationList.indexWhere((data) => data.key == locationData.key);
+    int index = courseController.locationList
+        .indexWhere((data) => data.key == locationData.key);
     if (index != -1) {
       courseController.locationList[index] = locationData;
     }
   }
 
   LocationData? getLocationData(Key key) {
-    final data = courseController.locationList.firstWhereOrNull((data) => data.key == key);
+    final data = courseController.locationList
+        .firstWhereOrNull((data) => data.key == key);
     if (data == null) {
       // 요소가 없는 경우 예외 처리
       print('No data found for the given key');
@@ -154,25 +196,25 @@ class LocationController extends g.GetxController {
     return data;
   }
 
-  // LocationData? getLocationData(String key) {
-  //   LocationData? data = courseController.locationList
-  //       .firstWhereOrNull((data) => data.key == key);
-  //   if (data == null) {
-  //     // 요소가 없는 경우 예외 처리
-  //     print('No data found for the given key');
-  //   }
-  //   return data;
-  // }
-
   LocationData getLocationDataByIndex(int index) {
     return courseController.locationList[index];
   }
 
   // other methods for managing data
+  void incrementNumberOfImage() {
+    if (numberOfImage.value < 5) {
+      numberOfImage.value++;
+    }
+  }
+
+  void decrementNumberOfImage() {
+    if (numberOfImage.value > 0) {
+      numberOfImage.value--;
+    }
+  }
 }
 
 class LocationData {
-  // late String key;
   late Key key;
   late String name;
   late double latitude;
@@ -183,6 +225,7 @@ class LocationData {
   late int numberOfImage;
   String? title;
   String? content;
+  final List<XFile> _temporaryImageList; // 추가된 부분
 
   LocationData({
     required this.key,
@@ -195,16 +238,19 @@ class LocationData {
     this.content = '',
     this.sido = '',
     this.gugun = '',
-  });
-  // LocationData({
-  //   required this.key,
-  //   required this.name,
-  //   required this.latitude,
-  //   required this.longitude,
-  //   this.image = '',
-  //   this.title = '',
-  //   this.content = '',
-  //   this.sido = '',
-  //   this.gugun = '',
-  // }) : key = UniqueKey();
+  }) : _temporaryImageList = []; // 추가된 부분
+
+  List<XFile> get temporaryImageList => _temporaryImageList; // 추가된 부분
+
+  void addTemporaryImage(XFile image) {
+    _temporaryImageList.add(image);
+  }
+
+  void removeTemporaryImage(XFile image) {
+    _temporaryImageList.remove(image);
+  }
+
+  void clearTemporaryImages() {
+    _temporaryImageList.clear();
+  }
 }

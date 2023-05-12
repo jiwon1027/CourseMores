@@ -2,7 +2,7 @@ import 'package:coursemores/course_make/make2.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:get/get.dart';
-import '../make_controller.dart';
+import '../controller/make_controller.dart';
 
 class MakeStart extends StatefulWidget {
   const MakeStart({super.key});
