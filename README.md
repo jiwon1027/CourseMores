@@ -63,19 +63,21 @@
 | :-------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------: |
 |                                                   MySQL                                                   |                                                    Redis                                                   |
 
-| <div align="center"><img src="./assets/readme/elasticsearch.png" alt="elasticsearch" width="95px" height="50px" /> </div> | <div align="center"><img src="./assets/readme/logstash.png" alt="logstash" width="60px" height="50px" /></div> | <div align="center"><img src="./assets/readme/kibana.png" alt="kibana" width="80px" height="50px" /></div> |
-| :-------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------: |:-----------------------------------------------------------------------------------------------------------: |
-|                                                   Elasticsearch                                                   |                                                    Logstash                                                  |                                                   Kibana                                                |
-
 <br />
 
 ## DevOps
 
-| <div align="center"><img src="./assets/readme/docker.png" alt="Docker" width="60px" height="50px" /> </div> | <div align="center"><img src="./assets/readme/jenkins.png" alt="Jenkins" width="50px" height="50px" /></div> | <div align="center"><img src="./assets/readme/nginx.png" alt="Nginx" width="50px" height="50px" /></div> | <div align="center"><img src="./assets/readme/awsec2.png" alt="AWS EC2" width="50px" height="50px" /></div> | <div align="center"><img src="./assets/readme/awss3.png" alt="AWS S3" width="70px" height="50px" /></div> |
+| <div align="center"><img src="./assets/readme/docker.png" alt="Docker" width="60px" height="50px" /> </div> | <div align="center"><img src="./assets/readme/jenkins.png" alt="Jenkins" width="50px" height="50px" /></div> | <div align="center"><img src="./assets/readme/nginx.png" alt="Nginx" width="50px" height="50px" /></div> | <div align="center"><img src="./assets/readme/awsec2.png" alt="AWS EC2" width="50px" height="50px" /></div> |<div align="center"><img src="./assets/readme/awss3.png" alt="AWS S3" width="70px" height="50px" /></div> |
 | :---------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------: |
 |                                                   Docker                                                    |                                             &nbsp;Jenkins&nbsp;                                              |                                      &nbsp;&nbsp;NginX&nbsp;&nbsp;                                       |                                         &nbsp;AWS EC2&nbsp;                                          |                                         &nbsp;AWS S3&nbsp;                                         |
 
-<br />
+| <div align="center"><img src="./assets/readme/elasticsearch.png" alt="elasticsearch" width="95px" height="50px" /> </div> | <div align="center"><img src="./assets/readme/logstash.png" alt="logstash" width="60px" height="50px" /></div> | <div align="center"><img src="./assets/readme/kibana.png" alt="kibana" width="80px" height="50px" /></div> |<div align="center"><img src="./assets/readme/elasticapm.svg" alt="Elastic Apm" width="65px" height="50px" /></div> |
+| :-------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------: |:-----------------------------------------------------------------------------------------------------------: |:-----------------------------------------------------------------------------------------------------------: |
+|                                                   Elasticsearch                                                   |                                &nbsp;                    Logstash                 &nbsp;                                 |                                                   &nbsp;Kibana                         &nbsp;                       |                                                  &nbsp; Elastic APM  &nbsp;                 |
+
+| <div align="center"><img src="./assets/readme/sonarqube.png" alt="SonarQube" width="190px" height="50px" /></div> |
+|:-:|
+|                                        &nbsp;SonarQube&nbsp;                                         |
 
 <br />
 
@@ -97,13 +99,13 @@
 
 - **시스템 아키텍처**
 
-  <img src="./assets/readme/Architecture.png"  alt="Architecture" width="600px" >
+  <img src="./assets/readme/architecture.png"  alt="Architecture" width="600px" >
 
 <br />
 
 - **ERD**
 
-  <img src="./assets/readme/ERD.png" alt="ERD" width="600px" >
+  <img src="./assets/readme/erd.png" alt="ERD" width="600px" >
   
 <br />
 
@@ -132,11 +134,11 @@
 <!--
 <img src="assets/memebers" alt="members" width="800" /> -->
 
-> - 이상민(팀장 / BE) : 
-> - 우상빈(팀원 / BE) : 
-> - 윤지영(팀원 / FE) : 
-> - 이지원(팀원 / BE) : 
-> - 임성준(팀원 / FE) : 
-> - 전태영(팀원 / FE) : 
+> - 이상민(팀장 / BE) : 프로젝트 총괄, API 개발
+> - 우상빈(팀원 / BE) : 데이터셋 수집, API 개발
+> - 윤지영(팀원 / FE) : 화면 구성, 디자인
+> - 이지원(팀원 / BE) : 인프라 구축 및 CI/CD, API 개발
+> - 임성준(팀원 / FE) : 화면 구성, QA
+> - 전태영(팀원 / FE) : 화면 구성
 
 <br />
