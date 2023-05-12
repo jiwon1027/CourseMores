@@ -45,17 +45,14 @@ public class CourseController {
     }
 
     @GetMapping("hot/calculation")
-    public ResponseEntity<Map<String, Object>> setHotCourse() {
+    public ResponseEntity<Void> setHotCourse() {
         logger.debug("[0/2][GET][/course/hot/calculation] << request: none");
 
-        Map<String, Object> resultMap = new HashMap<>();
-
         logger.debug("[1/2][GET][/course/hot/calculation] ... cs.setHotCourse");
-        List<HotPreviewResDto> courseList = courseService.setHotCourse();
-        resultMap.put("courseList", courseList);
+        courseService.setHotCourse();
 
-        logger.debug("[2/2][GET][/course/hot/calculation] >> response : courseList\n courseList = {}\n", courseList);
-        return new ResponseEntity<>(resultMap, HttpStatus.OK);
+        logger.debug("[2/2][GET][/course/hot/calculation] >> response : none\n");
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("around")

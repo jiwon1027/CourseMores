@@ -39,6 +39,9 @@ public class CourseServiceImpl implements CourseService {
     private final InterestRepository interestRepository;
     private final CourseLikeRepository courseLikeRepository;
     private final CommentRepository commentRepository;
+
+    private final String ALL = "전체";
+
     @Override
     public List<HotPreviewResDto> getHotCourseList() {
         // 한 번에 넘길 인기 코스의 수
@@ -51,8 +54,8 @@ public class CourseServiceImpl implements CourseService {
                                     .title(course.getTitle())
                                     .content(course.getContent())
                                     .image(course.getImage())
-                                    .sido(course.getSido())
-                                    .gugun(course.getGugun())
+                                    .sido(ALL.equals(course.getSido())?"대한민국":course.getSido())
+                                    .gugun(ALL.equals(course.getGugun())?"":course.getGugun())
                                     .build();
                         }
                 ).collect(Collectors.toList());
@@ -61,7 +64,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     @Transactional
-    public List<HotPreviewResDto> setHotCourse() {
+    public void setHotCourse() {
         LocalDateTime standardTime = LocalDateTime.now().minusWeeks(1); // 인기도의 기간
         List<Comment> comments = commentRepository.findByDeleteTimeIsNullAndCreateTimeAfter(standardTime); // 기간 동안 댓글 목록
         List<Interest> interests = interestRepository.findByFlagIsTrueAndRegisterTimeAfter(standardTime); // 기간 동안 관심 목록
@@ -94,21 +97,6 @@ public class CourseServiceImpl implements CourseService {
             if (--number == 0)
                 break;
         }
-
-        List<HotPreviewResDto> result = hotCourseRepository.findAll().stream()
-                .map(hotCourse -> {
-                            Course course = hotCourse.getCourse();
-                            return HotPreviewResDto.builder()
-                                    .courseId(course.getId())
-                                    .title(course.getTitle())
-                                    .content(course.getContent())
-                                    .image(course.getImage())
-                                    .sido(course.getSido())
-                                    .gugun(course.getGugun())
-                                    .build();
-                        }
-                ).collect(Collectors.toList());
-        return result;
     }
 
     @Override
@@ -154,8 +142,8 @@ public class CourseServiceImpl implements CourseService {
                         .likeCount(course.getLikeCount())
                         .commentCount(course.getCommentCount())
                         .image(course.getImage())
-                        .sido(course.getSido())
-                        .gugun(course.getGugun())
+                        .sido(ALL.equals(course.getSido())?"대한민국":course.getSido())
+                        .gugun(ALL.equals(course.getGugun())?"":course.getGugun())
                         .locationName(course.getLocationName() + " 외 " + (course.getLocationSize() - 1) + "곳")
 //                        .isInterest(interest.map(Interest::isFlag).orElse(false))
                         .isInterest(isInterest)
@@ -201,8 +189,8 @@ public class CourseServiceImpl implements CourseService {
                 .viewCount(course.getViewCount())
                 .likeCount(course.getLikeCount())
                 .interestCount(course.getInterestCount())
-                .sido(course.getSido())
-                .gugun(course.getGugun())
+                .sido(ALL.equals(course.getSido())?"대한민국":course.getSido())
+                .gugun(ALL.equals(course.getGugun())?"":course.getGugun())
                 .createTime(course.getCreateTime())
                 .hashtagList(course.getCourseHashtagList()
                         .stream()
@@ -233,8 +221,8 @@ public class CourseServiceImpl implements CourseService {
                         .content(courseLocation.getContent())
                         .latitude(courseLocation.getLatitude())
                         .longitude(courseLocation.getLongitude())
-                        .sido(courseLocation.getRegion().getSido())
-                        .gugun(courseLocation.getRegion().getGugun())
+                        .sido(ALL.equals(courseLocation.getRegion().getSido())?"대한민국":courseLocation.getRegion().getSido())
+                        .gugun(ALL.equals(courseLocation.getRegion().getGugun())?"":courseLocation.getRegion().getGugun())
                         .roadViewImage(courseLocation.getRoadViewImage())
                         .locationImageList(courseLocation.getCourseLocationImageList()
                                 .stream()
@@ -256,8 +244,8 @@ public class CourseServiceImpl implements CourseService {
                         .name(location.getName())
                         .longitude(location.getLongitude())
                         .latitude(location.getLatitude())
-                        .sido(location.getRegion().getSido())
-                        .gugun(location.getRegion().getGugun())
+                        .sido(ALL.equals(location.getRegion().getSido())?"대한민국":location.getRegion().getSido())
+                        .gugun(ALL.equals(location.getRegion().getGugun())?"":location.getRegion().getGugun())
                         .build())
                 .collect(Collectors.toList());
     }
@@ -283,8 +271,8 @@ public class CourseServiceImpl implements CourseService {
                             .visited(course.isVisited())
                             .likeCount(course.getLikeCount())
                             .image(course.getImage())
-                            .sido(course.getSido())
-                            .gugun(course.getGugun())
+                            .sido(ALL.equals(course.getSido())?"대한민국":course.getSido())
+                            .gugun(ALL.equals(course.getGugun())?"":course.getGugun())
                             .locationName(course.getLocationName() + " 외 " + (course.getLocationSize() - 1) + "곳")
                             .commentCount(course.getCommentCount())
                             .build();
@@ -314,8 +302,8 @@ public class CourseServiceImpl implements CourseService {
                 .image(firstLocation.getRoadViewImage())
                 .locationName(firstLocation.getName())
                 .locationSize(courseCreateReqDto.getLocationList().size())
-                .sido(firstLocation.getSido())
-                .gugun(firstLocation.getGugun())
+                .sido(initSido(firstLocation.getSido()))
+                .gugun(initGugun(firstLocation.getGugun()))
                 .latitude(firstLocation.getLatitude())
                 .longitude(firstLocation.getLongitude())
                 .user(user)
@@ -362,7 +350,7 @@ public class CourseServiceImpl implements CourseService {
         // 코스의 장소 정보 생성
         for (LocationCreateReqDto location : courseCreateReqDto.getLocationList()) {
             // 코스의 장소의 지역 가져오기
-            Region region = getRegion(location.getSido(), location.getGugun());
+            Region region = getRegion(initSido(location.getSido()), initGugun(location.getGugun()));
 
             // 코스의 장소 저장
             CourseLocation courseLocation = courseLocationRepository.save(CourseLocation.builder()
@@ -491,11 +479,14 @@ public class CourseServiceImpl implements CourseService {
         course.delete();
     }
 
-    private Region getRegion(String sido, String gugun){
-        final String ALL = "전체";
-        sido = sido == null ? ALL : regionRepository.existsBySido(sido) ? sido : ALL;
-        gugun = gugun == null ? ALL : regionRepository.existsByGugun(gugun) ? gugun : ALL;
+    private String initSido(String sido){
+        return sido == null ? ALL : regionRepository.existsBySido(sido.trim()) ? sido.trim() : ALL;
+    }
+    private String initGugun(String gugun){
+        return gugun == null ? ALL : regionRepository.existsByGugun(gugun.trim()) ? gugun.trim() : ALL;
+    }
 
+    private Region getRegion(String sido, String gugun){
         if(ALL.equals(sido)) { // 시도 : 전체
             if(ALL.equals(gugun)) { // 구군 : 전체
                 return regionRepository.findBySidoAndGugun(ALL, ALL)

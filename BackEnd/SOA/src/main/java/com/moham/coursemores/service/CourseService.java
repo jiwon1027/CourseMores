@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 public interface CourseService {
 
     List<HotPreviewResDto> getHotCourseList();
-    List<HotPreviewResDto> setHotCourse();
+    void setHotCourse();
     List<NearPreviewResDto> getCoursesNearby(double latitude, double longitude);
     Page<CoursePreviewResDto> search(Long userId, String word, Long regionId, List<Long> themeIds, int isVisited, int page, String sortby);
     void increaseViewCount(Long courseId);
