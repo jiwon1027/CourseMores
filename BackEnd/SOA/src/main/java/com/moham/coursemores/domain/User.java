@@ -47,10 +47,6 @@ public class User extends DeleteTimeEntity {
     @Enumerated(EnumType.STRING)
     private OAuthProvider provider;
 
-//    @NotNull
-//    @Column
-//    private String providerId;
-
     @Column(length = 50)
     private String nickname;
 
@@ -85,12 +81,10 @@ public class User extends DeleteTimeEntity {
     public User(String email
             , String roles
             , OAuthProvider provider
-//                ,String providerId
     ) {
         this.email = email;
         this.roles = roles;
         this.provider = provider;
-//        this.providerId = providerId;
     }
 
     public void create(UserInfoCreateReqDto userInfoCreateReqDto, String imageUrl) {

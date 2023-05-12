@@ -36,7 +36,7 @@ public class CommentImage extends CreateTimeEntity {
     @NotNull
     @ManyToOne(targetEntity = Comment.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "comment_id")
-    private Comment comment; // 사진의 해당 댓글
+    private Comment comment;
 
     @Builder
     public CommentImage(String image,

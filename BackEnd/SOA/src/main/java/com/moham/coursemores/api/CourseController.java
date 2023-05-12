@@ -84,7 +84,7 @@ public class CourseController {
         resultMap.put("courseList", courseList);
 
         // 몇 개 보낼지 변수를 만들어야 할듯
-        logger.debug("[2/2][GET][/course/around] >> response : courseList, distance\n courseList = {}\n distance = {}\n", courseList, 5);
+        logger.debug("[2/2][GET][/course/around] >> response : courseList\n courseList = {}\n", courseList);
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
 

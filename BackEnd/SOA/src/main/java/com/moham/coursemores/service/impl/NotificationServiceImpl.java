@@ -14,6 +14,7 @@ import com.moham.coursemores.repository.NotificationRepository;
 import com.moham.coursemores.repository.UserRepository;
 import com.moham.coursemores.service.NotificationService;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
@@ -73,6 +74,10 @@ public class NotificationServiceImpl implements NotificationService {
 
         com.moham.coursemores.domain.Notification notification = notificationRepository.findById(notificationId)
                 .orElseThrow(() -> new RuntimeException("해당 알림을 찾을 수 없습니다."));
+
+        if(!Objects.equals(user.getId(), notification.getUser().getId())){
+            throw new RuntimeException("해당 알림을 삭제할 수 없습니다.");
+        }
 
         notification.delete();
     }

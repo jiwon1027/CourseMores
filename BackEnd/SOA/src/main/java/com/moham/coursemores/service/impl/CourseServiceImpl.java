@@ -80,7 +80,7 @@ public class CourseServiceImpl implements CourseService {
     public List<HotPreviewResDto> getHotCourseList() {
         // 한 번에 넘길 인기 코스의 수
         int number = 10;
-        List<HotPreviewResDto> result = hotCourseRepository.findRandomHotCourse(number).stream()
+        return hotCourseRepository.findRandomHotCourse(number).stream()
                 .map(hotCourse -> {
                             Course course = hotCourse.getCourse();
                             return HotPreviewResDto.builder()
@@ -93,7 +93,6 @@ public class CourseServiceImpl implements CourseService {
                                     .build();
                         }
                 ).collect(Collectors.toList());
-        return result;
     }
 
     @Override
@@ -135,10 +134,8 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public List<NearPreviewResDto> getCoursesNearby(double latitude, double longitude) {
-        Pageable pageable = PageRequest.of(0, 5);
-
-        List<NearPreviewResDto> locationDtoList = courseRepository.findTop5CoursesByLocation(latitude, longitude, pageable);
-        return locationDtoList;
+        Pageable pageable = PageRequest.of(0, 10);
+        return courseRepository.findTop5CoursesByLocation(latitude, longitude, pageable);
     }
 
     @Override
@@ -156,9 +153,9 @@ public class CourseServiceImpl implements CourseService {
         Pageable pageable = PageRequest.of(page, size, sort);
 
         Page<Course> pageCourse = courseRepository.searchAll(word, regionId, themeIds, isVisited, pageable);
-        Page<CoursePreviewResDto> result = pageCourse
+
+        return pageCourse
                 .map(course -> {
-//                    Optional<Interest> interest = interestRepository.findByUserIdAndCourseId(user.getId(), course.getId());
                     boolean isInterest = false;
                     for (Interest interest : course.getInterestList()) {
                         if (Objects.equals(interest.getUser().getId(), user.getId())) {
@@ -179,20 +176,9 @@ public class CourseServiceImpl implements CourseService {
                             .sido(ALL.equals(course.getSido()) ? "대한민국" : course.getSido())
                             .gugun(ALL.equals(course.getGugun()) ? "" : course.getGugun())
                             .locationName(course.getLocationName() + " 외 " + (course.getLocationSize() - 1) + "곳")
-//                        .isInterest(interest.map(Interest::isFlag).orElse(false))
                             .isInterest(isInterest)
                             .build();
                 });
-
-//        long totalElements = result.getTotalElements();
-//        System.out.println("size = "+result.getContent().size());
-//        System.out.println("totalElements = "+totalElements);
-//        System.out.println("isFirst = "+result.isFirst());
-//        System.out.println("isLast = "+result.isLast());
-//        System.out.println("isEmpty = "+result.isEmpty());
-//        System.out.println("getNumber = "+result.getNumber());
-
-        return result;
     }
 
     @Override
@@ -517,11 +503,13 @@ public class CourseServiceImpl implements CourseService {
     }
 
     private String initSido(String sido) {
-        return sido == null ? ALL : regionRepository.existsBySido(sido.trim()) ? sido.trim() : ALL;
+        if(sido == null) return ALL;
+        return regionRepository.existsBySido(sido.trim()) ? sido.trim() : ALL;
     }
 
     private String initGugun(String gugun) {
-        return gugun == null ? ALL : regionRepository.existsByGugun(gugun.trim()) ? gugun.trim() : ALL;
+        if(gugun == null) return ALL;
+        return regionRepository.existsByGugun(gugun.trim()) ? gugun.trim() : ALL;
     }
 
     private Region getRegion(String sido, String gugun) {
