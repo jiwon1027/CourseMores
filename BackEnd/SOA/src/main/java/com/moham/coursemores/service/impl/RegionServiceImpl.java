@@ -23,7 +23,7 @@ public class RegionServiceImpl implements RegionService {
 
     @Override
     @Transactional
-    public void saveDummy() throws Exception {
+    public void saveDummy() {
         FileReader fr;
         BufferedReader br = null;
         String data;
