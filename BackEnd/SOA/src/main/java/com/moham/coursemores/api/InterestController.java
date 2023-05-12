@@ -10,6 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,60 +28,64 @@ public class InterestController {
 
     private final InterestService interestService;
 
-    @GetMapping("{userId}")
+    @GetMapping
     public ResponseEntity<Map<String, Object>> getUserInterestCourseList(
-            @PathVariable Long userId) {
-        logger.debug("[0/2][GET][/interest/{}] << request : none", userId);
+            @AuthenticationPrincipal User user) {
+        Long userId = Long.parseLong(user.getUsername());
+        logger.debug("[0/2][GET][/interest][{}] << request : none", userId);
 
         Map<String, Object> resultMap = new HashMap<>();
 
-        logger.debug("[1/2][GET][/interest/{}] ... is.getUserInterestCourseList", userId);
+        logger.debug("[1/2][GET][/interest][{}] ... is.getUserInterestCourseList", userId);
         List<InterestCourseResDto> interestCourseResDtoList = interestService.getUserInterestCourseList(userId);
         resultMap.put("myInterestCourseList", interestCourseResDtoList);
 
-        logger.debug("[2/2][GET][/interest/{}] >> response : myInterestCourseList\n myInterestCourseList = {}\n", userId, interestCourseResDtoList);
+        logger.debug("[2/2][GET][/interest][{}] >> response : myInterestCourseList\n myInterestCourseList = {}\n", userId, interestCourseResDtoList);
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
 
-    @GetMapping("course/{courseId}/{userId}")
+    @GetMapping("course/{courseId}")
     public ResponseEntity<Map<String, Object>> checkInterest(
-            @PathVariable Long userId,
+            @AuthenticationPrincipal User user,
             @PathVariable Long courseId) {
-        logger.debug("[0/2][GET][/interest/course/{}/{}] << request : none", courseId, userId);
+        Long userId = Long.parseLong(user.getUsername());
+        logger.debug("[0/2][GET][/interest/course/{}][{}] << request : none", courseId, userId);
 
         Map<String, Object> resultMap = new HashMap<>();
 
-        logger.debug("[1/2][GET][/interest/course/{}/{}] ... is.checkInterest", courseId, userId);
+        logger.debug("[1/2][GET][/interest/course/{}][{}] ... is.checkInterest", courseId, userId);
         boolean isInterestCourse = interestService.checkInterest(userId, courseId);
         resultMap.put("isInterestCourse", isInterestCourse);
 
-        logger.debug("[2/2][GET][/interest/course/{}/{}] >> response\n isInterestCourse = {}\n", courseId, userId, isInterestCourse);
+        logger.debug("[2/2][GET][/interest/course/{}][{}] >> response\n isInterestCourse = {}\n", courseId, userId, isInterestCourse);
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
 
-    @PostMapping("course/{courseId}/{userId}")
+    @PostMapping("course/{courseId}")
     public ResponseEntity<Void> addInterestCourse(
-            @PathVariable Long userId,
+            @AuthenticationPrincipal User user,
             @PathVariable Long courseId) {
-        logger.debug("[0/2][POST][/interest/course/{}/{}] << request : none", courseId, userId);
+        Long userId = Long.parseLong(user.getUsername());
+        logger.debug("[0/2][POST][/interest/course/{}][{}] << request : none", courseId, userId);
 
-        logger.debug("[1/2][POST][/interest/course/{}/{}] ... is.addInterestCourse", courseId, userId);
+        logger.debug("[1/2][POST][/interest/course/{}][{}] ... is.addInterestCourse", courseId, userId);
         interestService.addInterestCourse(userId, courseId);
 
-        logger.debug("[2/2][POST][/interest/course/{}/{}] >> response : none\n", courseId, userId);
+        logger.debug("[2/2][POST][/interest/course/{}][{}] >> response : none\n", courseId, userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("course/{courseId}/{userId}")
+    @DeleteMapping("course/{courseId}")
     public ResponseEntity<Void> deleteInterestCourse(
-            @PathVariable Long userId,
+            @AuthenticationPrincipal User user,
             @PathVariable Long courseId) {
-        logger.debug("[0/2][DELETE][/interest/course/{}/{}] << request : none", courseId, userId);
+        Long userId = Long.parseLong(user.getUsername());
+        logger.debug("[0/2][DELETE][/interest/course/{}][{}] << request : none", courseId, userId);
 
-        logger.debug("[1/2][DELETE][/interest/course/{}/{}] ... is.deleteInterestCourse", courseId, userId);
+        logger.debug("[1/2][DELETE][/interest/course/{}][{}] ... is.deleteInterestCourse", courseId, userId);
         interestService.deleteInterestCourse(userId, courseId);
 
-        logger.debug("[2/2][DELETE][/interest/course/{}/{}] >> response : none\n", courseId, userId);
+        logger.debug("[2/2][DELETE][/interest/course/{}][{}] >> response : none\n", courseId, userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
