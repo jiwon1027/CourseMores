@@ -18,4 +18,5 @@ public class CommentResDTO {
     private List<CommentImageResDTO> imageList;
     private LocalDateTime createTime;
     private UserSimpleInfoResDto writeUser;
+    private boolean isWrite;
 }

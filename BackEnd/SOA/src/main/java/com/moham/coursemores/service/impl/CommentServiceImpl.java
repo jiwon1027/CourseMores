@@ -16,6 +16,7 @@ import com.moham.coursemores.repository.CourseRepository;
 import com.moham.coursemores.repository.UserRepository;
 import com.moham.coursemores.service.CommentService;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -37,9 +38,13 @@ public class CommentServiceImpl implements CommentService {
     private final CourseRepository courseRepository;
 
     @Override
-    public List<CommentResDTO> getCommentList(Long courseId, int page, String sortby) {
+    public List<CommentResDTO> getCommentList(Long courseId, Long userId, int page, String sortby) {
+        // user를 불러와서 그 유저가 작성한 코멘트인지 확인하기
+        User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
+                .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
+
         // 한 페이지에 보여줄 댓글의 수
-        final int size = 5;
+        final int size = 10;
 
         // Sort 정렬 기준
         Sort sort = ("Like".equals(sortby)) ?
@@ -62,6 +67,7 @@ public class CommentServiceImpl implements CommentService {
                                         .build())
                                 .collect(Collectors.toList()))
                         .createTime(comment.getCreateTime())
+                        .isWrite(Objects.equals(comment.getUser().getId(), user.getId()))
                         .writeUser(UserSimpleInfoResDto.builder()
                                 .nickname(comment.getUser().getNickname())
                                 .profileImage(comment.getUser().getProfileImage())

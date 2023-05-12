@@ -206,13 +206,15 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public CourseInfoResDto getCourseInfo(Long courseId) {
+    public CourseInfoResDto getCourseInfo(Long courseId, Long userId) {
+        User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
+                .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
         // 코스 정보 가져오기
         Course course = courseRepository.findByIdAndDeleteTimeIsNull(courseId)
                 .orElseThrow(() -> new RuntimeException("해당 코스를 찾을 수 없습니다."));
 
         if (course.getUser().getDeleteTime() != null)
-            throw new RuntimeException("해당 유저를 찾을 수 없습니다.");
+            throw new RuntimeException("삭제된 코스입니다.");
 
         return CourseInfoResDto.builder()
                 .title(course.getTitle())
@@ -238,6 +240,7 @@ public class CourseServiceImpl implements CourseService {
                         .nickname(course.getUser().getNickname())
                         .profileImage(course.getUser().getProfileImage())
                         .build())
+                .isWrite(Objects.equals(course.getUser().getId(), user.getId()))
                 .build();
     }
 

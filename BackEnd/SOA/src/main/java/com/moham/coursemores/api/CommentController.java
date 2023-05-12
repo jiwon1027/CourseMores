@@ -50,7 +50,7 @@ public class CommentController {
         Map<String, Object> resultMap = new HashMap<>();
 
         logger.debug("[1/2][GET][/comment/course/{}][{}] ... cs.getCommentList", courseId, userId);
-        List<CommentResDTO> commentList = commentService.getCommentList(courseId, page, sortby);
+        List<CommentResDTO> commentList = commentService.getCommentList(courseId, userId, page, sortby);
         resultMap.put("commentList", commentList);
 
         logger.debug("[2/2][GET][/comment/course/{}][{}] >> response : commentList\n commentList = {}\n",

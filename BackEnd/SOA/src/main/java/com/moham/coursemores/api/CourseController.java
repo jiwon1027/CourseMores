@@ -117,19 +117,21 @@ public class CourseController {
 
     @GetMapping("info/{courseId}")
     public ResponseEntity<Map<String, Object>> getCourseInfo(
-            @PathVariable Long courseId) {
-        logger.debug("[0/3][GET][/course/info/{}] << request : none", courseId);
+            @PathVariable Long courseId,
+            @AuthenticationPrincipal User user) {
+        Long userId = Long.parseLong(user.getUsername());
+        logger.debug("[0/3][GET][/course/info/{}][{}] << request : none", courseId, userId);
 
         Map<String, Object> resultMap = new HashMap<>();
 
-        logger.debug("[1/3][GET][/course/info/{}] ... cs.increaseViewCount", courseId);
+        logger.debug("[1/3][GET][/course/info/{}][{}] ... cs.increaseViewCount", courseId, userId);
         courseService.increaseViewCount(courseId);
 
-        logger.debug("[2/3][GET][/course/info/{}] ... cs.getCourseInfo", courseId);
-        CourseInfoResDto courseInfoResDto = courseService.getCourseInfo(courseId);
+        logger.debug("[2/3][GET][/course/info/{}][{}] ... cs.getCourseInfo", courseId, userId);
+        CourseInfoResDto courseInfoResDto = courseService.getCourseInfo(courseId, userId);
         resultMap.put("courseInfo", courseInfoResDto);
 
-        logger.debug("[3/3][GET][/course/info/{}] >> response : courseInfo\n courseInfo = {}\n", courseId, courseInfoResDto);
+        logger.debug("[3/3][GET][/course/info/{}][{}] >> response : courseInfo\n courseInfo = {}\n", courseId, userId, courseInfoResDto);
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
 
