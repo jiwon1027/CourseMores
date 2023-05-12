@@ -17,6 +17,7 @@ import 'package:geocoding/geocoding.dart' as geocoding;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../auth/auth_dio.dart';
 import 'package:get/get.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter_multi_select_items/flutter_multi_select_items.dart';
 
 final List<String> imgList = [
@@ -30,7 +31,7 @@ final List<String> imgList = [
 
 final homeController = Get.put(HomeScreenInfo());
 final pageController = Get.put(PageNum());
-var hotCourse;
+// var hotCourse;
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -42,7 +43,10 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   Position? _currentPosition;
   // late Function changePageNum = widget.changePageNum;
-  List<Map<String, Object>> hotCourse = homeController.hotCourse;
+  // List<Map<String, Object>> hotCourse = homeController.hotCourse;
+  List<Map<String, Object>> hotCourse = [];
+  List<Map<String, Object>> nearCourse = [];
+
   Future<void> _getCurrentLocation() async {
     final permission = await Geolocator.requestPermission();
     if (permission == LocationPermission.denied) {
@@ -58,35 +62,71 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
-  void initState() {
-    super.initState();
-
-    // getHotCourse();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    getHotCourse();
     // getNearCourse();
+    _getCurrentLocation();
   }
 
-  // Future<void> getHotCourse() async {
-  //   print('여기서의 토큰 = ${tokenController.accessToken}');
-  //   final dio = await authDio();
+  // @override
+  // void initState() {
+  //   super.initState();
+
+  //   // tokenStorage.onInit();
+  //   getHotCourse();
+  //   // getNearCourse();
+  // }
+
+  Future<void> getHotCourse() async {
+    final tokenStorage = Get.put(TokenStorage());
+    print('여기서의 토큰 = ${tokenStorage.accessToken}');
+    // final dio = await authDio();
+
+    final response = await dio.get('course/hot',
+        options: Options(
+            headers: {'Authorization': 'Bearer ${tokenStorage.accessToken}'}));
+    print('4646464646');
+    print(response);
+
+    List<dynamic> data = response.data['courseList'];
+    hotCourse = data.map((item) => Map<String, Object>.from(item)).toList();
+    homeController.saveHotCourse(hotCourse);
+    setState(() {
+      hotCourse = homeController.hotCourse;
+    });
+    // homeController.saveHotCourse(
+    //     data.map((item) => Map<String, Object>.from(item)).toList());
+    // setState(() {
+    //   hotCourse = homeController.hotCourse;
+    // });
+    print('홈에서 받아온 hotcourse');
+    print(homeController.hotCourse);
+    print(_currentPosition?.latitude);
+    print(_currentPosition?.longitude);
+    print(homeController.hotCourse[0]['image'].toString());
+  }
+
+  // Future<void> getNearCourse() async {
+  //   final tokenStorage = Get.put(TokenStorage());
+
   //   final response = await dio.get(
-  //     'course/hot',
-  //   );
-  //   print('4646464646');
+  //       'course/around?latitude=${_currentPosition?.latitude}&longitude=${_currentPosition?.longitude}',
+  //       options: Options(
+  //           headers: {'Authorization': 'Bearer ${tokenStorage.accessToken}'}));
+  //   print('===근처코스내놔');
   //   print(response);
 
   //   List<dynamic> data = response.data['courseList'];
-  //   hotCourse = data.map((item) => Map<String, Object>.from(item)).toList();
-  //   homeController.saveHotCourse(hotCourse);
-  //   // homeController.saveHotCourse(
-  //   //     data.map((item) => Map<String, Object>.from(item)).toList());
-  //   // setState(() {
-  //   //   hotCourse = homeController.hotCourse;
-  //   // });
-  //   print('홈에서 받아온 hotcourse');
-  //   print(homeController.hotCourse);
-  //   print(_currentPosition?.latitude);
-  //   print(_currentPosition?.longitude);
-  //   print(homeController.hotCourse[0]['image'].toString());
+  //   nearCourse = data.map((item) => Map<String, Object>.from(item)).toList();
+  //   homeController.saveNearCourse(hotCourse);
+  //   setState(() {
+  //     nearCourse = homeController.nearCourse;
+  //   });
+
+  //   print('홈에서 받아온 nearcourse');
+  //   print(homeController.nearCourse);
+  //   // print(homeController.hotCourse[0]['image'].toString());
   // }
 
   // openweathermap의 api키
@@ -240,9 +280,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 buttonBar1(),
                 ButtonBar2(),
+                // Text('$hotCourse'),
+                // Text('$hotCourse'),
+
                 popularCourse(),
+
+                // Obx(() => popularCourse()),
                 themeList(),
-                reviews(),
+                // myNearCourse(),
+                // reviews(),
                 // Image.network(
                 //   hotCourse[1]['image'].toString(),
                 //   width: 200,
@@ -392,16 +438,38 @@ boxDeco() {
 
 popularCourse() {
   print(homeController.hotCourse);
-  return Container(
-    decoration: boxDeco(),
-    child: const Padding(
-      padding: EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0),
-      child: SizedBox(
-        height: 300.0,
-        child: carousel.CoourseCarousel(),
+  if (homeController.hotCourse.isEmpty) {
+    return const Center(child: CircularProgressIndicator());
+  } else {
+    return Container(
+      decoration: boxDeco(),
+      child: const Padding(
+        padding: EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0),
+        child: SizedBox(
+          height: 300.0,
+          child: carousel.CoourseCarousel(),
+        ),
       ),
-    ),
-  );
+    );
+  }
+}
+
+myNearCourse() {
+  print(homeController.nearCourse);
+  if (homeController.nearCourse.isEmpty) {
+    return const Center(child: CircularProgressIndicator());
+  } else {
+    return Container(
+      decoration: boxDeco(),
+      child: const Padding(
+        padding: EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0),
+        child: SizedBox(
+          height: 300.0,
+          child: carousel.NearCarousel(),
+        ),
+      ),
+    );
+  }
 }
 
 themeList() {
@@ -458,18 +526,18 @@ themeList() {
   );
 }
 
-reviews() {
-  return Container(
-    decoration: boxDeco(),
-    child: const Padding(
-      padding: EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0),
-      child: SizedBox(
-        height: 300.0,
-        child: carousel.ReviewCarousel(),
-      ),
-    ),
-  );
-}
+// reviews() {
+//   return Container(
+//     decoration: boxDeco(),
+//     child: const Padding(
+//       padding: EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0),
+//       child: SizedBox(
+//         height: 300.0,
+//         child: carousel.ReviewCarousel(),
+//       ),
+//     ),
+//   );
+// }
 
 TextEditingController searchTextEditingController = TextEditingController();
 
