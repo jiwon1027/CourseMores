@@ -14,8 +14,8 @@ final tokenStorage = Get.put(TokenStorage());
 Future<Dio> authDio() async {
   var dio = Dio();
 
-  searchController.getThemeList();
-  searchController.getSidoList();
+  // searchController.getThemeList();
+  // searchController.getSidoList();
   dio.options.baseUrl = baseURL;
   dio.interceptors.clear();
   print("토큰이 있니?");

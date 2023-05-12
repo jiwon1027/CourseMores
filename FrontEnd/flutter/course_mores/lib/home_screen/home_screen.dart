@@ -416,7 +416,7 @@ themeList() {
       child: Padding(
           padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0),
           child: Column(
-            children: const [
+            children: [
               Text(
                 '이런 테마는 어때요? 😊',
                 style: TextStyle(
@@ -425,31 +425,32 @@ themeList() {
                     fontWeight: FontWeight.bold),
               ),
 
-              SearchFilterTheme(),
-              // SizedBox(
-              //   height: 200.0,
-              //   child: ListView.builder(
-              //       padding: const EdgeInsets.all(8),
-              //       itemCount: themes.length,
-              //       itemBuilder: (BuildContext context, int index) {
-              //         return Container(
-              //           height: 30.0,
-              //           decoration: BoxDecoration(
-              //             color: Colors.white,
-              //             borderRadius: BorderRadius.circular(20),
-              //             boxShadow: [
-              //               BoxShadow(
-              //                 color: Colors.grey.withOpacity(0.5),
-              //                 spreadRadius: 2,
-              //                 blurRadius: 3,
-              //                 offset: const Offset(0, 2), // changes position of shadow
-              //               ),
-              //             ],
-              //           ),
-              //           child: Center(child: Text('${themes[index]}')),
-              //         );
-              //       }),
-              // )
+              // SearchFilterTheme(),
+              SizedBox(
+                height: 200.0,
+                child: ListView.builder(
+                    padding: const EdgeInsets.all(8),
+                    itemCount: themes.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Container(
+                        height: 30.0,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 2,
+                              blurRadius: 3,
+                              offset: const Offset(
+                                  0, 2), // changes position of shadow
+                            ),
+                          ],
+                        ),
+                        child: Center(child: Text('${themes[index]}')),
+                      );
+                    }),
+              )
             ],
           )),
     ),
