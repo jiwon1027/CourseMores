@@ -20,7 +20,7 @@ final userInfoController = Get.put(UserInfo());
 void postLogin(accessToken) async {
   print(accessToken);
   print('555555555555');
-  final dio = await authDio();
+
   dynamic bodyData = json.encode({'accessToken': accessToken});
   print(bodyData);
 
@@ -29,8 +29,6 @@ void postLogin(accessToken) async {
   print(response);
 
   if (response.statusCode == 200) {
-    tokenController.saveToken(response.data['token']['accessToken'],
-        response.data['token']['refreshToken']);
     if (response.data['agree'] == false) {
       Get.dialog(
         AlertDialog(
@@ -48,20 +46,24 @@ void postLogin(accessToken) async {
       );
       return;
     } else {
+      await tokenController.saveToken(response.data['token']['accessToken'],
+          response.data['token']['refreshToken']);
       if (response.data['userInfo'] == null) {
         Get.to(signup.SignUp());
       } else {
+        print('여기까지.....');
         loginController.changeLoginStatus(true);
+        print(loginController.isLoggedIn);
         userInfoController.saveNickname(response.data['userInfo']['nickname']);
         userInfoController.saveAge(response.data['userInfo']['age']);
         userInfoController.saveGender(response.data['userInfo']['gender']);
         userInfoController
             .saveImageUrl(response.data['userInfo']['profileImage']);
-        Get.back();
         // Get.replace(main.MyApp());
         print(loginController.isLoggedIn);
         print(pageController.pageNum());
       }
+      Get.back();
     }
   }
 }

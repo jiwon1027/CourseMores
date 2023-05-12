@@ -62,7 +62,7 @@ void postProfileEdit(nickname, age, gender, image, aToken) async {
   }
   try {
     final dio = await authDio();
-    final response = await dio.put('profile/5',
+    final response = await dio.put('profile/',
         data: formData,
         options: Options(
           headers: {
