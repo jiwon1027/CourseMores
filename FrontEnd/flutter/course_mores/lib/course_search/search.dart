@@ -1,181 +1,168 @@
 import 'package:flutter/material.dart';
+import '../controller/detail_controller.dart';
 import '../controller/search_controller.dart';
 import 'course_detail.dart' as detail;
 import 'package:flutter_multi_select_items/flutter_multi_select_items.dart';
-// import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 SearchController searchController = SearchController();
+DetailController detailController = DetailController();
 TextEditingController searchTextEditingController = TextEditingController();
 MultiSelectController multiSelectController = MultiSelectController();
 
-class Search extends StatefulWidget {
-  const Search({Key? key}) : super(key: key);
+class Search extends StatelessWidget {
+  Search({Key? key}) : super(key: key);
 
-  @override
-  State<Search> createState() => _SearchState();
-}
-
-class _SearchState extends State<Search> {
   @override
   Widget build(BuildContext context) {
+    searchController.getThemeList();
+    searchController.getSidoList();
     Get.put(SearchController());
     return Obx(() => Scaffold(
           appBar: searchPageHeader(),
           body: searchController.courseList.isEmpty ? displayNoSearchResultScreen() : SearchResult(),
         ));
   }
+}
 
-  controlSearching(str) {}
+controlSearching(str) {}
 
-  searchPageHeader() {
-    return AppBar(
-        automaticallyImplyLeading: false,
-        toolbarHeight: 110,
-        title: Column(
-          children: [
-            SizedBox(
-              height: 45,
-              child: TextFormField(
-                textAlignVertical: TextAlignVertical.center,
-                controller: searchTextEditingController,
-                onChanged: (value) {
-                  searchController.changeWord(word: searchTextEditingController.text);
-                },
-                decoration: InputDecoration(
-                  hintText: "코스를 검색해보세요",
-                  hintStyle: TextStyle(color: Colors.grey),
-                  enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-                  focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
-                  filled: true,
-                  // prefixIcon: FilterButton(context: context),
-                  prefixIcon: filterButton(),
-                  suffixIcon: IconButton(
-                    icon: Icon(Icons.search),
-                    color: Colors.grey,
-                    iconSize: 25,
-                    onPressed: () {
-                      setState(() {
-                        searchController.isSearchResults.value = true;
-                        searchController.searchCourse();
-
-                        // Fluttertoast.showToast(
-                        //   msg: "${searchController.queryParameters}",
-                        //   toastLength: Toast.LENGTH_SHORT,
-                        //   gravity: ToastGravity.CENTER,
-                        // );
-                      });
-                    },
-                  ),
-                ),
-                style: TextStyle(fontSize: 18, color: Colors.black),
-                onFieldSubmitted: controlSearching,
-              ),
-            ),
-            SizedBox(
-              height: 45,
-              width: 400,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [isVisitedCheckBox(), sortButtonBar()],
-              ),
-            )
-          ],
-        ));
-  }
-
-  isVisitedCheckBox() {
-    return Container(
-      // color: Colors.amber,
-      alignment: Alignment.center,
-      child: SizedBox(
-          width: 110,
-          height: 45,
-          child: Obx(
-            () => CheckboxListTile(
-              dense: true,
-              contentPadding: EdgeInsets.all(0),
-              controlAffinity: ListTileControlAffinity.leading,
-              title: Text('방문여부', style: TextStyle(color: Colors.black, fontSize: 16)),
-              value: searchController.isVisited.value,
-              onChanged: (value) {
-                searchController.changeIsVisited();
-              },
-            ),
-          )),
-    );
-  }
-
-  sortButtonBar() {
-    return SizedBox(
-      child: ButtonBar(
-        alignment: MainAxisAlignment.end,
+searchPageHeader() {
+  return AppBar(
+      automaticallyImplyLeading: false,
+      toolbarHeight: 110,
+      title: Column(
         children: [
-          ElevatedButton(
-            onPressed: () {
-              searchController.changeSortby(sortby: 'latest');
-              searchController.isLatestSelected.value = true;
-              searchController.isPopularSelected.value = false;
-            },
-            style: ButtonStyle(
-              minimumSize: MaterialStateProperty.all<Size>(Size(30, 35)),
-              padding: MaterialStateProperty.all(EdgeInsetsDirectional.symmetric(horizontal: 0)),
-              elevation: MaterialStateProperty.all<double>(0),
-              backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
-              foregroundColor:
-                  MaterialStateProperty.all<Color>(searchController.isLatestSelected.value ? Colors.blue : Colors.grey),
+          SizedBox(
+            height: 45,
+            child: TextFormField(
+              textAlignVertical: TextAlignVertical.center,
+              controller: searchTextEditingController,
+              onChanged: (value) {
+                searchController.changeWord(word: searchTextEditingController.text);
+              },
+              decoration: InputDecoration(
+                hintText: "코스를 검색해보세요",
+                hintStyle: TextStyle(color: Colors.grey),
+                enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+                focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+                filled: true,
+                // prefixIcon: FilterButton(context: context),
+                prefixIcon: filterButton(),
+                suffixIcon: IconButton(
+                  icon: Icon(Icons.search),
+                  color: Colors.grey,
+                  iconSize: 25,
+                  onPressed: () {
+                    searchController.isSearchResults.value = true;
+                    searchController.searchCourse();
+                  },
+                ),
+              ),
+              style: TextStyle(fontSize: 18, color: Colors.black),
+              onFieldSubmitted: controlSearching,
             ),
-            child: Text('최신순', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
           ),
-          ElevatedButton(
-            onPressed: () {
-              searchController.changeSortby(sortby: 'popular');
-              searchController.isLatestSelected.value = false;
-              searchController.isPopularSelected.value = true;
-            },
-            style: ButtonStyle(
-              minimumSize: MaterialStateProperty.all<Size>(Size(30, 35)),
-              padding: MaterialStateProperty.all(EdgeInsetsDirectional.symmetric(horizontal: 0)),
-              elevation: MaterialStateProperty.all<double>(0),
-              backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
-              foregroundColor: MaterialStateProperty.all<Color>(
-                  searchController.isPopularSelected.value ? Colors.blue : Colors.grey),
+          SizedBox(
+            height: 45,
+            width: 400,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [isVisitedCheckBox(), sortButtonBar()],
             ),
-            child: Text('인기순', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
+          )
+        ],
+      ));
+}
+
+isVisitedCheckBox() {
+  return Container(
+    // color: Colors.amber,
+    alignment: Alignment.center,
+    child: SizedBox(
+        width: 110,
+        height: 45,
+        child: Obx(
+          () => CheckboxListTile(
+            dense: true,
+            contentPadding: EdgeInsets.all(0),
+            controlAffinity: ListTileControlAffinity.leading,
+            title: Text('방문여부', style: TextStyle(color: Colors.black, fontSize: 16)),
+            value: searchController.isVisited.value,
+            onChanged: (value) {
+              searchController.changeIsVisited();
+            },
           ),
-        ],
-      ),
-    );
-  }
+        )),
+  );
+}
 
-  filterButton() {
-    return IconButton(
-        icon: Icon(Icons.tune),
-        color: Colors.grey,
-        iconSize: 25,
-        onPressed: () {
-          searchController.getThemeList();
-          searchController.getSidoList();
+sortButtonBar() {
+  return SizedBox(
+    child: ButtonBar(
+      alignment: MainAxisAlignment.end,
+      children: [
+        ElevatedButton(
+          onPressed: () {
+            searchController.changeSortby(sortby: 'latest');
+            searchController.isLatestSelected.value = true;
+            searchController.isPopularSelected.value = false;
+          },
+          style: ButtonStyle(
+            minimumSize: MaterialStateProperty.all<Size>(Size(30, 35)),
+            padding: MaterialStateProperty.all(EdgeInsetsDirectional.symmetric(horizontal: 0)),
+            elevation: MaterialStateProperty.all<double>(0),
+            backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
+            foregroundColor:
+                MaterialStateProperty.all<Color>(searchController.isLatestSelected.value ? Colors.blue : Colors.grey),
+          ),
+          child: Text('최신순', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            searchController.changeSortby(sortby: 'popular');
+            searchController.isLatestSelected.value = false;
+            searchController.isPopularSelected.value = true;
+          },
+          style: ButtonStyle(
+            minimumSize: MaterialStateProperty.all<Size>(Size(30, 35)),
+            padding: MaterialStateProperty.all(EdgeInsetsDirectional.symmetric(horizontal: 0)),
+            elevation: MaterialStateProperty.all<double>(0),
+            backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
+            foregroundColor:
+                MaterialStateProperty.all<Color>(searchController.isPopularSelected.value ? Colors.blue : Colors.grey),
+          ),
+          child: Text('인기순', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
+        ),
+      ],
+    ),
+  );
+}
 
-          Get.to(() => SearchFilter());
-        });
-  }
+filterButton() {
+  return IconButton(
+      icon: Icon(Icons.tune),
+      color: Colors.grey,
+      iconSize: 25,
+      onPressed: () {
+        Get.to(() => SearchFilter());
+      });
+}
 
-  displayNoSearchResultScreen() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: const [
-          Text("🔍", style: TextStyle(fontSize: 70)),
-          SizedBox(height: 20),
-          Text("검색결과가 없어요."),
-          SizedBox(height: 10),
-          Text("다른 조건으로 검색해볼까요?"),
-        ],
-      ),
-    );
-  }
+displayNoSearchResultScreen() {
+  return Center(
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: const [
+        Text("🔍", style: TextStyle(fontSize: 70)),
+        SizedBox(height: 20),
+        Text("검색결과가 없어요."),
+        SizedBox(height: 10),
+        Text("다른 조건으로 검색해볼까요?"),
+      ],
+    ),
+  );
 }
 
 class SearchResult extends StatelessWidget {
@@ -192,8 +179,15 @@ class SearchResult extends StatelessWidget {
             itemCount: searchController.courseList.length,
             itemBuilder: (BuildContext context, int index) {
               return InkWell(
-                onTap: () {
-                  Get.to(() => detail.CourseDetail(index: index));
+                onTap: () async {
+                  await searchController.changeNowCourseId(courseId: searchController.courseList[index]['courseId']);
+
+                  await detailController.getCourseInfo();
+                  await detailController.getIsLikeCourse();
+                  await detailController.getIsInterestCourse();
+                  await detailController.getCourseDetailList();
+
+                  Get.to(() => detail.Detail());
                 },
                 child: Container(
                   margin: EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 5),
@@ -258,8 +252,18 @@ class CourseSearchList extends StatelessWidget {
   CourseSearchList({super.key, required this.index});
   final int index;
 
+  late final people;
+
   @override
   Widget build(BuildContext context) {
+    if (searchController.courseList[index]['people'] <= 0) {
+      people = "상관 없음";
+    } else if (searchController.courseList[index]['people'] >= 5) {
+      people = "5명 이상";
+    } else {
+      people = "${searchController.courseList[index]['people']}명";
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -282,7 +286,7 @@ class CourseSearchList extends StatelessWidget {
                   if (searchController.courseList[index]["visited"] == true)
                     Container(
                       decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 107, 211, 66),
+                        color: Color.fromARGB(255, 107, 211, 66),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Row(
@@ -299,8 +303,8 @@ class CourseSearchList extends StatelessWidget {
                 ],
               ),
             ),
-            if (searchController.courseList[index]["interest"] == true) Icon(Icons.bookmark, size: 24),
-            if (searchController.courseList[index]["interest"] == false) Icon(Icons.bookmark_outline_rounded, size: 24),
+            if (searchController.courseList[index]["interest"]) Icon(Icons.bookmark, size: 24),
+            if (!searchController.courseList[index]["interest"]) Icon(Icons.bookmark_outline_rounded, size: 24),
           ],
         ),
         SizedBox(height: 2),
@@ -319,7 +323,7 @@ class CourseSearchList extends StatelessWidget {
             Icon(Icons.people, size: 12, color: Colors.black54),
             SizedBox(width: 3),
             Text(
-              "${searchController.courseList[index]['people'].toString()}명",
+              people,
               style: TextStyle(fontSize: 12, color: Colors.black54),
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
@@ -373,17 +377,12 @@ class CourseSearchList extends StatelessWidget {
   }
 }
 
-class SearchFilter extends StatefulWidget {
+class SearchFilter extends StatelessWidget {
   const SearchFilter({Key? key}) : super(key: key);
 
   @override
-  State<SearchFilter> createState() => _SearchFilterState();
-}
-
-class _SearchFilterState extends State<SearchFilter> {
-  @override
   Widget build(BuildContext context) {
-    searchController.settingCard();
+    // searchController.settingCard();
 
     return Scaffold(
       appBar: AppBar(
@@ -414,59 +413,77 @@ class _SearchFilterState extends State<SearchFilter> {
         child: Column(children: [
           SizedBox(height: 20),
           Text("이런 테마는 어때요? 😊", style: TextStyle(fontSize: 20)),
-          Padding(
-            padding: EdgeInsets.all(20),
-            child: MultiSelectContainer(
-              items: searchController.cards,
-              controller: multiSelectController,
-              onChange: (allSelectedItems, selectedItem) {
-                searchController.selectedThemeList.value = allSelectedItems;
-              },
-            ),
-          ),
+          SearchFilterTheme(),
           SizedBox(height: 20),
           Text("지역을 선택해보세요 🗺", style: TextStyle(fontSize: 20)),
-          MyDropdown(),
+          SearchFilterRegion(),
           SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                  backgroundColor: Colors.white,
-                ),
-                onPressed: () {
-                  setState(() {
-                    multiSelectController.deselectAll(); // 보여지는 테마 리스트 선택 취소
-                    searchController.changeSelectedThemeList(list: [].obs);
-                    searchController.changeSido(sido: "전체");
-                    searchController.changeGugun(gugun: "전체");
-                  });
-                },
-                child: Text("초기화", style: TextStyle(color: Colors.black)),
-              ),
-              SizedBox(width: 30),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                  backgroundColor: Colors.white,
-                ),
-                onPressed: () {
-                  searchController.saveFilter();
-                },
-                child: Text("저장", style: TextStyle(color: Colors.black)),
-              ),
-            ],
-          ),
+          SearchFilterButtons(),
         ]),
       ),
     );
   }
 }
 
-class MyDropdown extends StatelessWidget {
-  const MyDropdown({Key? key}) : super(key: key);
+class SearchFilterButtons extends StatelessWidget {
+  const SearchFilterButtons({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            backgroundColor: Colors.white,
+          ),
+          onPressed: () {
+            multiSelectController.deselectAll(); // 보여지는 테마 리스트 선택 취소
+            searchController.changeSelectedThemeList(list: [].obs);
+            searchController.changeSido(sido: "전체");
+            searchController.changeGugun(gugun: "전체");
+          },
+          child: Text("초기화", style: TextStyle(color: Colors.black)),
+        ),
+        SizedBox(width: 30),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            backgroundColor: Colors.white,
+          ),
+          onPressed: () {
+            searchController.saveFilter();
+          },
+          child: Text("저장", style: TextStyle(color: Colors.black)),
+        ),
+      ],
+    );
+  }
+}
+
+class SearchFilterTheme extends StatelessWidget {
+  const SearchFilterTheme({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.all(20),
+      child: MultiSelectContainer(
+        items: searchController.cards,
+        controller: multiSelectController,
+        onChange: (allSelectedItems, selectedItem) {
+          searchController.selectedThemeList.value = allSelectedItems;
+        },
+      ),
+    );
+  }
+}
+
+class SearchFilterRegion extends StatelessWidget {
+  SearchFilterRegion({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -474,12 +491,9 @@ class MyDropdown extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             DropdownButton(
-              value: searchController.savedSelectedAddress['sido'],
+              value: searchController.selectedAddress['sido'],
               items: searchController.sidoList.map((String value) {
-                return DropdownMenuItem(
-                  value: value,
-                  child: Text(value),
-                );
+                return DropdownMenuItem(value: value, child: Text(value));
               }).toList(),
               onChanged: (value) async {
                 searchController.changeSido(sido: value);
@@ -487,7 +501,7 @@ class MyDropdown extends StatelessWidget {
             ),
             SizedBox(width: 15),
             DropdownButton(
-              value: searchController.savedSelectedAddress['gugun'],
+              value: searchController.selectedAddress['gugun'],
               items: searchController.gugunList.map((value) {
                 return DropdownMenuItem(
                   value: value['gugun'],

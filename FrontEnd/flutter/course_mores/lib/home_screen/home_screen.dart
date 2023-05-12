@@ -1,8 +1,9 @@
 import 'package:coursemores/auth/login_page.dart';
 import '../controller/getx_controller.dart';
 import 'package:flutter/material.dart';
+import '../course_search/search.dart' as search;
 import './carousel.dart' as carousel;
-// import 'search.dart' as search;
+// import '../course_search/search.dart' as search;
 // import 'package:carousel_slider/carousel_slider.dart';
 // import 'carousel.dart';
 import '../course_search/course_list.dart' as course;
@@ -15,6 +16,7 @@ import 'package:geocoding/geocoding.dart' as geocoding;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../auth/auth_dio.dart';
 import 'package:get/get.dart';
+import 'package:flutter_multi_select_items/flutter_multi_select_items.dart';
 
 final List<String> imgList = [
   'https://images.unsplash.com/photo-1520342868574-5fa3804e551c?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=6ff92caffcdd63681a35134a6770ed3b&auto=format&fit=crop&w=1951&q=80',
@@ -119,12 +121,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<String> _getAddress(double lat, double lon) async {
-    final List<geocoding.Placemark> placemarks = await geocoding
-        .placemarkFromCoordinates(lat, lon, localeIdentifier: 'ko');
-    if (placemarks != null && placemarks.isNotEmpty) {
+    final List<geocoding.Placemark> placemarks =
+        await geocoding.placemarkFromCoordinates(lat, lon, localeIdentifier: 'ko');
+    if (placemarks.isNotEmpty) {
       final placemark = placemarks.first;
-      final String address =
-          '${placemark.subLocality} ${placemark.thoroughfare} ';
+      final String address = '${placemark.subLocality} ${placemark.thoroughfare} ';
       return address;
     }
     return '';
@@ -174,11 +175,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
                               final weatherData = snapshot.data!;
-                              final temp =
-                                  weatherData['main']['temp'].toString();
-                              final weather = weatherData['weather'][0]
-                                      ['description']
-                                  .toString();
+                              final temp = weatherData['main']['temp'].toString();
+                              final weather = weatherData['weather'][0]['description'].toString();
                               return Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -197,12 +195,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                     style: TextStyle(fontSize: 24),
                                   ),
                                   FutureBuilder<String>(
-                                    future: _getAddress(
-                                        _currentPosition?.latitude ?? 0,
-                                        _currentPosition?.longitude ?? 0),
+                                    future:
+                                        _getAddress(_currentPosition?.latitude ?? 0, _currentPosition?.longitude ?? 0),
                                     builder: (context, snapshot) {
-                                      if (snapshot.connectionState ==
-                                          ConnectionState.waiting) {
+                                      if (snapshot.connectionState == ConnectionState.waiting) {
                                         return Text('검색중...');
                                       } else if (snapshot.hasData) {
                                         final address = snapshot.data!;
@@ -362,9 +358,7 @@ class _ButtonBar2State extends State<ButtonBar2> {
 }
 
 iconBoxDeco() {
-  return BoxDecoration(
-      border: Border.all(color: Colors.black),
-      borderRadius: BorderRadius.circular(10));
+  return BoxDecoration(border: Border.all(color: Colors.black), borderRadius: BorderRadius.circular(10));
 }
 
 boxDeco() {
@@ -408,39 +402,37 @@ themeList() {
       child: Padding(
           padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0),
           child: Column(
-            children: [
-              const Text(
+            children: const [
+              Text(
                 '이런 테마는 어때요? 😊',
-                style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.bold),
+                style: TextStyle(color: Colors.black, fontSize: 20.0, fontWeight: FontWeight.bold),
               ),
-              SizedBox(
-                height: 200.0,
-                child: ListView.builder(
-                    padding: const EdgeInsets.all(8),
-                    itemCount: themes.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return Container(
-                        height: 30.0,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 2,
-                              blurRadius: 3,
-                              offset: const Offset(
-                                  0, 2), // changes position of shadow
-                            ),
-                          ],
-                        ),
-                        child: Center(child: Text('${themes[index]}')),
-                      );
-                    }),
-              )
+
+              SearchFilterTheme(),
+              // SizedBox(
+              //   height: 200.0,
+              //   child: ListView.builder(
+              //       padding: const EdgeInsets.all(8),
+              //       itemCount: themes.length,
+              //       itemBuilder: (BuildContext context, int index) {
+              //         return Container(
+              //           height: 30.0,
+              //           decoration: BoxDecoration(
+              //             color: Colors.white,
+              //             borderRadius: BorderRadius.circular(20),
+              //             boxShadow: [
+              //               BoxShadow(
+              //                 color: Colors.grey.withOpacity(0.5),
+              //                 spreadRadius: 2,
+              //                 blurRadius: 3,
+              //                 offset: const Offset(0, 2), // changes position of shadow
+              //               ),
+              //             ],
+              //           ),
+              //           child: Center(child: Text('${themes[index]}')),
+              //         );
+              //       }),
+              // )
             ],
           )),
     ),
@@ -497,4 +489,22 @@ searchButtonBar() {
     ),
     onFieldSubmitted: controlSearching,
   );
+}
+
+class SearchFilterTheme extends StatelessWidget {
+  const SearchFilterTheme({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.all(20),
+      child: MultiSelectContainer(
+        items: search.searchController.cards,
+        controller: search.multiSelectController,
+        onChange: (allSelectedItems, selectedItem) {
+          searchController.selectedThemeList.value = allSelectedItems;
+        },
+      ),
+    );
+  }
 }
