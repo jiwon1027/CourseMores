@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 import '../course_search/search.dart';
 
 class SearchController extends GetxController {
-  RxString userId = "4".obs;
   // courseList: 코스 정보를 담을 상태 변수
   final RxList<Map<String, dynamic>> courseList = <Map<String, dynamic>>[].obs;
 
@@ -76,7 +75,7 @@ class SearchController extends GetxController {
     }
   }
 
-  // TODO: 지역 중 충북 -> 하위 단계까지 노출됨. 청주시와 서원구가 같이 보임
+  // 지역 중 충북 -> 하위 단계까지 노출됨. 청주시와 서원구가 같이 보임
   // getSidoList : 초기 1회 실행되는 지역 대분류 불러오기
   Future getSidoList() async {
     try {
@@ -122,13 +121,13 @@ class SearchController extends GetxController {
     }
   }
 
-  // TODO: 검색창에 입력을 할 때는 자동완성으로 api를 보내야 하고 검색버튼을 눌렀을 때에만 searchCourse()를 보내야 함
+  // 검색창에 입력을 할 때는 자동완성으로 api를 보내야 하고 검색버튼을 눌렀을 때에만 searchCourse()를 보내야 함
   // searchCourse : 방문여부 수정, 정렬 수정, 검색 버튼 클릭 시 실행되는 코스 검색
   Future searchCourse() async {
     try {
       // GET 요청 보내기
       final dio = await authDio();
-      final response = await dio.get("course/search/$userId", queryParameters: queryParameters);
+      final response = await dio.get("course/search", queryParameters: queryParameters);
 
       // 응답 처리
       if (response.statusCode == 200) {

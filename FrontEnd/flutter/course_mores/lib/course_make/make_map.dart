@@ -15,17 +15,21 @@ class _CMMapState extends State<CMMap> {
   final Set<Marker> _markers = {};
   late BitmapDescriptor customIcon;
   // LatLng? _selectedLocation;
+  // ignore: unused_field
   String _locationName = '';
+  // ignore: unused_field
   double _latitude = 0;
+  // ignore: unused_field
   double _longitude = 0;
+  // ignore: unused_field
   String _sido = '';
+  // ignore: unused_field
   String _gugun = '';
 
   @override
   void initState() {
     super.initState();
-    BitmapDescriptor.fromAssetImage(
-            ImageConfiguration(size: Size(30, 40)), 'assets/flower_marker.png')
+    BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(30, 40)), 'assets/flower_marker.png')
         .then((icon) => customIcon = icon);
   }
 
@@ -84,6 +88,7 @@ class _CMMapState extends State<CMMap> {
     final String apiKey = dotenv.get('GOOGLE_MAP_API_KEY');
     final String url =
         "https://maps.googleapis.com/maps/api/streetview?size=400x400&location=${location.latitude},${location.longitude}&fov=90&heading=235&pitch=10&key=$apiKey";
+    // ignore: use_build_context_synchronously
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -130,9 +135,10 @@ class _CMMapState extends State<CMMap> {
   }
 
   Future<String> _getAddress(double lat, double lon) async {
-    final List<geocoding.Placemark> placemarks = await geocoding
-        .placemarkFromCoordinates(lat, lon, localeIdentifier: 'ko');
-    if (placemarks != null && placemarks.isNotEmpty) {
+    final List<geocoding.Placemark> placemarks =
+        await geocoding.placemarkFromCoordinates(lat, lon, localeIdentifier: 'ko');
+    // if (placemarks != null && placemarks.isNotEmpty) {
+    if (placemarks.isNotEmpty) {
       final geocoding.Placemark place = placemarks.first;
       final String thoroughfare = place.thoroughfare ?? '';
       final String subThoroughfare = place.subThoroughfare ?? '';
@@ -156,9 +162,10 @@ class _CMMapState extends State<CMMap> {
   //   return '';
   // }
   Future<String> _getSido(double lat, double lon) async {
-    final List<geocoding.Placemark> placemarks = await geocoding
-        .placemarkFromCoordinates(lat, lon, localeIdentifier: 'ko');
-    if (placemarks != null && placemarks.isNotEmpty) {
+    final List<geocoding.Placemark> placemarks =
+        await geocoding.placemarkFromCoordinates(lat, lon, localeIdentifier: 'ko');
+    // if (placemarks != null && placemarks.isNotEmpty) {
+    if (placemarks.isNotEmpty) {
       final geocoding.Placemark place = placemarks.first;
       final String administrativeArea = place.administrativeArea ?? '';
       if (administrativeArea.isNotEmpty) {
@@ -170,9 +177,10 @@ class _CMMapState extends State<CMMap> {
   }
 
   Future<String> _getGugun(double lat, double lon) async {
-    final List<geocoding.Placemark> placemarks = await geocoding
-        .placemarkFromCoordinates(lat, lon, localeIdentifier: 'ko');
-    if (placemarks != null && placemarks.isNotEmpty) {
+    final List<geocoding.Placemark> placemarks =
+        await geocoding.placemarkFromCoordinates(lat, lon, localeIdentifier: 'ko');
+    // if (placemarks != null && placemarks.isNotEmpty) {
+    if (placemarks.isNotEmpty) {
       final geocoding.Placemark place = placemarks.first;
       final String locality = place.locality ?? '';
       final String subLocality = place.subLocality ?? '';
@@ -189,8 +197,7 @@ class _CMMapState extends State<CMMap> {
 
   void _onMyLocationButtonPressed() async {
     final position = await Geolocator.getCurrentPosition();
-    final cameraUpdate = CameraUpdate.newLatLngZoom(
-        LatLng(position.latitude, position.longitude), 17);
+    final cameraUpdate = CameraUpdate.newLatLngZoom(LatLng(position.latitude, position.longitude), 17);
     _mapController?.animateCamera(cameraUpdate);
   }
 
@@ -211,6 +218,7 @@ class _CMMapState extends State<CMMap> {
     });
 
     // Show alert dialog to get the name of the location
+    // ignore: use_build_context_synchronously
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -227,8 +235,7 @@ class _CMMapState extends State<CMMap> {
               child: Text('확인'),
               onPressed: () {
                 // Save location with the entered name
-                String message =
-                    '위치 이름: $locationName\n위도: $latitude, 경도: $longitude';
+                String message = '위치 이름: $locationName\n위도: $latitude, 경도: $longitude';
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   content: Text(message),
                 ));
@@ -306,8 +313,7 @@ class _CMMapState extends State<CMMap> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            Text('누르면 마커가 생겨요',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            Text('누르면 마커가 생겨요', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             const SizedBox(height: 12),
             Container(
               height: MediaQuery.of(context).size.height / 1.5,

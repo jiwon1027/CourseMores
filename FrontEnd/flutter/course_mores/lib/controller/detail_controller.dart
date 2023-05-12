@@ -6,8 +6,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../auth/auth_dio.dart';
 
 class DetailController extends GetxController {
-  RxString userId = "4".obs;
-
   RxInt nowIndex = 0.obs;
   RxMap<String, dynamic> nowCourseInfo = <String, dynamic>{
     "title": "",
@@ -124,7 +122,7 @@ class DetailController extends GetxController {
   Future getIsLikeCourse() async {
     try {
       final dio = await authDio();
-      final response = await dio.get("like/course/${nowIndex.value}/$userId");
+      final response = await dio.get("like/course/${nowIndex.value}");
 
       // 응답 처리
       if (response.statusCode == 200) {
@@ -142,7 +140,7 @@ class DetailController extends GetxController {
   Future addIsLikeCourse() async {
     try {
       final dio = await authDio();
-      await dio.post("like/course/${nowIndex.value}/$userId");
+      await dio.post("like/course/${nowIndex.value}");
 
       isLikeCourse.value = true;
       nowCourseInfo['likeCount']++;
@@ -154,7 +152,7 @@ class DetailController extends GetxController {
   Future deleteIsLikeCourse() async {
     try {
       final dio = await authDio();
-      await dio.delete("like/course/${nowIndex.value}/$userId");
+      await dio.delete("like/course/${nowIndex.value}");
 
       isLikeCourse.value = false;
       nowCourseInfo['likeCount']--;
@@ -166,7 +164,7 @@ class DetailController extends GetxController {
   Future getIsInterestCourse() async {
     try {
       final dio = await authDio();
-      final response = await dio.get("interest/course/${nowIndex.value}/$userId");
+      final response = await dio.get("interest/course/${nowIndex.value}");
 
       // 응답 처리
       if (response.statusCode == 200) {
@@ -184,7 +182,7 @@ class DetailController extends GetxController {
   Future addIsInterestCourse() async {
     try {
       final dio = await authDio();
-      await dio.post("interest/course/${nowIndex.value}/$userId");
+      await dio.post("interest/course/${nowIndex.value}");
 
       isInterestCourse.value = true;
       nowCourseInfo['interestCount']++;
@@ -196,7 +194,7 @@ class DetailController extends GetxController {
   Future deleteIsInterestCourse() async {
     try {
       final dio = await authDio();
-      await dio.delete("interest/course/${nowIndex.value}/$userId");
+      await dio.delete("interest/course/${nowIndex.value}");
 
       isInterestCourse.value = false;
       nowCourseInfo['interestCount']--;

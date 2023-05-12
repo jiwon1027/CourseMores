@@ -13,16 +13,14 @@ class CMSearch extends StatefulWidget {
 
 class _CMSearchState extends State<CMSearch> {
   // final String apiKey = dotenv.get(GOOGLE_MAP_API_KEY);
-  final _placesApiClient =
-      GoogleMapsPlaces(apiKey: dotenv.get('GOOGLE_MAP_API_KEY'));
+  final _placesApiClient = GoogleMapsPlaces(apiKey: dotenv.get('GOOGLE_MAP_API_KEY'));
   final _searchController = TextEditingController();
   List<PlacesSearchResult> _searchResults = [];
 
   LatLng? _selectedLocation;
 
   void _onSearchPressed() async {
-    final response = await _placesApiClient.searchByText(_searchController.text,
-        language: 'ko');
+    final response = await _placesApiClient.searchByText(_searchController.text, language: 'ko');
     if (response.isOkay) {
       setState(() {
         _searchResults = response.results;
@@ -40,8 +38,8 @@ class _CMSearchState extends State<CMSearch> {
   }
 
   void _onPlaceSelected(PlacesSearchResult selectedPlace) {
-    if (selectedPlace.geometry == null ||
-        selectedPlace.geometry!.location == null) {
+    if (selectedPlace.geometry == null) {
+      // selectedPlace.geometry!.location == null) {
       // 예외 처리: 선택된 장소에 대한 위치 정보가 없음
       return;
     }
@@ -145,9 +143,7 @@ class _CMSearchState extends State<CMSearch> {
               },
             ),
           ),
-          if (_selectedLocation != null)
-            Text(
-                '선택된 장소: ${_selectedLocation!.latitude}, ${_selectedLocation!.longitude}')
+          if (_selectedLocation != null) Text('선택된 장소: ${_selectedLocation!.latitude}, ${_selectedLocation!.longitude}')
         ],
       ),
     );
