@@ -48,7 +48,7 @@ class CourseController extends g.GetxController {
   //   };
   // }
   void postCourse() async {
-    final url = 'https://coursemores.site/api/course/1';
+    // final url = 'https://coursemores.site/api/course/1';
     final List<Map<String, dynamic>> locationDataList = [];
     FormData formData;
 
@@ -94,7 +94,7 @@ class CourseController extends g.GetxController {
 
     try {
       final dio = await authDio();
-      final response = await dio.post(url,
+      final response = await dio.post("course/1",
           data: formData,
           options: Options(
             headers: {
@@ -119,8 +119,7 @@ class CourseController extends g.GetxController {
 
 // 코스 작성시 장소 개별 getX controller
 class LocationController extends g.GetxController {
-  final CourseController courseController =
-      g.Get.find(); // GetX에서 CourseController 가져오기
+  final CourseController courseController = g.Get.find(); // GetX에서 CourseController 가져오기
 
   var latitude = 0.0.obs;
   var longitude = 0.0.obs;
@@ -140,16 +139,14 @@ class LocationController extends g.GetxController {
   }
 
   void updateLocationData(LocationData locationData) {
-    int index = courseController.locationList
-        .indexWhere((data) => data.key == locationData.key);
+    int index = courseController.locationList.indexWhere((data) => data.key == locationData.key);
     if (index != -1) {
       courseController.locationList[index] = locationData;
     }
   }
 
   LocationData? getLocationData(Key key) {
-    final data = courseController.locationList
-        .firstWhereOrNull((data) => data.key == key);
+    final data = courseController.locationList.firstWhereOrNull((data) => data.key == key);
     if (data == null) {
       // 요소가 없는 경우 예외 처리
       print('No data found for the given key');

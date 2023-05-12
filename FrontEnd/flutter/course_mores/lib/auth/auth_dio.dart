@@ -3,11 +3,12 @@ import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:convert';
-import '../controller/search_controller.dart';
+// import '../controller/search_controller.dart';
+import '../course_search/search.dart';
 
 String baseURL = dotenv.get('BASE_URL');
 final authController = Get.put(AuthController());
-final searchController = Get.put(SearchController());
+// final searchController = Get.put(SearchController());
 final tokenStorage = Get.put(TokenStorage());
 
 Future<Dio> authDio() async {

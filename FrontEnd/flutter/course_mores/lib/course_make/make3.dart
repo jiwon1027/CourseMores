@@ -4,10 +4,10 @@ import 'package:flutter_multi_select_items/flutter_multi_select_items.dart';
 import 'package:textfield_tags/textfield_tags.dart';
 import 'package:lottie/lottie.dart';
 import 'package:get/get.dart';
-import 'make2.dart'; //
+// import 'make2.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../make_controller.dart';
-import 'package:dio/dio.dart';
+// import 'package:dio/dio.dart';
 
 CourseController courseController = Get.find<CourseController>();
 
@@ -194,8 +194,7 @@ class _MakeStepperState extends State<MakeStepper> {
                   child: Container(
                     padding: EdgeInsets.all(16), // 박스 내부 패딩
                     child: Column(
-                      crossAxisAlignment:
-                          CrossAxisAlignment.start, // 자식 위젯을 왼쪽 정렬
+                      crossAxisAlignment: CrossAxisAlignment.start, // 자식 위젯을 왼쪽 정렬
                       children: const [
                         Text(
                           '인원수',
@@ -225,8 +224,7 @@ class _MakeStepperState extends State<MakeStepper> {
                   child: Container(
                     padding: EdgeInsets.all(16), // 박스 내부 패딩
                     child: Column(
-                      crossAxisAlignment:
-                          CrossAxisAlignment.start, // 자식 위젯을 왼쪽 정렬
+                      crossAxisAlignment: CrossAxisAlignment.start, // 자식 위젯을 왼쪽 정렬
                       children: const [
                         Text(
                           '소요 시간',
@@ -255,8 +253,7 @@ class _MakeStepperState extends State<MakeStepper> {
                   child: Container(
                     padding: EdgeInsets.all(16), // 박스 내부 패딩
                     child: Column(
-                      crossAxisAlignment:
-                          CrossAxisAlignment.start, // 자식 위젯을 왼쪽 정렬
+                      crossAxisAlignment: CrossAxisAlignment.start, // 자식 위젯을 왼쪽 정렬
                       children: [
                         Text(
                           '코스 내용',
@@ -273,8 +270,7 @@ class _MakeStepperState extends State<MakeStepper> {
                             labelText: '글 내용', // 라벨 텍스트
                           ),
                           maxLines: null, // 다중 라인으로 입력 가능하게 설정
-                          keyboardType:
-                              TextInputType.multiline, // 다중 라인으로 입력 가능하게 설정
+                          keyboardType: TextInputType.multiline, // 다중 라인으로 입력 가능하게 설정
                           onChanged: (value) {
                             // 사용자가 입력한 텍스트가 변경될 때마다 호출됩니다.
                             print(value);
@@ -298,8 +294,7 @@ class _MakeStepperState extends State<MakeStepper> {
                   child: Container(
                     padding: EdgeInsets.all(16), // 박스 내부 패딩
                     child: Column(
-                      crossAxisAlignment:
-                          CrossAxisAlignment.start, // 자식 위젯을 왼쪽 정렬
+                      crossAxisAlignment: CrossAxisAlignment.start, // 자식 위젯을 왼쪽 정렬
                       children: const [
                         Text(
                           '해시태그',
@@ -620,17 +615,17 @@ class _PlaceListBoxState extends State<PlaceListBox> {
     if (numOfLocations == 1) {
       return firstLocation;
     }
-    return '$firstLocation';
+    return firstLocation;
   }
 
   @override
   Widget build(BuildContext context) {
     final String locationsString = _getLocationsString();
 
-    final String _apiKey = dotenv.get('GOOGLE_MAP_API_KEY');
+    final String apiKey = dotenv.get('GOOGLE_MAP_API_KEY');
 
-    final String _imgUrl =
-        "https://maps.googleapis.com/maps/api/streetview?size=400x400&location=${locations[0].latitude},${locations[0].longitude}&fov=90&heading=235&pitch=10&key=$_apiKey";
+    final String imgUrl =
+        "https://maps.googleapis.com/maps/api/streetview?size=400x400&location=${locations[0].latitude},${locations[0].longitude}&fov=90&heading=235&pitch=10&key=$apiKey";
 
     int numOfLocations = locations.length;
 
@@ -653,7 +648,7 @@ class _PlaceListBoxState extends State<PlaceListBox> {
                 ),
                 image: DecorationImage(
                   // image: AssetImage('assets/img1.jpg'),
-                  image: NetworkImage(_imgUrl),
+                  image: NetworkImage(imgUrl),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -883,19 +878,15 @@ class _MakeHashtagState extends State<MakeHashtag> {
                                   ),
                                   color: Color(0xFFEEEEEE),
                                 ),
-                                margin:
-                                    const EdgeInsets.symmetric(horizontal: 5.0),
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10.0, vertical: 5.0),
+                                margin: const EdgeInsets.symmetric(horizontal: 5.0),
+                                padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
                                 child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     InkWell(
                                       child: Text(
                                         '#$tag',
-                                        style: const TextStyle(
-                                            color: Color(0xFF6D6AFF)),
+                                        style: const TextStyle(color: Color(0xFF6D6AFF)),
                                       ),
                                       onTap: () {
                                         print("$tag selected");
@@ -1035,10 +1026,7 @@ class _ThemeSelectState extends State<ThemeSelect> {
       child: MultiSelectContainer(
         items: cards,
         onChange: (List<dynamic> allSelectedItems, dynamic selectedItem) {
-          final List<int> selectedIds = allSelectedItems
-              .whereType<int>()
-              .where(themeMapping.containsKey)
-              .toList();
+          final List<int> selectedIds = allSelectedItems.whereType<int>().where(themeMapping.containsKey).toList();
           selectedIds.sort();
           courseController.themeIdList.value = selectedIds;
           print('선택된 아이템의 id 리스트: $selectedIds');

@@ -15,8 +15,7 @@ class EditItemPage extends StatefulWidget {
   final LocationData locationData;
 
   @override
-  State<EditItemPage> createState() =>
-      _EditItemPageState(locationData: locationData);
+  State<EditItemPage> createState() => _EditItemPageState(locationData: locationData);
 }
 
 class _EditItemPageState extends State<EditItemPage> {
@@ -32,11 +31,14 @@ class _EditItemPageState extends State<EditItemPage> {
   @override
   void initState() {
     super.initState();
+    // ignore: unused_local_variable
     final LocationController locationController = Get.find();
     _titleController.text = _itemData.title ?? '';
     _contentController.text = _itemData.content ?? '';
-    _sidoController.text = _itemData.sido ?? '';
-    _gugunController.text = _itemData.gugun ?? '';
+    // _sidoController.text = _itemData.sido ?? '';
+    // _gugunController.text = _itemData.gugun ?? '';
+    _sidoController.text = _itemData.sido;
+    _gugunController.text = _itemData.gugun;
   }
 
   _EditItemPageState({required this.locationData}) {
@@ -45,6 +47,7 @@ class _EditItemPageState extends State<EditItemPage> {
 
   @override
   Widget build(BuildContext context) {
+    // ignore: unused_local_variable
     final CourseController courseController = Get.find();
     final LocationController locationController = Get.find();
     return Scaffold(
@@ -132,12 +135,8 @@ class _EditItemPageState extends State<EditItemPage> {
                     numberOfImage: widget.locationData.numberOfImage,
                     // numberOfImage: _imageList.length,
                     // numberOfImage: _imageUploaderState.getNumberOfImage(),
-                    title: _titleController.text.isNotEmpty
-                        ? _titleController.text
-                        : null,
-                    content: _contentController.text.isNotEmpty
-                        ? _contentController.text
-                        : null,
+                    title: _titleController.text.isNotEmpty ? _titleController.text : null,
+                    content: _contentController.text.isNotEmpty ? _contentController.text : null,
                     sido: widget.locationData.sido,
                     gugun: widget.locationData.gugun,
                   );
@@ -145,8 +144,7 @@ class _EditItemPageState extends State<EditItemPage> {
                   _itemData.content = updatedLocationData.content;
                   _itemData.sido = updatedLocationData.sido;
                   _itemData.gugun = updatedLocationData.gugun;
-                  _itemData.numberOfImage =
-                      updatedLocationData.numberOfImage; // numberOfImage 업데이트
+                  _itemData.numberOfImage = updatedLocationData.numberOfImage; // numberOfImage 업데이트
                   locationController.updateLocationData(updatedLocationData);
                   Navigator.pop(context, updatedLocationData);
                 },
@@ -190,9 +188,8 @@ class _PlaceNameState extends State<PlaceName> {
   }
 
   Future<void> _getAddress() async {
-    final List<geocoding.Placemark> placemarks = await geocoding
-        .placemarkFromCoordinates(widget.latitude, widget.longitude,
-            localeIdentifier: 'ko');
+    final List<geocoding.Placemark> placemarks =
+        await geocoding.placemarkFromCoordinates(widget.latitude, widget.longitude, localeIdentifier: 'ko');
 
     if (placemarks.isNotEmpty) {
       final geocoding.Placemark place = placemarks.first;
@@ -203,8 +200,7 @@ class _PlaceNameState extends State<PlaceName> {
       final String administrativeArea = place.administrativeArea ?? '';
 
       setState(() {
-        _address =
-            '$administrativeArea $locality $subLocality $thoroughfare $subThoroughfare';
+        _address = '$administrativeArea $locality $subLocality $thoroughfare $subThoroughfare';
       });
     } else {
       setState(() {
@@ -550,9 +546,7 @@ class _ImageUploaderState extends State<ImageUploader> {
           SizedBox(height: 20),
           SizedBox(
             height: 80,
-            child: _imageList.isEmpty
-                ? Center(child: Text("이미지를 선택해주세요."))
-                : buildGridView(),
+            child: _imageList.isEmpty ? Center(child: Text("이미지를 선택해주세요.")) : buildGridView(),
           ),
         ],
       ),

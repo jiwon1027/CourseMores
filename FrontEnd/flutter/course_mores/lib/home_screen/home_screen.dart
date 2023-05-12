@@ -1,7 +1,7 @@
-import 'package:coursemores/auth/login_page.dart';
 import '../controller/getx_controller.dart';
 import 'package:flutter/material.dart';
 import '../course_search/search.dart' as search;
+import '../course_search/search.dart';
 import './carousel.dart' as carousel;
 // import '../course_search/search.dart' as search;
 // import 'package:carousel_slider/carousel_slider.dart';
@@ -10,7 +10,6 @@ import '../course_search/course_list.dart' as course;
 // import '../mypage/mypage.dart' as mypage;
 // import '../controller/getx_controller.dart';
 import '../main.dart';
-import 'package:dio/dio.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart' as geocoding;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
