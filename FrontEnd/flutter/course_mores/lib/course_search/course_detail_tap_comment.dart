@@ -15,7 +15,7 @@ class CourseComments extends StatefulWidget {
 class _CourseCommentsState extends State<CourseComments> {
   late var courseIndex = detailController.nowIndex;
 
-  // TODO: 해야함
+  // todo!!
   // late List commentsList = course.courseList[courseIndex]['comments_list'] as List;
 
   bool isCommentLatestSelected = true;
@@ -57,7 +57,8 @@ class _CourseCommentsState extends State<CourseComments> {
               isCommentPopularSelected: isCommentPopularSelected,
               isCommentLatestSelectedClick: isCommentLatestSelectedClick,
               isCommentPopularSelectedClick: isCommentPopularSelectedClick),
-          // TODO: 해야함
+
+          // todo!!
           // SizedBox(
           //   height: commentsList.isEmpty ? null : 600,
           //   child: DetailTapCourseCommentsListSection(commentsList: commentsList),
@@ -431,7 +432,8 @@ class DetailTapCourseCommentsCreateSection extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: const [
-                  // TODO: 해야함
+                  // todo!!
+                  //
                   // Text(
                   //   "${(course.courseList[courseIndex]['comments_list'] as List<dynamic>).length}개의 코멘트가 있어요",
                   //   style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
@@ -443,7 +445,7 @@ class DetailTapCourseCommentsCreateSection extends StatelessWidget {
             ),
             TextButton(
               onPressed: () {
-                // TODO: 해야함
+                // todo!!
                 // Get.to(comment.NewComment());
               },
               style: TextButton.styleFrom(
