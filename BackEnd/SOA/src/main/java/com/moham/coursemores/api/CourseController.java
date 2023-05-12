@@ -79,7 +79,7 @@ public class CourseController {
     public ResponseEntity<Map<String, Object>> searchCourse(
             @PathVariable Long userId,
             @RequestParam(required = false) String word,
-            @RequestParam(required = false) Long regionId,
+            @RequestParam Long regionId,
             @RequestParam(required = false) List<Long> themeIds,
             @RequestParam int isVisited,
             @RequestParam int page,

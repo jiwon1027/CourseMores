@@ -1,16 +1,15 @@
 package com.moham.coursemores.repository.querydsl;
 
 import com.moham.coursemores.domain.Course;
-import com.querydsl.core.BooleanBuilder;
+import com.moham.coursemores.domain.Region;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.weaver.ast.Or;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -18,11 +17,7 @@ import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
 import static com.moham.coursemores.domain.QCourse.course;
-import static com.moham.coursemores.domain.QCourseLocation.courseLocation;
-import static com.moham.coursemores.domain.QHashtagOfCourse.hashtagOfCourse;
-import static com.moham.coursemores.domain.QHashtag.hashtag;
-import static com.moham.coursemores.domain.QThemeOfCourse.themeOfCourse;
-import static com.moham.coursemores.domain.QTheme.theme;
+import static com.moham.coursemores.domain.QRegion.region;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,6 +26,8 @@ import java.util.stream.Collectors;
 public class CourseCustomRepositoryImpl implements CourseCustomRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
+
+    private final String ALL = "전체";
 
     @Override
     public Page<Course> searchAll(String word, Long regionId, List<Long> themeIds, int isVisited, Pageable pageable) {
@@ -89,9 +86,25 @@ public class CourseCustomRepositoryImpl implements CourseCustomRepository {
     }
 
     private BooleanExpression regionEq(Long regionId) {
-        return (regionId != null && regionId > 0) ?
-                course.courseLocationList.any().region.id.eq(regionId) :
-                null;
+        if(regionId == null || regionId == 0) return null;
+
+        Region temp = jpaQueryFactory
+                .selectFrom(region)
+                .where(region.id.eq(regionId))
+                .fetchOne();
+
+        if(temp == null || ALL.equals(temp.getSido())){
+            return null;
+        }
+        else if(ALL.equals(temp.getGugun())){
+            // 코스의 첫번째 장소의 지역이 같을 경우만
+            return course.sido.eq(temp.getSido());
+//            // 코스의 모든 장소들 중 하나라도 지역이 포함되어 있는지
+//            return course.courseLocationList.any().region.sido.eq(temp.getSido());
+        }
+        else{
+            return course.gugun.eq(temp.getGugun());
+        }
     }
 
     private BooleanExpression themeContain(List<Long> themeIds) {
