@@ -10,6 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,66 +30,72 @@ public class ProfileController {
 
     private final ProfileService profileService;
 
-    @GetMapping("{userId}")
+    @GetMapping
     public ResponseEntity<Map<String, Object>> myProfile(
-            @PathVariable Long userId) {
-        logger.debug("[0/2][GET][/profile/{}] << request : none", userId);
+            @AuthenticationPrincipal User user) {
+        Long userId = Long.parseLong(user.getUsername());
+        logger.debug("[0/2][GET][/profile][{}] << request : none", userId);
 
         Map<String, Object> resultMap = new HashMap<>();
 
-        logger.debug("[1/2][GET][/profile/{}] ...ps.getMyProfile", userId);
+        logger.debug("[1/2][GET][/profile][{}] ...ps.getMyProfile", userId);
         UserInfoResDto userInfoResDto = profileService.getMyProfile(userId);
         resultMap.put("userInfo", userInfoResDto);
 
-        logger.debug("[2/2][GET][/profile/{}] >> response : userInfo\n userInfo = {}\n", userId, userInfoResDto);
+        logger.debug("[2/2][GET][/profile][{}] >> response : userInfo\n userInfo = {}\n", userId, userInfoResDto);
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
 
-    @PutMapping("{userId}/alram")
+    @PutMapping("alram")
     public ResponseEntity<Void> alarmSetting(
-            @PathVariable Long userId) {
-        logger.debug("[0/?][PUT][/profile/{}/alram] << request : none", userId);
+            @AuthenticationPrincipal User user) {
+        Long userId = Long.parseLong(user.getUsername());
+        logger.debug("[0/?][PUT][/profile/alram][{}] << request : none", userId);
 
         // 알림 셋팅
 
-        logger.debug("[?/?][PUT][/profile/{}/alram] >> response : none\n", userId);
+        logger.debug("[?/?][PUT][/profile/alram][{}] >> response : none\n", userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PutMapping("{userId}")
+    @PutMapping
     public ResponseEntity<Void> putUserInfo(
-            @PathVariable Long userId,
+            @AuthenticationPrincipal User user,
             @RequestPart UserInfoUpdateReqDto userInfoUpdateReqDto,
             @RequestPart(required = false) MultipartFile profileImage) {
-        logger.debug("[0/2][PUT][/profile/{}] << request : userInfoUpdateReqDto, profileImage\n userInfoUpdateReqDto = {}\n profileImage = {}",
+        Long userId = Long.parseLong(user.getUsername());
+        logger.debug("[0/2][PUT][/profile][{}] << request : userInfoUpdateReqDto, profileImage\n userInfoUpdateReqDto = {}\n profileImage = {}",
                 userId, userInfoUpdateReqDto, profileImage);
 
-        logger.debug("[1/2][PUT][/profile/{}] ...ps.updateUserInfo", userId);
+        logger.debug("[1/2][PUT][/profile][{}] ...ps.updateUserInfo", userId);
         profileService.updateUserInfo(userId, userInfoUpdateReqDto, profileImage);
 
-        logger.debug("[2/2][PUT][/profile/{}] >> response : none\n", userId);
+        logger.debug("[2/2][PUT][/profile][{}] >> response : none\n", userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("logout")
-    public ResponseEntity<Void> logout() {
-        logger.debug("[0/2][GET][/profile/logout] << request : none");
+    public ResponseEntity<Void> logout(
+            @AuthenticationPrincipal User user) {
+        Long userId = Long.parseLong(user.getUsername());
+        logger.debug("[0/2][GET][/profile/logout][{}] << request : none", userId);
         // 로그아웃 처리
-        logger.debug("[1/2][GET][/profile/logout] ...");
+        logger.debug("[1/2][GET][/profile/logout][{}] ...",userId);
 
-        logger.debug("[2/2][GET][/profile/logout] >> response : none\n");
+        logger.debug("[2/2][GET][/profile/logout][{}] >> response : none\n",userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("{userId}")
+    @DeleteMapping
     public ResponseEntity<Void> deleteUser(
-            @PathVariable Long userId) {
-        logger.debug("[0/2][DELETE][/profile/{}] << request : none", userId);
+            @AuthenticationPrincipal User user) {
+        Long userId = Long.parseLong(user.getUsername());
+        logger.debug("[0/2][DELETE][/profile][{}] << request : none", userId);
 
-        logger.debug("[1/2][DELETE][/profile/{}] ...ps.deleteUser", userId);
+        logger.debug("[1/2][DELETE][/profile][{}] ...ps.deleteUser", userId);
         profileService.deleteUser(userId);
 
-        logger.debug("[2/2][DELETE][/profile/{}] >> response : none\n", userId);
+        logger.debug("[2/2][DELETE][/profile][{}] >> response : none\n", userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

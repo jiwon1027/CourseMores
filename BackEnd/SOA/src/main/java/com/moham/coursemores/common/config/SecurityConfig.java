@@ -48,8 +48,10 @@ public class SecurityConfig {
                 .formLogin().disable()
                 .httpBasic().disable()
                 .authorizeRequests()
+                .antMatchers(PERMIT_URL_ARRAY).permitAll()
 //                .antMatchers("/user/oauth/login").authenticated()
-                .anyRequest().permitAll()
+//                .anyRequest().permitAll()
+                .anyRequest().authenticated()
 
                 // JwtFilter 를 addFilterBefore 로 등록했던 JwtSecurityConfig 클래스를 적용
                 .and()
@@ -60,4 +62,9 @@ public class SecurityConfig {
         return http.build();
     }
 
+    private static final String[] PERMIT_URL_ARRAY = {
+            "/auth/**",
+            "/user/validation/**",
+            "/user/reissue",
+    };
 }

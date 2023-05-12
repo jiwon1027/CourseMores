@@ -23,6 +23,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -86,28 +88,29 @@ public class CourseController {
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
 
-    @GetMapping("search/{userId}")
+    @GetMapping("search")
     public ResponseEntity<Map<String, Object>> searchCourse(
-            @PathVariable Long userId,
             @RequestParam(required = false) String word,
             @RequestParam Long regionId,
             @RequestParam(required = false) List<Long> themeIds,
             @RequestParam int isVisited,
             @RequestParam int page,
-            @RequestParam String sortby) {
+            @RequestParam String sortby,
+            @AuthenticationPrincipal User user) {
+        Long userId = Long.parseLong(user.getUsername());
         logger.debug(
-                "[0/2][GET][/course/search/{}] << request : word, regionId, themeIds, isVisited, page, sortby\n word = {}\n regionId = {}\n themeIds = {}\n isVisited = {}\n page = {}\n sortby = {}",
+                "[0/2][GET][/course/search][{}] << request : word, regionId, themeIds, isVisited, page, sortby\n word = {}\n regionId = {}\n themeIds = {}\n isVisited = {}\n page = {}\n sortby = {}",
                 userId, word, regionId, themeIds, isVisited, page, sortby);
 
         Map<String, Object> resultMap = new HashMap<>();
 
-        logger.debug("[1/2][GET][/course/search/{}] ... cd.search", userId);
+        logger.debug("[1/2][GET][/course/search][{}] ... cd.search", userId);
         Page<CoursePreviewResDto> pageCourse = courseService.search(userId, word, regionId, themeIds, isVisited, page, sortby);
         resultMap.put("courseList", pageCourse.getContent());
         resultMap.put("isFirst", pageCourse.isFirst());
         resultMap.put("isLast", pageCourse.isLast());
 
-        logger.debug("[2/2][GET][/course/search/{}] >> response : courseList, isFirst, isLast\n courseList = {}\n isFirst = {}\n isLast = {}\n",
+        logger.debug("[2/2][GET][/course/search][{}] >> response : courseList, isFirst, isLast\n courseList = {}\n isFirst = {}\n isLast = {}\n",
                 userId, pageCourse.getContent(), pageCourse.isFirst(), pageCourse.isLast());
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
@@ -145,18 +148,19 @@ public class CourseController {
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
 
-    @GetMapping("my/{userId}")
+    @GetMapping("my")
     public ResponseEntity<Map<String, Object>> getMyCourseList(
-            @PathVariable Long userId) {
-        logger.debug("[0/2][GET][/course/my/{}] << request :none", userId);
+            @AuthenticationPrincipal User user) {
+        Long userId = Long.parseLong(user.getUsername());
+        logger.debug("[0/2][GET][/course/my][{}] << request :none", userId);
 
         Map<String, Object> resultMap = new HashMap<>();
 
-        logger.debug("[1/2][GET][/course/my/{}] ... cd.getMyCourseList", userId);
+        logger.debug("[1/2][GET][/course/my][{}] ... cd.getMyCourseList", userId);
         List<MyCourseResDto> myCourseResDtoList = courseService.getMyCourseList(userId);
         resultMap.put("myCourseList", myCourseResDtoList);
 
-        logger.debug("[2/2][GET][/course/my/{}] >> response : myCourseList\n myCourseList = {}\n", userId, myCourseResDtoList);
+        logger.debug("[2/2][GET][/course/my][{}] >> response : myCourseList\n myCourseList = {}\n", userId, myCourseResDtoList);
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
 
@@ -175,18 +179,19 @@ public class CourseController {
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
 
-    @PostMapping("{userId}")
+    @PostMapping
     public ResponseEntity<Void> addCourse(
-            @PathVariable Long userId,
+            @AuthenticationPrincipal User user,
             @RequestPart CourseCreateReqDto courseCreateReqDto,
             @RequestPart(required = false) List<MultipartFile> imageList) {
-        logger.debug("[0/3][POST][/course/{}] << request : courseCreateReqDto, imageList\n courseCreateReqDto = {}\n imageList = {}",
+        Long userId = Long.parseLong(user.getUsername());
+        logger.debug("[0/3][POST][/course][{}] << request : courseCreateReqDto, imageList\n courseCreateReqDto = {}\n imageList = {}",
                 userId, courseCreateReqDto, imageList);
 
-        logger.debug("[1/3][POST][/course/{}] ... cd.addCourse", userId);
+        logger.debug("[1/3][POST][/course][{}] ... cd.addCourse", userId);
         Long courseId = courseService.addCourse(userId, courseCreateReqDto, imageList);
 
-        logger.debug("[2/3][POST][/course/{}] ... ess.addIndex", userId);
+        logger.debug("[2/3][POST][/course][{}] ... ess.addIndex", userId);
         // elasticsearch index 데이터 추가
         elasticSearchService.addIndex(IndexDataReqDTO.builder()
                 .id(Long.toString(courseId))
@@ -198,23 +203,24 @@ public class CourseController {
                 .hashtagList(courseCreateReqDto.getHashtagList())
                 .build());
 
-        logger.debug("[3/3][POST][/course/{}] >> response : none\n", userId);
+        logger.debug("[3/3][POST][/course][{}] >> response : none\n", userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PutMapping("{courseId}/{userId}")
+    @PutMapping("{courseId}")
     public ResponseEntity<Void> setCourse(
             @PathVariable Long courseId,
-            @PathVariable Long userId,
             @RequestPart CourseUpdateReqDto courseUpdateReqDto,
-            @RequestPart(required = false) List<MultipartFile> imageList) throws IOException {
-        logger.debug("[0/3][PUT][/course/{}/{}] << request : courseUpdateReqDto, imageList\n courseUpdateReqDto = {}\n imageList = {}",
+            @RequestPart(required = false) List<MultipartFile> imageList,
+            @AuthenticationPrincipal User user) throws IOException {
+        Long userId = Long.parseLong(user.getUsername());
+        logger.debug("[0/3][PUT][/course/{}][{}] << request : courseUpdateReqDto, imageList\n courseUpdateReqDto = {}\n imageList = {}",
                 courseId, userId, courseUpdateReqDto, imageList);
 
-        logger.debug("[1/3][PUT][/course/{}/{}] ... cs.setCourse", courseId, userId);
+        logger.debug("[1/3][PUT][/course/{}][{}] ... cs.setCourse", courseId, userId);
         courseService.setCourse(userId, courseId, courseUpdateReqDto, imageList);
 
-        logger.debug("[2/3][PUT][/course/{}/{}] ... ess.updateIndex", courseId, userId);
+        logger.debug("[2/3][PUT][/course/{}][{}] ... ess.updateIndex", courseId, userId);
         // elasticsearch index 데이터 수정
         elasticSearchService.updateIndex(IndexDataReqDTO.builder()
                 .id(Long.toString(courseId))
@@ -226,23 +232,24 @@ public class CourseController {
                 .hashtagList(courseUpdateReqDto.getHashtagList())
                 .build());
 
-        logger.debug("[3/3][PUT][/course/{}/{}] >> response : none\n", courseId, userId);
+        logger.debug("[3/3][PUT][/course/{}][{}] >> response : none\n", courseId, userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("{courseId}/{userId}")
+    @DeleteMapping("{courseId}")
     public ResponseEntity<Void> deleteCourse(
             @PathVariable Long courseId,
-            @PathVariable Long userId) throws IOException {
-        logger.debug("[0/3][DELETE][/course/{}/{}] << request : none", courseId, userId);
+            @AuthenticationPrincipal User user) throws IOException {
+        Long userId = Long.parseLong(user.getUsername());
+        logger.debug("[0/3][DELETE][/course/{}][{}] << request : none", courseId, userId);
 
-        logger.debug("[1/3][DELETE][/course/{}/{}] ... cs.deleteCourse", courseId, userId);
+        logger.debug("[1/3][DELETE][/course/{}][{}] ... cs.deleteCourse", courseId, userId);
         courseService.deleteCourse(userId, courseId);
 
-        logger.debug("[2/3][DELETE][/course/{}/{}] ... ess.deleteIndex", courseId, userId);
+        logger.debug("[2/3][DELETE][/course/{}][{}] ... ess.deleteIndex", courseId, userId);
         elasticSearchService.deleteIndex(Long.toString(courseId));
 
-        logger.debug("[3/3][DELETE][/course/{}/{}] >> response : none\n", courseId, userId);
+        logger.debug("[3/3][DELETE][/course/{}][{}] >> response : none\n", courseId, userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

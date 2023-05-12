@@ -9,6 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,91 +28,97 @@ public class LikeController {
     private final LikeService likeService;
     private final NotificationService notificationService;
 
-    @GetMapping("course/{courseId}/{userId}")
+    @GetMapping("course/{courseId}")
     public ResponseEntity<Map<String, Object>> checkLikeCourse(
-            @PathVariable Long userId,
+            @AuthenticationPrincipal User user,
             @PathVariable Long courseId) {
-        logger.debug("[0/2][GET][/like/course/{}/{}] << request : none", courseId, userId);
+        Long userId = Long.parseLong(user.getUsername());
+        logger.debug("[0/2][GET][/like/course/{}][{}] << request : none", courseId, userId);
 
         Map<String, Object> resultMap = new HashMap<>();
 
-        logger.debug("[1/2][GET][/like/course/{}/{}] ... ls.checkLikeCourse", courseId, userId);
+        logger.debug("[1/2][GET][/like/course/{}][{}] ... ls.checkLikeCourse", courseId, userId);
         boolean isLikeCourse = likeService.checkLikeCourse(userId, courseId);
         resultMap.put("isLikeCourse", isLikeCourse);
 
-        logger.debug("[2/2][GET][/like/course/{}/{}] >> response : isLikeCourse\n isLikeCourse = {}\n", courseId, userId, isLikeCourse);
+        logger.debug("[2/2][GET][/like/course/{}][{}] >> response : isLikeCourse\n isLikeCourse = {}\n", courseId, userId, isLikeCourse);
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
 
-    @PostMapping("course/{courseId}/{userId}")
+    @PostMapping("course/{courseId}")
     public ResponseEntity<Void> addLikeCourse(
-            @PathVariable Long userId,
+            @AuthenticationPrincipal User user,
             @PathVariable Long courseId) {
-        logger.debug("[0/3][POST][/like/course/{}/{}] << request : none", courseId, userId);
+        Long userId = Long.parseLong(user.getUsername());
+        logger.debug("[0/3][POST][/like/course/{}][{}] << request : none", courseId, userId);
 
-        logger.debug("[1/3][POST][/like/course/{}/{}] ... ls.addLikeCourse", courseId, userId);
+        logger.debug("[1/3][POST][/like/course/{}][{}] ... ls.addLikeCourse", courseId, userId);
         boolean alarm = likeService.addLikeCourse(userId, courseId);
 
-        logger.debug("[2/3][POST][/like/course/{}/{}] ... ns.makeNotification", courseId, userId);
+        logger.debug("[2/3][POST][/like/course/{}][{}] ... ns.makeNotification", courseId, userId);
         if (alarm)
             notificationService.makeNotification(userId, courseId, 0);
 
-        logger.debug("[3/3][POST][/like/course/{}/{}] >> response : none\n", courseId, userId);
+        logger.debug("[3/3][POST][/like/course/{}][{}] >> response : none\n", courseId, userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("course/{courseId}/{userId}")
+    @DeleteMapping("course/{courseId}")
     public ResponseEntity<Void> deleteLikeCourse(
-            @PathVariable Long userId,
+            @AuthenticationPrincipal User user,
             @PathVariable Long courseId) {
-        logger.debug("[0/2][DELETE][/like/course/{}/{}] << request : none", courseId, userId);
+        Long userId = Long.parseLong(user.getUsername());
+        logger.debug("[0/2][DELETE][/like/course/{}][{}] << request : none", courseId, userId);
 
-        logger.debug("[1/2][DELETE][/like/course/{}/{}] ... ls.deleteLikeCourse", courseId, userId);
+        logger.debug("[1/2][DELETE][/like/course/{}][{}] ... ls.deleteLikeCourse", courseId, userId);
         likeService.deleteLikeCourse(userId, courseId);
 
-        logger.debug("[2/2][DELETE][/like/course/{}/{}] >> response : none\n", courseId, userId);
+        logger.debug("[2/2][DELETE][/like/course/{}][{}] >> response : none\n", courseId, userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("comment/{commentId}/{userId}")
+    @GetMapping("comment/{commentId}")
     public ResponseEntity<Map<String, Object>> checkLikeComment(
-            @PathVariable Long userId,
+            @AuthenticationPrincipal User user,
             @PathVariable Long commentId) {
-        logger.debug("[0/2][GET][/like/comment/{}/{}] << request : none", commentId, userId);
+        Long userId = Long.parseLong(user.getUsername());
+        logger.debug("[0/2][GET][/like/comment/{}][{}] << request : none", commentId, userId);
 
         Map<String, Object> resultMap = new HashMap<>();
 
-        logger.debug("[1/2][GET][/like/comment/{}/{}] ... ls.checkLikeComment", commentId, userId);
+        logger.debug("[1/2][GET][/like/comment/{}][{}] ... ls.checkLikeComment", commentId, userId);
         boolean isLikeComment = likeService.checkLikeComment(userId, commentId);
         resultMap.put("isLikeComment", isLikeComment);
 
-        logger.debug("[2/2][GET][/like/comment/{}/{}] >> response : isLikeComment\n isLikeComment = {}\n", commentId, userId, isLikeComment);
+        logger.debug("[2/2][GET][/like/comment/{}][{}] >> response : isLikeComment\n isLikeComment = {}\n", commentId, userId, isLikeComment);
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
 
-    @PostMapping("comment/{commentId}/{userId}")
+    @PostMapping("comment/{commentId}")
     public ResponseEntity<Void> addLikeComment(
-            @PathVariable Long userId,
+            @AuthenticationPrincipal User user,
             @PathVariable Long commentId) {
-        logger.debug("[0/2][POST][/like/comment/{}/{}] << request : none", commentId, userId);
+        Long userId = Long.parseLong(user.getUsername());
+        logger.debug("[0/2][POST][/like/comment/{}][{}] << request : none", commentId, userId);
 
-        logger.debug("[1/2][POST][/like/comment/{}/{}] ... ls.addLikeComment", commentId, userId);
+        logger.debug("[1/2][POST][/like/comment/{}][{}] ... ls.addLikeComment", commentId, userId);
         likeService.addLikeComment(userId, commentId);
 
-        logger.debug("[2/2][POST][/like/comment/{}/{}] >> response : none\n", commentId, userId);
+        logger.debug("[2/2][POST][/like/comment/{}][{}] >> response : none\n", commentId, userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("comment/{commentId}/{userId}")
+    @DeleteMapping("comment/{commentId}")
     public ResponseEntity<Void> deleteLikeComment(
-            @PathVariable Long userId,
+            @AuthenticationPrincipal User user,
             @PathVariable Long commentId) {
-        logger.debug("[0/2][DELETE][/like/comment/{}/{}] << request : none", commentId, userId);
+        Long userId = Long.parseLong(user.getUsername());
+        logger.debug("[0/2][DELETE][/like/comment/{}][{}] << request : none", commentId, userId);
 
-        logger.debug("[1/2][DELETE][/like/comment/{}/{}] ... ls.deleteLikeComment", commentId, userId);
+        logger.debug("[1/2][DELETE][/like/comment/{}][{}] ... ls.deleteLikeComment", commentId, userId);
         likeService.deleteLikeComment(userId, commentId);
 
-        logger.debug("[2/2][DELETE][/like/comment/{}/{}] >> response : none\n", commentId, userId);
+        logger.debug("[2/2][DELETE][/like/comment/{}][{}] >> response : none\n", commentId, userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
