@@ -12,7 +12,6 @@ import org.springframework.data.elasticsearch.repository.config.EnableElasticsea
 
 
 @Configuration
-@ComponentScan(basePackages = { "com.moham.coursemores.common.elasticsearch" })
 public class ElasticSearchConfig extends AbstractElasticsearchConfiguration {
 
     @Bean
