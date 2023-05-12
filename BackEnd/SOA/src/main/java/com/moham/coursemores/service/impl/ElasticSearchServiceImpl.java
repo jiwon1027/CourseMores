@@ -10,11 +10,8 @@ import com.moham.coursemores.dto.elasticsearch.IndexDataReqDTO;
 import com.moham.coursemores.dto.elasticsearch.IndexDataResDTO;
 import com.moham.coursemores.service.ElasticSearchService;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+
 import lombok.RequiredArgsConstructor;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.DocWriteResponse;
@@ -25,7 +22,6 @@ import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.update.UpdateRequest;
-import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -42,6 +38,7 @@ public class ElasticSearchServiceImpl implements ElasticSearchService {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
     private final RestHighLevelClient client;
+    private final String VALUE = "value";
 
     public Boolean index(CourseDocument courseDocument) {
         try {
@@ -111,7 +108,7 @@ public class ElasticSearchServiceImpl implements ElasticSearchService {
             requestCourse.id(courseDocument.getId());
             requestCourse.source(value, XContentType.JSON);
 
-            IndexResponse responseCourse = client.index(requestCourse, RequestOptions.DEFAULT);
+            client.index(requestCourse, RequestOptions.DEFAULT);
 
             // CourselocationDocument
             for (String courselocation : indexDataReqDTO.getCourselocationList()) {
@@ -127,7 +124,7 @@ public class ElasticSearchServiceImpl implements ElasticSearchService {
                 requestHashtag.id(UUID.randomUUID().toString());
                 requestHashtag.source(temp, XContentType.JSON);
 
-                IndexResponse responseHashtag = client.index(requestHashtag, RequestOptions.DEFAULT);
+                client.index(requestHashtag, RequestOptions.DEFAULT);
             }
 
             // HashtagDocument index
@@ -144,9 +141,8 @@ public class ElasticSearchServiceImpl implements ElasticSearchService {
                 requestHashtag.id(UUID.randomUUID().toString());
                 requestHashtag.source(temp, XContentType.JSON);
 
-                IndexResponse responseHashtag = client.index(requestHashtag, RequestOptions.DEFAULT);
+                client.index(requestHashtag, RequestOptions.DEFAULT);
             }
-
 
         } catch (final Exception e) {
             e.printStackTrace();
@@ -171,27 +167,26 @@ public class ElasticSearchServiceImpl implements ElasticSearchService {
         Map<String, Object> sourceAsMap;
         for (SearchHit hit : searchHitsCourse) {
             sourceAsMap = hit.getSourceAsMap();
-            courses.add((String) sourceAsMap.get("value"));
+            courses.add((String) sourceAsMap.get(VALUE));
         }
 
         Set<String> courseLocations = new HashSet<>();
         for (SearchHit hit : searchHitsCourseLocation) {
             sourceAsMap = hit.getSourceAsMap();
-            courseLocations.add((String) sourceAsMap.get("value"));
+            courseLocations.add((String) sourceAsMap.get(VALUE));
         }
 
         Set<String> hashtags = new HashSet<>();
         for (SearchHit hit : searchHitsHashtag) {
             sourceAsMap = hit.getSourceAsMap();
-            hashtags.add((String) sourceAsMap.get("value"));
+            hashtags.add((String) sourceAsMap.get(VALUE));
         }
 
-        IndexDataResDTO indexDataResDTO = IndexDataResDTO.builder()
+        return IndexDataResDTO.builder()
                 .courses(courses)
                 .courselocations(courseLocations)
                 .hashtags(hashtags)
                 .build();
-        return indexDataResDTO;
 
     }
 
@@ -214,12 +209,10 @@ public class ElasticSearchServiceImpl implements ElasticSearchService {
         }
 
         Map<String, Object> jsonMap = new HashMap<>();
-        jsonMap.put("value", value);
-        request.doc(jsonMap);
+        jsonMap.put(VALUE, value);
+        Objects.requireNonNull(request).doc(jsonMap);
 
-        UpdateResponse response = client.update(request, RequestOptions.DEFAULT);
-
-
+        client.update(request, RequestOptions.DEFAULT);
     }
 
 
