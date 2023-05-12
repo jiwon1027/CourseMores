@@ -11,13 +11,11 @@ import lombok.ToString;
 @Getter
 @Builder
 public class CommentResDTO {
-
-    Long commentId;
-    String content;
-    int people;
-    int likeCount;
-    List<CommentImageResDTO> imageList;
-    LocalDateTime createTime;
-    UserSimpleInfoResDto writeUser;
-
+    private Long commentId;
+    private String content;
+    private int people;
+    private int likeCount;
+    private List<CommentImageResDTO> imageList;
+    private LocalDateTime createTime;
+    private UserSimpleInfoResDto writeUser;
 }

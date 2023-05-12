@@ -27,5 +27,5 @@ public class CourseInfoResDto {
     private List<String> hashtagList;
     private List<String> themeList;
     private UserSimpleInfoResDto simpleInfoOfWriter;
-
+    private boolean isWrite;
 }

@@ -8,8 +8,6 @@ import lombok.ToString;
 @Getter
 @Builder
 public class CommentImageResDTO {
-
     private long commentImageId;
     private String image;
-
 }

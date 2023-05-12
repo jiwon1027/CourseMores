@@ -6,8 +6,6 @@ import lombok.ToString;
 @ToString
 @Getter
 public class CommentCreateReqDTO {
-
-    String content;
-    int people;
-
+    private String content;
+    private int people;
 }

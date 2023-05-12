@@ -7,9 +7,7 @@ import lombok.ToString;
 @ToString
 @Getter
 public class CommentUpdateReqDTO {
-
-    String content;
-    int people;
-    List<Long> deleteImageList;
-
+    private String content;
+    private int people;
+    private List<Long> deleteImageList;
 }
