@@ -49,6 +49,11 @@ public class CommentServiceImpl implements CommentService {
                 Sort.by("createTime").descending();
         Pageable pageable = PageRequest.of(page, size, sort);
 
+        List<Long> userLikeComment = user.getCommentLikeList()
+                .stream()
+                .map(like -> like.isFlag() ? like.getComment().getId() : null)
+                .collect(Collectors.toList());
+
         return commentRepository.findByCourseIdAndDeleteTimeIsNull(courseId, pageable)
                 .stream()
                 .map(comment -> CommentResDTO.builder()
@@ -65,11 +70,7 @@ public class CommentServiceImpl implements CommentService {
                                         .collect(Collectors.toList()))
                         .createTime(comment.getCreateTime())
                         .isWrite(Objects.equals(comment.getUser().getId(), user.getId()))
-                        .isLike(user.getCommentLikeList()
-                                    .stream()
-                                    .map(like -> like.getComment().getId())
-                                    .collect(Collectors.toList())
-                                .contains(courseId))
+                        .isLike(userLikeComment.contains(comment.getId()))
                         .writeUser(UserSimpleInfoResDto.builder()
                                 .nickname(comment.getUser().getNickname())
                                 .profileImage(comment.getUser().getProfileImage())
