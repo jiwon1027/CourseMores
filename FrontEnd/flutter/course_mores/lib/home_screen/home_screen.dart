@@ -31,6 +31,7 @@ final List<String> imgList = [
 
 final homeController = Get.put(HomeScreenInfo());
 final pageController = Get.put(PageNum());
+final locationController = Get.put(LocationInfo());
 // var hotCourse;
 
 class HomeScreen extends StatefulWidget {
@@ -58,6 +59,8 @@ class _HomeScreenState extends State<HomeScreen> {
     );
     setState(() {
       _currentPosition = position;
+      locationController.saveLatitude(_currentPosition?.latitude);
+      locationController.saveLongitude(_currentPosition?.longitude);
     });
   }
 
@@ -65,7 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     getHotCourse();
-    // getNearCourse();
+    getNearCourse();
     _getCurrentLocation();
   }
 
@@ -102,32 +105,35 @@ class _HomeScreenState extends State<HomeScreen> {
     // });
     print('홈에서 받아온 hotcourse');
     print(homeController.hotCourse);
-    print(_currentPosition?.latitude);
-    print(_currentPosition?.longitude);
+    print('위도 === ${_currentPosition?.latitude}');
+    print('경도 === ${_currentPosition?.longitude}');
     print(homeController.hotCourse[0]['image'].toString());
   }
 
-  // Future<void> getNearCourse() async {
-  //   final tokenStorage = Get.put(TokenStorage());
+  Future<void> getNearCourse() async {
+    final tokenStorage = Get.put(TokenStorage());
 
-  //   final response = await dio.get(
-  //       'course/around?latitude=${_currentPosition?.latitude}&longitude=${_currentPosition?.longitude}',
-  //       options: Options(
-  //           headers: {'Authorization': 'Bearer ${tokenStorage.accessToken}'}));
-  //   print('===근처코스내놔');
-  //   print(response);
+    // if (_currentPosition?.latitude != null &&
+    //     _currentPosition?.longitude != null) {
+    final response = await dio.get(
+        'course/around?latitude=${locationController.latitude}&longitude=${locationController.longitude}',
+        options: Options(
+            headers: {'Authorization': 'Bearer ${tokenStorage.accessToken}'}));
+    print('===근처코스내놔');
+    print(response);
 
-  //   List<dynamic> data = response.data['courseList'];
-  //   nearCourse = data.map((item) => Map<String, Object>.from(item)).toList();
-  //   homeController.saveNearCourse(hotCourse);
-  //   setState(() {
-  //     nearCourse = homeController.nearCourse;
-  //   });
+    List<dynamic> data = response.data['courseList'];
+    nearCourse = data.map((item) => Map<String, Object>.from(item)).toList();
+    homeController.saveNearCourse(nearCourse);
+    setState(() {
+      nearCourse = homeController.nearCourse;
+    });
 
-  //   print('홈에서 받아온 nearcourse');
-  //   print(homeController.nearCourse);
-  //   // print(homeController.hotCourse[0]['image'].toString());
-  // }
+    print('홈에서 받아온 nearcourse');
+    print(homeController.nearCourse);
+    // }
+    // print(homeController.hotCourse[0]['image'].toString());
+  }
 
   // openweathermap의 api키
   final String apiKey = dotenv.get('OPENWEATHER_API_KEY');
@@ -287,7 +293,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 // Obx(() => popularCourse()),
                 themeList(),
-                // myNearCourse(),
+                myNearCourse(),
                 // reviews(),
                 // Image.network(
                 //   hotCourse[1]['image'].toString(),
