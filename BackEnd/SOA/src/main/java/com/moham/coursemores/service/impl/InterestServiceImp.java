@@ -1,20 +1,21 @@
 package com.moham.coursemores.service.impl;
 
-import com.moham.coursemores.domain.*;
+import com.moham.coursemores.domain.Course;
+import com.moham.coursemores.domain.Interest;
+import com.moham.coursemores.domain.User;
 import com.moham.coursemores.dto.course.CoursePreviewResDto;
 import com.moham.coursemores.dto.interest.InterestCourseResDto;
 import com.moham.coursemores.repository.CourseRepository;
 import com.moham.coursemores.repository.InterestRepository;
 import com.moham.coursemores.repository.UserRepository;
 import com.moham.coursemores.service.InterestService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +28,12 @@ public class InterestServiceImp implements InterestService {
 
     @Override
     public List<InterestCourseResDto> getUserInterestCourseList(Long userId) {
+        User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
+                .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
+        List<Long> userLikeCourse = user.getCourseLikeList()
+                .stream()
+                .map(like -> like.isFlag() ? like.getCourse().getId() : null)
+                .collect(Collectors.toList());
         // 현재의 관심 여부(flag)가 true인 것만 가져오기
         return interestRepository.findByUserIdAndFlag(userId, true)
                 .stream()
@@ -47,6 +54,7 @@ public class InterestServiceImp implements InterestService {
                             .sido(course.getSido())
                             .gugun(course.getGugun())
                             .isInterest(true)
+                            .isLike(userLikeCourse.contains(course.getId()))
                             .build();
 
                     return InterestCourseResDto.builder()

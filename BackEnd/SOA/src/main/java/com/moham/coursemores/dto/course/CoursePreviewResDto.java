@@ -21,5 +21,6 @@ public class CoursePreviewResDto {
     private String gugun; // 구,군
     private String locationName; // 장소 이름("장소 이름" 외 n개의 장소)
     private boolean isInterest; // 관심 여부
+    private boolean isLike; // 좋아요 여부
 
 }
