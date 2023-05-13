@@ -1,50 +1,10 @@
 package com.moham.coursemores.service.impl;
 
-import com.moham.coursemores.domain.Comment;
-import com.moham.coursemores.domain.Course;
-import com.moham.coursemores.domain.CourseLike;
-import com.moham.coursemores.domain.CourseLocation;
-import com.moham.coursemores.domain.CourseLocationImage;
-import com.moham.coursemores.domain.Hashtag;
-import com.moham.coursemores.domain.HashtagOfCourse;
-import com.moham.coursemores.domain.HotCourse;
-import com.moham.coursemores.domain.Interest;
-import com.moham.coursemores.domain.Region;
-import com.moham.coursemores.domain.Theme;
-import com.moham.coursemores.domain.ThemeOfCourse;
-import com.moham.coursemores.domain.User;
-import com.moham.coursemores.dto.course.CourseCreateReqDto;
-import com.moham.coursemores.dto.course.CourseDetailResDto;
-import com.moham.coursemores.dto.course.CourseImportResDto;
-import com.moham.coursemores.dto.course.CourseInfoResDto;
-import com.moham.coursemores.dto.course.CoursePreviewResDto;
-import com.moham.coursemores.dto.course.CourseUpdateReqDto;
-import com.moham.coursemores.dto.course.HotPreviewResDto;
-import com.moham.coursemores.dto.course.LocationCreateReqDto;
-import com.moham.coursemores.dto.course.LocationUpdateReqDto;
-import com.moham.coursemores.dto.course.MyCourseResDto;
-import com.moham.coursemores.dto.course.NearPreviewResDto;
+import com.moham.coursemores.domain.*;
+import com.moham.coursemores.dto.course.*;
 import com.moham.coursemores.dto.profile.UserSimpleInfoResDto;
-import com.moham.coursemores.repository.CommentRepository;
-import com.moham.coursemores.repository.CourseLikeRepository;
-import com.moham.coursemores.repository.CourseLocationImageRepository;
-import com.moham.coursemores.repository.CourseLocationRepository;
-import com.moham.coursemores.repository.CourseRepository;
-import com.moham.coursemores.repository.HashtagOfCourseRepository;
-import com.moham.coursemores.repository.HashtagRepository;
-import com.moham.coursemores.repository.HotCourseRepository;
-import com.moham.coursemores.repository.InterestRepository;
-import com.moham.coursemores.repository.RegionRepository;
-import com.moham.coursemores.repository.ThemeOfCourseRepository;
-import com.moham.coursemores.repository.ThemeRepository;
-import com.moham.coursemores.repository.UserRepository;
+import com.moham.coursemores.repository.*;
 import com.moham.coursemores.service.CourseService;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -53,6 +13,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -154,6 +121,11 @@ public class CourseServiceImpl implements CourseService {
 
         Page<Course> pageCourse = courseRepository.searchAll(word, regionId, themeIds, isVisited, pageable);
 
+        List<Long> userLikeCourse = user.getCourseLikeList()
+                .stream()
+                .map(like -> like.isFlag() ? like.getCourse().getId() : null)
+                .collect(Collectors.toList());
+
         return pageCourse
                 .map(course -> {
                     boolean isInterest = false;
@@ -177,6 +149,7 @@ public class CourseServiceImpl implements CourseService {
                             .gugun(ALL.equals(course.getGugun()) ? "" : course.getGugun())
                             .locationName(course.getLocationName() + " 외 " + (course.getLocationSize() - 1) + "곳")
                             .isInterest(isInterest)
+                            .isLike(userLikeCourse.contains(course.getId()))
                             .build();
                 });
     }

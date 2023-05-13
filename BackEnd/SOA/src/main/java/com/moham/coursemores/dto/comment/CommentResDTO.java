@@ -1,11 +1,12 @@
 package com.moham.coursemores.dto.comment;
 
 import com.moham.coursemores.dto.profile.UserSimpleInfoResDto;
-import java.time.LocalDateTime;
-import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @ToString
 @Getter
@@ -19,4 +20,5 @@ public class CommentResDTO {
     private LocalDateTime createTime;
     private UserSimpleInfoResDto writeUser;
     private boolean isWrite;
+    private boolean isLike;
 }

@@ -4,20 +4,13 @@ import com.moham.coursemores.domain.Comment;
 import com.moham.coursemores.domain.CommentImage;
 import com.moham.coursemores.domain.Course;
 import com.moham.coursemores.domain.User;
-import com.moham.coursemores.dto.comment.CommentCreateReqDTO;
-import com.moham.coursemores.dto.comment.CommentImageResDTO;
-import com.moham.coursemores.dto.comment.CommentResDTO;
-import com.moham.coursemores.dto.comment.CommentUpdateReqDTO;
-import com.moham.coursemores.dto.comment.MyCommentResDto;
+import com.moham.coursemores.dto.comment.*;
 import com.moham.coursemores.dto.profile.UserSimpleInfoResDto;
 import com.moham.coursemores.repository.CommentImageRepository;
 import com.moham.coursemores.repository.CommentRepository;
 import com.moham.coursemores.repository.CourseRepository;
 import com.moham.coursemores.repository.UserRepository;
 import com.moham.coursemores.service.CommentService;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +18,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -52,6 +49,11 @@ public class CommentServiceImpl implements CommentService {
                 Sort.by("createTime").descending();
         Pageable pageable = PageRequest.of(page, size, sort);
 
+        List<Long> userLikeComment = user.getCommentLikeList()
+                .stream()
+                .map(like -> like.isFlag() ? like.getComment().getId() : null)
+                .collect(Collectors.toList());
+
         return commentRepository.findByCourseIdAndDeleteTimeIsNull(courseId, pageable)
                 .stream()
                 .map(comment -> CommentResDTO.builder()
@@ -65,9 +67,10 @@ public class CommentServiceImpl implements CommentService {
                                         .commentImageId(commentImage.getId())
                                         .image(commentImage.getImage())
                                         .build())
-                                .collect(Collectors.toList()))
+                                        .collect(Collectors.toList()))
                         .createTime(comment.getCreateTime())
                         .isWrite(Objects.equals(comment.getUser().getId(), user.getId()))
+                        .isLike(userLikeComment.contains(comment.getId()))
                         .writeUser(UserSimpleInfoResDto.builder()
                                 .nickname(comment.getUser().getNickname())
                                 .profileImage(comment.getUser().getProfileImage())
