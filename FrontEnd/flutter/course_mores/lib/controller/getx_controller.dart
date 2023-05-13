@@ -255,3 +255,20 @@ class HomeScreenInfo extends GetxController {
     update();
   }
 }
+
+class LocationInfo extends GetxController {
+  double latitude = 0.0;
+  double longitude = 0.0;
+
+  void saveLatitude(newLatitude) {
+    latitude = newLatitude;
+    print('컨트롤러에서 위도 갱신 => $latitude');
+    update();
+  }
+
+  void saveLongitude(newLongitude) {
+    longitude = newLongitude;
+    print('컨트롤러에서 경도 갱신 => $longitude');
+    update();
+  }
+}
