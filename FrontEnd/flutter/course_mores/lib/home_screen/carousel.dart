@@ -381,9 +381,15 @@ class _NearCarouselState extends State<NearCarousel> {
                                                     style: TextStyle(
                                                       color: Colors.white,
                                                       fontSize: 14.0,
-                                                    ))
+                                                    )),
                                               ],
-                                            )
+                                            ),
+                                            Text(
+                                                '내 위치로부터 ${item['distance'].round()}km',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 10.0,
+                                                ))
                                           ],
                                         ),
                                       ),
