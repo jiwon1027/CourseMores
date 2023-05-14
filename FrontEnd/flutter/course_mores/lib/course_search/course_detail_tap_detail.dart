@@ -180,17 +180,11 @@ class ThumbnailImage extends StatelessWidget {
 
 class ImageGridView extends StatelessWidget {
   ImageGridView({Key? key}) : super(key: key);
-  late final List<String> imageList;
+  final List<dynamic> imageList =
+      detailController.nowCourseDetail[detailController.placeIndex.value]['locationImageList'];
 
   @override
   Widget build(BuildContext context) {
-    try {
-      imageList = detailController.nowCourseDetail[detailController.placeIndex.value]['locationImageList'];
-    } catch (e) {
-      imageList = ["", "", "", "", ""];
-      print(e);
-    }
-
     return GridView.builder(
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
       physics: NeverScrollableScrollPhysics(),

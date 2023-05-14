@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
+// ignore: depend_on_referenced_packages
 import 'package:intl/intl.dart';
 import '../course_search/course_detail.dart' as detail;
 import '../course_search/search.dart';
@@ -61,7 +62,7 @@ class DetailTapCourseCommentsListSection extends StatelessWidget {
                                   await searchController.changeNowCourseId(
                                       courseId: courseId);
 
-                                  await detailController.getCourseInfo();
+                                  await detailController.getCourseInfo('코스 소개');
                                   await detailController.getIsLikeCourse();
                                   await detailController.getIsInterestCourse();
                                   await detailController.getCourseDetailList();
