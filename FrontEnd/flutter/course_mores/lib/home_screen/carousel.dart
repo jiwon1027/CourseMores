@@ -2,9 +2,10 @@ import 'package:carousel_slider/carousel_slider.dart';
 import '../controller/getx_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../course_search/course_detail.dart' as detail;
+import '../course_search/search.dart';
 
-// final homeController = Get.put(HomeScreenInfo());
-
+final myPageController = Get.put(MyPageInfo());
 final List<String> imgList = [
   'https://images.unsplash.com/photo-1520342868574-5fa3804e551c?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=6ff92caffcdd63681a35134a6770ed3b&auto=format&fit=crop&w=1951&q=80',
   'https://images.unsplash.com/photo-1522205408450-add114ad53fe?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=368f45b0888aeb0b7b08e3a1084d3ede&auto=format&fit=crop&w=1950&q=80',
@@ -198,69 +199,84 @@ class _CoourseCarouselState extends State<CoourseCarousel> {
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   final List<Widget> imageSliders = snapshot.data!
-                      .map((item) => Container(
-                            margin: const EdgeInsets.all(5.0),
-                            child: ClipRRect(
-                                borderRadius: const BorderRadius.all(
-                                    Radius.circular(5.0)),
-                                child: Stack(
-                                  children: <Widget>[
-                                    Image.network(item['image'].toString(),
-                                        fit: BoxFit.cover, width: 1000.0),
-                                    Positioned(
-                                      bottom: 0.0,
-                                      left: 0.0,
-                                      right: 0.0,
-                                      height: null,
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: Colors.black,
-                                          gradient: LinearGradient(
-                                            colors: const [
-                                              Color.fromARGB(200, 0, 0, 0),
-                                              Color.fromARGB(0, 0, 0, 0)
+                      .map((item) => InkWell(
+                            onTap: () async {
+                              int courseId = (item['courseId'] as int);
+
+                              await searchController.changeNowCourseId(
+                                  courseId: courseId);
+
+                              await detailController.getCourseInfo();
+                              await detailController.getIsLikeCourse();
+                              await detailController.getIsInterestCourse();
+                              await detailController.getCourseDetailList();
+
+                              Get.to(() => detail.Detail());
+                            },
+                            child: Container(
+                              margin: const EdgeInsets.all(5.0),
+                              child: ClipRRect(
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(5.0)),
+                                  child: Stack(
+                                    children: <Widget>[
+                                      Image.network(item['image'].toString(),
+                                          fit: BoxFit.cover, width: 1000.0),
+                                      Positioned(
+                                        bottom: 0.0,
+                                        left: 0.0,
+                                        right: 0.0,
+                                        height: null,
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color: Colors.black,
+                                            gradient: LinearGradient(
+                                              colors: const [
+                                                Color.fromARGB(200, 0, 0, 0),
+                                                Color.fromARGB(0, 0, 0, 0)
+                                              ],
+                                              begin: Alignment.bottomCenter,
+                                              end: Alignment.topCenter,
+                                            ),
+                                          ),
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 10.0, horizontal: 10.0),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                '${item['title']}',
+                                                style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 20.0,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              Text(
+                                                  '${item['sido']} ${item['gugun']}',
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 10.0,
+                                                  )),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                children: [
+                                                  Text('${item['content']}',
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 14.0,
+                                                      ))
+                                                ],
+                                              )
                                             ],
-                                            begin: Alignment.bottomCenter,
-                                            end: Alignment.topCenter,
                                           ),
                                         ),
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 10.0, horizontal: 10.0),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              '${item['title']}',
-                                              style: const TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 20.0,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            Text(
-                                                '${item['sido']} ${item['gugun']}',
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 10.0,
-                                                )),
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              children: [
-                                                Text('${item['content']}',
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 14.0,
-                                                    ))
-                                              ],
-                                            )
-                                          ],
-                                        ),
                                       ),
-                                    ),
-                                  ],
-                                )),
+                                    ],
+                                  )),
+                            ),
                           ))
                       .toList();
 
@@ -327,75 +343,90 @@ class _NearCarouselState extends State<NearCarousel> {
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   final List<Widget> imageSliders = snapshot.data!
-                      .map((item) => Container(
-                            margin: const EdgeInsets.all(5.0),
-                            child: ClipRRect(
-                                borderRadius: const BorderRadius.all(
-                                    Radius.circular(5.0)),
-                                child: Stack(
-                                  children: <Widget>[
-                                    Image.network(item['image'].toString(),
-                                        fit: BoxFit.cover, width: 1000.0),
-                                    Positioned(
-                                      bottom: 0.0,
-                                      left: 0.0,
-                                      right: 0.0,
-                                      height: null,
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: Colors.black,
-                                          gradient: LinearGradient(
-                                            colors: const [
-                                              Color.fromARGB(200, 0, 0, 0),
-                                              Color.fromARGB(0, 0, 0, 0)
+                      .map((item) => InkWell(
+                            onTap: () async {
+                              int courseId = (item['courseId'] as int);
+
+                              await searchController.changeNowCourseId(
+                                  courseId: courseId);
+
+                              await detailController.getCourseInfo();
+                              await detailController.getIsLikeCourse();
+                              await detailController.getIsInterestCourse();
+                              await detailController.getCourseDetailList();
+
+                              Get.to(() => detail.Detail());
+                            },
+                            child: Container(
+                              margin: const EdgeInsets.all(5.0),
+                              child: ClipRRect(
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(5.0)),
+                                  child: Stack(
+                                    children: <Widget>[
+                                      Image.network(item['image'].toString(),
+                                          fit: BoxFit.cover, width: 1000.0),
+                                      Positioned(
+                                        bottom: 0.0,
+                                        left: 0.0,
+                                        right: 0.0,
+                                        height: null,
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color: Colors.black,
+                                            gradient: LinearGradient(
+                                              colors: const [
+                                                Color.fromARGB(200, 0, 0, 0),
+                                                Color.fromARGB(0, 0, 0, 0)
+                                              ],
+                                              begin: Alignment.bottomCenter,
+                                              end: Alignment.topCenter,
+                                            ),
+                                          ),
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 10.0, horizontal: 10.0),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                '${item['title']}',
+                                                style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 20.0,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              Text(
+                                                  '${item['sido']} ${item['gugun']}',
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 10.0,
+                                                  )),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                children: [
+                                                  Text('${item['content']}',
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 14.0,
+                                                      )),
+                                                ],
+                                              ),
+                                              Text(
+                                                  '내 위치로부터 ${item['distance'].round()}km',
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 10.0,
+                                                  ))
                                             ],
-                                            begin: Alignment.bottomCenter,
-                                            end: Alignment.topCenter,
                                           ),
                                         ),
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 10.0, horizontal: 10.0),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              '${item['title']}',
-                                              style: const TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 20.0,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            Text(
-                                                '${item['sido']} ${item['gugun']}',
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 10.0,
-                                                )),
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              children: [
-                                                Text('${item['content']}',
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 14.0,
-                                                    )),
-                                              ],
-                                            ),
-                                            Text(
-                                                '내 위치로부터 ${item['distance'].round()}km',
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 10.0,
-                                                ))
-                                          ],
-                                        ),
                                       ),
-                                    ),
-                                  ],
-                                )),
+                                    ],
+                                  )),
+                            ),
                           ))
                       .toList();
 
