@@ -1,5 +1,6 @@
 // import 'login_page.dart' as login;
 import 'package:coursemores/auth/login_page.dart';
+import 'package:coursemores/course_search/course_list.dart';
 // import 'package:coursemores/home_screen/home_screen.dart';
 import 'package:flutter/material.dart';
 import '../auth/sign_up.dart' as signup;
@@ -240,7 +241,7 @@ class MyCourse extends StatelessWidget {
 
               await searchController.changeNowCourseId(courseId: courseId);
 
-              await detailController.getCourseInfo();
+              await detailController.getCourseInfo('코스 소개');
               await detailController.getIsLikeCourse();
               await detailController.getIsInterestCourse();
               await detailController.getCourseDetailList();

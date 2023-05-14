@@ -3,11 +3,11 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
+import 'course_new_comment.dart';
 
-final TextEditingController textController = TextEditingController();
-
-class NewComment extends StatelessWidget {
-  NewComment({super.key});
+class ChangeComment extends StatelessWidget {
+  ChangeComment(this.index, {super.key});
+  final index;
 
   @override
   Widget build(BuildContext context) {
@@ -47,13 +47,8 @@ class NewComment extends StatelessWidget {
               AddText(),
               SizedBox(height: 10),
               ElevatedButton(
-                onPressed: () {
-                  detailController.addComment();
-                  Fluttertoast.showToast(
-                    msg: "작성 내용 : ${textController.text}",
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.CENTER,
-                  );
+                onPressed: () async {
+                  await detailController.changeComment(index);
                   Get.back();
                 },
                 child: Text("저장하기"),
@@ -88,10 +83,7 @@ class AddText extends StatelessWidget {
           child: TextField(
             controller: textController,
             decoration: InputDecoration(
-              border: InputBorder.none,
-              hintText: '5000자까지 작성할 수 있어요',
-              hintStyle: TextStyle(color: Colors.grey),
-            ),
+                border: InputBorder.none, hintText: '5000자까지 작성할 수 있어요', hintStyle: TextStyle(color: Colors.grey)),
           ),
         ),
       ],

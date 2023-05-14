@@ -206,7 +206,7 @@ class _CoourseCarouselState extends State<CoourseCarousel> {
                               await searchController.changeNowCourseId(
                                   courseId: courseId);
 
-                              await detailController.getCourseInfo();
+                              await detailController.getCourseInfo('코스 소개');
                               await detailController.getIsLikeCourse();
                               await detailController.getIsInterestCourse();
                               await detailController.getCourseDetailList();
@@ -350,7 +350,7 @@ class _NearCarouselState extends State<NearCarousel> {
                               await searchController.changeNowCourseId(
                                   courseId: courseId);
 
-                              await detailController.getCourseInfo();
+                              await detailController.getCourseInfo('코스 소개');
                               await detailController.getIsLikeCourse();
                               await detailController.getIsInterestCourse();
                               await detailController.getCourseDetailList();

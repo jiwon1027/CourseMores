@@ -260,13 +260,12 @@ class DetailLike extends StatelessWidget {
   }
 }
 
-// ignore: must_be_immutable
 class DetailDateViews extends StatelessWidget {
   DetailDateViews({super.key});
   final createTime = detailController.nowCourseInfo['createTime'] ?? "";
-  var year;
-  var month;
-  var date;
+  late final year;
+  late final month;
+  late final date;
 
   @override
   Widget build(BuildContext context) {
