@@ -1,6 +1,6 @@
 // import 'login_page.dart' as login;
 import 'package:coursemores/auth/login_page.dart';
-import 'package:coursemores/home_screen/home_screen.dart';
+// import 'package:coursemores/home_screen/home_screen.dart';
 import 'package:flutter/material.dart';
 import '../auth/sign_up.dart' as signup;
 import 'package:animated_button_bar/animated_button_bar.dart';
@@ -234,8 +234,11 @@ class MyCourse extends StatelessWidget {
         itemBuilder: (BuildContext context, int index) {
           return InkWell(
             onTap: () async {
-              await searchController.changeNowCourseId(
-                  courseId: searchController.courseList[index]['courseId']);
+              print('mypage 코스리스트 == ${myPageController.myCourse}');
+              int courseId =
+                  (myPageController.myCourse[index]['courseId'] as int);
+
+              await searchController.changeNowCourseId(courseId: courseId);
 
               await detailController.getCourseInfo();
               await detailController.getIsLikeCourse();
@@ -438,6 +441,12 @@ class ThumbnailImage extends StatelessWidget {
 final userInfoController = Get.put(UserInfo());
 profileBox() {
   final profileImageUrl;
+  var gender;
+  if (userInfoController.gender.value == 'M') {
+    gender = '남성';
+  } else {
+    gender = '여성';
+  }
   if (userInfoController.imageUrl.value == 'default') {
     profileImageUrl =
         'https://media.istockphoto.com/id/1316947194/vector/messenger-profile-icon-on-white-isolated-background-vector-illustration.jpg?s=612x612&w=0&k=20&c=1iQ926GXQTJkopoZAdYXgU17NCDJIRUzx6bhzgLm9ps=';
@@ -486,14 +495,14 @@ profileBox() {
                 Padding(
                   padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 0),
                   child: Text(
-                    userInfoController.age.value.toString(),
+                    '${userInfoController.age.value.toString()} 대',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                   ),
                 ),
                 Padding(
                   padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
                   child: Text(
-                    userInfoController.gender.value,
+                    gender,
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                   ),
                 )

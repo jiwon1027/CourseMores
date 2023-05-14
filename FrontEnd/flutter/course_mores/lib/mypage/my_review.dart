@@ -4,6 +4,8 @@ import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:intl/intl.dart';
 import '../course_search/course_detail.dart' as detail;
+import '../course_search/search.dart';
+import 'mypage.dart';
 
 class DetailTapCourseCommentsListSection extends StatelessWidget {
   const DetailTapCourseCommentsListSection({
@@ -50,11 +52,23 @@ class DetailTapCourseCommentsListSection extends StatelessWidget {
                               // Icon(Icons.account_circle),
                               SizedBox(width: 5),
                               InkWell(
-                                onTap: () {
-                                  detail.DetailCourseInfo(
-                                      // coursId를 인덱스로 받는게 맞는지?
-                                      // index: commentsList[index]['courseId']
-                                      );
+                                onTap: () async {
+                                  print(
+                                      'mypage 코스리스트 == ${myPageController.myReview}');
+                                  int courseId = (myPageController
+                                      .myReview[index]['courseId'] as int);
+
+                                  await searchController.changeNowCourseId(
+                                      courseId: courseId);
+
+                                  await detailController.getCourseInfo();
+                                  await detailController.getIsLikeCourse();
+                                  await detailController.getIsInterestCourse();
+                                  await detailController.getCourseDetailList();
+
+                                  Get.to(() => detail.Detail());
+
+                                  // Get.to(() => detail.CourseDetail(index: index));
                                 },
                                 child: Text(
                                   commentsList[index]['courseTitle'],
