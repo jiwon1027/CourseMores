@@ -20,49 +20,24 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: 'assets/config/.env');
   KakaoSdk.init(nativeAppKey: '59816c34bd5a0094d4f29bf08b55a34c');
-  runApp(GetMaterialApp(theme: style.theme, home: const MyApp()));
+  runApp(GetMaterialApp(theme: style.theme, home: MyApp()));
 }
 
-class MyApp extends StatefulWidget {
+class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
-
-  @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  // changePageNum(index) {
-
-  //   setState(() {
-  //     pageNum = index;
-  //     pageController.changePageNum(index);
-  //     Fluttertoast.showToast(
-  //       msg: "$pageNum번 탭으로 이동",
-  //       toastLength: Toast.LENGTH_SHORT,
-  //       gravity: ToastGravity.CENTER,
-  //     );
-  //   });
-  // }
-
-  @override
-  void initState() {
-    super.initState();
-    tokenStorage.onInit();
-  }
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
       var pageNum = pageController.pageNum.value;
 
-      // print(pageNum);
       if (loginController.isLoggedIn.value == true) {
         // 백에 accesstoken 재발급받는 api 요청..
         // 컨트롤러에 response 저장
 
         return Scaffold(
-            backgroundColor: const Color.fromARGB(255, 240, 240, 240),
-            appBar: const CustomAppBar(),
+            backgroundColor: Color.fromARGB(255, 240, 240, 240),
+            appBar: CustomAppBar(),
             body: [
               home.HomeScreen(),
               make.MakeStart(),
@@ -75,31 +50,28 @@ class _MyAppState extends State<MyApp> {
                 : FlashyTabBar(
                     selectedIndex: pageNum,
                     showElevation: true,
-                    // onItemSelected: (index) => setState(() {
-                    //   changePageNum(index);
-                    // }),
                     onItemSelected: (index) =>
                         pageController.changePageNum(index),
                     items: [
                       FlashyTabBarItem(
-                        icon: const Icon(Icons.home),
-                        title: const Text('홈'),
+                        icon: Icon(Icons.home),
+                        title: Text('홈'),
                       ),
                       FlashyTabBarItem(
-                        icon: const Icon(Icons.route),
-                        title: const Text('코스'),
+                        icon: Icon(Icons.route),
+                        title: Text('코스'),
                       ),
                       FlashyTabBarItem(
-                        icon: const Icon(Icons.search),
-                        title: const Text('검색'),
+                        icon: Icon(Icons.search),
+                        title: Text('검색'),
                       ),
                       FlashyTabBarItem(
-                        icon: const Icon(Icons.bookmark),
-                        title: const Text('관심'),
+                        icon: Icon(Icons.bookmark),
+                        title: Text('관심'),
                       ),
                       FlashyTabBarItem(
-                        icon: const Icon(Icons.person),
-                        title: const Text('마이페이지'),
+                        icon: Icon(Icons.person),
+                        title: Text('마이페이지'),
                       ),
                     ],
                   ));
@@ -111,21 +83,16 @@ class _MyAppState extends State<MyApp> {
 }
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const CustomAppBar({
-    super.key,
-  });
+  const CustomAppBar({super.key});
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: const Text('CourseMores', style: TextStyle(color: Colors.black)),
+      title: Text('CourseMores', style: TextStyle(color: Colors.black)),
       centerTitle: true,
       actions: [
         IconButton(
-          icon: const Icon(
-            Icons.notifications,
-            color: Colors.black,
-          ),
+          icon: Icon(Icons.notifications, color: Colors.black),
           onPressed: () {
             Get.to(noti.Notification());
           },
@@ -135,5 +102,5 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+  Size get preferredSize => Size.fromHeight(kToolbarHeight);
 }

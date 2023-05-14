@@ -182,10 +182,7 @@ class SearchResult extends StatelessWidget {
                 onTap: () async {
                   await searchController.changeNowCourseId(courseId: searchController.courseList[index]['courseId']);
 
-                  await detailController.getCourseInfo();
-                  await detailController.getIsLikeCourse();
-                  await detailController.getIsInterestCourse();
-                  await detailController.getCourseDetailList();
+                  await detailController.getCourseInfo('코스 소개');
 
                   Get.to(() => detail.Detail());
                 },
@@ -355,7 +352,8 @@ class CourseSearchList extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.favorite, size: 14),
+                    if (searchController.courseList[index]["like"]) Icon(Icons.favorite, size: 14),
+                    if (!searchController.courseList[index]["like"]) Icon(Icons.favorite_border_outlined, size: 14),
                     SizedBox(width: 3),
                     Text(searchController.courseList[index]["likeCount"].toString()),
                   ],
