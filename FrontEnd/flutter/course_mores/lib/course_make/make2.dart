@@ -32,6 +32,8 @@ class _CourseMakeState extends State<CourseMake> {
   final courseController = Get.put(CourseController());
   final LocationController locationController = Get.put(LocationController());
 
+  bool isRefreshing = false;
+
   // list of tiles
   late List<LocationData> _items;
 
@@ -52,6 +54,35 @@ class _CourseMakeState extends State<CourseMake> {
     if (widget.courseId != null) {
       // Fetch the course information using the courseId
       fetchCourse(widget.courseId!);
+    }
+  }
+
+  Future<void> refreshImages() async {
+    setState(() {
+      isRefreshing = true;
+    });
+
+    // 이미지 다시 로드
+    for (var locationData in courseController.locationList) {
+      await loadImages(locationData);
+    }
+
+    setState(() {
+      isRefreshing = false;
+    });
+  }
+
+  Future<void> loadImages(LocationData locationData) async {
+    try {
+      final String apiKey = dotenv.get('GOOGLE_MAP_API_KEY');
+      final String imgUrl =
+          "https://maps.googleapis.com/maps/api/streetview?size=400x400&location=${locationData.latitude},${locationData.longitude}&fov=90&heading=235&pitch=10&key=$apiKey";
+
+      final imageProvider = NetworkImage(imgUrl);
+      await precacheImage(imageProvider, context);
+    } catch (error) {
+      // 이미지 로딩 중 에러 발생
+      print(error);
     }
   }
 
@@ -79,7 +110,7 @@ class _CourseMakeState extends State<CourseMake> {
     }
   }
 
-  void importCourse(List<dynamic> courseImportList) {
+  void importCourse(List<dynamic> courseImportList) async {
     for (dynamic course in courseImportList) {
       if (course is Map<String, dynamic>) {
         print('very good!!!');
@@ -89,26 +120,26 @@ class _CourseMakeState extends State<CourseMake> {
           course["longitude"],
           course["sido"],
           course["gugun"],
+          shouldLoadImage: true, // 이미지 로드 여부를 지정
           UniqueKey(), // Create a unique key for each course item
         );
       }
     }
   }
 
-  // @override
-  // void initState() {
-  //   final courseController = Get.put(CourseController());
-  //   final locationController = Get.put(LocationController());
-  //   super.initState();
-  // }
-
   _CourseMakeState() {
     _items = <LocationData>[];
   }
 
   void _addItem(
-      String name, double latitude, double longitude, String sido, String gugun,
-      [Key? key]) {
+    String name,
+    double latitude,
+    double longitude,
+    String sido,
+    String gugun,
+    Key? key, {
+    bool shouldLoadImage = false,
+  }) {
     if (_items.length >= 5) {
       showDialog(
         context: context,
@@ -148,6 +179,11 @@ class _CourseMakeState extends State<CourseMake> {
     _items.add(locationData);
     // CourseController에서 locationList에 locationData를 추가
     courseController.locationList.add(locationData);
+
+    // 이미지 로드를 수행할 때만 loadImages 함수 호출
+    if (shouldLoadImage) {
+      loadImages(locationData);
+    }
   }
 
   // 시도, 구군 정보 따로 저장하는 과정
@@ -301,15 +337,24 @@ class _CourseMakeState extends State<CourseMake> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedBox(
-                height: 20,
+                height: 10,
               ),
-              const Text(
-                '장소는 최대 5개까지 추가할 수 있어요',
-                style: TextStyle(
-                    color: Color.fromARGB(255, 92, 67, 67), fontSize: 18),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    '장소는 최대 5개까지 추가할 수 있어요',
+                    style: TextStyle(
+                        color: Color.fromARGB(255, 92, 67, 67), fontSize: 18),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.refresh),
+                    onPressed: isRefreshing ? null : refreshImages,
+                  ),
+                ],
               ),
               SizedBox(
-                height: 10,
+                height: 5,
               ),
               SizedBox(
                 width: 380,
@@ -402,6 +447,7 @@ class _CourseMakeState extends State<CourseMake> {
                               sido,
                               gugun,
                               UniqueKey(),
+                              shouldLoadImage: true,
                             );
                           }
                         });
@@ -446,6 +492,7 @@ class _CourseMakeState extends State<CourseMake> {
                               data['sido'],
                               data['gugun'],
                               UniqueKey(),
+                              shouldLoadImage: true,
                             );
                           }
                         });
@@ -539,13 +586,11 @@ class _CourseMakeState extends State<CourseMake> {
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
-                            title: const Text('정말로 작성이 완료 되었나요?'),
+                            title: const Text('작성한 내용을 저장하겠습니까?'),
                             content: Column(
                               mainAxisSize: MainAxisSize.min,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text('작성하신 내용을 저장하시겠습니까?'),
-                                const SizedBox(height: 8),
                                 Text('작성한 장소 ${_items.length}곳:',
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
