@@ -8,7 +8,6 @@ import com.moham.coursemores.domain.User;
 import com.moham.coursemores.dto.profile.UserInfoCreateReqDto;
 import com.moham.coursemores.dto.profile.UserInfoResDto;
 import com.moham.coursemores.dto.token.TokenReissueReqDto;
-import com.moham.coursemores.dto.token.TokenResDto;
 import com.moham.coursemores.repository.UserRepository;
 import com.moham.coursemores.service.UserService;
 import lombok.RequiredArgsConstructor;

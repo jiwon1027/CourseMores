@@ -43,7 +43,7 @@ public class CourseServiceImpl implements CourseService {
     private final CourseLikeRepository courseLikeRepository;
     private final CommentRepository commentRepository;
 
-    private final String ALL = "전체";
+    private static final String ALL = "전체";
 
     @Override
     public List<HotPreviewResDto> getHotCourseList() {

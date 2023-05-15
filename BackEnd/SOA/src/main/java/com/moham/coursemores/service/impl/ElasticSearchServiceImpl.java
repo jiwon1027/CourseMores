@@ -37,7 +37,7 @@ public class ElasticSearchServiceImpl implements ElasticSearchService {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
     private final RestHighLevelClient client;
-    private final String VALUE = "value";
+    private static final String VALUE = "value";
 
     public Boolean index(CourseDocument courseDocument) {
         try {

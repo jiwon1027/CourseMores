@@ -37,7 +37,7 @@ public class CourseController {
 
     private final CourseService courseService;
     private final ElasticSearchService elasticSearchService;
-    private final String COURSE_LIST = "courseList";
+    private static final String COURSE_LIST = "courseList";
 
     @GetMapping("hot")
     public ResponseEntity<Map<String, Object>> getHotCourse() {

@@ -25,6 +25,7 @@ import org.springframework.stereotype.Repository;
 public class CourseCustomRepositoryImpl implements CourseCustomRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
+    private static final String ALL = "전체";
 
     @Override
     public Page<Course> searchAll(String word, Long regionId, List<Long> themeIds, int isVisited, Pageable pageable) {
@@ -83,7 +84,6 @@ public class CourseCustomRepositoryImpl implements CourseCustomRepository {
                 .where(region.id.eq(regionId))
                 .fetchOne();
 
-        String ALL = "전체";
         if (temp == null || ALL.equals(temp.getSido())) {
             return null;
         } else if (ALL.equals(temp.getGugun())) {

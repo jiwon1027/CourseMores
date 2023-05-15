@@ -29,9 +29,9 @@ public class ElasticSearchController {
     private static final Logger logger = LoggerFactory.getLogger(ElasticSearchController.class);
 
     private final ElasticSearchService courseSearchService;
-    private final String VALUE = "value";
-    private final String INDEX = "index";
-    private final String ID = "id";
+    private static final String VALUE = "value";
+    private static final String INDEX = "index";
+    private static final String ID = "id";
 
     @PostMapping("search")
     public ResponseEntity<Map<String, List<Integer>>> search(

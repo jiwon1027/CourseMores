@@ -26,7 +26,7 @@ public class AuthController {
     private final OAuthLoginService oAuthLoginService;
     private final UserService userService;
 
-    private final String ACCESS_TOKEN = "accessToken";
+    private static final String ACCESS_TOKEN = "accessToken";
 
     @PostMapping("kakao/login")
     public ResponseEntity<Map<String, Object>> kakaoLogin(

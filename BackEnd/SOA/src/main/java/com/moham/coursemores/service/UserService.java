@@ -4,7 +4,6 @@ import com.moham.coursemores.common.util.OAuthProvider;
 import com.moham.coursemores.dto.profile.UserInfoCreateReqDto;
 import com.moham.coursemores.dto.profile.UserInfoResDto;
 import com.moham.coursemores.dto.token.TokenReissueReqDto;
-import com.moham.coursemores.dto.token.TokenResDto;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
