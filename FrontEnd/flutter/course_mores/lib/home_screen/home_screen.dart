@@ -4,7 +4,6 @@ import '../course_search/elastic_search.dart';
 import '../course_search/search.dart' as search;
 import '../course_search/search.dart';
 import './carousel.dart' as carousel;
-import '../course_search/course_list.dart' as course;
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart' as geocoding;
 import 'package:flutter_dotenv/flutter_dotenv.dart';

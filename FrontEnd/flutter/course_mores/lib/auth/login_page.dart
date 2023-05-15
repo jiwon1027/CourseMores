@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'sign_up.dart' as signup;
 // import '../home_screen/home_screen.dart' as home;
-import '../main.dart' as main;
+// import '../main.dart' as main;
 // import 'package:dio/dio.dart';
 // import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -59,8 +59,7 @@ void postLogin(accessToken) async {
         userInfoController.saveNickname(response.data['userInfo']['nickname']);
         userInfoController.saveAge(response.data['userInfo']['age']);
         userInfoController.saveGender(response.data['userInfo']['gender']);
-        userInfoController
-            .saveImageUrl(response.data['userInfo']['profileImage']);
+        userInfoController.saveImageUrl(response.data['userInfo']['profileImage']);
         firstLoginController.changeFirstLogin(false);
         // Get.replace(main.MyApp());
         print(loginController.isLoggedIn);
@@ -114,9 +113,7 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-          image: DecorationImage(
-              image: AssetImage('assets/background.gif'), fit: BoxFit.cover)),
+      decoration: BoxDecoration(image: DecorationImage(image: AssetImage('assets/background.gif'), fit: BoxFit.cover)),
       child: Scaffold(
           backgroundColor: Colors.transparent,
           body: Center(
@@ -149,25 +146,21 @@ class LoginPage extends StatelessWidget {
                       children: [
                         InkWell(
                           onTap: () async {
-                            bool isKakaoInstalled =
-                                await isKakaoTalkInstalled();
+                            bool isKakaoInstalled = await isKakaoTalkInstalled();
                             OAuthToken? token;
                             // UserService userService = UserService();
 
                             if (isKakaoInstalled) {
                               try {
-                                token =
-                                    await UserApi.instance.loginWithKakaoTalk();
+                                token = await UserApi.instance.loginWithKakaoTalk();
                                 debugPrint('카카오톡으로 로그인 성공');
                               } catch (error) {
                                 debugPrint('카톡로그인 실패 $error');
-                                if (error is PlatformException &&
-                                    error.code == 'CANCELED') {
+                                if (error is PlatformException && error.code == 'CANCELED') {
                                   return;
                                 }
                                 try {
-                                  token = await UserApi.instance
-                                      .loginWithKakaoAccount();
+                                  token = await UserApi.instance.loginWithKakaoAccount();
                                   debugPrint('카카오계정로그인 성공');
                                 } catch (error) {
                                   debugPrint('카카오계정로그인 실패 $error');
@@ -175,8 +168,7 @@ class LoginPage extends StatelessWidget {
                               }
                             } else {
                               try {
-                                token = await UserApi.instance
-                                    .loginWithKakaoAccount();
+                                token = await UserApi.instance.loginWithKakaoAccount();
                                 debugPrint('카카오계정 로그인 성공');
                               } catch (error) {
                                 debugPrint('카카오계정 로그인 실패 $error');
