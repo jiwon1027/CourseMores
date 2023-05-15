@@ -2,6 +2,7 @@
 // import 'package:coursemores/mypage/mypage.dart';
 import '../controller/getx_controller.dart';
 import 'package:flutter/material.dart';
+import '../course_search/elastic_search.dart';
 import '../course_search/search.dart' as search;
 import '../course_search/search.dart';
 import './carousel.dart' as carousel;
@@ -307,7 +308,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
 buttonBar1() {
   return Padding(
-    padding: const EdgeInsets.fromLTRB(0, 15.0, 0, 15.0),
+    padding: const EdgeInsets.fromLTRB(5, 15.0, 5, 15.0),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -315,13 +316,15 @@ buttonBar1() {
           width: 50.0,
           decoration: boxDeco(),
           child: IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.tune),
+            onPressed: () {
+              Get.to(() => SearchFilter());
+            },
+            icon: Icon(Icons.tune),
           ),
         ),
         Container(
           decoration: boxDeco(),
-          width: 300.0,
+          width: 320.0,
           child: searchButtonBar(),
         )
       ],
@@ -512,8 +515,7 @@ themeList() {
                               color: Colors.grey.withOpacity(0.5),
                               spreadRadius: 2,
                               blurRadius: 3,
-                              offset: const Offset(
-                                  0, 2), // changes position of shadow
+                              offset: Offset(0, 2),
                             ),
                           ],
                         ),
@@ -540,7 +542,7 @@ themeList() {
 //   );
 // }
 
-TextEditingController searchTextEditingController = TextEditingController();
+// TextEditingController searchTextEditingController = TextEditingController();
 
 emptyTheTextFormField() {
   searchTextEditingController.clear();
@@ -551,9 +553,10 @@ controlSearching(str) {}
 searchButtonBar() {
   return TextFormField(
     controller: searchTextEditingController,
+    onTap: () => Get.to(SearchScreen()),
     decoration: InputDecoration(
       hintText: "원하는 코스를 검색해보세요",
-      hintStyle: const TextStyle(color: Colors.grey),
+      hintStyle: TextStyle(color: Colors.grey),
       enabledBorder: UnderlineInputBorder(
         borderSide: BorderSide(color: Colors.transparent),
       ),
@@ -561,20 +564,42 @@ searchButtonBar() {
       //   borderSide: BorderSide(color: Colors.white),
       // ),
       filled: true,
-      suffixIcon: IconButton(
-        icon: const Icon(Icons.search),
-        color: Colors.grey,
-        iconSize: 30,
-        onPressed: () {
-          // print("${searchTextEditingController.text} 검색하기");
-          pageController.changePageNum(2);
-        },
+      suffixIcon: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IconButton(
+            icon: Icon(Icons.clear),
+            color: Colors.grey,
+            onPressed: () {
+              searchTextEditingController.clear();
+              searchController.changeWord(word: '');
+              searchController.getElasticList();
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.search),
+            color: Colors.grey,
+            iconSize: 25,
+            onPressed: () {
+              Get.back();
+              pageController.changePageNum(2);
+              searchController.isSearchResults.value = true;
+              searchController.searchCourse();
+            },
+          ),
+        ],
       ),
+      // IconButton(
+      //   icon: Icon(Icons.search),
+      //   color: Colors.grey,
+      //   iconSize: 30,
+      //   onPressed: () {
+      //     // print("${searchTextEditingController.text} 검색하기");
+      //     pageController.changePageNum(2);
+      //   },
+      // ),
     ),
-    style: const TextStyle(
-      fontSize: 18,
-      color: Colors.black,
-    ),
+    style: TextStyle(fontSize: 18, color: Colors.black),
     onFieldSubmitted: controlSearching,
   );
 }

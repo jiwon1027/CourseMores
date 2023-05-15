@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:coursemores/auth/auth_dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_multi_select_items/flutter_multi_select_items.dart';
@@ -14,6 +16,9 @@ class SearchController extends GetxController {
   final RxList<Map<String, dynamic>> gugunList = <Map<String, dynamic>>[
     {"regionId": 0, "gugun": "전체"}
   ].obs;
+
+// elasticMap : 자동완성 api 값을 담을 맵
+  RxMap elasticMap = {}.obs;
 
   // selectedThemeList : 바뀌고 있는 테마 임시 리스트 (저장 안 됨)
   // savedSelectedThemeList : 저장버튼을 누를 때만 바뀌는 테마 저장 리스트
@@ -306,6 +311,35 @@ class SearchController extends GetxController {
           ),
         );
         cards.add(card);
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  // getElasticList : 자동완성할 때마다 불러옴
+  Future getElasticList() async {
+    try {
+      if (searchTextEditingController.text != "") {
+        dynamic bodyData = json.encode({'value': searchTextEditingController.text});
+
+        print(searchTextEditingController.text);
+
+        final dio = await authDio();
+        final response = await dio.post("elasticsearch/search", data: bodyData);
+
+        // 응답 처리
+        if (response.statusCode == 200) {
+          // 요청이 성공한 경우
+          dynamic data = response.data;
+
+          // 데이터 처리
+          elasticMap.clear();
+          elasticMap = RxMap.from(data);
+        }
+      } else {
+        elasticMap.clear();
+        print(elasticMap);
       }
     } catch (e) {
       print(e);

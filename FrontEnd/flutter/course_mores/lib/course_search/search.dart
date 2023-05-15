@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import '../controller/detail_controller.dart';
 import '../controller/search_controller.dart';
+import '../main.dart';
 import 'course_detail.dart' as detail;
 import 'package:flutter_multi_select_items/flutter_multi_select_items.dart';
 import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+
+import 'elastic_search.dart';
 
 SearchController searchController = SearchController();
 DetailController detailController = DetailController();
@@ -39,6 +42,7 @@ searchPageHeader() {
             child: TextFormField(
               textAlignVertical: TextAlignVertical.center,
               controller: searchTextEditingController,
+              onTap: () => Get.to(SearchScreen()),
               onChanged: (value) {
                 searchController.changeWord(word: searchTextEditingController.text);
               },
@@ -50,14 +54,30 @@ searchPageHeader() {
                 filled: true,
                 // prefixIcon: FilterButton(context: context),
                 prefixIcon: filterButton(),
-                suffixIcon: IconButton(
-                  icon: Icon(Icons.search),
-                  color: Colors.grey,
-                  iconSize: 25,
-                  onPressed: () {
-                    searchController.isSearchResults.value = true;
-                    searchController.searchCourse();
-                  },
+                suffixIcon: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.clear),
+                      color: Colors.grey,
+                      onPressed: () {
+                        searchTextEditingController.clear();
+                        searchController.changeWord(word: '');
+                        searchController.getElasticList();
+                      },
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.search),
+                      color: Colors.grey,
+                      iconSize: 25,
+                      onPressed: () {
+                        Get.back();
+                        pageController.changePageNum(2);
+                        searchController.isSearchResults.value = true;
+                        searchController.searchCourse();
+                      },
+                    ),
+                  ],
                 ),
               ),
               style: TextStyle(fontSize: 18, color: Colors.black),
@@ -382,6 +402,9 @@ class SearchFilter extends StatelessWidget {
   Widget build(BuildContext context) {
     // searchController.settingCard();
 
+    searchController.getThemeList();
+    searchController.getSidoList();
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -454,6 +477,7 @@ class SearchFilterButtons extends StatelessWidget {
           ),
           onPressed: () {
             searchController.saveFilter();
+            Get.back();
           },
           child: Text("저장", style: TextStyle(color: Colors.black)),
         ),
