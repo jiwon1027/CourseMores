@@ -32,9 +32,9 @@ public class TokenProvider {
 
     private final Key key;
     @Value("${token.authorities.key}")
-    private static String AUTHORITIES_KEY;
+    private String AUTHORITIES_KEY;
     @Value("${token.access.expire}")
-    private static long ACCESS_TOKEN_EXPIRE_TIME;
+    private long ACCESS_TOKEN_EXPIRE_TIME;
 
     public TokenProvider(@Value("${jwt.secret}") String secretKey) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
