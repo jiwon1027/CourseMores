@@ -71,9 +71,8 @@ class _HomeScreenState extends State<HomeScreen> {
     print('여기서의 토큰 = ${tokenStorage.accessToken}');
     final dio = await authDio();
 
-    final response = await dio.get('course/hot',
-        options: Options(
-            headers: {'Authorization': 'Bearer ${tokenStorage.accessToken}'}));
+    final response =
+        await dio.get('course/hot', options: Options(headers: {'Authorization': 'Bearer ${tokenStorage.accessToken}'}));
 
     List<dynamic> data = response.data['courseList'];
     hotCourse = data.map((item) => Map<String, Object>.from(item)).toList();
@@ -90,8 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
     //     _currentPosition?.longitude != null) {
     final response = await dio.get(
         'course/around?latitude=${locationController.latitude}&longitude=${locationController.longitude}',
-        options: Options(
-            headers: {'Authorization': 'Bearer ${tokenStorage.accessToken}'}));
+        options: Options(headers: {'Authorization': 'Bearer ${tokenStorage.accessToken}'}));
 
     List<dynamic> data = response.data['courseList'];
     nearCourse = data.map((item) => Map<String, Object>.from(item)).toList();
@@ -139,12 +137,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<String> _getAddress(double lat, double lon) async {
-    final List<geocoding.Placemark> placemarks = await geocoding
-        .placemarkFromCoordinates(lat, lon, localeIdentifier: 'ko');
+    final List<geocoding.Placemark> placemarks =
+        await geocoding.placemarkFromCoordinates(lat, lon, localeIdentifier: 'ko');
     if (placemarks.isNotEmpty) {
       final placemark = placemarks.first;
-      final String address =
-          '${placemark.subLocality} ${placemark.thoroughfare} ';
+      final String address = '${placemark.subLocality} ${placemark.thoroughfare} ';
       return address;
     }
     return '';
@@ -194,11 +191,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
                               final weatherData = snapshot.data!;
-                              final temp =
-                                  weatherData['main']['temp'].toString();
-                              final weather = weatherData['weather'][0]
-                                      ['description']
-                                  .toString();
+                              final temp = weatherData['main']['temp'].toString();
+                              final weather = weatherData['weather'][0]['description'].toString();
                               return Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -217,12 +211,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                     style: TextStyle(fontSize: 24),
                                   ),
                                   FutureBuilder<String>(
-                                    future: _getAddress(
-                                        _currentPosition?.latitude ?? 0,
-                                        _currentPosition?.longitude ?? 0),
+                                    future:
+                                        _getAddress(_currentPosition?.latitude ?? 0, _currentPosition?.longitude ?? 0),
                                     builder: (context, snapshot) {
-                                      if (snapshot.connectionState ==
-                                          ConnectionState.waiting) {
+                                      if (snapshot.connectionState == ConnectionState.waiting) {
                                         return Text('검색중...');
                                       } else if (snapshot.hasData) {
                                         final address = snapshot.data!;
@@ -378,9 +370,7 @@ class _ButtonBar2State extends State<ButtonBar2> {
 }
 
 iconBoxDeco() {
-  return BoxDecoration(
-      border: Border.all(color: Colors.black),
-      borderRadius: BorderRadius.circular(10));
+  return BoxDecoration(border: Border.all(color: Colors.black), borderRadius: BorderRadius.circular(10));
 }
 
 boxDeco() {
@@ -451,15 +441,20 @@ themeList() {
                 padding: const EdgeInsets.only(top: 15.0, bottom: 15.0),
                 child: Text(
                   '이런 테마는 어때요? 😊',
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.bold),
+                  style: TextStyle(color: Colors.black, fontSize: 20.0, fontWeight: FontWeight.bold),
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.only(bottom: 8.0),
                 child: Wrap(
+                  spacing: 8.0,
+                  runSpacing: 8.0,
+                  alignment: WrapAlignment.start,
+                  crossAxisAlignment: WrapCrossAlignment.start,
+                  textDirection: TextDirection.ltr,
+                  runAlignment: WrapAlignment.start,
+                  verticalDirection: VerticalDirection.down,
+                  clipBehavior: Clip.none,
                   children: themes.map((theme) {
                     return Container(
                       margin: EdgeInsets.all(2.0),
@@ -476,8 +471,7 @@ themeList() {
                         ],
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12.0, vertical: 8.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
                         child: Text(
                           theme,
                           style: TextStyle(
@@ -488,14 +482,6 @@ themeList() {
                       ),
                     );
                   }).toList(),
-                  spacing: 8.0,
-                  runSpacing: 8.0,
-                  alignment: WrapAlignment.start,
-                  crossAxisAlignment: WrapCrossAlignment.start,
-                  textDirection: TextDirection.ltr,
-                  runAlignment: WrapAlignment.start,
-                  verticalDirection: VerticalDirection.down,
-                  clipBehavior: Clip.none,
                 ),
               )
               // SearchFilterTheme(),
@@ -584,6 +570,7 @@ searchButtonBar() {
             onPressed: () {
               Get.back();
               pageController.changePageNum(2);
+              searchController.changePage(page: 0);
               searchController.isSearchResults.value = true;
               searchController.searchCourse();
             },

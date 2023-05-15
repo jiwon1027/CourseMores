@@ -80,10 +80,7 @@ class DetailTaps extends StatelessWidget {
       decoration: BoxDecoration(
         boxShadow: const [
           BoxShadow(
-              color: Color.fromARGB(255, 211, 211, 211),
-              blurRadius: 10.0,
-              spreadRadius: 1.0,
-              offset: Offset(3, 3))
+              color: Color.fromARGB(255, 211, 211, 211), blurRadius: 10.0, spreadRadius: 1.0, offset: Offset(3, 3))
         ],
         color: Color.fromARGB(255, 255, 255, 255),
         borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -102,14 +99,11 @@ class DetailTaps extends StatelessWidget {
                     segments: detailController.segments,
                     backgroundColor: Color.fromARGB(255, 228, 220, 255),
                     activeStyle: TextStyle(
-                        color: Color.fromARGB(255, 93, 0, 255),
-                        fontWeight: FontWeight.w700,
-                        fontFamily: 'SCDream5'),
+                        color: Color.fromARGB(255, 93, 0, 255), fontWeight: FontWeight.w700, fontFamily: 'SCDream5'),
                   ),
                   ValueListenableBuilder(
                     valueListenable: detailController.selectedSegment,
-                    builder:
-                        (BuildContext context, dynamic value, Widget? child) {
+                    builder: (BuildContext context, dynamic value, Widget? child) {
                       switch (value) {
                         case '코스 소개':
                           return CourseIntroduction();
@@ -141,16 +135,10 @@ class DetailCourseInfo extends StatelessWidget {
     return Obx(() => Container(
           margin: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 10),
           padding: EdgeInsets.all(20),
-          decoration: BoxDecoration(
-              boxShadow: const [
-                BoxShadow(
-                    color: Color.fromARGB(255, 211, 211, 211),
-                    blurRadius: 10.0,
-                    spreadRadius: 1.0,
-                    offset: Offset(3, 3)),
-              ],
-              color: Colors.white,
-              borderRadius: BorderRadius.all(Radius.circular(10))),
+          decoration: BoxDecoration(boxShadow: const [
+            BoxShadow(
+                color: Color.fromARGB(255, 211, 211, 211), blurRadius: 10.0, spreadRadius: 1.0, offset: Offset(3, 3)),
+          ], color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(10))),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
@@ -165,10 +153,7 @@ class DetailCourseInfo extends StatelessWidget {
                           // 제목 라인
                           Text(
                             "${detailController.nowCourseInfo['title']}",
-                            style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                height: 1.3),
+                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, height: 1.3),
                             softWrap: true,
                           ),
                           SizedBox(height: 10),
@@ -176,8 +161,7 @@ class DetailCourseInfo extends StatelessWidget {
                           DetailAddressPeopleTime(),
                           SizedBox(height: 10),
                           // 본문 텍스트 라인
-                          Text("${detailController.nowCourseInfo['content']}",
-                              style: TextStyle(height: 1.7)),
+                          Text("${detailController.nowCourseInfo['content']}", style: TextStyle(height: 1.7)),
                           SizedBox(height: 10),
                           // 테마 라인
                           DetailTheme(),
@@ -224,11 +208,7 @@ class DetailLikeBookmarkShareScrap extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20.0),
         boxShadow: [
-          BoxShadow(
-              color: Colors.grey.withOpacity(0.5),
-              spreadRadius: 1,
-              blurRadius: 7,
-              offset: Offset(0, 3)),
+          BoxShadow(color: Colors.grey.withOpacity(0.5), spreadRadius: 1, blurRadius: 7, offset: Offset(0, 3)),
         ],
         color: Colors.white,
       ),
@@ -262,13 +242,10 @@ class DetailInterest extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                if (detailController.isInterestCourse.value)
-                  Icon(Icons.bookmark),
-                if (!detailController.isInterestCourse.value)
-                  Icon(Icons.bookmark_outline),
+                if (detailController.isInterestCourse.value) Icon(Icons.bookmark),
+                if (!detailController.isInterestCourse.value) Icon(Icons.bookmark_outline),
                 SizedBox(height: 5),
-                Text(detailController.nowCourseInfo['interestCount'].toString(),
-                    style: TextStyle(fontSize: 16)),
+                Text(detailController.nowCourseInfo['interestCount'].toString(), style: TextStyle(fontSize: 16)),
               ],
             ),
           ),
@@ -294,11 +271,9 @@ class DetailLike extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               if (detailController.isLikeCourse.value) Icon(Icons.favorite),
-              if (!detailController.isLikeCourse.value)
-                Icon(Icons.favorite_outline),
+              if (!detailController.isLikeCourse.value) Icon(Icons.favorite_outline),
               SizedBox(height: 5),
-              Text(detailController.nowCourseInfo['likeCount'].toString(),
-                  style: TextStyle(fontSize: 16)),
+              Text(detailController.nowCourseInfo['likeCount'].toString(), style: TextStyle(fontSize: 16)),
             ],
           ))),
     );
@@ -345,8 +320,7 @@ class DetailDateViews extends StatelessWidget {
           children: [
             Icon(Icons.remove_red_eye, size: 16),
             SizedBox(width: 3),
-            Text(detailController.nowCourseInfo['viewCount'].toString(),
-                style: TextStyle(fontSize: 14)),
+            Text(detailController.nowCourseInfo['viewCount'].toString(), style: TextStyle(fontSize: 14)),
           ],
         ),
       ],
@@ -383,15 +357,12 @@ class DetailTag extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Iterable<dynamic> hashtagList =
-        detailController.nowCourseInfo['hashtagList'] as Iterable<dynamic>;
+    Iterable<dynamic> hashtagList = detailController.nowCourseInfo['hashtagList'] as Iterable<dynamic>;
 
     return Wrap(
       spacing: 6,
       children: hashtagList.map((hashtag) {
-        return Text("#$hashtag",
-            style: TextStyle(fontSize: 12, color: Colors.blue[600]),
-            softWrap: true);
+        return Text("#$hashtag", style: TextStyle(fontSize: 12, color: Colors.blue[600]), softWrap: true);
       }).toList(),
     );
   }
@@ -466,18 +437,13 @@ class DetailScrap extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) =>
-                  CourseMake(courseId: detailController.nowIndex.toString()),
+              builder: (context) => CourseMake(courseId: detailController.nowIndex.toString()),
             ),
           );
         },
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            Icon(Icons.ios_share),
-            SizedBox(height: 8),
-            Text("코스 가져오기")
-          ],
+          children: const [Icon(Icons.ios_share), SizedBox(height: 8), Text("코스 가져오기")],
         ),
       ),
     );
@@ -500,11 +466,7 @@ class DetailShare extends StatelessWidget {
         },
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            Icon(Icons.share),
-            SizedBox(height: 8),
-            Text("공유하기")
-          ],
+          children: const [Icon(Icons.share), SizedBox(height: 8), Text("공유하기")],
         ),
       ),
     );
@@ -518,8 +480,7 @@ class DetailTheme extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     try {
-      themeList =
-          detailController.nowCourseInfo['themeList'] as Iterable<dynamic>;
+      themeList = detailController.nowCourseInfo['themeList'] as Iterable<dynamic>;
     } catch (e) {
       themeList = [];
       print(e);
@@ -529,7 +490,7 @@ class DetailTheme extends StatelessWidget {
       spacing: 6,
       children: themeList.map((theme) {
         return Chip(
-          label: Text(theme.toString()),
+          label: Text(theme['name'].toString()),
           backgroundColor: Color.fromARGB(255, 115, 81, 255),
           labelStyle: TextStyle(color: Colors.white, fontSize: 12),
         );
@@ -546,8 +507,7 @@ class DetailUserVisited extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     try {
-      nickname =
-          detailController.nowCourseInfo['simpleInfoOfWriter']['nickname'];
+      nickname = detailController.nowCourseInfo['simpleInfoOfWriter']['nickname'];
     } catch (e) {
       nickname = "";
       print(e);
@@ -584,8 +544,7 @@ class DetailUserVisited extends StatelessWidget {
                       padding: EdgeInsets.all(4.0),
                       child: Icon(Icons.check, size: 14, color: Colors.white),
                     ),
-                    Text("방문",
-                        style: TextStyle(color: Colors.white, fontSize: 12)),
+                    Text("방문", style: TextStyle(color: Colors.white, fontSize: 12)),
                     SizedBox(width: 7),
                   ],
                 ),
@@ -633,14 +592,11 @@ class ProfileImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     try {
-      if (detailController.nowCourseInfo['simpleInfoOfWriter']
-              ['profileImage'] !=
-          "default") {
+      if (detailController.nowCourseInfo['simpleInfoOfWriter']['profileImage'] != "default") {
         return ClipRRect(
             borderRadius: BorderRadius.circular(30),
             child: CachedNetworkImage(
-              imageUrl: detailController.nowCourseInfo['simpleInfoOfWriter']
-                  ['profileImage'],
+              imageUrl: detailController.nowCourseInfo['simpleInfoOfWriter']['profileImage'],
               placeholder: (context, url) => CircularProgressIndicator(),
               errorWidget: (context, url, error) => Icon(Icons.error),
               height: 25,
@@ -652,17 +608,12 @@ class ProfileImage extends StatelessWidget {
         return Container(
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(30)),
             clipBehavior: Clip.hardEdge,
-            child: Image(
-                image: AssetImage(image),
-                height: 25,
-                width: 25,
-                fit: BoxFit.cover));
+            child: Image(image: AssetImage(image), height: 25, width: 25, fit: BoxFit.cover));
       }
     } catch (e) {
       print(e);
       const image = 'assets/default_profile.png';
-      return Image(
-          image: AssetImage(image), height: 25, width: 25, fit: BoxFit.cover);
+      return Image(image: AssetImage(image), height: 25, width: 25, fit: BoxFit.cover);
     }
   }
 }
@@ -674,11 +625,7 @@ class ThumbnailImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(5),
-      child: Image(
-          image: AssetImage('assets/img1.jpg'),
-          height: 150,
-          width: 130,
-          fit: BoxFit.cover),
+      child: Image(image: AssetImage('assets/img1.jpg'), height: 150, width: 130, fit: BoxFit.cover),
     );
   }
 }

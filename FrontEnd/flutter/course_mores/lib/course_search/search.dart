@@ -13,6 +13,7 @@ SearchController searchController = SearchController();
 DetailController detailController = DetailController();
 TextEditingController searchTextEditingController = TextEditingController();
 MultiSelectController multiSelectController = MultiSelectController();
+ScrollController scrollController = ScrollController();
 
 class Search extends StatelessWidget {
   Search({Key? key}) : super(key: key);
@@ -74,6 +75,7 @@ searchPageHeader() {
                         Get.back();
                         pageController.changePageNum(2);
                         searchController.isSearchResults.value = true;
+                        searchController.changePage(page: 0);
                         searchController.searchCourse();
                       },
                     ),
@@ -111,6 +113,7 @@ isVisitedCheckBox() {
             title: Text('방문여부', style: TextStyle(color: Colors.black, fontSize: 16)),
             value: searchController.isVisited.value,
             onChanged: (value) {
+              searchController.changePage(page: 0);
               searchController.changeIsVisited();
             },
           ),
@@ -125,6 +128,7 @@ sortButtonBar() {
       children: [
         ElevatedButton(
           onPressed: () {
+            searchController.changePage(page: 0);
             searchController.changeSortby(sortby: 'latest');
             searchController.isLatestSelected.value = true;
             searchController.isPopularSelected.value = false;
@@ -141,6 +145,7 @@ sortButtonBar() {
         ),
         ElevatedButton(
           onPressed: () {
+            searchController.changePage(page: 0);
             searchController.changeSortby(sortby: 'popular');
             searchController.isLatestSelected.value = false;
             searchController.isPopularSelected.value = true;
@@ -190,48 +195,63 @@ class SearchResult extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    scrollController.addListener(() {
+      if (scrollController.position.pixels == scrollController.position.maxScrollExtent) {
+        // 스크롤이 리스트의 끝까지 도달하면 다음 검색 결과 호출
+        searchController.getNextSearchResults();
+      }
+    });
     return Obx(() => Container(
           color: Color.fromARGB(221, 244, 244, 244),
-          child: ListView.builder(
-            shrinkWrap: true,
-            scrollDirection: Axis.vertical,
-            padding: EdgeInsets.all(8),
-            itemCount: searchController.courseList.length,
-            itemBuilder: (BuildContext context, int index) {
-              return InkWell(
-                onTap: () async {
-                  await searchController.changeNowCourseId(courseId: searchController.courseList[index]['courseId']);
+          child: Column(
+            children: [
+              Expanded(
+                child: ListView.builder(
+                  controller: scrollController, // ScrollController 설정
+                  shrinkWrap: true,
+                  scrollDirection: Axis.vertical,
+                  padding: EdgeInsets.all(8),
+                  itemCount: searchController.courseList.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return InkWell(
+                      onTap: () async {
+                        await searchController.changeNowCourseId(
+                            courseId: searchController.courseList[index]['courseId']);
 
-                  await detailController.getCourseInfo('코스 소개');
+                        await detailController.getCourseInfo('코스 소개');
 
-                  Get.to(() => detail.Detail());
-                },
-                child: Container(
-                  margin: EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 5),
-                  padding: EdgeInsets.all(10),
-                  decoration: const BoxDecoration(boxShadow: [
-                    BoxShadow(
-                        color: Color.fromARGB(255, 211, 211, 211),
-                        blurRadius: 10.0,
-                        spreadRadius: 1.0,
-                        offset: Offset(3, 3)),
-                  ], color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(10))),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                          child: SizedBox(
-                              width: 300,
-                              child: Row(children: [
-                                ThumbnailImage(index: index),
-                                SizedBox(width: 10),
-                                Expanded(child: CourseSearchList(index: index)),
-                              ]))),
-                    ],
-                  ),
+                        Get.to(() => detail.Detail());
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 5),
+                        padding: EdgeInsets.all(10),
+                        decoration: const BoxDecoration(boxShadow: [
+                          BoxShadow(
+                              color: Color.fromARGB(255, 211, 211, 211),
+                              blurRadius: 10.0,
+                              spreadRadius: 1.0,
+                              offset: Offset(3, 3)),
+                        ], color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(10))),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                                child: SizedBox(
+                                    width: 300,
+                                    child: Row(children: [
+                                      ThumbnailImage(index: index),
+                                      SizedBox(width: 10),
+                                      Expanded(child: CourseSearchList(index: index)),
+                                    ]))),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
                 ),
-              );
-            },
+              ),
+              if (searchController.isCourseLoading.value) CircularProgressIndicator(), // 로딩 중인 경우 표시할 위젯
+            ],
           ),
         ));
   }
