@@ -88,7 +88,7 @@ public class NotificationServiceImpl implements NotificationService {
         FirebaseToken fireBaseToken = firebaseTokenRedisRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(CustomErrorCode.FIREBASE_TOKEN_NOT_FOUND));
         Message message = Message.builder()
-                .setToken(fireBaseToken.getFirebaseToken())
+                .setToken(fireBaseToken.getToken())
                 .setNotification(Notification.builder()
                         .setTitle(title)
                         .setBody(nickname + "님이 회원님의 코스에 " + (messageType == 0 ? "좋아요를 눌렀" : "댓글을 남겼" + "습니다."))

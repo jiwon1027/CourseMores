@@ -13,12 +13,12 @@ public class FirebaseToken {
 
     @Id
     private Long userId;
-    private String firebaseToken;
+    private String token;
 
     @Builder
-    public FirebaseToken(Long userId, String firebaseToken) {
+    public FirebaseToken(Long userId, String token) {
         this.userId = userId;
-        this.firebaseToken = firebaseToken;
+        this.token = token;
     }
 
 }
