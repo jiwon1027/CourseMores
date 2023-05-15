@@ -2,6 +2,7 @@ package com.moham.coursemores.api;
 
 import com.moham.coursemores.dto.notification.NotificationResDto;
 import com.moham.coursemores.service.NotificationService;
+import com.moham.coursemores.service.UserService;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +25,25 @@ import org.springframework.web.bind.annotation.RestController;
 public class NotificationController {
 
     private static final Logger logger = LoggerFactory.getLogger(NotificationController.class);
+
+    private final UserService userService;
     private final NotificationService notificationService;
+
+    @GetMapping("setting")
+    public ResponseEntity<Map<String, Object>> getUserAlarmSetting(
+            @AuthenticationPrincipal User user) {
+        Long userId = Long.parseLong(user.getUsername());
+        logger.debug("[0/2][GET][/notification/setting][{}] << request : none", userId);
+
+        Map<String, Object> resultMap = new HashMap<>();
+
+        logger.debug("[1/2][GET][/notification/setting][{}] ... us.getMyAlarmSetting", userId);
+        int myAlarmSetting = userService.getMyAlarmSetting(userId);
+        resultMap.put("myAlarmSetting", myAlarmSetting);
+
+        logger.debug("[2/2][GET][/notification/setting][{}] >> response : myAlarmSetting\n myAlarmSetting = {}\n", userId, myAlarmSetting);
+        return new ResponseEntity<>(resultMap, HttpStatus.OK);
+    }
 
     @GetMapping
     public ResponseEntity<Map<String, Object>> getUserNotificationList(
