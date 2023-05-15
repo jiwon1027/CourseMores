@@ -13,7 +13,7 @@ public interface UserService {
 
     UserInfoResDto getUserInfo(Long userId);
 
-    TokenResDto generateToken(Long userId, OAuthProvider oAuthProvider);
+    String generateToken(Long userId, OAuthProvider oAuthProvider);
 
     boolean isDuplicatedNickname(String nickname);
 

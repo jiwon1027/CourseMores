@@ -5,13 +5,11 @@ import com.moham.coursemores.common.exception.CustomErrorCode;
 import com.moham.coursemores.common.exception.CustomException;
 import com.moham.coursemores.common.util.OAuthProvider;
 import com.moham.coursemores.domain.User;
-import com.moham.coursemores.domain.redis.RefreshToken;
 import com.moham.coursemores.dto.profile.UserInfoCreateReqDto;
 import com.moham.coursemores.dto.profile.UserInfoResDto;
 import com.moham.coursemores.dto.token.TokenReissueReqDto;
 import com.moham.coursemores.dto.token.TokenResDto;
 import com.moham.coursemores.repository.UserRepository;
-import com.moham.coursemores.service.RefreshService;
 import com.moham.coursemores.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.security.auth.message.AuthException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -32,7 +29,6 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final FileUploadService fileUploadService;
     private final TokenProvider tokenProvider;
-    private final RefreshService refreshService;
 
     @Override
     public UserInfoResDto getUserInfo(Long userId) {
@@ -53,14 +49,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public TokenResDto generateToken(Long userId, OAuthProvider oAuthProvider) {
-        String accessToken = tokenProvider.generateAccessToken(Long.toString(userId), oAuthProvider);
-        String refreshToken = tokenProvider.generateRefreshToken();
-
-        return TokenResDto.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
+    public String generateToken(Long userId, OAuthProvider oAuthProvider) {
+        return tokenProvider.generateAccessToken(Long.toString(userId), oAuthProvider);
     }
 
     @Override
@@ -110,4 +100,6 @@ public class UserServiceImpl implements UserService {
 
         return resultMap;
     }
+
+
 }
