@@ -106,6 +106,10 @@ public class User extends DeleteTimeEntity {
         this.profileImage = imageUrl;
     }
 
+    public void setAlarmSetting(int updateAlarmSetting) {
+        this.alarmSetting = updateAlarmSetting;
+    }
+
     public void delete() {
         this.deleteTime = LocalDateTime.now();
     }

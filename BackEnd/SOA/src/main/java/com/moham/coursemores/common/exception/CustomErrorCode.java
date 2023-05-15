@@ -21,6 +21,7 @@ public enum CustomErrorCode {
     NOTIFICATION_NOT_FOUND("알림을 찾을 수 없습니다."),
     FIREBASE_TOKEN_NOT_FOUND("파이어베이스 토큰을 찾을 수 없습니다."),
 
+    NOTIFICATION_SETTING_MISMATCH("올바른 알림 설정이 아닙니다."),
     NOTIFICATION_NOT_DELETE("알림을 삭제할 수 없습니다."),
     TOKEN_NOT_VALID("토큰이 유효하지 않습니다."),
     ALREADY_DELETE_COURSE("삭제된 코스입니다."),

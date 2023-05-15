@@ -106,4 +106,15 @@ public class UserServiceImpl implements UserService {
         return user.getAlarmSetting();
     }
 
+    @Override
+    @Transactional
+    public void updateMyAlarmSetting(Long userId, int updateAlarmSetting) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(userId, CustomErrorCode.USER_NOT_FOUND));
+        if (0 < updateAlarmSetting && updateAlarmSetting < 4)
+            user.setAlarmSetting(updateAlarmSetting);
+        else
+            throw new CustomException(CustomErrorCode.NOTIFICATION_SETTING_MISMATCH);
+    }
+
 }

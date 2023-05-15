@@ -16,6 +16,8 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -43,6 +45,21 @@ public class NotificationController {
 
         logger.debug("[2/2][GET][/notification/setting][{}] >> response : myAlarmSetting\n myAlarmSetting = {}\n", userId, myAlarmSetting);
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
+    }
+
+    @PutMapping("setting")
+    public ResponseEntity<Void> updateUserAlarmSetting(
+            @AuthenticationPrincipal User user,
+            @RequestBody Map<String, Integer> requestMap) {
+        Long userId = Long.parseLong(user.getUsername());
+        int updateAlarmSetting = requestMap.get("updateAlarmSetting");
+        logger.debug("[0/2][PUT][/notification/setting][{}] << request : updateAlarmSetting\n updateAlarmSetting ={}", userId, updateAlarmSetting);
+
+        logger.debug("[1/2][PUT][/notification/setting][{}] ... us.updateMyAlarmSetting", userId);
+        userService.updateMyAlarmSetting(userId, updateAlarmSetting);
+
+        logger.debug("[2/2][PUT][/notification/setting][{}] >> response : none\n", userId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping

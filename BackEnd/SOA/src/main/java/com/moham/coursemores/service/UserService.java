@@ -21,4 +21,6 @@ public interface UserService {
 
     int getMyAlarmSetting(Long userId);
 
+    void updateMyAlarmSetting(Long userId, int updateAlarmSetting);
+
 }
