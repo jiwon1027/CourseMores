@@ -6,6 +6,8 @@ import com.moham.coursemores.domain.document.HashtagDocument;
 import com.moham.coursemores.dto.elasticsearch.IndexDataReqDTO;
 import com.moham.coursemores.dto.elasticsearch.IndexDataResDTO;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 public interface ElasticSearchService {
 
@@ -17,7 +19,7 @@ public interface ElasticSearchService {
 
     void addIndex(IndexDataReqDTO indexDataReqDTO);
 
-    IndexDataResDTO search(String value) throws IOException;
+    Map<String, List<Integer>> search(String value) throws IOException;
 
     void updateIndex(IndexDataReqDTO indexDataReqDTO) throws IOException;
 

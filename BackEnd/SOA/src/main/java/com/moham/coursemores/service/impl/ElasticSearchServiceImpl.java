@@ -149,7 +149,7 @@ public class ElasticSearchServiceImpl implements ElasticSearchService {
         }
     }
 
-    public IndexDataResDTO search(String value) throws IOException {
+    public Map<String, List<Integer>> search(String value) throws IOException {
         SearchRequest requestCourse = SearchUtil.buildSearchRequest(Indices.COURSE_INDEX, value);
         SearchRequest requestCourseLocation = SearchUtil.buildSearchRequest(Indices.COURSELOCATION_INDEX, value);
         SearchRequest requestHashtag = SearchUtil.buildSearchRequest(Indices.HASHTAG_INDEX, value);
@@ -163,7 +163,6 @@ public class ElasticSearchServiceImpl implements ElasticSearchService {
         SearchHit[] searchHitsHashtag = responseHashtag.getHits().getHits();
 
         Set<String> courses = new HashSet<>();
-
         Map<String, Object> sourceAsMap;
         for (SearchHit hit : searchHitsCourse) {
             sourceAsMap = hit.getSourceAsMap();
@@ -182,11 +181,50 @@ public class ElasticSearchServiceImpl implements ElasticSearchService {
             hashtags.add((String) sourceAsMap.get(VALUE));
         }
 
-        return IndexDataResDTO.builder()
-                .courses(courses)
-                .courselocations(courseLocations)
-                .hashtags(hashtags)
-                .build();
+
+        Map<String, List<Integer>> temp = new HashMap<>();
+
+        for (String course : courses) {
+            temp.put(course, new ArrayList<>(Arrays.asList(1)));
+        }
+
+        for (String courseLocation : courseLocations) {
+            if (temp.containsKey(courseLocation)) {
+                List<Integer> existingList = temp.get(courseLocation);
+                existingList.add(2);
+                temp.put(courseLocation, existingList);
+            }
+            else{
+                temp.put(courseLocation, new ArrayList<>(Arrays.asList(2)));
+            }
+        }
+
+        for (String hashtag : hashtags) {
+            if (temp.containsKey(hashtag)) {
+                List<Integer> existingList = temp.get(hashtag);
+                existingList.add(3);
+                temp.put(hashtag, existingList);
+            }
+            else{
+                temp.put(hashtag, new ArrayList<>(Arrays.asList(3)));
+            }
+        }
+
+        List<String> keySet = new ArrayList<>(temp.keySet());
+        Collections.sort(keySet, new Comparator<String>() {
+            @Override
+            public int compare(String s1, String s2) {
+                return Integer.compare(s1.length(), s2.length());
+            }
+        });
+
+        Map<String, List<Integer>> sortedResult = new LinkedHashMap<>();
+        for (String key : keySet) {
+            List<Integer> list = temp.get(key);
+            sortedResult.put(key, list);
+        }
+
+        return sortedResult;
 
     }
 

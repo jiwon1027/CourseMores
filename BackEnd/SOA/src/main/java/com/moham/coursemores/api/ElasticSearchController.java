@@ -7,6 +7,7 @@ import com.moham.coursemores.dto.elasticsearch.IndexDataReqDTO;
 import com.moham.coursemores.dto.elasticsearch.IndexDataResDTO;
 import com.moham.coursemores.service.ElasticSearchService;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -33,12 +34,12 @@ public class ElasticSearchController {
     private final String ID = "id";
 
     @PostMapping("search")
-    public ResponseEntity<IndexDataResDTO> search(
+    public ResponseEntity<Map<String, List<Integer>>> search(
             @RequestBody Map<String, String> map) throws IOException {
         logger.debug("[0/2][POST][/elasticsearch/search] << request : value\n value = {}", map.get(VALUE));
 
         logger.debug("[1/2][POST][/elasticsearch/search] ... css.search");
-        IndexDataResDTO result = courseSearchService.search(map.get(VALUE));
+        Map<String, List<Integer>> result = courseSearchService.search(map.get(VALUE));
 
         logger.debug("[2/2][POST][/elasticsearch/search] >> response : result\n result = {}\n", result);
         return new ResponseEntity<>(result, HttpStatus.OK);
