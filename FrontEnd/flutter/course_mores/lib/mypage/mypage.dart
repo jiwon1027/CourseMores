@@ -39,15 +39,12 @@ class _MyPageState extends State<MyPage> {
     status = 'course';
     fetchData(tokenController.accessToken);
     updateUserInfo();
-    print('mypage data 가져오기');
-    print(courseList);
   }
 
   Future<void> updateUserInfo() async {
     final dio = await authDio();
     final response = await dio.get('profile/');
-    print('update UserInfo!!');
-    print(response);
+
     userInfoController.saveImageUrl(response.data['userInfo']['profileImage']);
   }
 
@@ -57,9 +54,7 @@ class _MyPageState extends State<MyPage> {
     final response = await dio.get(
       'course/my',
     );
-    print(response);
     List<dynamic> data = response.data['myCourseList'];
-    print(data);
     // final list = (data as List<dynamic>).cast<Map<String, Object>>().toList();
     // courseList = list;
     // setState(() {
@@ -70,14 +65,11 @@ class _MyPageState extends State<MyPage> {
     setState(() {
       courseList = myPageController.myCourse;
     });
-    print(courseList);
-    print(courseList.length);
 
     final response2 = await dio.get('comment/',
         options: Options(
           headers: {'Authorization': 'Bearer $aToken'},
         ));
-    print(response2);
     List<dynamic> data2 = response2.data['myCommentList'];
     // print(data);
     myPageController.saveMyReview(
@@ -85,7 +77,6 @@ class _MyPageState extends State<MyPage> {
     setState(() {
       reviewList = myPageController.myReview;
     });
-    print(reviewList);
   }
 
   buttonBar() {
@@ -626,6 +617,7 @@ class ModalBottom extends StatelessWidget {
                                       Navigator.pop(context);
                                       loginController.changeLoginStatus();
                                       // 로그아웃 메서드 쓰기..
+                                      // logout();
                                       print('logout');
                                       Get.to(main.MyApp());
                                     },
@@ -678,3 +670,8 @@ class ModalBottom extends StatelessWidget {
     );
   }
 }
+
+// void logout() async {
+//   final dio = await authDio();
+//   await dio.get('profile/logout');
+// }
