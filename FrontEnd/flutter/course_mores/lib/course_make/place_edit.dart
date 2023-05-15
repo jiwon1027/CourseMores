@@ -21,6 +21,7 @@ class EditItemPage extends StatefulWidget {
 
 class _EditItemPageState extends State<EditItemPage> {
   // final TextEditingController _textController = TextEditingController();
+  final GlobalKey<_AddImageState> _addImageKey = GlobalKey();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
   final TextEditingController _sidoController = TextEditingController();
@@ -37,6 +38,14 @@ class _EditItemPageState extends State<EditItemPage> {
     _contentController.text = _itemData.content ?? '';
     _sidoController.text = _itemData.sido ?? '';
     _gugunController.text = _itemData.gugun ?? '';
+
+    // 이곳에서 저장된 이미지 목록을 불러옵니다.
+    List<XFile> savedImages = _itemData.getSavedImageList();
+    if (_addImageKey.currentState != null) {
+      // Make sure currentState is not null before calling getTemporaryImageList
+      locationData.saveImageList(_addImageKey.currentState!
+          .getTemporaryImageList()); // Save images in initState
+    }
   }
 
   _EditItemPageState({required this.locationData}) {
@@ -115,7 +124,8 @@ class _EditItemPageState extends State<EditItemPage> {
               ),
               // Text('수정할 Item: ${widget.item.title}'),
               SizedBox(height: 40),
-              AddImage(),
+              // AddImage(),
+              AddImage(key: _addImageKey),
               AddTitle(titleController: _titleController),
               SizedBox(height: 20),
               // AddText(textController: _textController),
@@ -129,7 +139,10 @@ class _EditItemPageState extends State<EditItemPage> {
                     latitude: widget.locationData.latitude,
                     longitude: widget.locationData.longitude,
                     roadViewImage: widget.locationData.roadViewImage,
-                    numberOfImage: widget.locationData.numberOfImage,
+                    // numberOfImage: widget.locationData.numberOfImage,
+                    numberOfImage: _addImageKey.currentState!
+                        .getTemporaryImageList()
+                        .length,
                     // numberOfImage: _imageList.length,
                     // numberOfImage: _imageUploaderState.getNumberOfImage(),
                     title: _titleController.text.isNotEmpty
@@ -140,12 +153,23 @@ class _EditItemPageState extends State<EditItemPage> {
                         : null,
                     sido: widget.locationData.sido,
                     gugun: widget.locationData.gugun,
+                    // temporaryImageList: _imageUploaderState._temporaryImageList,
+                    temporaryImageList:
+                        _addImageKey.currentState!.getTemporaryImageList(),
                   );
                   _itemData.title = updatedLocationData.title;
                   _itemData.content = updatedLocationData.content;
                   _itemData.sido = updatedLocationData.sido;
                   _itemData.gugun = updatedLocationData.gugun;
                   _itemData.numberOfImage = updatedLocationData.numberOfImage;
+                  // _itemData.temporaryImageList =
+                  //     updatedLocationData.temporaryImageList;
+                  // 사용자가 "저장하기" 버튼을 눌렀을 때 임시 이미지 목록을 저장합니다.
+                  // _itemData.saveImageList();
+                  _itemData.saveImageList(
+                      _addImageKey.currentState!.getTemporaryImageList());
+
+                  _itemData = updatedLocationData;
 
                   locationController.updateLocationData(updatedLocationData);
                   // 프린트 테스트 for images
@@ -346,36 +370,45 @@ class AddText extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text("글을 작성할 수 있어요 📝",
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w800,
-            )),
-        SizedBox(height: 10),
-        Container(
-          height: 200,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.5),
-                spreadRadius: 2,
-                blurRadius: 5,
-                offset: Offset(0, 3), // 그림자 위치 조절
-              ),
-            ],
+        Text(
+          "장소에 대한 설명 📝",
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w800,
           ),
-          padding: EdgeInsets.all(10),
-          child: TextField(
-            controller: _contentController,
-            maxLines: null, // 여러 줄 입력 가능
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              hintText: '~~자까지 작성할 수 있어요',
-              prefixText: ' ',
-              prefixStyle: TextStyle(color: Colors.transparent),
-              hintStyle: TextStyle(color: Colors.grey),
+        ),
+        SizedBox(height: 10),
+        SingleChildScrollView(
+          child: Container(
+            constraints: BoxConstraints(
+              maxHeight: 200,
+            ),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5),
+                  spreadRadius: 2,
+                  blurRadius: 5,
+                  offset: Offset(0, 3),
+                ),
+              ],
+            ),
+            padding: EdgeInsets.all(10),
+            child: TextField(
+              controller: _contentController,
+              maxLength: 5000,
+              maxLines: null,
+              expands: true, // TextField의 높이를 가능한 한 최대로 확장
+              minLines: null, // 최소 줄 수를 지정하지 않음
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                hintText: '최대 5000자까지 작성할 수 있어요',
+                prefixText: ' ',
+                prefixStyle: TextStyle(color: Colors.transparent),
+                hintStyle: TextStyle(color: Colors.grey),
+              ),
             ),
           ),
         ),
@@ -384,15 +417,43 @@ class AddText extends StatelessWidget {
   }
 }
 
-class AddImage extends StatelessWidget {
+// class AddImage extends StatelessWidget {
+//   const AddImage({
+//     super.key,
+//   });
+class AddImage extends StatefulWidget {
+  // const AddImage({
+  //   Key? key,
+  // }) : super(key: key);
   const AddImage({
-    super.key,
-  });
+    Key? key,
+    this.locationData, // Assuming locationData is optional. If it's required, change this to 'required this.locationData'.
+  }) : super(key: key);
+
+  final LocationData? locationData;
+  // final LocationData locationData; // Added locationData
+
+  @override
+  State<AddImage> createState() => _AddImageState();
+}
+
+class _AddImageState extends State<AddImage> {
+  final GlobalKey<_ImageUploaderState> _imageUploaderKey = GlobalKey();
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.locationData != null) {
+      // Check if locationData is not null
+      _imageUploaderKey.currentState?.initializeImageList(widget.locationData!
+          .getSavedImageList()); // Make sure currentState is not null before calling initializeImageList
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: const [
+      children: [
         Text("이미지를 첨부해보세요 📷",
             style: TextStyle(
               fontSize: 20,
@@ -403,16 +464,23 @@ class AddImage extends StatelessWidget {
         SizedBox(height: 10),
         SizedBox(
           // height: 250,
-          child: ImageUploader(),
+          child: ImageUploader(key: _imageUploaderKey),
         ),
       ],
     );
+  }
+
+  // List<XFile> get temporaryImageList =>
+  //     _imageUploaderKey.currentState!._temporaryImageList;
+  List<XFile> getTemporaryImageList() {
+    return _imageUploaderKey.currentState!._temporaryImageList;
   }
 }
 
 // 5개까지만 선택 가능하고 그 이상은 동작하지 않고, 카메라로 찍기, 선택된 사진 취소도 가능한 코드
 class ImageUploader extends StatefulWidget {
-  const ImageUploader({super.key});
+  // const ImageUploader({super.key});
+  const ImageUploader({Key? key}) : super(key: key);
 
   @override
   State<ImageUploader> createState() => _ImageUploaderState();
@@ -422,6 +490,11 @@ class _ImageUploaderState extends State<ImageUploader> {
   final List<XFile> _temporaryImageList = []; // 수정된 부분
   final picker = ImagePicker();
   final int maxImageCount = 5; // 최대 업로드 가능한 이미지 수
+
+  void initializeImageList(List<XFile> savedImageList) {
+    // Added method to initialize image list
+    _temporaryImageList.addAll(savedImageList);
+  }
 
   int getNumberOfImage() {
     return _temporaryImageList.length;
@@ -457,10 +530,9 @@ class _ImageUploaderState extends State<ImageUploader> {
         print('선택된 이미지가 없어요.');
       }
     });
-    // _imageList의 길이로 선택된 이미지 개수를 업데이트합니다.
+    // Update numberOfImage to match the length of _temporaryImageList.
     final LocationController locationController = Get.find();
-    locationController.numberOfImage.value =
-        locationController.numberOfImage.value + 1; // numberOfImage 증가
+    locationController.numberOfImage.value = _temporaryImageList.length;
     print(_temporaryImageList);
   }
 
@@ -469,9 +541,9 @@ class _ImageUploaderState extends State<ImageUploader> {
       _temporaryImageList.removeAt(index);
     });
 
+    // Update numberOfImage to match the length of _temporaryImageList.
     final LocationController locationController = Get.find();
-    locationController.numberOfImage.value =
-        locationController.numberOfImage.value - 1; // numberOfImage 감소
+    locationController.numberOfImage.value = _temporaryImageList.length;
     print(_temporaryImageList);
   }
 
@@ -528,10 +600,9 @@ class _ImageUploaderState extends State<ImageUploader> {
       _temporaryImageList.add(imageFile);
     });
 
-    // _imageList의 길이로 선택된 이미지 개수를 업데이트합니다.
+    // Update numberOfImage to match the length of _temporaryImageList.
     final LocationController locationController = Get.find();
-    locationController.numberOfImage.value =
-        locationController.numberOfImage.value + 1;
+    locationController.numberOfImage.value = _temporaryImageList.length;
 
     print('7777777777777777777777');
     print(_temporaryImageList);
