@@ -11,7 +11,7 @@ import 'course_make/make_start.dart' as make;
 import 'auth/login_page.dart' as login;
 import 'package:get/get.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'auth/auth_dio.dart';
+// import 'auth/auth_dio.dart';
 import 'dart:convert';
 import 'interests/interested_course.dart' as interest;
 
