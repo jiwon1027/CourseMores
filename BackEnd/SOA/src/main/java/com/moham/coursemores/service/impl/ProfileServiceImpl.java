@@ -1,6 +1,8 @@
 package com.moham.coursemores.service.impl;
 
 
+import com.moham.coursemores.common.exception.CustomErrorCode;
+import com.moham.coursemores.common.exception.CustomException;
 import com.moham.coursemores.domain.User;
 import com.moham.coursemores.dto.profile.UserInfoResDto;
 import com.moham.coursemores.dto.profile.UserInfoUpdateReqDto;
@@ -23,7 +25,7 @@ public class ProfileServiceImpl implements ProfileService {
     public UserInfoResDto getMyProfile(Long userId) {
         // userId의 User 가져오기
         User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
-                .orElseThrow(() -> new NullPointerException("해당 유저를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(userId,CustomErrorCode.USER_NOT_FOUND));
 
         return UserInfoResDto.builder()
                 .nickname(user.getNickname())
@@ -43,7 +45,7 @@ public class ProfileServiceImpl implements ProfileService {
     public void updateUserInfo(Long userId, UserInfoUpdateReqDto userInfoUpdateReqDto, MultipartFile profileImage) {
         // userId의 User 가져오기
         User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
-                .orElseThrow(() -> new NullPointerException("해당 유저를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(userId,CustomErrorCode.USER_NOT_FOUND));
 
         String imageUrl = "default";
         if (profileImage != null)
@@ -57,7 +59,7 @@ public class ProfileServiceImpl implements ProfileService {
     public void deleteUser(Long userId) {
         // userId의 User 가져오기
         User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
-                .orElseThrow(() -> new NullPointerException("해당 유저를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(userId,CustomErrorCode.USER_NOT_FOUND));
 
         // deleteTime 추가
         user.delete();

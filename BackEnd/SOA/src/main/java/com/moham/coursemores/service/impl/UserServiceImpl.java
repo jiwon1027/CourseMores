@@ -1,6 +1,8 @@
 package com.moham.coursemores.service.impl;
 
 import com.moham.coursemores.common.auth.jwt.TokenProvider;
+import com.moham.coursemores.common.exception.CustomErrorCode;
+import com.moham.coursemores.common.exception.CustomException;
 import com.moham.coursemores.common.util.OAuthProvider;
 import com.moham.coursemores.domain.User;
 import com.moham.coursemores.domain.redis.RefreshToken;
@@ -35,7 +37,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserInfoResDto getUserInfo(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(userId, CustomErrorCode.USER_NOT_FOUND));
 
         if (StringUtils.hasText(user.getNickname())
                 && user.getAge() > 0
@@ -70,7 +72,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void addUserInfo(Long userId, UserInfoCreateReqDto userInfoCreateReqDto, MultipartFile profileImage) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(userId,CustomErrorCode.USER_NOT_FOUND));
 
         String imageUrl = "default";
         // 선택한 이미지가 있다면 업로드
@@ -85,12 +87,12 @@ public class UserServiceImpl implements UserService {
         Long userId = tokenProvider.extractMemberId(tokenReissueReqDto.getAccessToken());
 
         if(userId == null)
-            throw new RuntimeException("해당 토큰이 유효하지 않습니다.");
+            throw new CustomException(tokenReissueReqDto.getAccessToken(),CustomErrorCode.TOKEN_NOT_VALID);
 
         Optional<User> temp = userRepository.findByIdAndDeleteTimeIsNull(userId);
 
         if(temp.isEmpty() || !temp.get().getNickname().equals(tokenReissueReqDto.getNickname())){
-            throw new RuntimeException("해당 유저를 찾을 수 없습니다.");
+            throw new CustomException(userId,CustomErrorCode.USER_NOT_FOUND);
         }
 
         Map<String, Object> resultMap = new HashMap<>();
@@ -108,24 +110,4 @@ public class UserServiceImpl implements UserService {
 
         return resultMap;
     }
-
-//    @Override
-//    public String reissue(TokenReissueReqDto tokenReissueReqDto) {
-//        Long userId = tokenProvider.extractMemberId(tokenReissueReqDto.getAccessToken());
-//        Optional<User> user = userRepository.findById(userId);
-//        if(user.isEmpty()){
-//            return "401";
-//        }
-//
-//        // 3. 저장소에서 Member ID 를 기반으로 Refresh Token 값 가져옴
-//        Optional<RefreshToken> originRefreshToken = refreshService.get(userId); // 로그아웃 시 DB에서 리프레쉬 토큰을 제거한다는 가정하에
-//
-//        // 4. Refresh Token 일치하는지 검사
-//        if (originRefreshToken.isEmpty() || !originRefreshToken.get().getRefreshToken().equals(tokenReissueReqDto.getRefreshToken())) {
-//            return "401";
-//        }
-//
-//        // 토큰 발급
-//        return tokenProvider.generateAccessToken(Long.toString(userId), user.get().getProvider());
-//    }
 }

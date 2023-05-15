@@ -4,6 +4,8 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
+import com.moham.coursemores.common.exception.CustomErrorCode;
+import com.moham.coursemores.common.exception.CustomException;
 import com.moham.coursemores.domain.Course;
 import com.moham.coursemores.domain.User;
 import com.moham.coursemores.domain.redis.FirebaseToken;
@@ -50,9 +52,9 @@ public class NotificationServiceImpl implements NotificationService {
     @Transactional
     public void makeNotification(Long userId, Long courseId, int messageType) {
         User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
-                .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(userId, CustomErrorCode.USER_NOT_FOUND));
         Course course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new RuntimeException("해당 코스를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(courseId,CustomErrorCode.COURSE_NOT_FOUND));
 
         User targetUser = course.getUser();
         String nickname = user.getNickname();
@@ -70,13 +72,13 @@ public class NotificationServiceImpl implements NotificationService {
     @Transactional
     public void deleteNotification(Long userId, Long notificationId) {
         User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
-                .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(userId,CustomErrorCode.USER_NOT_FOUND));
 
         com.moham.coursemores.domain.Notification notification = notificationRepository.findById(notificationId)
-                .orElseThrow(() -> new RuntimeException("해당 알림을 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(notificationId,CustomErrorCode.NOTIFICATION_NOT_FOUND));
 
         if(!Objects.equals(user.getId(), notification.getUser().getId())){
-            throw new RuntimeException("해당 알림을 삭제할 수 없습니다.");
+            throw new CustomException(CustomErrorCode.NOTIFICATION_NOT_DELETE);
         }
 
         notification.delete();
@@ -84,7 +86,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     public void sendNotification(Long userId, String nickname, String title, int messageType) {
         FirebaseToken fireBaseToken = firebaseTokenRedisRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("해당 FirebaseToken을 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(CustomErrorCode.FIREBASE_TOKEN_NOT_FOUND));
         Message message = Message.builder()
                 .setToken(fireBaseToken.getFirebaseToken())
                 .setNotification(Notification.builder()
@@ -95,7 +97,7 @@ public class NotificationServiceImpl implements NotificationService {
         try {
             firebaseMessaging.send(message);
         } catch (FirebaseMessagingException e) {
-            throw new RuntimeException("실시간 알림 보내기에 실패하였습니다.");
+            throw new CustomException(CustomErrorCode.FAIL_SEND_NOTIFICATION);
         }
     }
 

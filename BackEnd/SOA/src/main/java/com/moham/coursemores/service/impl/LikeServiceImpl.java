@@ -1,5 +1,7 @@
 package com.moham.coursemores.service.impl;
 
+import com.moham.coursemores.common.exception.CustomErrorCode;
+import com.moham.coursemores.common.exception.CustomException;
 import com.moham.coursemores.domain.Comment;
 import com.moham.coursemores.domain.CommentLike;
 import com.moham.coursemores.domain.Course;
@@ -38,7 +40,7 @@ public class LikeServiceImpl implements LikeService {
     @Transactional
     public boolean addLikeCourse(Long userId, Long courseId) {
         Course course = courseRepository.findByIdAndDeleteTimeIsNull(courseId)
-                .orElseThrow(() -> new RuntimeException("해당 코스를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(courseId, CustomErrorCode.COURSE_NOT_FOUND));
 
         Optional<CourseLike> courseLike = courseLikeRepository.findByUserIdAndCourseId(userId, courseId);
         boolean alarm;
@@ -49,7 +51,7 @@ public class LikeServiceImpl implements LikeService {
         } else {
             // 코스 좋아요 객체가 존재하지 않으면 새로 생성해준다.
             User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
-                    .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
+                    .orElseThrow(() -> new CustomException(userId,CustomErrorCode.USER_NOT_FOUND));
             courseLikeRepository.save(CourseLike.builder()
                     .user(user)
                     .course(course)
@@ -64,11 +66,11 @@ public class LikeServiceImpl implements LikeService {
     @Transactional
     public void deleteLikeCourse(Long userId, Long courseId) {
         Course course = courseRepository.findByIdAndDeleteTimeIsNull(courseId)
-                .orElseThrow(() -> new RuntimeException("해당 코스를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(courseId,CustomErrorCode.COURSE_NOT_FOUND));
 
         // 코스 좋아요 객체의 해제일시를 설정해준다.
         CourseLike courseLike = courseLikeRepository.findByUserIdAndCourseId(userId, courseId)
-                .orElseThrow(() -> new RuntimeException("해당 코스 좋아요 내역을 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(userId,courseId,CustomErrorCode.LIKE_COURSE_NOT_FOUND));
         courseLike.release();
 
         course.decreaseLikeCount();
@@ -85,7 +87,7 @@ public class LikeServiceImpl implements LikeService {
     @Transactional
     public void addLikeComment(Long userId, Long commentId) {
         Comment comment = commentRepository.findByIdAndDeleteTimeIsNull(commentId)
-                .orElseThrow(() -> new RuntimeException("해당 댓글을 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(commentId,CustomErrorCode.COMMENT_NOT_FOUND));
 
         Optional<CommentLike> commentLike = commentLikeRepository.findByUserIdAndCommentId(userId, commentId);
 
@@ -95,7 +97,7 @@ public class LikeServiceImpl implements LikeService {
         } else {
             // 댓글 좋아요 객체가 존재하지 않으면 새로 생성해준다.
             User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
-                    .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
+                    .orElseThrow(() -> new CustomException(userId,CustomErrorCode.USER_NOT_FOUND));
             commentLikeRepository.save(CommentLike.builder()
                     .user(user)
                     .comment(comment)
@@ -110,11 +112,11 @@ public class LikeServiceImpl implements LikeService {
     @Transactional
     public void deleteLikeComment(Long userId, Long commentId) {
         Comment comment = commentRepository.findByIdAndDeleteTimeIsNull(commentId)
-                .orElseThrow(() -> new RuntimeException("해당 댓글을 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(commentId,CustomErrorCode.COMMENT_NOT_FOUND));
 
         // 댓글 좋아요 객체의 해제일시를 설정해준다.
         CommentLike commentLike = commentLikeRepository.findByUserIdAndCommentId(userId, commentId)
-                .orElseThrow(() -> new RuntimeException("해당 댓글 좋아요 내역을 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(userId,commentId,CustomErrorCode.LIKE_COMMENT_NOT_FOUND));
         commentLike.release();
 
         // 댓글의 좋아요수 감소

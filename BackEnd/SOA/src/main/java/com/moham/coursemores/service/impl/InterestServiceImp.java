@@ -1,5 +1,7 @@
 package com.moham.coursemores.service.impl;
 
+import com.moham.coursemores.common.exception.CustomErrorCode;
+import com.moham.coursemores.common.exception.CustomException;
 import com.moham.coursemores.domain.Course;
 import com.moham.coursemores.domain.Interest;
 import com.moham.coursemores.domain.User;
@@ -29,7 +31,7 @@ public class InterestServiceImp implements InterestService {
     @Override
     public List<InterestCourseResDto> getUserInterestCourseList(Long userId) {
         User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
-                .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(userId,CustomErrorCode.USER_NOT_FOUND));
         List<Long> userLikeCourse = user.getCourseLikeList()
                 .stream()
                 .map(like -> like.isFlag() ? like.getCourse().getId() : null)
@@ -76,21 +78,21 @@ public class InterestServiceImp implements InterestService {
     @Transactional
     public void addInterestCourse(Long userId, Long courseId) {
         Course course = courseRepository.findByIdAndDeleteTimeIsNull(courseId)
-                .orElseThrow(() -> new RuntimeException("해당 코스를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(courseId,CustomErrorCode.COURSE_NOT_FOUND));
 
         Optional<Interest> interest = interestRepository.findByUserIdAndCourseId(userId, courseId);
 
         if (interest.isPresent()) {
             // 관심 객체가 존재하는데, flag가 true라면 이미 관심 등록된 코스이다.
             if (interest.get().isFlag()) {
-                throw new RuntimeException("이미 관심 등록된 코스입니다.");
+                throw new CustomException(CustomErrorCode.ALREADY_REGISTER_INTEREST_COURSE);
             }
             // 그렇지 않다면 관심 객체의 등록일시를 설정해준다.
             interest.get().register();
         } else {
             // 관심 객체가 존재하지 않으면 새로 생성해준다.
             User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
-                    .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
+                    .orElseThrow(() -> new CustomException(userId,CustomErrorCode.USER_NOT_FOUND));
 
             interestRepository.save(Interest.builder()
                     .user(user)
@@ -106,14 +108,14 @@ public class InterestServiceImp implements InterestService {
     @Transactional
     public void deleteInterestCourse(Long userId, Long courseId) {
         Course course = courseRepository.findByIdAndDeleteTimeIsNull(courseId)
-                .orElseThrow(() -> new RuntimeException("해당 코스를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(courseId,CustomErrorCode.COURSE_NOT_FOUND));
 
         Interest interest = interestRepository.findByUserIdAndCourseId(userId, courseId)
-                .orElseThrow(() -> new RuntimeException("해당 관심 내역을 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(userId,courseId,CustomErrorCode.INTEREST_COURSE_NOT_FOUND));
 
         // 관심 객체의 flag가 false라면 이미 관심 해제된 코스이다.
         if (!interest.isFlag()) {
-            throw new RuntimeException("이미 관심 해제된 코스입니다.");
+            throw new CustomException(CustomErrorCode.ALREADY_RELEASE_INTEREST_COURSE);
         }
         // 그렇지 않다면 관심 객체의 해제일시를 설정해준다.
         interest.release();
