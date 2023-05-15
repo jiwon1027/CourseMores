@@ -433,9 +433,10 @@ myNearCourse() {
 }
 
 themeList() {
+  searchController.getThemeList();
   var themes = [];
   for (var theme in searchController.themeList) {
-    themes.add(theme["text"]);
+    themes.add(theme["name"]);
   }
 
   return Padding(
@@ -446,50 +447,56 @@ themeList() {
           padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0),
           child: Column(
             children: [
-              Text(
-                '이런 테마는 어때요? 😊',
-                style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.bold),
+              Padding(
+                padding: const EdgeInsets.only(top: 15.0, bottom: 15.0),
+                child: Text(
+                  '이런 테마는 어때요? 😊',
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold),
+                ),
               ),
-              Wrap(
-                children: themes.map((theme) {
-                  return Container(
-                    margin: EdgeInsets.all(2.0),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.5),
-                          spreadRadius: 2,
-                          blurRadius: 3,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12.0, vertical: 8.0),
-                      child: Text(
-                        theme,
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 12.0,
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8.0),
+                child: Wrap(
+                  children: themes.map((theme) {
+                    return Container(
+                      margin: EdgeInsets.all(2.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 2,
+                            blurRadius: 3,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12.0, vertical: 8.0),
+                        child: Text(
+                          theme,
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 12.0,
+                          ),
                         ),
                       ),
-                    ),
-                  );
-                }).toList(),
-                spacing: 8.0,
-                runSpacing: 8.0,
-                alignment: WrapAlignment.start,
-                crossAxisAlignment: WrapCrossAlignment.start,
-                textDirection: TextDirection.ltr,
-                runAlignment: WrapAlignment.start,
-                verticalDirection: VerticalDirection.down,
-                clipBehavior: Clip.none,
+                    );
+                  }).toList(),
+                  spacing: 8.0,
+                  runSpacing: 8.0,
+                  alignment: WrapAlignment.start,
+                  crossAxisAlignment: WrapCrossAlignment.start,
+                  textDirection: TextDirection.ltr,
+                  runAlignment: WrapAlignment.start,
+                  verticalDirection: VerticalDirection.down,
+                  clipBehavior: Clip.none,
+                ),
               )
               // SearchFilterTheme(),
               // SizedBox(

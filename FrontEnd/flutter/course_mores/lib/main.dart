@@ -13,6 +13,8 @@ import 'package:get/get.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'auth/auth_dio.dart';
 import 'dart:convert';
+import 'interests/interested_course.dart' as interest;
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 final loginController = Get.put(LoginStatus());
@@ -20,11 +22,12 @@ final pageController = Get.put(PageNum());
 final tokenStorage = Get.put(TokenStorage());
 final firstLoginController = Get.put(LoginCheck());
 final userInfoController = Get.put(UserInfo());
+String kakaoNativeAppKey = dotenv.get('KAKAO_NATIVE_APP_KEY');
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: 'assets/config/.env');
-  KakaoSdk.init(nativeAppKey: '59816c34bd5a0094d4f29bf08b55a34c');
+  KakaoSdk.init(nativeAppKey: kakaoNativeAppKey);
   reissueToken();
   runApp(GetMaterialApp(theme: style.theme, home: MyApp()));
 }
@@ -50,7 +53,7 @@ class MyApp extends StatelessWidget {
               home.HomeScreen(),
               make.MakeStart(),
               search.Search(),
-              Text("관심페이지"),
+              interest.InterestedCourse(),
               mypage.MyPage(),
             ][pageNum],
             bottomNavigationBar: pageNum == 0
