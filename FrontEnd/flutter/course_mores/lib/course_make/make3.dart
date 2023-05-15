@@ -103,21 +103,66 @@ class _MakeStepperState extends State<MakeStepper> {
                       ],
                     ),
                     SizedBox(height: 8), // 간격 추가
-                    TextField(
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: '코스 이름을 입력하세요',
+                    // TextField(
+                    //   decoration: InputDecoration(
+                    //     border: OutlineInputBorder(),
+                    //     labelText: '코스 이름을 입력하세요',
+                    //   ),
+                    //   onChanged: (text) {
+                    //     // 사용자의 입력이 변화할 때마다 실행되는 콜백 함수
+                    //     print('User typed: $text');
+                    //     // CourseController의 title 변수 업데이트
+                    //     Get.find<CourseController>().title.value = text;
+                    //   },
+                    //   maxLength: 50,
+                    //   maxLines: null,
+                    // ),
+                    // Text(
+                    //   '(30자 이상, 기타 입력조건)',
+                    //   style: TextStyle(color: Colors.grey),
+                    // ),
+                    SingleChildScrollView(
+                      child: Container(
+                        constraints: BoxConstraints(
+                          maxHeight: 100,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: Colors.grey.withOpacity(0.5),
+                            width: 1,
+                          ),
+                          // boxShadow: [
+                          //   BoxShadow(
+                          //     color: Colors.grey.withOpacity(0.5),
+                          //     spreadRadius: 2,
+                          //     blurRadius: 5,
+                          //     offset: Offset(0, 3),
+                          //   ),
+                          // ],
+                        ),
+                        padding: EdgeInsets.all(10),
+                        child: TextField(
+                          onChanged: (text) {
+                            // 사용자의 입력이 변화할 때마다 실행되는 콜백 함수
+                            print('User typed: $text');
+                            // CourseController의 title 변수 업데이트
+                            Get.find<CourseController>().title.value = text;
+                          },
+                          maxLength: 50,
+                          maxLines: null,
+                          expands: true, // TextField의 높이를 가능한 한 최대로 확장
+                          minLines: null, // 최소 줄 수를 지정하지 않음
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: '최대 50자까지 작성할 수 있어요',
+                            prefixText: ' ',
+                            prefixStyle: TextStyle(color: Colors.transparent),
+                            hintStyle: TextStyle(color: Colors.grey),
+                          ),
+                        ),
                       ),
-                      onChanged: (text) {
-                        // 사용자의 입력이 변화할 때마다 실행되는 콜백 함수
-                        print('User typed: $text');
-                        // CourseController의 title 변수 업데이트
-                        Get.find<CourseController>().title.value = text;
-                      },
-                    ),
-                    Text(
-                      '(30자 이상, 기타 입력조건)',
-                      style: TextStyle(color: Colors.grey),
                     ),
                   ],
                 ),
@@ -266,20 +311,57 @@ class _MakeStepperState extends State<MakeStepper> {
                           ),
                         ),
                         SizedBox(height: 8), // 간격 추가
-                        TextField(
-                          decoration: InputDecoration(
-                            hintText: '내용은 150자까지 입력이 가능합니다', // 힌트 텍스트
-                            border: OutlineInputBorder(), // 외곽선
-                            labelText: '글 내용', // 라벨 텍스트
+                        // TextField(
+                        //   decoration: InputDecoration(
+                        //     hintText: '내용은 150자까지 입력이 가능합니다', // 힌트 텍스트
+                        //     border: OutlineInputBorder(), // 외곽선
+                        //     labelText: '글 내용', // 라벨 텍스트
+                        //   ),
+                        //   maxLines: null, // 다중 라인으로 입력 가능하게 설정
+                        //   keyboardType:
+                        //       TextInputType.multiline, // 다중 라인으로 입력 가능하게 설정
+                        //   onChanged: (value) {
+                        //     // 사용자가 입력한 텍스트가 변경될 때마다 호출됩니다.
+                        //     print(value);
+                        //     Get.find<CourseController>().content.value = value;
+                        //   },
+                        // ),
+
+                        SingleChildScrollView(
+                          child: Container(
+                            constraints: BoxConstraints(
+                              maxHeight: 200,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color: Colors.grey.withOpacity(0.5),
+                                width: 1,
+                              ),
+                            ),
+                            padding: EdgeInsets.all(10),
+                            child: TextField(
+                              onChanged: (value) {
+                                //     // 사용자가 입력한 텍스트가 변경될 때마다 호출됩니다.
+                                print(value);
+                                Get.find<CourseController>().content.value =
+                                    value;
+                              },
+                              maxLength: 5000,
+                              maxLines: null,
+                              expands: true, // TextField의 높이를 가능한 한 최대로 확장
+                              minLines: null, // 최소 줄 수를 지정하지 않음
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                hintText: '내용은 5000자까지 입력 가능합니다',
+                                prefixText: ' ',
+                                prefixStyle:
+                                    TextStyle(color: Colors.transparent),
+                                hintStyle: TextStyle(color: Colors.grey),
+                              ),
+                            ),
                           ),
-                          maxLines: null, // 다중 라인으로 입력 가능하게 설정
-                          keyboardType:
-                              TextInputType.multiline, // 다중 라인으로 입력 가능하게 설정
-                          onChanged: (value) {
-                            // 사용자가 입력한 텍스트가 변경될 때마다 호출됩니다.
-                            print(value);
-                            Get.find<CourseController>().content.value = value;
-                          },
                         ),
                       ],
                     ),

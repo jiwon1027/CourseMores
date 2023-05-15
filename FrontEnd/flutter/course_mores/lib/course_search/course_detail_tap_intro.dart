@@ -18,7 +18,9 @@ class CourseIntroduction extends StatelessWidget {
       alignment: Alignment.topRight,
       front: Container(
         alignment: Alignment.topRight,
-        decoration: BoxDecoration(color: Color.fromARGB(255, 46, 85, 57), borderRadius: BorderRadius.circular(10)),
+        decoration: BoxDecoration(
+            color: Color.fromARGB(255, 46, 85, 57),
+            borderRadius: BorderRadius.circular(10)),
         margin: EdgeInsets.symmetric(horizontal: 0, vertical: 30),
         padding: EdgeInsets.all(10),
         width: double.infinity,
@@ -78,25 +80,99 @@ class ChangeButton extends StatelessWidget {
   }
 }
 
+// class LineMap extends StatelessWidget {
+//   LineMap({super.key});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Obx(() => GoogleMap(
+//           // 첫 번째 마커를 화면 중앙에 띄우기
+//           initialCameraPosition: CameraPosition(target: detailController.markerPositions[0], zoom: 15.0),
+//           markers: Set.from(detailController.markerPositions
+//               .toList()
+//               .map((position) => Marker(markerId: MarkerId(position.toString()), position: position))),
+//           polylines: {
+//             Polyline(
+//                 polylineId: PolylineId('route'),
+//                 points: detailController.markerPositions,
+//                 color: Colors.blue,
+//                 width: 5),
+//           },
+//         ));
+//   }
+// }
+
 class LineMap extends StatelessWidget {
   LineMap({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Obx(() => GoogleMap(
-          // 첫 번째 마커를 화면 중앙에 띄우기
-          initialCameraPosition: CameraPosition(target: detailController.markerPositions[0], zoom: 15.0),
-          markers: Set.from(detailController.markerPositions
-              .toList()
-              .map((position) => Marker(markerId: MarkerId(position.toString()), position: position))),
-          polylines: {
-            Polyline(
+    // 마커 아이콘들의 경로 리스트
+    final List<String> markerIconPaths = [
+      'assets/marker1.png',
+      'assets/marker2.png',
+      'assets/marker3.png',
+      'assets/marker4.png',
+      'assets/marker5.png',
+    ];
+
+    return Obx(() {
+      final List<LatLng> positions = detailController.markerPositions
+          .map((position) => LatLng(position.latitude, position.longitude))
+          .toList();
+      final markersFuture = Future.wait(markerIconPaths.map((iconPath) {
+        return BitmapDescriptor.fromAssetImage(
+          ImageConfiguration(size: Size(24, 24)),
+          iconPath,
+        );
+      }));
+
+      return FutureBuilder<List<BitmapDescriptor>>(
+        future: markersFuture,
+        builder: (BuildContext context,
+            AsyncSnapshot<List<BitmapDescriptor>> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Container(
+              color: Colors.grey,
+              child: Center(child: CircularProgressIndicator()),
+            );
+          } else if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          } else if (!snapshot.hasData) {
+            return Text('Error: no data');
+          }
+
+          final List<BitmapDescriptor> markerIcons = snapshot.data!;
+          final List<Marker> markers = positions.asMap().entries.map((entry) {
+            final index = entry.key;
+            final position = entry.value;
+            final markerId = MarkerId('marker$index');
+            final icon = markerIcons[index % markerIcons.length];
+            return Marker(
+              markerId: markerId,
+              position: position,
+              icon: icon,
+            );
+          }).toList();
+
+          return GoogleMap(
+            initialCameraPosition: CameraPosition(
+              target: positions[0], // 첫 번째 장소를 화면 중앙에 띄우기
+              zoom: 14.0,
+            ),
+            markers: Set.from(markers),
+            polylines: {
+              Polyline(
                 polylineId: PolylineId('route'),
-                points: detailController.markerPositions,
+                points: positions,
                 color: Colors.blue,
-                width: 5),
-          },
-        ));
+                width: 5,
+              ),
+            },
+          );
+        },
+      );
+    });
   }
 }
 
@@ -107,14 +183,20 @@ class DetailTapCourseIntroductionTimeline extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(() => FixedTimeline.tileBuilder(
           theme: TimelineThemeData(
-              connectorTheme: ConnectorThemeData(color: Color.fromARGB(69, 255, 255, 255), space: 30),
-              indicatorTheme: IndicatorThemeData(color: Color.fromARGB(255, 141, 233, 127))),
+              connectorTheme: ConnectorThemeData(
+                  color: Color.fromARGB(69, 255, 255, 255), space: 30),
+              indicatorTheme: IndicatorThemeData(
+                  color: Color.fromARGB(255, 141, 233, 127))),
           builder: TimelineTileBuilder.connectedFromStyle(
             contentsAlign: ContentsAlign.alternating,
             contentsBuilder: (context, index) => Padding(
               padding: EdgeInsets.all(15),
-              child: Obx(() => Text("${detailController.nowCourseDetail[index]['title']}",
-                  style: TextStyle(color: Colors.white, fontSize: 18, fontFamily: 'KyoboHandwriting2020pdy'))),
+              child: Obx(() => Text(
+                  "${detailController.nowCourseDetail[index]['title']}",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontFamily: 'KyoboHandwriting2020pdy'))),
             ),
             oppositeContentsBuilder: (context, index) => Card(
               elevation: 6,
@@ -125,9 +207,12 @@ class DetailTapCourseIntroductionTimeline extends StatelessWidget {
                     ThumbnailImage(index: index),
                     Padding(
                       padding: EdgeInsets.all(8.0),
-                      child: Text("${detailController.nowCourseDetail[index]['name']}",
+                      child: Text(
+                          "${detailController.nowCourseDetail[index]['name']}",
                           style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w800, fontFamily: 'KyoboHandwriting2020pdy')),
+                              fontSize: 16,
+                              fontWeight: FontWeight.w800,
+                              fontFamily: 'KyoboHandwriting2020pdy')),
                     ),
                   ],
                 ),
@@ -148,7 +233,8 @@ class ThumbnailImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     try {
-      late final image = detailController.nowCourseDetail[index]['roadViewImage'];
+      late final image =
+          detailController.nowCourseDetail[index]['roadViewImage'];
       return ClipRRect(
           borderRadius: BorderRadius.circular(0),
           child: CachedNetworkImage(
@@ -162,7 +248,8 @@ class ThumbnailImage extends StatelessWidget {
     } catch (e) {
       print(e);
       const image = 'assets/img1.jpg';
-      return Image(image: AssetImage(image), height: 150, width: 130, fit: BoxFit.cover);
+      return Image(
+          image: AssetImage(image), height: 150, width: 130, fit: BoxFit.cover);
     }
   }
 }

@@ -24,6 +24,8 @@ class CourseController extends g.GetxController {
 
   void removeLocation(LocationData location) {
     locationList.remove(location);
+    // 아래 코드를 추가하여 locationList에서 해당 location을 제거합니다.
+    update(); // GetX의 갱신 메서드를 호출하여 화면을 업데이트합니다.
   }
 
   void clearLocations() {
@@ -44,7 +46,7 @@ class CourseController extends g.GetxController {
   List<XFile> getCombinedImages() {
     List<XFile> combinedImages = [];
     for (var location in locationList) {
-      combinedImages.addAll(location._temporaryImageList);
+      combinedImages.addAll(location.temporaryImageList);
     }
     return combinedImages;
   }
@@ -88,6 +90,8 @@ class CourseController extends g.GetxController {
     print(locationDataList);
     print('11111111111111');
     print(combinedImages);
+    print('2222222222');
+    print(imageFileList);
 
     // 이미지가 없는 경우
     if (imageFileList.isEmpty) {
@@ -225,7 +229,9 @@ class LocationData {
   late int numberOfImage;
   String? title;
   String? content;
-  final List<XFile> _temporaryImageList; // 추가된 부분
+  // final List<XFile> _temporaryImageList; // 추가된 부분
+  final List<XFile> temporaryImageList;
+  final List<XFile> savedImageList = [];
 
   LocationData({
     required this.key,
@@ -238,19 +244,32 @@ class LocationData {
     this.content = '',
     this.sido = '',
     this.gugun = '',
-  }) : _temporaryImageList = []; // 추가된 부분
+    required this.temporaryImageList,
+  });
 
-  List<XFile> get temporaryImageList => _temporaryImageList; // 추가된 부분
+  // List<XFile> get temporaryImageList => _temporaryImageList; // 추가된 부분
+
+  // temporaryImageList의 이미지들을 저장합니다.
+  // void saveImageList() {
+  void saveImageList(List<XFile> imageList) {
+    savedImageList.clear();
+    savedImageList.addAll(temporaryImageList);
+  }
+
+  // savedImageList에서 이미지를 가져옵니다.
+  List<XFile> getSavedImageList() {
+    return savedImageList;
+  }
 
   void addTemporaryImage(XFile image) {
-    _temporaryImageList.add(image);
+    temporaryImageList.add(image);
   }
 
   void removeTemporaryImage(XFile image) {
-    _temporaryImageList.remove(image);
+    temporaryImageList.remove(image);
   }
 
   void clearTemporaryImages() {
-    _temporaryImageList.clear();
+    temporaryImageList.clear();
   }
 }
