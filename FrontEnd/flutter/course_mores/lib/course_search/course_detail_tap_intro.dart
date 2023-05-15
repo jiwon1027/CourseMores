@@ -233,8 +233,13 @@ class ThumbnailImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     try {
-      late final image =
-          detailController.nowCourseDetail[index]['roadViewImage'];
+      late final image = detailController.nowCourseDetail[index]
+                      ['locationImageList'] !=
+                  null &&
+              detailController
+                  .nowCourseDetail[index]['locationImageList'].isNotEmpty
+          ? detailController.nowCourseDetail[index]['locationImageList'][0]
+          : detailController.nowCourseDetail[index]['roadViewImage'];
       return ClipRRect(
           borderRadius: BorderRadius.circular(0),
           child: CachedNetworkImage(
