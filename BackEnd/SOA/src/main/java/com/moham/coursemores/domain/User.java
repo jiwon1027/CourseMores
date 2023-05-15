@@ -56,6 +56,10 @@ public class User extends DeleteTimeEntity {
     @Column
     private int age;
 
+    @NotNull
+    @Column
+    private Integer alarmSetting;
+
     @Column(length = 1000)
     private String profileImage;
 
@@ -85,6 +89,7 @@ public class User extends DeleteTimeEntity {
         this.email = email;
         this.roles = roles;
         this.provider = provider;
+        this.alarmSetting = 3;
     }
 
     public void create(UserInfoCreateReqDto userInfoCreateReqDto, String imageUrl) {
@@ -99,6 +104,10 @@ public class User extends DeleteTimeEntity {
         this.age = userInfoUpdateReqDto.getAge();
         this.gender = userInfoUpdateReqDto.getGender();
         this.profileImage = imageUrl;
+    }
+
+    public void setAlarmSetting(int updateAlarmSetting) {
+        this.alarmSetting = updateAlarmSetting;
     }
 
     public void delete() {

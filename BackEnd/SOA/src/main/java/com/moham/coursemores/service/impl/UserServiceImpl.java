@@ -10,15 +10,14 @@ import com.moham.coursemores.dto.profile.UserInfoResDto;
 import com.moham.coursemores.dto.token.TokenReissueReqDto;
 import com.moham.coursemores.repository.UserRepository;
 import com.moham.coursemores.service.UserService;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -61,7 +60,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void addUserInfo(Long userId, UserInfoCreateReqDto userInfoCreateReqDto, MultipartFile profileImage) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(userId,CustomErrorCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(userId, CustomErrorCode.USER_NOT_FOUND));
 
         String imageUrl = "default";
         // 선택한 이미지가 있다면 업로드
@@ -75,13 +74,13 @@ public class UserServiceImpl implements UserService {
     public Map<String, Object> reissue(TokenReissueReqDto tokenReissueReqDto) {
         Long userId = tokenProvider.extractMemberId(tokenReissueReqDto.getAccessToken());
 
-        if(userId == null)
-            throw new CustomException(tokenReissueReqDto.getAccessToken(),CustomErrorCode.TOKEN_NOT_VALID);
+        if (userId == null)
+            throw new CustomException(tokenReissueReqDto.getAccessToken(), CustomErrorCode.TOKEN_NOT_VALID);
 
         Optional<User> temp = userRepository.findByIdAndDeleteTimeIsNull(userId);
 
-        if(temp.isEmpty() || !temp.get().getNickname().equals(tokenReissueReqDto.getNickname())){
-            throw new CustomException(userId,CustomErrorCode.USER_NOT_FOUND);
+        if (temp.isEmpty() || !temp.get().getNickname().equals(tokenReissueReqDto.getNickname())) {
+            throw new CustomException(userId, CustomErrorCode.USER_NOT_FOUND);
         }
 
         Map<String, Object> resultMap = new HashMap<>();
@@ -90,7 +89,7 @@ public class UserServiceImpl implements UserService {
         resultMap.put("accessToken", accessToken);
 
         User user = temp.get();
-        resultMap.put("userInfo",UserInfoResDto.builder()
+        resultMap.put("userInfo", UserInfoResDto.builder()
                 .age(user.getAge())
                 .profileImage(user.getProfileImage())
                 .gender(user.getGender())
@@ -100,5 +99,22 @@ public class UserServiceImpl implements UserService {
         return resultMap;
     }
 
+    @Override
+    public int getMyAlarmSetting(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(userId, CustomErrorCode.USER_NOT_FOUND));
+        return user.getAlarmSetting();
+    }
+
+    @Override
+    @Transactional
+    public void updateMyAlarmSetting(Long userId, int updateAlarmSetting) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(userId, CustomErrorCode.USER_NOT_FOUND));
+        if (0 < updateAlarmSetting && updateAlarmSetting < 4)
+            user.setAlarmSetting(updateAlarmSetting);
+        else
+            throw new CustomException(CustomErrorCode.NOTIFICATION_SETTING_MISMATCH);
+    }
 
 }
