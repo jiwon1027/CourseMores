@@ -75,18 +75,31 @@ public class UserController {
             @RequestBody TokenReissueReqDto tokenReissueReqDto) {
         logger.debug("[0/2][POST][/user/reissue] << request : tokenReissueReqDto\n tokenReissueReqDto = {}", tokenReissueReqDto);
 
-        Map<String, Object> resultMap = new HashMap<>();
-
         logger.debug("[1/2][POST][/user/reissue] ...us.reissue");
-        String accessToken = userService.reissue(tokenReissueReqDto);
-        if("401".equals(accessToken)){
-            logger.debug("[2/2][POST][/user/reissue] >> response : 401 error");
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-        resultMap.put("accessToken", accessToken);
+        Map<String, Object> resultMap = userService.reissue(tokenReissueReqDto);
 
-        logger.debug("[2/2][POST][/user/reissue] >> response : accessToken\n accessToken = {}\n", accessToken);
+        logger.debug("[2/2][POST][/user/reissue] >> response : userInfo, accessToken\n userInfo = {}\n accessToken = {}\n",
+                resultMap.get("userInfo"), resultMap.get("accessToken"));
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
+
+//    @PostMapping("reissue")
+//    public ResponseEntity<Map<String, Object>> reissue(
+//            @RequestBody TokenReissueReqDto tokenReissueReqDto) {
+//        logger.debug("[0/2][POST][/user/reissue] << request : tokenReissueReqDto\n tokenReissueReqDto = {}", tokenReissueReqDto);
+//
+//        Map<String, Object> resultMap = new HashMap<>();
+//
+//        logger.debug("[1/2][POST][/user/reissue] ...us.reissue");
+//        String accessToken = userService.reissue(tokenReissueReqDto);
+//        if("401".equals(accessToken)){
+//            logger.debug("[2/2][POST][/user/reissue] >> response : 401 error");
+//            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+//        }
+//        resultMap.put("accessToken", accessToken);
+//
+//        logger.debug("[2/2][POST][/user/reissue] >> response : accessToken\n accessToken = {}\n", accessToken);
+//        return new ResponseEntity<>(resultMap, HttpStatus.OK);
+//    }
 
 }

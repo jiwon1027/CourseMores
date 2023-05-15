@@ -7,6 +7,8 @@ import com.moham.coursemores.dto.token.TokenReissueReqDto;
 import com.moham.coursemores.dto.token.TokenResDto;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Map;
+
 public interface UserService {
 
     UserInfoResDto getUserInfo(Long userId);
@@ -17,6 +19,6 @@ public interface UserService {
 
     void addUserInfo(Long userId, UserInfoCreateReqDto userInfoCreateReqDto, MultipartFile profileImage);
 
-    String reissue(TokenReissueReqDto tokenReissueReqDto);
+    Map<String, Object> reissue(TokenReissueReqDto tokenReissueReqDto);
 
 }
