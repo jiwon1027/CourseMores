@@ -187,6 +187,24 @@ class DetailCourseInfo extends StatelessWidget {
                           SizedBox(height: 10),
                           // 작성일자, 조회수 라인
                           DetailDateViews(),
+                          if (detailController.nowCourseInfo['write'])
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                SizedBox(height: 15),
+                                Expanded(child: Container()),
+                                TextButton(
+                                    onPressed: () async {
+                                      // TODO: 이곳에 코스 수정하기 API 연결
+                                    },
+                                    child: Text("수정")),
+                                TextButton(
+                                    onPressed: () {
+                                      // TODO: 이곳에 코스 삭제하기 API 연결
+                                    },
+                                    child: Text("삭제")),
+                              ],
+                            ),
                         ],
                       ))),
             ],
