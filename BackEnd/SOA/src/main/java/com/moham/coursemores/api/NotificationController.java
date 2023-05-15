@@ -16,6 +16,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,9 +32,21 @@ public class NotificationController {
     private final UserService userService;
     private final NotificationService notificationService;
 
+    @PostMapping("token")
+    public ResponseEntity<Void> registerFirebaseToken(@AuthenticationPrincipal User user, @RequestBody Map<String, String> requestMap) {
+        Long userId = Long.parseLong(user.getUsername());
+        String firebaseToken = requestMap.get("firebaseToken");
+        logger.debug("[0/2][POST][/notification/token][{}] << request : firebaseToken\n firebaseToken = {}", userId, firebaseToken);
+
+        logger.debug("[1/2][POST][/notification/token][{}] ... ns.saveToken", userId);
+        notificationService.saveToken(userId, firebaseToken);
+
+        logger.debug("[2/2][POST][/notification/token][{}] >> response : none\n", userId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @GetMapping("setting")
-    public ResponseEntity<Map<String, Object>> getUserAlarmSetting(
-            @AuthenticationPrincipal User user) {
+    public ResponseEntity<Map<String, Object>> getUserAlarmSetting(@AuthenticationPrincipal User user) {
         Long userId = Long.parseLong(user.getUsername());
         logger.debug("[0/2][GET][/notification/setting][{}] << request : none", userId);
 
@@ -48,9 +61,7 @@ public class NotificationController {
     }
 
     @PutMapping("setting")
-    public ResponseEntity<Void> updateUserAlarmSetting(
-            @AuthenticationPrincipal User user,
-            @RequestBody Map<String, Integer> requestMap) {
+    public ResponseEntity<Void> updateUserAlarmSetting(@AuthenticationPrincipal User user, @RequestBody Map<String, Integer> requestMap) {
         Long userId = Long.parseLong(user.getUsername());
         int updateAlarmSetting = requestMap.get("updateAlarmSetting");
         logger.debug("[0/2][PUT][/notification/setting][{}] << request : updateAlarmSetting\n updateAlarmSetting ={}", userId, updateAlarmSetting);
@@ -63,8 +74,7 @@ public class NotificationController {
     }
 
     @GetMapping
-    public ResponseEntity<Map<String, Object>> getUserNotificationList(
-            @AuthenticationPrincipal User user) {
+    public ResponseEntity<Map<String, Object>> getUserNotificationList(@AuthenticationPrincipal User user) {
         Long userId = Long.parseLong(user.getUsername());
         logger.debug("[0/2][GET][/notification][{}] << request : none", userId);
 
@@ -79,9 +89,7 @@ public class NotificationController {
     }
 
     @DeleteMapping("{notificationId}")
-    public ResponseEntity<Void> deleteInterestCourse(
-            @PathVariable Long notificationId,
-            @AuthenticationPrincipal User user) {
+    public ResponseEntity<Void> deleteInterestCourse(@PathVariable Long notificationId, @AuthenticationPrincipal User user) {
         Long userId = Long.parseLong(user.getUsername());
         logger.debug("[0/2][DELETE][/notification/{}][{}] << request : none", notificationId, userId);
 

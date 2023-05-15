@@ -37,6 +37,15 @@ public class NotificationServiceImpl implements NotificationService {
     private final CourseRepository courseRepository;
 
     @Override
+    @Transactional
+    public void saveToken(Long userId, String firebaseToken) {
+        firebaseTokenRedisRepository.save(FirebaseToken.builder()
+                .userId(userId)
+                .token(firebaseToken)
+                .build());
+    }
+
+    @Override
     public List<NotificationResDto> getMyNotificationList(Long userId) {
         return notificationRepository.findByUserIdAndDeleteTimeIsNull(userId).stream()
                 .map(notification -> NotificationResDto.builder()
@@ -54,7 +63,7 @@ public class NotificationServiceImpl implements NotificationService {
         User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
                 .orElseThrow(() -> new CustomException(userId, CustomErrorCode.USER_NOT_FOUND));
         Course course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new CustomException(courseId,CustomErrorCode.COURSE_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(courseId, CustomErrorCode.COURSE_NOT_FOUND));
 
         User targetUser = course.getUser();
         String nickname = user.getNickname();
@@ -72,12 +81,12 @@ public class NotificationServiceImpl implements NotificationService {
     @Transactional
     public void deleteNotification(Long userId, Long notificationId) {
         User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
-                .orElseThrow(() -> new CustomException(userId,CustomErrorCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(userId, CustomErrorCode.USER_NOT_FOUND));
 
         com.moham.coursemores.domain.Notification notification = notificationRepository.findById(notificationId)
-                .orElseThrow(() -> new CustomException(notificationId,CustomErrorCode.NOTIFICATION_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(notificationId, CustomErrorCode.NOTIFICATION_NOT_FOUND));
 
-        if(!Objects.equals(user.getId(), notification.getUser().getId())){
+        if (!Objects.equals(user.getId(), notification.getUser().getId())) {
             throw new CustomException(CustomErrorCode.NOTIFICATION_NOT_DELETE);
         }
 
