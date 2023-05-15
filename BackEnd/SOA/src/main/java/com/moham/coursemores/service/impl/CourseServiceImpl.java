@@ -1,5 +1,7 @@
 package com.moham.coursemores.service.impl;
 
+import com.moham.coursemores.common.exception.CustomErrorCode;
+import com.moham.coursemores.common.exception.CustomException;
 import com.moham.coursemores.domain.*;
 import com.moham.coursemores.dto.course.*;
 import com.moham.coursemores.dto.profile.UserSimpleInfoResDto;
@@ -108,7 +110,7 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public Page<CoursePreviewResDto> search(Long userId, String word, Long regionId, List<Long> themeIds, int isVisited, int page, String sortby) {
         User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
-                .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(userId, CustomErrorCode.USER_NOT_FOUND));
 
         // 한 페이지에 보여줄 코스의 수
         final int size = 10;
@@ -159,7 +161,7 @@ public class CourseServiceImpl implements CourseService {
     public void increaseViewCount(Long courseId) {
         // 코스 정보 가져오기
         Course course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new RuntimeException("해당 코스를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(courseId,CustomErrorCode.COURSE_NOT_FOUND));
         // 코스 조회수 증가
         course.increaseViewCount();
     }
@@ -167,13 +169,13 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public CourseInfoResDto getCourseInfo(Long courseId, Long userId) {
         User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
-                .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(userId,CustomErrorCode.USER_NOT_FOUND));
         // 코스 정보 가져오기
         Course course = courseRepository.findByIdAndDeleteTimeIsNull(courseId)
-                .orElseThrow(() -> new RuntimeException("해당 코스를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(courseId,CustomErrorCode.COURSE_NOT_FOUND));
 
         if (course.getUser().getDeleteTime() != null)
-            throw new RuntimeException("삭제된 코스입니다.");
+            throw new CustomException(CustomErrorCode.ALREADY_DELETE_COURSE);
 
         return CourseInfoResDto.builder()
                 .title(course.getTitle())

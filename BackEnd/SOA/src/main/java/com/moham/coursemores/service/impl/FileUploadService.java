@@ -7,6 +7,9 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import java.io.IOException;
 import java.util.UUID;
+
+import com.moham.coursemores.common.exception.CustomErrorCode;
+import com.moham.coursemores.common.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -33,7 +36,7 @@ public class FileUploadService {
             amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, multipartFile.getInputStream(), objectMetadata)
                     .withCannedAcl(CannedAccessControlList.PublicRead));
         } catch (IOException e) {
-            throw new RuntimeException("사진 업로드 도중 오류가 발생하였습니다.");
+            throw new CustomException(CustomErrorCode.FAIL_UPLOAD_IMAGE);
         }
         return String.valueOf(amazonS3Client.getUrl(bucket, fileName));
     }

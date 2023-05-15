@@ -26,11 +26,14 @@ public enum CustomErrorCode {
     TOKEN_NOT_VALID("토큰이 유효하지 않습니다."),
 
     FAIL_SEND_NOTIFICATION("알림 전송에 실패하였습니다."),
+    FAIL_UPLOAD_IMAGE("사진 업로드에 실패하였습니다."),
 
     ALREADY_REGISTER_INTEREST_COURSE("이미 관심 등록된 코스입니다."),
     ALREADY_RELEASE_INTEREST_COURSE("이미 관심 해제된 코스입니다."),
     ALREADY_REGISTER_LIKE_COURSE("이미 좋아요 등록된 코스입니다."),
     ALREADY_RELEASE_LIKE_COURSE("이미 좋아요 해제된 코스입니다."),
+
+    ALREADY_DELETE_COURSE("삭제된 코스입니다."),
     ;
 
     private final String statusMessage;

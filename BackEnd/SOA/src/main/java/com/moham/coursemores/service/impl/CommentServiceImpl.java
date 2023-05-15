@@ -1,5 +1,7 @@
 package com.moham.coursemores.service.impl;
 
+import com.moham.coursemores.common.exception.CustomErrorCode;
+import com.moham.coursemores.common.exception.CustomException;
 import com.moham.coursemores.domain.Comment;
 import com.moham.coursemores.domain.CommentImage;
 import com.moham.coursemores.domain.Course;
@@ -38,7 +40,7 @@ public class CommentServiceImpl implements CommentService {
     public List<CommentResDTO> getCommentList(Long courseId, Long userId, int page, String sortby) {
         // user를 불러와서 그 유저가 작성한 코멘트인지 확인하기
         User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
-                .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(userId, CustomErrorCode.USER_NOT_FOUND));
 
         // 한 페이지에 보여줄 댓글의 수
         final int size = 10;
@@ -107,11 +109,11 @@ public class CommentServiceImpl implements CommentService {
     public void createComment(Long courseId, Long userId, CommentCreateReqDTO commentCreateReqDTO, List<MultipartFile> imageList) {
         // userId의 User 가져오기
         User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
-                .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(userId,CustomErrorCode.USER_NOT_FOUND));
 
         //courseId의 Course 가져오기
         Course course = courseRepository.findByIdAndDeleteTimeIsNull(courseId)
-                .orElseThrow(() -> new RuntimeException("해당 코스를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(courseId,CustomErrorCode.COURSE_NOT_FOUND));
 
         // courseId의 course가 있다면 course + DTO를 기반으로 새로운 댓글 생성
         Comment comment = Comment.builder()
@@ -142,11 +144,11 @@ public class CommentServiceImpl implements CommentService {
     public void updateComment(Long commentId, Long userId, CommentUpdateReqDTO commentUpdateReqDTO, List<MultipartFile> imageList) {
         // userId의 User 가져오기
         User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
-                .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(userId,CustomErrorCode.USER_NOT_FOUND));
 
         // commentId의 Comment 가져오기
         Comment comment = commentRepository.findByIdAndUserIdAndDeleteTimeIsNull(commentId, user.getId())
-                .orElseThrow(() -> new RuntimeException("해당 댓글을 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(commentId,CustomErrorCode.COMMENT_NOT_FOUND));
 
         // commentId의 comment가 있다면 comment를 가져와서 수정
         comment.update(commentUpdateReqDTO.getContent(), commentUpdateReqDTO.getPeople());
@@ -154,7 +156,7 @@ public class CommentServiceImpl implements CommentService {
         // 기존에 있었던 commentImage 삭제
         for (long courseImageId : commentUpdateReqDTO.getDeleteImageList()) {
             CommentImage commentImage = commentImageRepository.findById(courseImageId)
-                    .orElseThrow(() -> new RuntimeException("해당 댓글 이미지를 찾을 수 없습니다."));
+                    .orElseThrow(() -> new CustomException(courseImageId,CustomErrorCode.COMMENT_IMAGE_NOT_FOUND));
             commentImageRepository.delete(commentImage);
         }
 
@@ -176,11 +178,11 @@ public class CommentServiceImpl implements CommentService {
     public void deleteComment(Long commentId, Long userId) {
         // userId의 User 가져오기
         User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
-                .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(userId,CustomErrorCode.USER_NOT_FOUND));
 
         // commentId의 Comment 가져오기
         Comment comment = commentRepository.findByIdAndUserIdAndDeleteTimeIsNull(commentId, user.getId())
-                .orElseThrow(() -> new RuntimeException("해당 댓글를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(commentId,CustomErrorCode.COMMENT_NOT_FOUND));
 
         // commentId의 comment가 있다면 comment를 가져와서 수정
         comment.delete();
