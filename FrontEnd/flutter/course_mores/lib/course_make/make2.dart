@@ -11,9 +11,13 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import '../controller/make_controller.dart';
 import 'package:geocoding/geocoding.dart' as geocoding;
+import 'package:dio/dio.dart';
+import '../auth/auth_dio.dart';
 
 class CourseMake extends StatefulWidget {
-  const CourseMake({Key? key}) : super(key: key);
+  final String? courseId;
+  CourseMake({Key? key, this.courseId}) : super(key: key);
+  // const CourseMake({Key? key}) : super(key: key);
 
   @override
   State<CourseMake> createState() => _CourseMakeState();
@@ -30,6 +34,66 @@ class _CourseMakeState extends State<CourseMake> {
 
   // list of tiles
   late List<LocationData> _items;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Initialize the controller values
+    courseController.title.value = '';
+    courseController.content.value = '';
+    courseController.people.value = 0;
+    courseController.time.value = 0;
+    courseController.visited.value = false;
+    courseController.locationList.clear();
+    courseController.hashtagList.clear();
+    courseController.themeIdList.clear();
+
+    if (widget.courseId != null) {
+      // Fetch the course information using the courseId
+      fetchCourse(widget.courseId!);
+    }
+  }
+
+  Future<void> fetchCourse(String courseId) async {
+    final dio = await authDio();
+    final response = await dio.get('course/$courseId');
+    print(response);
+    if (response.statusCode == 200) {
+      // If the server returns a 200 OK response, parse the JSON.
+      final courseImportList = response.data['courseImportList '];
+      print(courseImportList);
+      // if (courseImportList != null && courseImportList is Iterable) {
+      //   List<Map<String, dynamic>> courseImportList =
+      //       List<Map<String, dynamic>>.from(response.data['courseImportList']);
+      //   importCourse(courseImportList); // Import the course after fetching it
+      // } else {
+      //   // Handle the case when courseImportList is null or not iterable
+      //   // ...
+      // }
+      importCourse(courseImportList);
+    } else {
+      // If the server did not return a 200 OK response,
+      // throw an exception.
+      throw Exception('Failed to load course');
+    }
+  }
+
+  void importCourse(List<dynamic> courseImportList) {
+    for (dynamic course in courseImportList) {
+      if (course is Map<String, dynamic>) {
+        print('very good!!!');
+        _addItem(
+          course["name"],
+          course["latitude"],
+          course["longitude"],
+          course["sido"],
+          course["gugun"],
+          UniqueKey(), // Create a unique key for each course item
+        );
+      }
+    }
+  }
 
   // @override
   // void initState() {
@@ -70,13 +134,16 @@ class _CourseMakeState extends State<CourseMake> {
         "https://maps.googleapis.com/maps/api/streetview?size=400x400&location=$latitude,$longitude&fov=90&heading=235&pitch=10&key=$apiKey2";
 
     LocationData locationData = LocationData(
-      key: UniqueKey(),
+      // key: UniqueKey(),
+      key: key ??
+          UniqueKey(), // Use the provided key or create a new one if none is provided
       name: name,
       latitude: latitude,
       longitude: longitude,
       sido: sido,
       gugun: gugun,
       roadViewImage: imgUrl2,
+      temporaryImageList: [],
     );
     _items.add(locationData);
     // CourseController에서 locationList에 locationData를 추가
@@ -128,42 +195,6 @@ class _CourseMakeState extends State<CourseMake> {
     return '';
   }
 
-  // // 기존 아이템을 수정하는 함수
-  // void _editItem(int index, String title, double latitude, double longitude) {
-  //   setState(() {
-  //     final item = LocationData(
-  //       name: title,
-  //       latitude: latitude,
-  //       longitude: longitude,
-  //       key: _items[index].key,
-  //     );
-  //     _items[index] = item;
-  //   });
-  // }
-  // 기존 아이템을 수정하는 함수
-  // void _editItem(int index, String title, double latitude, double longitude) {
-  //   final locationData = LocationData(
-  //     key: _items[index].key,
-  //     name: title,
-  //     latitude: latitude,
-  //     longitude: longitude,
-  //   );
-  //   final locationController = Get.find<LocationController>();
-  //   locationController.editItem(index, locationData);
-  // }
-
-  // void _editItem(int index, String title, double latitude, double longitude, String sido, String gugun) {
-  //   final locationData = LocationData(
-  //     name: title,
-  //     latitude: latitude,
-  //     longitude: longitude,
-  //     key: _items[index].key,
-  //     sido: sido,
-  //     gugun: gugun,
-  //   );
-  //   locationController.updateLocation(index, locationData);
-  // }
-
 // Returns index of item with given key
   int _indexOfKey(Key key) {
     return _items.indexWhere((LocationData d) => d.key == key);
@@ -201,6 +232,9 @@ class _CourseMakeState extends State<CourseMake> {
   void onDelete(LocationData item) {
     setState(() {
       _items.remove(item);
+
+      // CourseController의 locationList에서 해당 아이템 제거
+      Get.find<CourseController>().removeLocation(item);
     });
   }
   //
@@ -474,29 +508,32 @@ class _CourseMakeState extends State<CourseMake> {
                           Get.find<CourseController>();
 
                       // courseController 내부의 값들 출력하기
-                      print(courseController.title);
-                      print(courseController.locationList);
-                      print(courseController.locationList[0].name);
-                      print(courseController.locationList[1].name);
-                      print(courseController.locationList[2].name);
-                      // print(courseController.locationList[3].name);
-                      // print(courseController.locationList[4].name);
-                      print(courseController.locationList[0].title);
-                      print(courseController.locationList[0].sido);
-                      print(courseController.locationList[1].sido);
-                      print(courseController.locationList[2].sido);
-                      // print(courseController.locationList[3].sido);
-                      // print(courseController.locationList[4].sido);
-                      print(courseController.locationList[0].gugun);
-                      print(courseController.locationList[1].gugun);
-                      print(courseController.locationList[2].gugun);
-                      // print(courseController.locationList[3].gugun);
-                      // print(courseController.locationList[4].gugun);
-                      print(courseController.locationList[1].content);
+                      // print(courseController.title);
+                      // print(courseController.locationList);
+                      // print(courseController.locationList[0].name);
+                      // print(courseController.locationList[1].name);
+                      // print(courseController.locationList[2].name);
+                      // // print(courseController.locationList[3].name);
+                      // // print(courseController.locationList[4].name);
+                      // print(courseController.locationList[0].title);
+                      // print(courseController.locationList[0].sido);
+                      // print(courseController.locationList[1].sido);
+                      // print(courseController.locationList[2].sido);
+                      // // print(courseController.locationList[3].sido);
+                      // // print(courseController.locationList[4].sido);
+                      // print(courseController.locationList[0].gugun);
+                      // print(courseController.locationList[1].gugun);
+                      // print(courseController.locationList[2].gugun);
+                      // // print(courseController.locationList[3].gugun);
+                      // // print(courseController.locationList[4].gugun);
+                      // print(courseController.locationList[1].content);
                       // print(courseController.locationList[0].name);
                       // print(courseController.locationList[1].name);
                       // print(courseController.locationList[2].name);
                       // print(courseController.locationList[3].name);
+                      // print(courseController.locationList[0].numberOfImage);
+                      // print(courseController.locationList[1].numberOfImage);
+                      // print(courseController.locationList[2].numberOfImage);
                       // 코스 저장여부 확인 코드 끝 check //
                       showDialog(
                         context: context,
