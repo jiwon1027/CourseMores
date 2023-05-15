@@ -1,5 +1,7 @@
 // import 'package:coursemores/auth/login_page.dart';
 // import 'package:coursemores/mypage/mypage.dart';
+import 'package:coursemores/controller/search_controller.dart';
+
 import '../controller/getx_controller.dart';
 import 'package:flutter/material.dart';
 import '../course_search/elastic_search.dart';
@@ -32,6 +34,7 @@ final List<String> imgList = [
 final homeController = Get.put(HomeScreenInfo());
 final pageController = Get.put(PageNum());
 final locationController = Get.put(LocationInfo());
+final searchController = Get.put(SearchController());
 // var hotCourse;
 
 class HomeScreen extends StatefulWidget {
@@ -478,7 +481,7 @@ myNearCourse() {
 
 themeList() {
   var themes = [];
-  for (var theme in course.themeList) {
+  for (var theme in searchController.themeList) {
     themes.add(theme["text"]);
   }
 
