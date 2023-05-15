@@ -35,7 +35,8 @@ public class CourseCustomRepositoryImpl implements CourseCustomRepository {
                 .where(wordContain(word),
                         regionEq(regionId),
                         themeContain(themeIds),
-                        isVisited(isVisited))
+                        isVisited(isVisited),
+                        isNotDelete())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(getOrderSpecifier(pageable.getSort()).toArray(OrderSpecifier[]::new))
@@ -48,7 +49,8 @@ public class CourseCustomRepositoryImpl implements CourseCustomRepository {
                 .where(wordContain(word),
                         regionEq(regionId),
                         themeContain(themeIds),
-                        isVisited(isVisited));
+                        isVisited(isVisited),
+                        isNotDelete());
 
         return PageableExecutionUtils.getPage(fetch, pageable, count::fetchCount);
     }
@@ -65,6 +67,10 @@ public class CourseCustomRepositoryImpl implements CourseCustomRepository {
                     return new OrderSpecifier(direction, orderByExpression.get(prop));
                 })
                 .collect(Collectors.toList());
+    }
+
+    private BooleanExpression isNotDelete() {
+        return course.deleteTime.isNull();
     }
 
     private BooleanExpression wordContain(String word) {
