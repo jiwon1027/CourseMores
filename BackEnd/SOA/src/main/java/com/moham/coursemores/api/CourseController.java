@@ -1,14 +1,6 @@
 package com.moham.coursemores.api;
 
-import com.moham.coursemores.dto.course.CourseCreateReqDto;
-import com.moham.coursemores.dto.course.CourseDetailResDto;
-import com.moham.coursemores.dto.course.CourseImportResDto;
-import com.moham.coursemores.dto.course.CourseInfoResDto;
-import com.moham.coursemores.dto.course.CoursePreviewResDto;
-import com.moham.coursemores.dto.course.CourseUpdateReqDto;
-import com.moham.coursemores.dto.course.HotPreviewResDto;
-import com.moham.coursemores.dto.course.MyCourseResDto;
-import com.moham.coursemores.dto.course.NearPreviewResDto;
+import com.moham.coursemores.dto.course.*;
 import com.moham.coursemores.dto.elasticsearch.IndexDataReqDTO;
 import com.moham.coursemores.service.CourseService;
 import com.moham.coursemores.service.ElasticSearchService;
@@ -201,7 +193,7 @@ public class CourseController {
                 .title(courseCreateReqDto.getTitle())
                 .courselocationList(courseCreateReqDto.getLocationList()
                         .stream()
-                        .map(locationCreateReqDto -> locationCreateReqDto.getName())
+                        .map(LocationCreateReqDto::getName)
                         .collect(Collectors.toList()))
                 .hashtagList(courseCreateReqDto.getHashtagList())
                 .build());
@@ -230,7 +222,7 @@ public class CourseController {
                 .title(courseUpdateReqDto.getTitle())
                 .courselocationList(courseUpdateReqDto.getLocationList()
                         .stream()
-                        .map(locationUpdateReqDto -> locationUpdateReqDto.getName())
+                        .map(LocationUpdateReqDto::getName)
                         .collect(Collectors.toList()))
                 .hashtagList(courseUpdateReqDto.getHashtagList())
                 .build());

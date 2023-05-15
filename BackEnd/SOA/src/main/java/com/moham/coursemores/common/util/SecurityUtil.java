@@ -1,5 +1,7 @@
 package com.moham.coursemores.common.util;
 
+import com.moham.coursemores.common.exception.CustomErrorCode;
+import com.moham.coursemores.common.exception.CustomException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,7 +18,7 @@ public class SecurityUtil {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication == null || authentication.getName() == null) {
-            throw new RuntimeException("Security Context 에 인증 정보가 없습니다.");
+            throw new CustomException(CustomErrorCode.SECURITY_CONTEXT_NOT_FOUND);
         }
 
         return authentication.getName();

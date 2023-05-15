@@ -25,7 +25,7 @@ public class RegionController {
     private final RegionService regionService;
 
     @GetMapping("dummy")
-    public ResponseEntity<Void> saveDummyData() throws Exception {
+    public ResponseEntity<Void> saveDummyData() {
         logger.debug("[0/1][GET][/region/dummy] << request : none");
 
         logger.debug("[1/2][GET][/region/dummy] ...rs.saveDummy");

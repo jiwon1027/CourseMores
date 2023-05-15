@@ -1,5 +1,7 @@
 package com.moham.coursemores.common.auth.jwt;
 
+import com.moham.coursemores.common.exception.CustomErrorCode;
+import com.moham.coursemores.common.exception.CustomException;
 import com.moham.coursemores.common.util.OAuthProvider;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -33,16 +35,10 @@ public class TokenProvider {
     private String AUTHORITIES_KEY;
     @Value("${token.access.expire}")
     private long ACCESS_TOKEN_EXPIRE_TIME;
-    @Value("${token.refresh.expire}")
-    private long REFRESH_TOKEN_EXPIRE_TIME;
 
     public TokenProvider(@Value("${jwt.secret}") String secretKey) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
-    }
-
-    public long get_REFRESH_TOKEN_EXPIRE_TIME() {
-        return REFRESH_TOKEN_EXPIRE_TIME;
     }
 
     public String generateAccessToken(String subject, OAuthProvider oAuthProvider) {
@@ -51,14 +47,6 @@ public class TokenProvider {
                 .setSubject(subject)
                 .claim(AUTHORITIES_KEY, oAuthProvider)
                 .setExpiration(new Date(now + ACCESS_TOKEN_EXPIRE_TIME))
-                .signWith(key, SignatureAlgorithm.HS512)
-                .compact();
-    }
-
-    public String generateRefreshToken() {
-        long now = (new Date()).getTime();
-        return Jwts.builder()
-                .setExpiration(new Date(now + REFRESH_TOKEN_EXPIRE_TIME))
                 .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
     }
@@ -103,7 +91,7 @@ public class TokenProvider {
             User principal = new User(claims.getSubject(), "", authorities);
             return new UsernamePasswordAuthenticationToken(principal, accessToken, authorities);
         } else {
-            throw new RuntimeException("해당 토큰은 권한 정보가 없습니다.");
+            throw new CustomException(CustomErrorCode.TOKEN_NOT_VALID);
         }
     }
 
