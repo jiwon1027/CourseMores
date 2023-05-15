@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:coursemores/course_search/search.dart';
 import 'package:dio/dio.dart';
 import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
@@ -61,6 +62,8 @@ class DetailController extends GetxController {
   RxInt commentImageIndex = 0.obs;
   RxString directory = "/data/user/0/com.moham.coursemores/cache".obs;
 
+  RxBool isCommentLoading = false.obs;
+
   RxList<File> imageList = <File>[].obs;
   RxList<File> addImageList = <File>[].obs;
   RxInt commentPeople = 0.obs;
@@ -105,6 +108,14 @@ class DetailController extends GetxController {
     }
   }
 
+  Future changeCommentPage(int index) async {
+    try {
+      commentPage.value = index;
+    } catch (e) {
+      print(e);
+    }
+  }
+
   Future getCourseInfo(tap) async {
     try {
       final dio = await authDio();
@@ -120,6 +131,7 @@ class DetailController extends GetxController {
         await getIsLikeCourse();
         await getIsInterestCourse();
         await getCourseDetailList();
+        changeCommentPage(0);
         await getCommentList();
       } else {
         // 요청이 실패한 경우
@@ -250,6 +262,8 @@ class DetailController extends GetxController {
         dynamic data = response.data;
 
         nowCourseCommentList.value = RxList<Map<String, dynamic>>.from(data['commentList']);
+
+        detailController.commentPage++;
       } else {
         // 요청이 실패한 경우
         // 에러 처리
@@ -494,7 +508,7 @@ class DetailController extends GetxController {
         // DioError가 아닌 다른 예외 처리
       }
     }
-    getCourseInfo("코멘트");
+    await getCourseInfo("코멘트");
 
     await getCommentList();
     selectedSegment.value = "코멘트";
@@ -588,5 +602,21 @@ class DetailController extends GetxController {
     getCourseInfo("코멘트");
     selectedSegment.value = "코멘트";
     throw Exception('Error');
+  }
+
+  void getNextCommentResults() async {
+    if (isCommentLoading.value) return; // 이미 로딩 중이면 중복 호출 방지
+
+    final RxList<Map<String, dynamic>> newCourseCommentList = RxList.from(nowCourseCommentList);
+
+    // 로딩 상태 설정
+    isCommentLoading.value = true;
+
+    await detailController.getCommentList().then((_) {
+      isCommentLoading.value = false;
+    });
+
+    newCourseCommentList.addAll([...nowCourseCommentList]); // 기존 검색 결과와 새로운 결과를 병합
+    nowCourseCommentList.value = newCourseCommentList;
   }
 }

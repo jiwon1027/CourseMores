@@ -17,8 +17,10 @@ class SearchController extends GetxController {
     {"regionId": 0, "gugun": "전체"}
   ].obs;
 
-// elasticMap : 자동완성 api 값을 담을 맵
+  // elasticMap : 자동완성 api 값을 담을 맵
   RxMap elasticMap = {}.obs;
+
+  RxBool isCourseLoading = false.obs;
 
   // selectedThemeList : 바뀌고 있는 테마 임시 리스트 (저장 안 됨)
   // savedSelectedThemeList : 저장버튼을 누를 때만 바뀌는 테마 저장 리스트
@@ -140,6 +142,9 @@ class SearchController extends GetxController {
         dynamic data = response.data;
         // 데이터 처리
         courseList.value = RxList<Map<String, dynamic>>.from(data['courseList']);
+        // courseList.addAll(RxList<Map<String, dynamic>>.from(data['courseList']));
+
+        await searchController.queryParameters['page']++;
       } else {
         // 요청이 실패한 경우
         // 에러 처리
@@ -344,5 +349,21 @@ class SearchController extends GetxController {
     } catch (e) {
       print(e);
     }
+  }
+
+  void getNextSearchResults() async {
+    if (isCourseLoading.value) return; // 이미 로딩 중이면 중복 호출 방지
+
+    final RxList<Map<String, dynamic>> newCourseList = RxList.from(courseList);
+
+    // 로딩 상태 설정
+    isCourseLoading.value = true;
+
+    await searchController.searchCourse().then((_) {
+      isCourseLoading.value = false;
+    });
+
+    newCourseList.addAll([...courseList]); // 기존 검색 결과와 새로운 결과를 병합
+    courseList.value = newCourseList;
   }
 }

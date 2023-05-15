@@ -51,6 +51,7 @@ class SearchScreen extends StatelessWidget {
                               onPressed: () {
                                 Get.back();
                                 pageController.changePageNum(2);
+                                searchController.changePage(page: 0);
                                 searchController.isSearchResults.value = true;
                                 searchController.searchCourse();
                               },
@@ -81,6 +82,7 @@ class SearchScreen extends StatelessWidget {
                     leading: ElasticIcon(value: searchController.elasticMap[key][0]),
                     title: Text(key),
                     onTap: () {
+                      searchController.changePage(page: 0);
                       FocusScope.of(context).unfocus(); // 키보드 닫기
                       searchTextEditingController.text = key;
                       searchController.changeWord(word: key);
@@ -112,12 +114,12 @@ class ElasticIcon extends StatelessWidget {
       case 1:
         return Icon(Icons.route_outlined);
       case 2:
-        return Icon(Icons.home_rounded);
+        return Icon(Icons.location_pin);
       case 3:
         return Icon(Icons.tag);
 
       default:
-        return Icon(Icons.home_rounded);
+        return Icon(Icons.location_pin);
     }
   }
 }
