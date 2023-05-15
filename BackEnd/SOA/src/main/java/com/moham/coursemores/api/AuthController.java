@@ -26,10 +26,12 @@ public class AuthController {
     private final OAuthLoginService oAuthLoginService;
     private final UserService userService;
 
+    private final String ACCESS_TOKEN = "accessToken";
+
     @PostMapping("kakao/login")
     public ResponseEntity<Map<String, Object>> kakaoLogin(
             @RequestBody Map<String, Object> requestMap) {
-        String kakaoAccessToken = (String) requestMap.get("accessToken");
+        String kakaoAccessToken = (String) requestMap.get(ACCESS_TOKEN);
         logger.debug("[0/5][POST][/auth/kakao/login] << request : accessToken\n accessToken = {}", kakaoAccessToken);
 
         Map<String, Object> resultMap = new HashMap<>();
@@ -52,7 +54,7 @@ public class AuthController {
 
         logger.debug("[4/5][POST][/auth/kakao/login] ... us.generateToken");
         String accessToken = userService.generateToken(userId, OAuthProvider.KAKAO);
-        resultMap.put("accessToken", accessToken);
+        resultMap.put(ACCESS_TOKEN, accessToken);
 
         logger.debug("[5/5][POST][/auth/kakao/login] >> response : agree, userInfo, token\n agree = {}\n userInfo = {}\n accessToken = {}\n",
                 false, userInfo, accessToken);
@@ -77,7 +79,7 @@ public class AuthController {
 
         logger.debug("[4/6][POST][/auth/google/login] ... us.generateToken");
         String accessToken = userService.generateToken(userId, OAuthProvider.GOOGLE);
-        resultMap.put("accessToken", accessToken);
+        resultMap.put(ACCESS_TOKEN, accessToken);
 
         logger.debug("[6/6][POST][/auth/google/login] >> response : userInfo, token\n userInfo = {}\n accessToken = {}\n",
                 userInfo, accessToken);

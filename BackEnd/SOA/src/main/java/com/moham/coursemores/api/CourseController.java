@@ -45,6 +45,7 @@ public class CourseController {
 
     private final CourseService courseService;
     private final ElasticSearchService elasticSearchService;
+    private final String COURSE_LIST = "courseList";
 
     @GetMapping("hot")
     public ResponseEntity<Map<String, Object>> getHotCourse() {
@@ -54,7 +55,7 @@ public class CourseController {
 
         logger.debug("[1/2][GET][/course/hot]... cs.getHotCourseList");
         final List<HotPreviewResDto> courseList = courseService.getHotCourseList();
-        resultMap.put("courseList", courseList);
+        resultMap.put(COURSE_LIST, courseList);
 
         logger.debug("[2/2][GET][/course/hot] >> response : courseList\n courseList = {}\n", courseList);
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
@@ -81,7 +82,7 @@ public class CourseController {
 
         logger.debug("[1/2][GET][/course/around] ... cd.getCoursesNearby");
         List<NearPreviewResDto> courseList = courseService.getCoursesNearby(latitude, longitude);
-        resultMap.put("courseList", courseList);
+        resultMap.put(COURSE_LIST, courseList);
 
         // 몇 개 보낼지 변수를 만들어야 할듯
         logger.debug("[2/2][GET][/course/around] >> response : courseList\n courseList = {}\n", courseList);
@@ -106,7 +107,7 @@ public class CourseController {
 
         logger.debug("[1/2][GET][/course/search][{}] ... cd.search", userId);
         Page<CoursePreviewResDto> pageCourse = courseService.search(userId, word, regionId, themeIds, isVisited, page, sortby);
-        resultMap.put("courseList", pageCourse.getContent());
+        resultMap.put(COURSE_LIST, pageCourse.getContent());
         resultMap.put("isFirst", pageCourse.isFirst());
         resultMap.put("isLast", pageCourse.isLast());
 
