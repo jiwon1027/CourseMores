@@ -187,6 +187,7 @@ public class CourseServiceImpl implements CourseService {
                 .viewCount(course.getViewCount())
                 .likeCount(course.getLikeCount())
                 .interestCount(course.getInterestCount())
+                .commentCount(course.getCommentCount())
                 .sido(ALL.equals(course.getSido()) ? "대한민국" : course.getSido())
                 .gugun(ALL.equals(course.getGugun()) ? "" : course.getGugun())
                 .createTime(course.getCreateTime())
