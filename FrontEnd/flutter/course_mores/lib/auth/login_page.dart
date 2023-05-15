@@ -16,6 +16,7 @@ import 'auth_dio.dart';
 
 final tokenController = Get.put(TokenStorage());
 final userInfoController = Get.put(UserInfo());
+final firstLoginController = Get.put(LoginCheck());
 
 void postLogin(accessToken) async {
   print(accessToken);
@@ -46,12 +47,13 @@ void postLogin(accessToken) async {
       );
       return;
     } else {
-      await tokenController.saveToken(response.data['token']['accessToken'],
-          response.data['token']['refreshToken']);
+      await tokenController.saveToken(
+        response.data['accessToken'],
+      );
       if (response.data['userInfo'] == null) {
         Get.to(signup.SignUp());
       } else {
-        print('여기까지.....');
+        print('로그인시 컨트롤러에 저장된 토큰 : ${tokenController.accessToken}');
         loginController.changeLoginStatus(true);
         print(loginController.isLoggedIn);
         userInfoController.saveNickname(response.data['userInfo']['nickname']);
@@ -59,6 +61,7 @@ void postLogin(accessToken) async {
         userInfoController.saveGender(response.data['userInfo']['gender']);
         userInfoController
             .saveImageUrl(response.data['userInfo']['profileImage']);
+        firstLoginController.changeFirstLogin(false);
         // Get.replace(main.MyApp());
         print(loginController.isLoggedIn);
         print(pageController.pageNum());
@@ -85,18 +88,20 @@ void signInWithGoogle() async {
 
     if (response.statusCode == 200) {
       // 추후에 issignup으로 교체
-      tokenController.saveToken(response.data['token']['accessToken'],
-          response.data['token']['refreshToken']);
+      tokenController.saveToken(
+        response.data['token']['accessToken'],
+      );
       if (response.data['userInfo'] == null) {
         Get.to(signup.SignUp());
       } else {
         loginController.changeLoginStatus(true);
+        firstLoginController.changeFirstLogin(false);
         userInfoController.saveNickname(response.data['userInfo']['nickname']);
         userInfoController.saveAge(response.data['userInfo']['age']);
         userInfoController.saveGender(response.data['userInfo']['gender']);
         // 이미지는 받을때 type이 경로인가..? null보내면 default string으로?
 
-        Get.replace(main.MyApp());
+        Get.back();
       }
     }
   }
@@ -142,31 +147,6 @@ class LoginPage extends StatelessWidget {
                   children: [
                     Column(
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 20.0),
-                          child: SizedBox(
-                            width: 185,
-                            height: 45,
-                            child: ElevatedButton(
-                                onPressed: () {
-                                  loginController.changeLoginStatus(true);
-                                  // Get.to(
-                                  //   main.MyApp(),
-                                  //   transition: Transition.fadeIn,
-                                  // );
-                                },
-                                style: ElevatedButton.styleFrom(
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(5))),
-                                child: Text(
-                                  '게스트로 입장하기',
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold),
-                                )),
-                          ),
-                        ),
                         InkWell(
                           onTap: () async {
                             bool isKakaoInstalled =

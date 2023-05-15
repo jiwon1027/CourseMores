@@ -11,15 +11,21 @@ import 'course_make/make_start.dart' as make;
 import 'auth/login_page.dart' as login;
 import 'package:get/get.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'auth/auth_dio.dart';
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final loginController = Get.put(LoginStatus());
 final pageController = Get.put(PageNum());
 final tokenStorage = Get.put(TokenStorage());
+final firstLoginController = Get.put(LoginCheck());
+final userInfoController = Get.put(UserInfo());
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: 'assets/config/.env');
   KakaoSdk.init(nativeAppKey: '59816c34bd5a0094d4f29bf08b55a34c');
+  reissueToken();
   runApp(GetMaterialApp(theme: style.theme, home: MyApp()));
 }
 
@@ -29,12 +35,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
+      print('MyApp실행시 컨트롤러에 있는 토큰 : ${tokenStorage.accessToken}');
+      print('컨트롤러 firstLogin : ${firstLoginController.isFirstLogin}');
       var pageNum = pageController.pageNum.value;
 
       if (loginController.isLoggedIn.value == true) {
         // 백에 accesstoken 재발급받는 api 요청..
         // 컨트롤러에 response 저장
-
+        // reissueToken();
         return Scaffold(
             backgroundColor: Color.fromARGB(255, 240, 240, 240),
             appBar: CustomAppBar(),
@@ -103,4 +111,26 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize => Size.fromHeight(kToolbarHeight);
+}
+
+void reissueToken() async {
+  // final dio = await authDio();
+  final prefs = await SharedPreferences.getInstance();
+  if (prefs.getBool('isFirstLogin') == false) {
+    print('첫로그인 아니고 토큰 재발급!!!');
+    dynamic bodyData = json.encode({
+      'accessToken': prefs.getString('accessToken'),
+      'nickname': prefs.getString('nickname'),
+    });
+    final response = await dio.post('user/reissue', data: bodyData);
+    // print('토큰 재발급!!');
+    print(response.data['accessToken']);
+    userInfoController.saveNickname(response.data['userInfo']['nickname']);
+    userInfoController.saveAge(response.data['userInfo']['age']);
+    userInfoController.saveGender(response.data['userInfo']['gender']);
+    userInfoController.saveImageUrl(response.data['userInfo']['profileImage']);
+    tokenStorage.saveToken(response.data['accessToken']);
+  } else {
+    print('재발급 필요없엉');
+  }
 }
