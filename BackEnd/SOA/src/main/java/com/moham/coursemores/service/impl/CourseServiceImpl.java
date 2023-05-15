@@ -5,6 +5,7 @@ import com.moham.coursemores.common.exception.CustomException;
 import com.moham.coursemores.domain.*;
 import com.moham.coursemores.dto.course.*;
 import com.moham.coursemores.dto.profile.UserSimpleInfoResDto;
+import com.moham.coursemores.dto.theme.ThemeResDto;
 import com.moham.coursemores.repository.*;
 import com.moham.coursemores.service.CourseService;
 import lombok.RequiredArgsConstructor;
@@ -195,7 +196,10 @@ public class CourseServiceImpl implements CourseService {
                         .collect(Collectors.toList()))
                 .themeList(course.getThemeOfCourseList()
                         .stream()
-                        .map(o -> o.getTheme().getName())
+                        .map(o -> ThemeResDto.builder()
+                                .themeId(o.getTheme().getId())
+                                .name(o.getTheme().getName())
+                                .build())
                         .collect(Collectors.toList()))
                 .simpleInfoOfWriter(UserSimpleInfoResDto.builder()
                         .nickname(course.getUser().getNickname())

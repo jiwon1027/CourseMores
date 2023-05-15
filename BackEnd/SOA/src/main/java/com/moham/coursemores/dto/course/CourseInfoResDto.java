@@ -3,6 +3,8 @@ package com.moham.coursemores.dto.course;
 import com.moham.coursemores.dto.profile.UserSimpleInfoResDto;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import com.moham.coursemores.dto.theme.ThemeResDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
@@ -25,7 +27,7 @@ public class CourseInfoResDto {
     private String gugun;
     private LocalDateTime createTime;
     private List<String> hashtagList;
-    private List<String> themeList;
+    private List<ThemeResDto> themeList;
     private UserSimpleInfoResDto simpleInfoOfWriter;
     private boolean isWrite;
 }
