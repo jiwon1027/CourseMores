@@ -30,4 +30,10 @@ public class CustomException extends RuntimeException{
         this.customErrorCode = customErrorCode;
         this.detailMessage = "(value : " + value + ") " + customErrorCode.getStatusMessage();
     }
+
+    public CustomException(String value1, String value2, CustomErrorCode customErrorCode){
+        super(customErrorCode.getStatusMessage());
+        this.customErrorCode = customErrorCode;
+        this.detailMessage = "(value : " + value1 + ", " + value2 + ") " + customErrorCode.getStatusMessage();
+    }
 }

@@ -209,7 +209,7 @@ public class CourseServiceImpl implements CourseService {
     public List<CourseDetailResDto> getCourseDetail(Long courseId) {
         // 해당 코스가 존재하는지 확인
         if (!courseRepository.existsByIdAndDeleteTimeIsNull(courseId))
-            throw new RuntimeException("해당 코스를 찾을 수 없습니다.");
+            throw new CustomException(courseId,CustomErrorCode.COURSE_NOT_FOUND);
         // 코스 정보 반환
         return courseLocationRepository.findByCourseId(courseId)
                 .stream()
@@ -235,7 +235,7 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public List<CourseImportResDto> importCourse(Long courseId) {
         return courseRepository.findById(courseId)
-                .orElseThrow(() -> new RuntimeException("해당 코스를 찾을 수 없습니다."))
+                .orElseThrow(() -> new CustomException(courseId,CustomErrorCode.COURSE_NOT_FOUND))
                 .getCourseLocationList()
                 .stream()
                 .map(location -> CourseImportResDto.builder()
@@ -252,7 +252,7 @@ public class CourseServiceImpl implements CourseService {
     public List<MyCourseResDto> getMyCourseList(Long userId) {
         // 유저 정보 가져오기
         User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
-                .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(userId,CustomErrorCode.USER_NOT_FOUND));
 
         // 유저의 코스들을 Dto로 가공하여 list에 담기
         return user.getCourseList()
@@ -285,7 +285,7 @@ public class CourseServiceImpl implements CourseService {
 
         // 유저 정보 가져오기
         User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
-                .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(userId,CustomErrorCode.USER_NOT_FOUND));
         LocationCreateReqDto firstLocation = courseCreateReqDto.getLocationList().get(0);
         // 코스 생성
         Course course = courseRepository.save(Course.builder()
@@ -312,7 +312,7 @@ public class CourseServiceImpl implements CourseService {
         courseCreateReqDto.getThemeIdList().forEach(themeId -> {
             // 테마 정보 가져오기
             Theme theme = themeRepository.findById(themeId)
-                    .orElseThrow(() -> new RuntimeException("해당 테마를 찾을 수 없습니다."));
+                    .orElseThrow(() -> new CustomException(themeId,CustomErrorCode.THEME_NOT_FOUND));
             // 코스의 테마 저장
             themeOfCourseRepository.save(ThemeOfCourse.builder()
                     .course(course)
@@ -386,10 +386,10 @@ public class CourseServiceImpl implements CourseService {
     public void setCourse(Long userId, Long courseId, CourseUpdateReqDto courseUpdateReqDto, List<MultipartFile> imageList) {
         // 유저 정보 가져오기
         User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
-                .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(userId,CustomErrorCode.USER_NOT_FOUND));
         // 코스 정보 가져오기
         Course course = courseRepository.findByIdAndUserIdAndDeleteTimeIsNull(courseId, user.getId())
-                .orElseThrow(() -> new RuntimeException("해당 코스를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(courseId,CustomErrorCode.COURSE_NOT_FOUND));
         // 코스 정보 수정하기
         course.update(courseUpdateReqDto);
         // 기존 해시태그 지우기
@@ -424,7 +424,7 @@ public class CourseServiceImpl implements CourseService {
         courseUpdateReqDto.getThemeIdList().forEach(themeId -> {
             // 테마 정보 가져오기
             Theme theme = themeRepository.findById(themeId)
-                    .orElseThrow(() -> new RuntimeException("해당 테마를 찾을 수 없습니다."));
+                    .orElseThrow(() -> new CustomException(themeId,CustomErrorCode.THEME_NOT_FOUND));
             // 코스의 테마 저장
             themeOfCourseRepository.save(ThemeOfCourse.builder()
                     .course(course)
@@ -436,13 +436,13 @@ public class CourseServiceImpl implements CourseService {
         for (LocationUpdateReqDto updateCourseLocation : courseUpdateReqDto.getLocationList()) {
             // 코스 장소 불러오기
             CourseLocation courseLocation = courseLocationRepository.findById(updateCourseLocation.getCourseLocationId())
-                    .orElseThrow(() -> new RuntimeException("해당 장소를 찾을 수 없습니다."));
+                    .orElseThrow(() -> new CustomException(updateCourseLocation.getCourseLocationId(),CustomErrorCode.COURSE_LOCATION_NOT_FOUND));
             // 코스 장소 수정하기
             courseLocation.update(updateCourseLocation);
             // 이미지 삭제
             for (long locationImageId : updateCourseLocation.getDeleteImageList()) {
                 CourseLocationImage courseLocationImage = courseLocationImageRepository.findById(locationImageId)
-                        .orElseThrow(() -> new RuntimeException("해당 장소 이미지를 찾을 수 없습니다."));
+                        .orElseThrow(() -> new CustomException(locationImageId,CustomErrorCode.COURSE_LOCATION_IMAGE_NOT_FOUND));
                 courseLocationImageRepository.delete(courseLocationImage);
             }
             // 코스의 장소 이미지 추가 생성
@@ -469,10 +469,10 @@ public class CourseServiceImpl implements CourseService {
     public void deleteCourse(Long userId, Long courseId) {
         // 유저 찾기
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(userId,CustomErrorCode.USER_NOT_FOUND));
         // 코스 찾기
         Course course = courseRepository.findByIdAndUserId(courseId, user.getId())
-                .orElseThrow(() -> new RuntimeException("해당 코스를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(courseId,userId,CustomErrorCode.COURSE_NOT_FOUND));
         // 코스 삭제
         course.delete();
     }
@@ -491,18 +491,18 @@ public class CourseServiceImpl implements CourseService {
         if (ALL.equals(sido)) { // 시도 : 전체
             if (ALL.equals(gugun)) { // 구군 : 전체
                 return regionRepository.findBySidoAndGugun(ALL, ALL)
-                        .orElseThrow(() -> new RuntimeException("해당 지역을 찾을 수 없습니다."));
+                        .orElseThrow(() -> new CustomException(ALL,ALL,CustomErrorCode.REGION_NOT_FOUND));
             } else { // 구군 : 유효
                 return regionRepository.findByGugun(gugun)
-                        .orElseThrow(() -> new RuntimeException("해당 지역을 찾을 수 없습니다."));
+                        .orElseThrow(() -> new CustomException(gugun,CustomErrorCode.REGION_NOT_FOUND));
             }
         } else {// 시도 : 유효
             if (ALL.equals(gugun)) { // 구군 : 전체
                 return regionRepository.findBySidoAndGugun(sido, ALL)
-                        .orElseThrow(() -> new RuntimeException("해당 지역을 찾을 수 없습니다."));
+                        .orElseThrow(() -> new CustomException(sido,ALL,CustomErrorCode.REGION_NOT_FOUND));
             } else { // 구군 : 유효
                 return regionRepository.findBySidoAndGugun(sido, gugun)
-                        .orElseThrow(() -> new RuntimeException("해당 지역을 찾을 수 없습니다."));
+                        .orElseThrow(() -> new CustomException(sido,gugun,CustomErrorCode.REGION_NOT_FOUND));
             }
         }
     }
