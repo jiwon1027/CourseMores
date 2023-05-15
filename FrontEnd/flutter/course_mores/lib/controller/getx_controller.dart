@@ -179,6 +179,14 @@ class MyPageInfo extends GetxController {
   }
 }
 
+class InterestedCourseInfo extends GetxController {
+  List<Map<String, Object>> interestedCourse = [];
+
+  void saveInterestedCourse(courseList) {
+    interestedCourse = courseList;
+  }
+}
+
 class HomeScreenInfo extends GetxController {
   List<Map<String, Object>> hotCourse = [];
   List<Map<String, Object>> nearCourse = [];
