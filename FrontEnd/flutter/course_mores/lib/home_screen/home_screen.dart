@@ -1,18 +1,10 @@
-// import 'package:coursemores/auth/login_page.dart';
-// import 'package:coursemores/mypage/mypage.dart';
 import '../controller/getx_controller.dart';
 import 'package:flutter/material.dart';
 import '../course_search/elastic_search.dart';
 import '../course_search/search.dart' as search;
 import '../course_search/search.dart';
 import './carousel.dart' as carousel;
-// import '../course_search/search.dart' as search;
-// import 'package:carousel_slider/carousel_slider.dart';
-// import 'carousel.dart';
 import '../course_search/course_list.dart' as course;
-// import '../mypage/mypage.dart' as mypage;
-// import '../controller/getx_controller.dart';
-// import '../main.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart' as geocoding;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -20,19 +12,12 @@ import '../auth/auth_dio.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_multi_select_items/flutter_multi_select_items.dart';
-
-final List<String> imgList = [
-  'https://images.unsplash.com/photo-1520342868574-5fa3804e551c?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=6ff92caffcdd63681a35134a6770ed3b&auto=format&fit=crop&w=1951&q=80',
-  'https://images.unsplash.com/photo-1522205408450-add114ad53fe?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=368f45b0888aeb0b7b08e3a1084d3ede&auto=format&fit=crop&w=1950&q=80',
-  'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=94a1e718d89ca60a6337a6008341ca50&auto=format&fit=crop&w=1950&q=80',
-  'https://images.unsplash.com/photo-1523205771623-e0faa4d2813d?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=89719a0d55dd05e2deae4120227e6efc&auto=format&fit=crop&w=1953&q=80',
-  'https://images.unsplash.com/photo-1508704019882-f9cf40e475b4?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=8c6e5e3aba713b17aa1fe71ab4f0ae5b&auto=format&fit=crop&w=1352&q=80',
-  'https://images.unsplash.com/photo-1519985176271-adb1088fa94c?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=a0c8d632e977f94e5d312d9893258f59&auto=format&fit=crop&w=1355&q=80'
-];
+import 'package:coursemores/controller/search_controller.dart';
 
 final homeController = Get.put(HomeScreenInfo());
 final pageController = Get.put(PageNum());
 final locationController = Get.put(LocationInfo());
+final searchController = Get.put(SearchController());
 // var hotCourse;
 
 class HomeScreen extends StatefulWidget {
@@ -97,16 +82,6 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       hotCourse = homeController.hotCourse;
     });
-    // homeController.saveHotCourse(
-    //     data.map((item) => Map<String, Object>.from(item)).toList());
-    // setState(() {
-    //   hotCourse = homeController.hotCourse;
-    // });
-    // print('홈에서 받아온 hotcourse');
-    // print(homeController.hotCourse);
-    // print('위도 === ${_currentPosition?.latitude}');
-    // print('경도 === ${_currentPosition?.longitude}');
-    // print(homeController.hotCourse[0]['image'].toString());
   }
 
   Future<void> getNearCourse() async {
@@ -118,8 +93,6 @@ class _HomeScreenState extends State<HomeScreen> {
         'course/around?latitude=${locationController.latitude}&longitude=${locationController.longitude}',
         options: Options(
             headers: {'Authorization': 'Bearer ${tokenStorage.accessToken}'}));
-    // print('===근처코스내놔');
-    // print(response);
 
     List<dynamic> data = response.data['courseList'];
     nearCourse = data.map((item) => Map<String, Object>.from(item)).toList();
@@ -127,11 +100,6 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       nearCourse = homeController.nearCourse;
     });
-
-    // print('홈에서 받아온 nearcourse');
-    // print(homeController.nearCourse);
-    // }
-    // print(homeController.hotCourse[0]['image'].toString());
   }
 
   // openweathermap의 api키
@@ -285,21 +253,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 buttonBar1(),
                 ButtonBar2(),
-                // Text('$hotCourse'),
-                // Text('$hotCourse'),
-
                 popularCourse(),
-
-                // Obx(() => popularCourse()),
                 themeList(),
                 myNearCourse(),
-                // reviews(),
-                // Image.network(
-                //   hotCourse[1]['image'].toString(),
-                //   width: 200,
-                //   height: 200,
-                //   fit: BoxFit.cover,
-                // )
               ],
             ),
           ),
@@ -478,9 +434,10 @@ myNearCourse() {
 }
 
 themeList() {
+  searchController.getThemeList();
   var themes = [];
-  for (var theme in course.themeList) {
-    themes.add(theme["text"]);
+  for (var theme in searchController.themeList) {
+    themes.add(theme["name"]);
   }
 
   return Padding(
@@ -491,39 +448,83 @@ themeList() {
           padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0),
           child: Column(
             children: [
-              Text(
-                '이런 테마는 어때요? 😊',
-                style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.bold),
+              Padding(
+                padding: const EdgeInsets.only(top: 15.0, bottom: 15.0),
+                child: Text(
+                  '이런 테마는 어때요? 😊',
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold),
+                ),
               ),
-
-              // SearchFilterTheme(),
-              SizedBox(
-                height: 200.0,
-                child: ListView.builder(
-                    padding: const EdgeInsets.all(8),
-                    itemCount: themes.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return Container(
-                        height: 30.0,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 2,
-                              blurRadius: 3,
-                              offset: Offset(0, 2),
-                            ),
-                          ],
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8.0),
+                child: Wrap(
+                  children: themes.map((theme) {
+                    return Container(
+                      margin: EdgeInsets.all(2.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 2,
+                            blurRadius: 3,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12.0, vertical: 8.0),
+                        child: Text(
+                          theme,
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 12.0,
+                          ),
                         ),
-                        child: Center(child: Text('${themes[index]}')),
-                      );
-                    }),
+                      ),
+                    );
+                  }).toList(),
+                  spacing: 8.0,
+                  runSpacing: 8.0,
+                  alignment: WrapAlignment.start,
+                  crossAxisAlignment: WrapCrossAlignment.start,
+                  textDirection: TextDirection.ltr,
+                  runAlignment: WrapAlignment.start,
+                  verticalDirection: VerticalDirection.down,
+                  clipBehavior: Clip.none,
+                ),
               )
+              // SearchFilterTheme(),
+              // SizedBox(
+              //   height: 200.0,
+              //   child: ListView.builder(
+              //       padding: const EdgeInsets.all(8),
+              //       itemCount: themes.length,
+              //       itemBuilder: (BuildContext context, int index) {
+              //         return Container(
+              //           height: 30.0,
+              //           decoration: BoxDecoration(
+              //             color: Colors.white,
+              //             borderRadius: BorderRadius.circular(20),
+              //             boxShadow: [
+              //               BoxShadow(
+              //                 color: Colors.grey.withOpacity(0.5),
+              //                 spreadRadius: 2,
+              //                 blurRadius: 3,
+              //                 offset: const Offset(
+              //                     0, 2), // changes position of shadow
+              //               ),
+              //             ],
+              //           ),
+              //           child: Center(child: Text('${themes[index]}')),
+              //         );
+              //       }),
+              // )
             ],
           )),
     ),
