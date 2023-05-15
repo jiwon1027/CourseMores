@@ -7,7 +7,6 @@ import com.moham.coursemores.domain.document.CourseDocument;
 import com.moham.coursemores.domain.document.CourseLocationDocument;
 import com.moham.coursemores.domain.document.HashtagDocument;
 import com.moham.coursemores.dto.elasticsearch.IndexDataReqDTO;
-import com.moham.coursemores.dto.elasticsearch.IndexDataResDTO;
 import com.moham.coursemores.service.ElasticSearchService;
 import java.io.IOException;
 import java.util.*;
@@ -185,7 +184,7 @@ public class ElasticSearchServiceImpl implements ElasticSearchService {
         Map<String, List<Integer>> temp = new HashMap<>();
 
         for (String course : courses) {
-            temp.put(course, new ArrayList<>(Arrays.asList(1)));
+            temp.put(course, new ArrayList<>(List.of(1)));
         }
 
         for (String courseLocation : courseLocations) {
@@ -195,7 +194,7 @@ public class ElasticSearchServiceImpl implements ElasticSearchService {
                 temp.put(courseLocation, existingList);
             }
             else{
-                temp.put(courseLocation, new ArrayList<>(Arrays.asList(2)));
+                temp.put(courseLocation, new ArrayList<>(List.of(2)));
             }
         }
 
@@ -206,17 +205,12 @@ public class ElasticSearchServiceImpl implements ElasticSearchService {
                 temp.put(hashtag, existingList);
             }
             else{
-                temp.put(hashtag, new ArrayList<>(Arrays.asList(3)));
+                temp.put(hashtag, new ArrayList<>(List.of(3)));
             }
         }
 
         List<String> keySet = new ArrayList<>(temp.keySet());
-        Collections.sort(keySet, new Comparator<String>() {
-            @Override
-            public int compare(String s1, String s2) {
-                return Integer.compare(s1.length(), s2.length());
-            }
-        });
+        keySet.sort(Comparator.comparingInt(String::length));
 
         Map<String, List<Integer>> sortedResult = new LinkedHashMap<>();
         for (String key : keySet) {
