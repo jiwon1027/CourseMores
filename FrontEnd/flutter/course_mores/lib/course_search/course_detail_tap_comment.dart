@@ -10,6 +10,8 @@ import 'package:photo_view/photo_view_gallery.dart';
 import 'course_change_comment.dart';
 import 'course_new_comment.dart';
 
+ScrollController commentScrollController = ScrollController();
+
 class CourseComments extends StatelessWidget {
   CourseComments({super.key});
 
@@ -45,6 +47,7 @@ class SortButtonBar extends StatelessWidget {
             children: [
               ElevatedButton(
                 onPressed: () {
+                  detailController.changeCommentPage(0);
                   detailController.isCommentLatestSelectedClick();
                 },
                 style: ButtonStyle(
@@ -59,6 +62,7 @@ class SortButtonBar extends StatelessWidget {
               ),
               ElevatedButton(
                 onPressed: () {
+                  detailController.changeCommentPage(0);
                   detailController.isCommentPopularSelectedClick();
                 },
                 style: ButtonStyle(
@@ -96,6 +100,13 @@ class CommentsListSection extends StatelessWidget {
       date = "";
       print(e);
     }
+
+    commentScrollController.addListener(() {
+      if (commentScrollController.position.pixels == commentScrollController.position.maxScrollExtent) {
+        // 스크롤이 리스트의 끝까지 도달하면 다음 검색 결과 호출
+        detailController.getNextCommentResults();
+      }
+    });
     return Obx(() => detailController.nowCourseCommentList.isEmpty
         ? Container(
             margin: EdgeInsets.only(top: 50),
@@ -109,96 +120,104 @@ class CommentsListSection extends StatelessWidget {
               ],
             ),
           )
-        : ListView.builder(
-            padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
-            itemCount: detailController.nowCourseCommentList.length,
-            itemBuilder: (context, index) {
-              return Card(
-                elevation: 6,
-                margin: EdgeInsets.fromLTRB(4, 10, 4, 0),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                child: Padding(
-                  padding: EdgeInsets.all(15),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(children: [
-                            ProfileImage(index: index),
-                            SizedBox(width: 5),
-                            Text(detailController.nowCourseCommentList[index]['writeUser']['nickname']),
-                          ]),
-                          // TODO: 좋아요 눌렀을 때 화면에는 실시간으로 바로 반영되지는 않음, Rx가 아니어서
-                          Obx(() => InkWell(
-                              onTap: () {
-                                if (!detailController.nowCourseCommentList[index]['like']) {
-                                  detailController.addIsLikeComment(index);
-                                } else {
-                                  detailController.deleteIsLikeComment(index);
-                                }
-                                detailController.update();
-                              },
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  if (detailController.nowCourseCommentList[index]['like']) Icon(Icons.favorite),
-                                  if (!detailController.nowCourseCommentList[index]['like'])
-                                    Icon(Icons.favorite_outline),
-                                  SizedBox(width: 5),
-                                  Text("${detailController.nowCourseCommentList[index]['likeCount']}",
-                                      style: TextStyle(fontSize: 16)),
-                                ],
-                              ))),
-                        ],
-                      ),
-                      SizedBox(height: 5),
-                      Row(
-                        children: [
-                          Icon(Icons.calendar_month, size: 16),
-                          SizedBox(width: 5),
-                          Text("$year. $month. $date", style: TextStyle(fontSize: 12)),
-                          SizedBox(width: 10),
-                          Icon(Icons.people, size: 16),
-                          SizedBox(width: 5),
-                          if (detailController.nowCourseCommentList[index]['people'] != 0)
-                            if (detailController.nowCourseCommentList[index]['people'] != 5)
-                              Text('${detailController.nowCourseCommentList[index]['people']}명',
-                                  style: TextStyle(fontSize: 12)),
-                          if (detailController.nowCourseCommentList[index]['people'] >= 5)
-                            Text('5명 이상', style: TextStyle(fontSize: 12)),
-                        ],
-                      ),
-                      SizedBox(height: 10),
-                      if (detailController.nowCourseCommentList[index]['imageList'].length != 0)
-                        ImageGridView(index: index),
-                      SizedBox(height: 10),
-                      Text('${detailController.nowCourseCommentList[index]['content']}'),
-                      SizedBox(height: 10),
-                      if (detailController.nowCourseCommentList[index]['write'])
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.end,
+        : Column(
+            children: [
+              Expanded(
+                child: ListView.builder(
+                  controller: commentScrollController, // ScrollController 설정
+                  padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
+                  itemCount: detailController.nowCourseCommentList.length,
+                  itemBuilder: (context, index) {
+                    return Card(
+                      elevation: 6,
+                      margin: EdgeInsets.fromLTRB(4, 10, 4, 0),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      child: Padding(
+                        padding: EdgeInsets.all(15),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Expanded(child: Container()),
-                            TextButton(
-                                onPressed: () async {
-                                  await detailController.setComment(index);
-                                  Get.to(ChangeComment(index));
-                                },
-                                child: Text("수정")),
-                            TextButton(
-                                onPressed: () {
-                                  detailController.deleteComment(index);
-                                },
-                                child: Text("삭제")),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(children: [
+                                  ProfileImage(index: index),
+                                  SizedBox(width: 5),
+                                  Text(detailController.nowCourseCommentList[index]['writeUser']['nickname']),
+                                ]),
+                                // TODO: 좋아요 눌렀을 때 화면에는 실시간으로 바로 반영되지는 않음, Rx가 아니어서
+                                Obx(() => InkWell(
+                                    onTap: () {
+                                      if (!detailController.nowCourseCommentList[index]['like']) {
+                                        detailController.addIsLikeComment(index);
+                                      } else {
+                                        detailController.deleteIsLikeComment(index);
+                                      }
+                                      detailController.update();
+                                    },
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        if (detailController.nowCourseCommentList[index]['like']) Icon(Icons.favorite),
+                                        if (!detailController.nowCourseCommentList[index]['like'])
+                                          Icon(Icons.favorite_outline),
+                                        SizedBox(width: 5),
+                                        Text("${detailController.nowCourseCommentList[index]['likeCount']}",
+                                            style: TextStyle(fontSize: 16)),
+                                      ],
+                                    ))),
+                              ],
+                            ),
+                            SizedBox(height: 5),
+                            Row(
+                              children: [
+                                Icon(Icons.calendar_month, size: 16),
+                                SizedBox(width: 5),
+                                Text("$year. $month. $date", style: TextStyle(fontSize: 12)),
+                                SizedBox(width: 10),
+                                Icon(Icons.people, size: 16),
+                                SizedBox(width: 5),
+                                if (detailController.nowCourseCommentList[index]['people'] != 0)
+                                  if (detailController.nowCourseCommentList[index]['people'] != 5)
+                                    Text('${detailController.nowCourseCommentList[index]['people']}명',
+                                        style: TextStyle(fontSize: 12)),
+                                if (detailController.nowCourseCommentList[index]['people'] >= 5)
+                                  Text('5명 이상', style: TextStyle(fontSize: 12)),
+                              ],
+                            ),
+                            SizedBox(height: 10),
+                            if (detailController.nowCourseCommentList[index]['imageList'].length != 0)
+                              ImageGridView(index: index),
+                            SizedBox(height: 10),
+                            Text('${detailController.nowCourseCommentList[index]['content']}'),
+                            SizedBox(height: 10),
+                            if (detailController.nowCourseCommentList[index]['write'])
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Expanded(child: Container()),
+                                  TextButton(
+                                      onPressed: () async {
+                                        await detailController.setComment(index);
+                                        Get.to(ChangeComment(index));
+                                      },
+                                      child: Text("수정")),
+                                  TextButton(
+                                      onPressed: () {
+                                        detailController.deleteComment(index);
+                                      },
+                                      child: Text("삭제")),
+                                ],
+                              ),
                           ],
                         ),
-                    ],
-                  ),
+                      ),
+                    );
+                  },
                 ),
-              );
-            },
+              ),
+              if (detailController.isCommentLoading.value) CircularProgressIndicator(), // 로딩 중인 경우 표시할 위젯
+            ],
           ));
   }
 }
@@ -396,7 +415,7 @@ class CommentsCreateSection extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "${detailController.nowCourseCommentList.length}개의 코멘트가 있어요",
+                    "${detailController.nowCourseInfo['commentCount']}개의 코멘트가 있어요",
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
                   ),
                   SizedBox(height: 8),
