@@ -84,13 +84,11 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> getHotCourse() async {
     final tokenStorage = Get.put(TokenStorage());
     print('여기서의 토큰 = ${tokenStorage.accessToken}');
-    // final dio = await authDio();
+    final dio = await authDio();
 
     final response = await dio.get('course/hot',
         options: Options(
             headers: {'Authorization': 'Bearer ${tokenStorage.accessToken}'}));
-    print('4646464646');
-    print(response);
 
     List<dynamic> data = response.data['courseList'];
     hotCourse = data.map((item) => Map<String, Object>.from(item)).toList();
@@ -103,24 +101,24 @@ class _HomeScreenState extends State<HomeScreen> {
     // setState(() {
     //   hotCourse = homeController.hotCourse;
     // });
-    print('홈에서 받아온 hotcourse');
-    print(homeController.hotCourse);
-    print('위도 === ${_currentPosition?.latitude}');
-    print('경도 === ${_currentPosition?.longitude}');
-    print(homeController.hotCourse[0]['image'].toString());
+    // print('홈에서 받아온 hotcourse');
+    // print(homeController.hotCourse);
+    // print('위도 === ${_currentPosition?.latitude}');
+    // print('경도 === ${_currentPosition?.longitude}');
+    // print(homeController.hotCourse[0]['image'].toString());
   }
 
   Future<void> getNearCourse() async {
     final tokenStorage = Get.put(TokenStorage());
-
+    final dio = await authDio();
     // if (_currentPosition?.latitude != null &&
     //     _currentPosition?.longitude != null) {
     final response = await dio.get(
         'course/around?latitude=${locationController.latitude}&longitude=${locationController.longitude}',
         options: Options(
             headers: {'Authorization': 'Bearer ${tokenStorage.accessToken}'}));
-    print('===근처코스내놔');
-    print(response);
+    // print('===근처코스내놔');
+    // print(response);
 
     List<dynamic> data = response.data['courseList'];
     nearCourse = data.map((item) => Map<String, Object>.from(item)).toList();
@@ -129,8 +127,8 @@ class _HomeScreenState extends State<HomeScreen> {
       nearCourse = homeController.nearCourse;
     });
 
-    print('홈에서 받아온 nearcourse');
-    print(homeController.nearCourse);
+    // print('홈에서 받아온 nearcourse');
+    // print(homeController.nearCourse);
     // }
     // print(homeController.hotCourse[0]['image'].toString());
   }
@@ -443,7 +441,6 @@ boxDeco() {
 }
 
 popularCourse() {
-  print(homeController.hotCourse);
   if (homeController.hotCourse.isEmpty) {
     return const Center(child: CircularProgressIndicator());
   } else {
@@ -461,7 +458,6 @@ popularCourse() {
 }
 
 myNearCourse() {
-  print(homeController.nearCourse);
   if (homeController.nearCourse.isEmpty) {
     return const Center(child: CircularProgressIndicator());
   } else {

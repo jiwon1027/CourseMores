@@ -407,11 +407,16 @@ class _NearCarouselState extends State<NearCarousel> {
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.start,
                                                 children: [
-                                                  Text('${item['content']}',
-                                                      style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 14.0,
-                                                      )),
+                                                  Text(
+                                                    '${item['content']}',
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 14.0,
+                                                    ),
+                                                    maxLines: 1,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
                                                 ],
                                               ),
                                               Text(

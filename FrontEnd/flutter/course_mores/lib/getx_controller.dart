@@ -14,16 +14,22 @@ class AuthController extends GetxController {
   final pageNum = Get.put(PageNum());
   final tokenStorage = Get.put(TokenStorage());
   final userInfo = Get.put(UserInfo());
-  final loginCheck = Get.put(LoginCheck());
 
   void logout() {
     loginStatus.changeLoginStatus(false);
     pageNum.changePageNum(0);
     tokenStorage.clearTokens();
     userInfo.clearUserInfo();
-    loginCheck.clearFirtLogin();
   }
 }
+
+// class LoginStatus extends GetxController {
+//   final isLoggedIn = false.obs;
+
+//   void changeLoginStatus() {
+//     isLoggedIn.value = !isLoggedIn.value;
+//   }
+// }
 
 class LoginStatus extends GetxController {
   final isLoggedIn = false.obs;
@@ -43,7 +49,6 @@ class LoginStatus extends GetxController {
     final prefs = await SharedPreferences.getInstance();
     prefs.setBool('isLoggedIn', isLoggedIn);
     this.isLoggedIn.value = isLoggedIn;
-    print(this.isLoggedIn);
   }
 }
 
@@ -57,39 +62,90 @@ class PageNum extends GetxController {
 
 class TokenStorage extends GetxController {
   final accessToken = ''.obs;
-  // final refreshToken = ''.obs;
+  final refreshToken = ''.obs;
 
   @override
   void onInit() async {
     super.onInit();
     final prefs = await SharedPreferences.getInstance();
     accessToken.value = prefs.getString('accessToken') ?? '';
-    // refreshToken.value = prefs.getString('refreshToken') ?? '';
+    refreshToken.value = prefs.getString('refreshToken') ?? '';
   }
 
-  Future<void> saveToken(String aToken) async {
+  void saveToken(String aToken, String rToken) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('accessToken', aToken);
-    // await prefs.setString('refreshToken', rToken);
+    await prefs.setString('refreshToken', rToken);
     accessToken.value = aToken;
-    // refreshToken.value = rToken;
+    refreshToken.value = rToken;
   }
 
   void clearTokens() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('accessToken');
-    // await prefs.remove('refreshToken');
+    await prefs.remove('refreshToken');
     accessToken.value = '';
-    // refreshToken.value = '';
+    refreshToken.value = '';
   }
 }
+
+// class TokenStorage extends GetxController {
+//   final accessToken = ''.obs;
+//   final refreshToken = ''.obs;
+//   void saveToken(aToken, rToken) {
+//     accessToken.value = aToken;
+//     refreshToken.value = rToken;
+//     print('토큰정보!!');
+//     print({accessToken, refreshToken});
+//   }
+
+//   void clearTokens() {
+//     accessToken.value = '';
+//     refreshToken.value = '';
+//   }
+// }
+
+// class UserInfo extends GetxController {
+//   final nickname = 'default'.obs;
+//   final gender = 'default'.obs;
+//   final age = 0.obs;
+//   // final image = ''.obs;
+//   XFile? profileImage;
+//   void saveNickname(newNickname) {
+//     nickname.value = newNickname;
+//     print(nickname.value);
+//   }
+
+//   void saveGender(newGender) {
+//     gender.value = newGender;
+//     print(gender.value);
+//   }
+
+//   void saveAge(newAge) {
+//     age.value = newAge;
+//     print(age.value);
+//   }
+
+//   void saveImage(XFile? image) {
+//     if (image != null) {
+//       profileImage = image;
+//       print(profileImage);
+//     }
+//   }
+
+//   void clearUserInfo() {
+//     nickname.value = '';
+//     gender.value = '';
+//     age.value = 0;
+//     profileImage = null;
+//   }
+// }
 
 class UserInfo extends GetxController {
   final nickname = 'default'.obs;
   final gender = 'default'.obs;
   final age = 0.obs;
   XFile? profileImage;
-  final imageUrl = 'default'.obs;
 
   @override
   void onInit() async {
@@ -98,7 +154,6 @@ class UserInfo extends GetxController {
     nickname.value = prefs.getString('nickname') ?? 'default';
     gender.value = prefs.getString('gender') ?? 'default';
     age.value = prefs.getInt('age') ?? 0;
-    imageUrl.value = prefs.getString('imageUrl') ?? 'default';
     final imagePath = prefs.getString('profileImage');
     if (imagePath != null) {
       profileImage = XFile(imagePath);
@@ -131,29 +186,16 @@ class UserInfo extends GetxController {
     }
   }
 
-  void saveImageUrl(newImageUrl) async {
-    if (newImageUrl != null) {
-      final prefs = await SharedPreferences.getInstance();
-      prefs.setString('imageUrl', newImageUrl);
-      imageUrl.value = newImageUrl;
-    } else {
-      final prefs = await SharedPreferences.getInstance();
-      prefs.setString('imageUrl', 'default');
-    }
-  }
-
   void clearUserInfo() async {
     final prefs = await SharedPreferences.getInstance();
     prefs.remove('nickname');
     prefs.remove('gender');
     prefs.remove('age');
     prefs.remove('profileImage');
-    prefs.remove('imageUrl');
     nickname.value = 'default';
     gender.value = 'default';
     age.value = 0;
     profileImage = null;
-    imageUrl.value = 'default';
   }
 }
 
@@ -185,58 +227,9 @@ class HomeScreenInfo extends GetxController {
 
   void saveHotCourse(courseList) {
     hotCourse = courseList;
-    // print('hotCourse불러오기');
-    // print(hotCourse);
-    update();
   }
 
   void saveNearCourse(courseList) {
     nearCourse = courseList;
-    // print('nearCourse불러오기');
-    // print(nearCourse);
-    update();
-  }
-}
-
-class LocationInfo extends GetxController {
-  double latitude = 0.0;
-  double longitude = 0.0;
-
-  void saveLatitude(newLatitude) {
-    latitude = newLatitude;
-    print('컨트롤러에서 위도 갱신 => $latitude');
-    update();
-  }
-
-  void saveLongitude(newLongitude) {
-    longitude = newLongitude;
-    print('컨트롤러에서 경도 갱신 => $longitude');
-    update();
-  }
-}
-
-class LoginCheck extends GetxController {
-  var isFirstLogin = true;
-
-  @override
-  void onInit() async {
-    super.onInit();
-    final prefs = await SharedPreferences.getInstance();
-    isFirstLogin = prefs.getBool('isFirstLogin') ?? true;
-    // print('firstLogin?? $isFirstLogin');
-  }
-
-  void changeFirstLogin(bool changeTo) async {
-    isFirstLogin = changeTo;
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setBool('isFirstLogin', isFirstLogin);
-    // print('firstLogin == $isFirstLogin');
-  }
-
-  void clearFirtLogin() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('isFirstLogin');
-    isFirstLogin = true;
-    // print('firstLogin == $isFirstLogin');
   }
 }
