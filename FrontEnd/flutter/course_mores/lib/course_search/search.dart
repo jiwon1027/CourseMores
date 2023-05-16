@@ -103,7 +103,7 @@ isVisitedCheckBox() {
     // color: Colors.amber,
     alignment: Alignment.center,
     child: SizedBox(
-        width: 110,
+        width: 160,
         height: 45,
         child: Obx(
           () => CheckboxListTile(

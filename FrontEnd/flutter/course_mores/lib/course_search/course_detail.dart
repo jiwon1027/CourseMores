@@ -17,7 +17,7 @@ class Detail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // detailController.getCourseInfo('코스 소개');
+    detailController.getCourseInfo('코스 소개');
     try {
       return Scaffold(
         appBar: DetailAppBar(),
