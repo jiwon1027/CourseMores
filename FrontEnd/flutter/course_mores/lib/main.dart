@@ -28,7 +28,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: 'assets/config/.env');
   KakaoSdk.init(nativeAppKey: kakaoNativeAppKey);
-  reissueToken();
+  await reissueToken();
   runApp(GetMaterialApp(theme: style.theme, home: MyApp()));
 }
 
@@ -38,8 +38,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      print('MyApp실행시 컨트롤러에 있는 토큰 : ${tokenStorage.accessToken}');
-      print('컨트롤러 firstLogin : ${firstLoginController.isFirstLogin}');
       var pageNum = pageController.pageNum.value;
 
       if (loginController.isLoggedIn.value == true) {
@@ -116,18 +114,16 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   Size get preferredSize => Size.fromHeight(kToolbarHeight);
 }
 
-void reissueToken() async {
+Future<void> reissueToken() async {
   // final dio = await authDio();
   final prefs = await SharedPreferences.getInstance();
   if (prefs.getBool('isFirstLogin') == false) {
-    print('첫로그인 아니고 토큰 재발급!!!');
     dynamic bodyData = json.encode({
       'accessToken': prefs.getString('accessToken'),
       'nickname': prefs.getString('nickname'),
     });
     final response = await dio.post('user/reissue', data: bodyData);
-    // print('토큰 재발급!!');
-    print(response.data['accessToken']);
+    print('재발급 토큰 : ${response.data['accessToken']}');
     userInfoController.saveNickname(response.data['userInfo']['nickname']);
     userInfoController.saveAge(response.data['userInfo']['age']);
     userInfoController.saveGender(response.data['userInfo']['gender']);
