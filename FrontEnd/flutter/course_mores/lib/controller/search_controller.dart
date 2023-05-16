@@ -32,8 +32,10 @@ class SearchController extends GetxController {
 
   // selectedAddress : 바뀌고 있는 주소 임시 리스트 (저장 안 됨)
   // savedSelectedAddress : 저장버튼을 누를 때만 바뀌는 주소 저장 리스트
-  RxMap<String, dynamic> selectedAddress = {'sido': "전체", 'gugun': "전체", 'regionId': 0}.obs;
-  RxMap<String, dynamic> savedSelectedAddress = {'sido': "전체", 'gugun': "전체", 'regionId': 0}.obs;
+  RxMap<String, dynamic> selectedAddress =
+      {'sido': "전체", 'gugun': "전체", 'regionId': 0}.obs;
+  RxMap<String, dynamic> savedSelectedAddress =
+      {'sido': "전체", 'gugun': "전체", 'regionId': 0}.obs;
 
   // isVisited : 검색 설정 중 방문여부 체크 (true이면 체크되도록 쓰는 용도)
   // isSearchResults : 검색 전이거나 검색 결과가 없을 때의 화면을 보여줄지 체크
@@ -65,6 +67,27 @@ class SearchController extends GetxController {
     try {
       final dio = await authDio();
       final response = await dio.get("theme");
+
+      // 응답 처리
+      if (response.statusCode == 200) {
+        // 요청이 성공한 경우
+        dynamic data = response.data;
+        // 데이터 처리
+        themeList.value = RxList<Map<String, dynamic>>.from(data['themeList']);
+        settingCard();
+      } else {
+        // 요청이 실패한 경우
+        // 에러 처리
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future getMainThemeList() async {
+    try {
+      final dio = await authDio();
+      final response = await dio.get("theme/home");
 
       // 응답 처리
       if (response.statusCode == 200) {
@@ -134,16 +157,17 @@ class SearchController extends GetxController {
     try {
       // GET 요청 보내기
       final dio = await authDio();
-      final response = await dio.get("course/search", queryParameters: queryParameters);
+      final response =
+          await dio.get("course/search", queryParameters: queryParameters);
 
       // 응답 처리
       if (response.statusCode == 200) {
         // 요청이 성공한 경우
         dynamic data = response.data;
         // 데이터 처리
-        courseList.value = RxList<Map<String, dynamic>>.from(data['courseList']);
+        courseList.value =
+            RxList<Map<String, dynamic>>.from(data['courseList']);
         // courseList.addAll(RxList<Map<String, dynamic>>.from(data['courseList']));
-
         await searchController.queryParameters['page']++;
       } else {
         // 요청이 실패한 경우
@@ -254,7 +278,6 @@ class SearchController extends GetxController {
     try {
       nowCourseId.value = courseId;
       detailController.changeNowIndex(nowCourseId.value);
-      print("nowCourseId= $nowCourseId");
     } catch (e) {
       print(e);
     }
@@ -301,7 +324,10 @@ class SearchController extends GetxController {
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                    color: Colors.grey.withOpacity(0.5), spreadRadius: 2, blurRadius: 3, offset: const Offset(0, 2))
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 2,
+                    blurRadius: 3,
+                    offset: const Offset(0, 2))
               ],
             ),
             // 선택된 테마 스타일
@@ -310,7 +336,10 @@ class SearchController extends GetxController {
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                    color: Colors.grey.withOpacity(0.5), spreadRadius: 2, blurRadius: 3, offset: const Offset(0, 2))
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 2,
+                    blurRadius: 3,
+                    offset: const Offset(0, 2))
               ],
             ),
           ),
@@ -326,7 +355,8 @@ class SearchController extends GetxController {
   Future getElasticList() async {
     try {
       if (searchTextEditingController.text != "") {
-        dynamic bodyData = json.encode({'value': searchTextEditingController.text});
+        dynamic bodyData =
+            json.encode({'value': searchTextEditingController.text});
 
         print(searchTextEditingController.text);
 

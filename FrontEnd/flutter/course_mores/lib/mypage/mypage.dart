@@ -44,6 +44,7 @@ class _MyPageState extends State<MyPage> {
   Future<void> updateUserInfo() async {
     final dio = await authDio();
     final response = await dio.get('profile/');
+    // print(response);
 
     userInfoController.saveImageUrl(response.data['userInfo']['profileImage']);
   }
@@ -139,21 +140,27 @@ class _MyPageState extends State<MyPage> {
                 //     child: Text('로그인페이지')),
                 buttonBar(),
                 if (status == 'course')
-                  (Text(
-                    '내가 작성한 코스 : ${courseList.length} 개',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15,
-                    ),
-                  )),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: (Text(
+                      '내가 작성한 코스 : ${courseList.length} 개',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      ),
+                    )),
+                  ),
                 if (status == 'review')
-                  (Text(
-                    '내가 작성한 리뷰 : ${reviewList.length} 개',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15,
-                    ),
-                  )),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: (Text(
+                      '내가 작성한 리뷰 : ${reviewList.length} 개',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      ),
+                    )),
+                  ),
                 if (status == 'course')
                   (Flexible(
                     child: MyCourse(),
@@ -445,70 +452,76 @@ profileBox() {
   } else {
     profileImageUrl = userInfoController.imageUrl.value;
   }
-  return Container(
-      height: 200.0,
-      decoration: boxDeco(),
-      child: Row(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Container(
-              padding: const EdgeInsets.all(5),
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  begin: Alignment.bottomRight,
-                  end: Alignment.topLeft,
-                  colors: [
-                    Color(0xff4dabf7),
-                    Color(0xffda77f2),
-                    Color(0xfff783ac),
-                  ],
+  return Padding(
+    padding: const EdgeInsets.all(8.0),
+    child: Container(
+        height: 200.0,
+        decoration: boxDeco(),
+        child: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                padding: const EdgeInsets.all(5),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    begin: Alignment.bottomRight,
+                    end: Alignment.topLeft,
+                    colors: [
+                      Color(0xff4dabf7),
+                      Color(0xffda77f2),
+                      Color(0xfff783ac),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(120),
                 ),
-                borderRadius: BorderRadius.circular(120),
-              ),
-              child: CircleAvatar(
-                radius: 60,
-                backgroundImage: NetworkImage(profileImageUrl),
+                child: CircleAvatar(
+                  radius: 60,
+                  backgroundImage: NetworkImage(profileImageUrl),
+                ),
               ),
             ),
-          ),
-          Expanded(
-            child: Column(
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(15.0, 20.0, 15.0, 15.0),
+                    child: Text(
+                      userInfoController.nickname.value,
+                      style:
+                          TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 0),
+                    child: Text(
+                      '${userInfoController.age.value.toString()} 대',
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
+                    child: Text(
+                      gender,
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            Column(
               mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.fromLTRB(15.0, 20.0, 15.0, 15.0),
-                  child: Text(
-                    userInfoController.nickname.value,
-                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 0),
-                  child: Text(
-                    '${userInfoController.age.value.toString()} 대',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
-                  child: Text(
-                    gender,
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-                  ),
-                )
+              children: const [
+                ModalBottom(),
               ],
-            ),
-          ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: const [
-              ModalBottom(),
-            ],
-          )
-        ],
-      ));
+            )
+          ],
+        )),
+  );
 }
 
 boxDeco() {

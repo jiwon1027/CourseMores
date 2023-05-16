@@ -88,19 +88,15 @@ class MyInterestedCourse extends StatelessWidget {
         itemBuilder: (BuildContext context, int index) {
           return InkWell(
             onTap: () async {
-              print('관심 코스리스트 == ${interestController.interestedCourse}');
               int courseId = (interestController.interestedCourse[index]
                   ['courseId'] as int);
-              print('코스아이디 == $courseId');
               await searchController.changeNowCourseId(courseId: courseId);
               await detailController.changeNowIndex(courseId);
-              print(searchController.queryParameters);
               await detailController.getCourseInfo('코스 소개');
               await detailController.getIsLikeCourse();
               await detailController.getIsInterestCourse();
               await detailController.getCourseDetailList();
 
-              print(detailController.nowCourseInfo);
               Get.to(detail.Detail2());
 
               // Get.to(() => detail.CourseDetail(index: index));
