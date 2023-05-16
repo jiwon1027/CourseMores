@@ -189,6 +189,7 @@ class DetailCourseInfo extends StatelessWidget {
                           SizedBox(height: 10),
                           // 작성일자, 조회수 라인
                           DetailDateViews(),
+                          SizedBox(height: 10),
                           if (detailController.nowCourseInfo['write'])
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.end,

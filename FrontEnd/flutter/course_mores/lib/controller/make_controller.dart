@@ -157,8 +157,112 @@ class CourseController extends g.GetxController {
       }
     }
   }
+
+  void modifyCourse(String? courseId) async {
+    // final url = 'https://coursemores.site/api/course/1';
+    // final url = 'https://coursemores.site/api/course/';
+    final List<Map<String, dynamic>> locationDataList = [];
+    FormData formData;
+
+    final List<XFile> combinedImages = getCombinedImages();
+
+    // locationList의 데이터를 LocationCreateReqDto로 변환
+    for (final locationData in locationList) {
+      locationDataList.add({
+        'courseLocationId': locationData.courseLocationId,
+        'name': locationData.name,
+        'title': locationData.title,
+        'content': locationData.content,
+        'numberOfImage': locationData.numberOfImage,
+      });
+    }
+
+    // FormData에서 imageList를 생성
+    List<MultipartFile> imageFileList = [];
+    int imageIndex = 0;
+    for (var locationData in locationList) {
+      for (var i = 0; i < locationData.numberOfImage; i++) {
+        imageFileList.add(await MultipartFile.fromFile(
+          combinedImages[imageIndex++].path,
+          contentType: MediaType("image", "jpg"),
+        ));
+      }
+    }
+
+    // 출력확인
+    print(locationDataList);
+    print('11111111111111');
+    print(combinedImages);
+    print('2222222222');
+    print(imageFileList);
+
+    // 이미지가 없는 경우
+    if (imageFileList.isEmpty) {
+      formData = FormData.fromMap({
+        'courseUpdateReqDto': MultipartFile.fromString(
+          jsonEncode({
+            'title': title.value,
+            'content': content.value,
+            'people': people.value,
+            'time': time.value,
+            'visited': visited.value,
+            'locationList': locationDataList,
+            'hashtagList': hashtagList,
+            'themeIdList': themeIdList,
+          }),
+          contentType: MediaType.parse('application/json'),
+        ),
+        'imageList': null,
+      });
+    } else {
+      // 이미지가 있는 경우
+      formData = FormData.fromMap({
+        'courseUpdateReqDto': MultipartFile.fromString(
+          jsonEncode({
+            'title': title.value,
+            'content': content.value,
+            'people': people.value,
+            'time': time.value,
+            'visited': visited.value,
+            'locationList': locationDataList,
+            'hashtagList': hashtagList,
+            'themeIdList': themeIdList,
+          }),
+          contentType: MediaType.parse('application/json'),
+        ),
+        'imageList': imageFileList,
+      });
+    }
+
+    // 출력확인
+    print(formData.fields);
+    print(formData.files);
+
+    try {
+      final dio = await authDio();
+      final response = await dio.put('course/$courseId',
+          data: formData,
+          options: Options(
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          ));
+      if (response.statusCode == 200) {
+        print('PUT 요청 성공');
+      }
+    } catch (e) {
+      if (e is DioError) {
+        print('Dio Error Status Code: ${e.response?.statusCode}');
+        print('Dio Error Message: ${e.response?.statusMessage}');
+        print('Dio Server Error Message: ${e.response?.data}');
+      } else {
+        // DioError가 아닌 다른 예외 처리
+      }
+    }
+  }
 }
-//////////
+
+/////////////////////////
 
 // 코스 작성시 장소 개별 getX controller
 class LocationController extends g.GetxController {
@@ -232,6 +336,7 @@ class LocationData {
   // final List<XFile> _temporaryImageList; // 추가된 부분
   final List<XFile> temporaryImageList;
   final List<XFile> savedImageList = [];
+  int? courseLocationId; // courseLocationId를 nullable로 변경
 
   LocationData({
     required this.key,
@@ -245,6 +350,7 @@ class LocationData {
     this.sido = '',
     this.gugun = '',
     required this.temporaryImageList,
+    this.courseLocationId, // nullable로 변경
   });
 
   // List<XFile> get temporaryImageList => _temporaryImageList; // 추가된 부분
