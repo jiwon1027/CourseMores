@@ -48,7 +48,7 @@ class MyApp extends StatelessWidget {
         // reissueToken();
         return Scaffold(
             backgroundColor: Color.fromARGB(255, 240, 240, 240),
-            appBar: CustomAppBar(),
+            // appBar: pageNum == 0 ? null : CustomAppBar(),
             body: [
               home.HomeScreen(),
               make.MakeStart(),
@@ -61,7 +61,8 @@ class MyApp extends StatelessWidget {
                 : FlashyTabBar(
                     selectedIndex: pageNum,
                     showElevation: true,
-                    onItemSelected: (index) => pageController.changePageNum(index),
+                    onItemSelected: (index) =>
+                        pageController.changePageNum(index),
                     items: [
                       FlashyTabBarItem(
                         icon: Icon(Icons.home),

@@ -100,36 +100,32 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          image: DecorationImage(
-              image: AssetImage('assets/background.gif'), fit: BoxFit.cover)),
+        image: DecorationImage(
+          image: AssetImage('assets/background-pink.jpg'),
+          fit: BoxFit.cover,
+        ),
+      ),
       child: Scaffold(
           backgroundColor: Colors.transparent,
           body: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Column(children: const [
-                  Text(
-                    'Course',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 30,
-                    ),
-                  ),
-                  Text(
-                    'Mores',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 30,
-                    ),
-                  ),
-                ]),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                    Image(image: AssetImage('assets/flower.png'), height: 200),
+                    SizedBox(height: 10),
+                    Text("COURSE MORES",
+                        style: TextStyle(fontSize: 30, color: Colors.white)),
+                    SizedBox(height: 10),
+                    Text("코스모스",
+                        style: TextStyle(
+                            fontSize: 40,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white)),
+                    SizedBox(height: 100),
                     Column(
                       children: [
                         InkWell(
@@ -175,25 +171,72 @@ class LoginPage extends StatelessWidget {
                             }
                           },
                           child: Image(
-                            image: AssetImage('assets/kakao.png'),
+                            image: AssetImage(
+                                'assets/kakao_login_medium_wide.png'),
                             fit: BoxFit.fill,
                           ),
                         ),
-                        Padding(
-                            padding: const EdgeInsets.only(top: 20.0),
+
+                        SizedBox(height: 15),
+                        // Padding(
+                        //     padding: const EdgeInsets.only(top: 20.0),
+                        //     child: InkWell(
+                        //       onTap: () {
+                        //         signInWithGoogle();
+                        //       },
+                        //       child: SizedBox(
+                        //         height: 50,
+                        //         width: 190,
+                        //         child: Image(
+                        //           image: AssetImage('assets/google.png'),
+                        //           fit: BoxFit.fill,
+                        //         ),
+                        //       ),
+                        //     )),
+                        Container(
+                          width: 300,
+                          height: 40,
+                          padding: EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: SizedBox(
                             child: InkWell(
                               onTap: () {
                                 signInWithGoogle();
                               },
-                              child: SizedBox(
-                                height: 50,
-                                width: 190,
-                                child: Image(
-                                  image: AssetImage('assets/google.png'),
-                                  fit: BoxFit.fill,
-                                ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  SizedBox(width: 4),
+                                  Image.asset('assets/glogo.png', height: 20),
+                                  SizedBox(width: 15),
+                                  Expanded(
+                                    child: Center(
+                                      child: Text(
+                                        // '구글 로그인',
+                                        'Google로 시작하기',
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 19,
+                                            fontFamily: "Roboto",
+                                            fontWeight: FontWeight.w700),
+                                      ),
+                                    ),
+                                  ),
+                                  Opacity(
+                                      opacity: 0.0,
+                                      child: Image.asset('assets/glogo.png')),
+                                ],
                               ),
-                            )),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10.0,
+                        ),
                       ],
                     ),
                     // InkWell(
