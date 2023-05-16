@@ -114,6 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
     getNearCourse();
     _getCurrentLocation();
     searchController.getMainThemeList();
+    print(searchController.courseList);
   }
 
   // @override
