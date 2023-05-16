@@ -8,6 +8,7 @@ import 'sign_up.dart' as signup;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'dart:convert';
 import 'auth_dio.dart';
+import 'dart:math';
 
 final tokenController = Get.put(TokenStorage());
 final userInfoController = Get.put(UserInfo());
@@ -92,9 +93,31 @@ void signInWithGoogle() async {
   }
 }
 
-class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
-  // const BASE_URL = 'https://coursemores.site/api/';
+class LoginPage extends StatefulWidget {
+  const LoginPage({Key? key}) : super(key: key);
+
+  @override
+  _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+
+  @override
+  void initState() {
+    _animationController = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: 10), // 10초 동안 애니메이션 실행
+    )..repeat(); // 애니메이션을 반복하도록 설정
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -115,7 +138,20 @@ class LoginPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Image(image: AssetImage('assets/flower.png'), height: 200),
+                    // Image(image: AssetImage('assets/flower.png'), height: 200),
+                    AnimatedBuilder(
+                      animation: _animationController,
+                      builder: (context, child) {
+                        return Transform.rotate(
+                          angle: _animationController.value * 2 * pi,
+                          child: child,
+                        );
+                      },
+                      child: Image(
+                        image: AssetImage('assets/flower.png'),
+                        height: 200,
+                      ),
+                    ),
                     SizedBox(height: 10),
                     Text("COURSE MORES",
                         style: TextStyle(fontSize: 30, color: Colors.white)),
@@ -220,7 +256,7 @@ class LoginPage extends StatelessWidget {
                                         'Google로 시작하기',
                                         style: TextStyle(
                                             color: Colors.black,
-                                            fontSize: 19,
+                                            fontSize: 14,
                                             fontFamily: "Roboto",
                                             fontWeight: FontWeight.w700),
                                       ),
