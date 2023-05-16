@@ -11,6 +11,7 @@ import '../auth/auth_dio.dart';
 import 'package:get/get.dart';
 import 'package:flutter_multi_select_items/flutter_multi_select_items.dart';
 import 'package:coursemores/controller/search_controller.dart';
+import 'package:lottie/lottie.dart';
 
 final homeController = Get.put(HomeScreenInfo());
 final pageController = Get.put(PageNum());
@@ -31,6 +32,65 @@ class _HomeScreenState extends State<HomeScreen> {
   // List<Map<String, Object>> hotCourse = homeController.hotCourse;
   List<Map<String, Object>> hotCourse = [];
   List<Map<String, Object>> nearCourse = [];
+
+  Widget _getWeatherIcon(String iconCode) {
+    switch (iconCode) {
+      case '01d':
+      case '01n':
+        return Lottie.asset(
+          'assets/weather_sunny.json',
+          fit: BoxFit.fitWidth,
+          width: 200,
+        );
+      case '02d':
+      case '02n':
+      case '03d':
+      case '03n':
+      case '04d':
+      case '04n':
+        return Lottie.asset(
+          'assets/weather_cloudy.json',
+          fit: BoxFit.fitWidth,
+          width: 200,
+        );
+      case '09d':
+      case '09n':
+      case '10d':
+      case '10n':
+        return Lottie.asset(
+          'assets/weather_rainy.json',
+          fit: BoxFit.fitWidth,
+          width: 200,
+        );
+      case '11d':
+      case '11n':
+        return Lottie.asset(
+          'assets/weather_thunderstorm.json',
+          fit: BoxFit.fitWidth,
+          width: 200,
+        );
+      case '13d':
+      case '13n':
+        return Lottie.asset(
+          'assets/weather_snow.json',
+          fit: BoxFit.fitWidth,
+          width: 200,
+        );
+      case '50d':
+      case '50n':
+        return Lottie.asset(
+          'assets/weather_mist.json',
+          fit: BoxFit.fitWidth,
+          width: 200,
+        );
+      default:
+        return Lottie.asset(
+          'assets/weather_sunny.json',
+          fit: BoxFit.fitWidth,
+          width: 200,
+        );
+    }
+  }
 
   Future<void> _getCurrentLocation() async {
     final permission = await Geolocator.requestPermission();
@@ -70,8 +130,9 @@ class _HomeScreenState extends State<HomeScreen> {
     print('여기서의 토큰 = ${tokenStorage.accessToken}');
     final dio = await authDio();
 
-    final response =
-        await dio.get('course/hot', options: Options(headers: {'Authorization': 'Bearer ${tokenStorage.accessToken}'}));
+    final response = await dio.get('course/hot',
+        options: Options(
+            headers: {'Authorization': 'Bearer ${tokenStorage.accessToken}'}));
 
     List<dynamic> data = response.data['courseList'];
     hotCourse = data.map((item) => Map<String, Object>.from(item)).toList();
@@ -88,7 +149,8 @@ class _HomeScreenState extends State<HomeScreen> {
     //     _currentPosition?.longitude != null) {
     final response = await dio.get(
         'course/around?latitude=${locationController.latitude}&longitude=${locationController.longitude}',
-        options: Options(headers: {'Authorization': 'Bearer ${tokenStorage.accessToken}'}));
+        options: Options(
+            headers: {'Authorization': 'Bearer ${tokenStorage.accessToken}'}));
 
     List<dynamic> data = response.data['courseList'];
     nearCourse = data.map((item) => Map<String, Object>.from(item)).toList();
@@ -136,11 +198,12 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<String> _getAddress(double lat, double lon) async {
-    final List<geocoding.Placemark> placemarks =
-        await geocoding.placemarkFromCoordinates(lat, lon, localeIdentifier: 'ko');
+    final List<geocoding.Placemark> placemarks = await geocoding
+        .placemarkFromCoordinates(lat, lon, localeIdentifier: 'ko');
     if (placemarks.isNotEmpty) {
       final placemark = placemarks.first;
-      final String address = '${placemark.subLocality} ${placemark.thoroughfare} ';
+      final String address =
+          '${placemark.subLocality} ${placemark.thoroughfare} ';
       return address;
     }
     return '';
@@ -179,55 +242,119 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 Container(
                   width: double.infinity,
-                  height: 200.0,
-                  color: Colors.amber,
+                  height: 210.0,
+                  // color: Colors.amber,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('assets/blue_background.gif'),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                   child: Center(
                     child: Column(children: [
-                      Text('날씨~~'),
+                      // Text('날씨~~'),
                       SizedBox(
                         child: FutureBuilder<Map<String, dynamic>>(
                           future: _getWeather(),
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
                               final weatherData = snapshot.data!;
-                              final temp = weatherData['main']['temp'].toString();
-                              final weather = weatherData['weather'][0]['description'].toString();
-                              return Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
+                              final temp =
+                                  weatherData['main']['temp'].toString();
+                              final weather = weatherData['weather'][0]
+                                      ['description']
+                                  .toString();
+                              final iconCode =
+                                  weatherData['weather'][0]['icon'].toString();
+                              return Row(
                                 children: [
-                                  Text(
-                                    '위치: ${_currentPosition?.latitude}, ${_currentPosition?.longitude}',
-                                    style: TextStyle(fontSize: 24),
+                                  SizedBox(
+                                    width: 10,
                                   ),
-                                  SizedBox(height: 16),
-                                  Text(
-                                    '기온: $temp °C',
-                                    style: TextStyle(fontSize: 24),
+                                  Expanded(
+                                    flex: 5,
+                                    child: Container(
+                                      padding: EdgeInsets.all(8.0),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        color: Colors.black.withOpacity(0.5),
+                                        border: Border.all(
+                                          color: Colors.white,
+                                          width: 1.0,
+                                        ),
+                                      ),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          // Text(
+                                          //   '위치: ${_currentPosition?.latitude}, ${_currentPosition?.longitude}',
+                                          //   style: TextStyle(fontSize: 24),
+                                          // ),
+                                          Text(
+                                            // '기온: $temp °C',
+                                            '${temp.split('.')[0]} °C',
+                                            style: TextStyle(
+                                                fontSize: 35,
+                                                color: Colors.white),
+                                          ),
+                                          SizedBox(height: 16),
+                                          Text(
+                                            '$weather',
+                                            style: TextStyle(
+                                                fontSize: 18,
+                                                color: Colors.white),
+                                          ),
+                                          SizedBox(
+                                            height: 16,
+                                          ),
+                                          // Icon(
+                                          //   _getWeatherIcon(iconCode),
+                                          //   size: 48,
+                                          //   color: Colors.white,
+                                          // ),
+
+                                          FutureBuilder<String>(
+                                            future: _getAddress(
+                                                _currentPosition?.latitude ?? 0,
+                                                _currentPosition?.longitude ??
+                                                    0),
+                                            builder: (context, snapshot) {
+                                              if (snapshot.connectionState ==
+                                                  ConnectionState.waiting) {
+                                                return Text('검색중...');
+                                              } else if (snapshot.hasData) {
+                                                final address = snapshot.data!;
+                                                return Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    Icon(Icons.location_on,
+                                                        color: Colors.white),
+                                                    SizedBox(width: 4),
+                                                    Text(
+                                                      '$address',
+                                                      style: TextStyle(
+                                                          fontSize: 18,
+                                                          color: Colors.white),
+                                                    ),
+                                                  ],
+                                                );
+                                              } else if (snapshot.hasError) {
+                                                return Text(
+                                                    'Error: ${snapshot.error}');
+                                              } else {
+                                                return Text('');
+                                              }
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                    ),
                                   ),
-                                  SizedBox(height: 16),
-                                  Text(
-                                    '날씨: $weather',
-                                    style: TextStyle(fontSize: 24),
-                                  ),
-                                  FutureBuilder<String>(
-                                    future:
-                                        _getAddress(_currentPosition?.latitude ?? 0, _currentPosition?.longitude ?? 0),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.connectionState == ConnectionState.waiting) {
-                                        return Text('검색중...');
-                                      } else if (snapshot.hasData) {
-                                        final address = snapshot.data!;
-                                        return Text(
-                                          '장소: $address',
-                                          style: TextStyle(fontSize: 24),
-                                        );
-                                      } else if (snapshot.hasError) {
-                                        return Text('Error: ${snapshot.error}');
-                                      } else {
-                                        return Text('');
-                                      }
-                                    },
-                                  ),
+                                  Expanded(
+                                      flex: 5,
+                                      child: _getWeatherIcon(iconCode)),
                                 ],
                               );
                             } else if (snapshot.hasError) {
@@ -369,7 +496,9 @@ class _ButtonBar2State extends State<ButtonBar2> {
 }
 
 iconBoxDeco() {
-  return BoxDecoration(border: Border.all(color: Colors.black), borderRadius: BorderRadius.circular(10));
+  return BoxDecoration(
+      border: Border.all(color: Colors.black),
+      borderRadius: BorderRadius.circular(10));
 }
 
 boxDeco() {
@@ -440,7 +569,10 @@ themeList() {
                 padding: const EdgeInsets.only(top: 15.0, bottom: 15.0),
                 child: Text(
                   '이런 테마는 어때요? 😊',
-                  style: TextStyle(color: Colors.black, fontSize: 20.0, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold),
                 ),
               ),
               Padding(
@@ -470,7 +602,8 @@ themeList() {
                         ],
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12.0, vertical: 8.0),
                         child: Text(
                           theme,
                           style: TextStyle(
