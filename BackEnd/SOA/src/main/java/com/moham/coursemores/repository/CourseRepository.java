@@ -24,6 +24,7 @@ public interface CourseRepository extends JpaRepository<Course, Long>, CourseCus
     @Query("SELECT new com.moham.coursemores.dto.course.NearPreviewResDto(c.id, c.title, c.content, c.image, c.sido, c.gugun, " +
             "(SQRT(POWER(c.latitude - :lat, 2) + POWER(c.longitude - :lng, 2)) * 111.13384)) " +
             "FROM Course c " +
+            "WHERE c.deleteTime is null " +
             "ORDER BY (SQRT(POWER(c.latitude - :lat, 2) + POWER(c.longitude - :lng, 2)) * 111.13384)")
     List<NearPreviewResDto> findTop5CoursesByLocation(@Param("lat") double lat, @Param("lng") double lng, Pageable pageable);
 
