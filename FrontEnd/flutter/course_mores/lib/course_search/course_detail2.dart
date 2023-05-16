@@ -10,6 +10,7 @@ import 'course_detail_tap_detail.dart';
 import 'course_detail_tap_comment.dart';
 import 'package:coursemores/course_make/make2.dart';
 import '../controller/make_controller.dart';
+import 'package:coursemores/course_modify/modify2.dart';
 
 class Detail2 extends StatelessWidget {
   Detail2({Key? key}) : super(key: key);
@@ -197,13 +198,54 @@ class DetailCourseInfo extends StatelessWidget {
                                 TextButton(
                                     onPressed: () async {
                                       // TODO: 이곳에 코스 수정하기 API 연결
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => CourseModify(
+                                                  courseId: detailController
+                                                      .nowIndex
+                                                      .toString(),
+                                                )),
+                                      );
                                     },
                                     child: Text("수정")),
                                 TextButton(
-                                    onPressed: () {
-                                      // TODO: 이곳에 코스 삭제하기 API 연결
-                                    },
-                                    child: Text("삭제")),
+                                  onPressed: () async {
+                                    print(detailController.nowIndex);
+                                    bool confirmed = await showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: Text("코스 삭제"),
+                                          content: Text("정말로 삭제하시겠습니까?"),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop(
+                                                    true); // 확인 버튼을 누를 때 true 반환
+                                              },
+                                              child: Text("확인"),
+                                            ),
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop(
+                                                    false); // 취소 버튼을 누를 때 false 반환
+                                              },
+                                              child: Text("취소"),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+
+                                    if (confirmed == true) {
+                                      // TODO: 삭제하기 API 연결
+                                      detailController.deleteCourse();
+                                      Navigator.of(context).pop();
+                                    }
+                                  },
+                                  child: Text("삭제"),
+                                ),
                               ],
                             ),
                         ],
