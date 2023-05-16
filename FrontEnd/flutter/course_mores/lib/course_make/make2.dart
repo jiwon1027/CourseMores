@@ -1,8 +1,6 @@
 import 'package:coursemores/course_make/make3.dart';
 import 'package:coursemores/course_make/make_map.dart';
 import 'package:coursemores/course_make/make_search.dart';
-// import 'package:coursemores/course_search/course_list.dart';
-// import 'package:flutter_reorderable_list/flutter_reorderable_list.dart';
 import 'package:flutter_reorderable_list/flutter_reorderable_list.dart' as frl;
 import 'package:flutter/material.dart';
 import './place_edit.dart';
@@ -370,14 +368,17 @@ class _CourseMakeState extends State<CourseMake> {
                           sliver: SliverList(
                             delegate: SliverChildBuilderDelegate(
                               (BuildContext context, int index) {
-                                return Item(
-                                  data: _items[index],
-                                  // first and last attributes affect border drawn during dragging
-                                  isFirst: index == 0,
-                                  isLast: index == _items.length - 1,
-                                  draggingMode: _draggingMode,
-                                  onEdit: () => onEdit(_items[index]),
-                                  onDelete: () => onDelete(_items[index]),
+                                return Padding(
+                                  padding: EdgeInsets.all(5),
+                                  child: Item(
+                                    data: _items[index],
+                                    // first and last attributes affect border drawn during dragging
+                                    isFirst: index == 0,
+                                    isLast: index == _items.length - 1,
+                                    draggingMode: _draggingMode,
+                                    onEdit: () => onEdit(_items[index]),
+                                    onDelete: () => onDelete(_items[index]),
+                                  ),
                                 );
                               },
                               childCount: _items.length,
@@ -828,7 +829,15 @@ class Item extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20.0),
+        // borderRadius: BorderRadius.circular(20.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 2,
+            blurRadius: 3,
+            offset: Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         children: [
