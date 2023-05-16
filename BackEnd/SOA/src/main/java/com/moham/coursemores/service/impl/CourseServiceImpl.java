@@ -439,6 +439,7 @@ public class CourseServiceImpl implements CourseService {
         });
 
         int imageIdx = 0;
+        boolean isFirstImage = courseUpdateReqDto.getLocationList().get(0).getNumberOfImage() != 0;
         for (LocationUpdateReqDto updateCourseLocation : courseUpdateReqDto.getLocationList()) {
             // 코스 장소 불러오기
             CourseLocation courseLocation = courseLocationRepository.findById(updateCourseLocation.getCourseLocationId())
@@ -446,28 +447,21 @@ public class CourseServiceImpl implements CourseService {
             // 코스 장소 수정하기
             courseLocation.update(updateCourseLocation);
             // 이미지 삭제
-            for (long locationImageId : updateCourseLocation.getDeleteImageList()) {
-                CourseLocationImage courseLocationImage = courseLocationImageRepository.findById(locationImageId)
-                        .orElseThrow(() -> new CustomException(locationImageId,CustomErrorCode.COURSE_LOCATION_IMAGE_NOT_FOUND));
-                courseLocationImageRepository.delete(courseLocationImage);
-            }
+            courseLocationImageRepository.deleteByCourseLocationId(courseLocation.getId());
             // 코스의 장소 이미지 추가 생성
             for (int end = imageIdx + updateCourseLocation.getNumberOfImage(); imageIdx < end; imageIdx++) {
                 String imagePath = fileUploadService.uploadImage(imageList.get(imageIdx));
+                // 코스의 대표 이미지 설정
+                if (isFirstImage) {
+                    course.setMainImage(imagePath);
+                    isFirstImage = false;
+                }
                 courseLocationImageRepository.save(CourseLocationImage.builder()
                         .image(imagePath)
                         .courseLocation(courseLocation)
                         .build());
             }
         }
-        // 코스의 대표 이미지 재설정
-        String mainImage;
-        try {
-            mainImage = course.getCourseLocationList().get(0).getCourseLocationImageList().get(0).getImage();
-        } catch (NullPointerException e) {
-            mainImage = course.getCourseLocationList().get(0).getRoadViewImage();
-        }
-        course.setMainImage(mainImage);
     }
 
     @Override
