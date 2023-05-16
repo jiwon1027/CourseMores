@@ -11,17 +11,19 @@ import '../controller/make_controller.dart';
 
 CourseController courseController = Get.find<CourseController>();
 
-class MakeStepper extends StatefulWidget {
-  const MakeStepper({super.key});
+class ModifyStepper extends StatefulWidget {
+  // const ModifyStepper({super.key});
+  final String? courseId;
+  ModifyStepper({Key? key, this.courseId}) : super(key: key);
 
   @override
-  State<MakeStepper> createState() => _MakeStepperState();
+  State<ModifyStepper> createState() => _ModifyStepperState();
 }
 
-class _MakeStepperState extends State<MakeStepper> {
+class _ModifyStepperState extends State<ModifyStepper> {
   late final TextfieldTagsController hashtagcontroller;
 
-  _MakeStepperState() {
+  _ModifyStepperState() {
     hashtagcontroller = TextfieldTagsController();
   }
 
@@ -93,24 +95,6 @@ class _MakeStepperState extends State<MakeStepper> {
                       ],
                     ),
                     SizedBox(height: 8), // 간격 추가
-                    // TextField(
-                    //   decoration: InputDecoration(
-                    //     border: OutlineInputBorder(),
-                    //     labelText: '코스 이름을 입력하세요',
-                    //   ),
-                    //   onChanged: (text) {
-                    //     // 사용자의 입력이 변화할 때마다 실행되는 콜백 함수
-                    //     print('User typed: $text');
-                    //     // CourseController의 title 변수 업데이트
-                    //     Get.find<CourseController>().title.value = text;
-                    //   },
-                    //   maxLength: 50,
-                    //   maxLines: null,
-                    // ),
-                    // Text(
-                    //   '(30자 이상, 기타 입력조건)',
-                    //   style: TextStyle(color: Colors.grey),
-                    // ),
                     SingleChildScrollView(
                       child: Container(
                         constraints: BoxConstraints(
@@ -123,17 +107,11 @@ class _MakeStepperState extends State<MakeStepper> {
                             color: Colors.grey.withOpacity(0.5),
                             width: 1,
                           ),
-                          // boxShadow: [
-                          //   BoxShadow(
-                          //     color: Colors.grey.withOpacity(0.5),
-                          //     spreadRadius: 2,
-                          //     blurRadius: 5,
-                          //     offset: Offset(0, 3),
-                          //   ),
-                          // ],
                         ),
                         padding: EdgeInsets.all(10),
                         child: TextField(
+                          controller: TextEditingController(
+                              text: courseController.title.value),
                           onChanged: (text) {
                             // 사용자의 입력이 변화할 때마다 실행되는 콜백 함수
                             print('User typed: $text');
@@ -316,6 +294,8 @@ class _MakeStepperState extends State<MakeStepper> {
                             ),
                             padding: EdgeInsets.all(10),
                             child: TextField(
+                              controller: TextEditingController(
+                                  text: courseController.content.value),
                               onChanged: (value) {
                                 //     // 사용자가 입력한 텍스트가 변경될 때마다 호출됩니다.
                                 print(value);
@@ -430,7 +410,7 @@ class _MakeStepperState extends State<MakeStepper> {
               ),
             ),
             TextSpan(
-              text: '코스 작성하기',
+              text: '코스 수정하기',
               style: TextStyle(
                 fontSize: 22,
                 color: Colors.black,
@@ -561,7 +541,7 @@ class _MakeStepperState extends State<MakeStepper> {
                                   fit: BoxFit.fitWidth,
                                   width: 300,
                                 ),
-                                Text("코스 작성을 완료했어요!"),
+                                Text("코스 수정을 완료했어요!"),
                               ],
                             ),
                             actions: <Widget>[
@@ -570,7 +550,8 @@ class _MakeStepperState extends State<MakeStepper> {
                                   child: Text("확인"),
                                   onPressed: () {
                                     // courseController의 모든 값 출력
-                                    courseController.postCourse();
+                                    courseController
+                                        .modifyCourse(widget.courseId);
                                     print(courseController.title.value);
                                     print(courseController.content.value);
                                     print(courseController.people.value);
@@ -756,7 +737,9 @@ class Slider1 extends StatefulWidget {
 }
 
 class _Slider1State extends State<Slider1> {
-  late double _sliderValue = 3;
+  final CourseController courseController = Get.find<CourseController>();
+
+  late double _sliderValue = courseController.people.value.toDouble();
 
   Map<int, String> peopleMapping = {
     0: '상관없음',
@@ -807,7 +790,9 @@ class Slider2 extends StatefulWidget {
 }
 
 class _Slider2State extends State<Slider2> {
-  late double _sliderValue2 = 3;
+  final CourseController courseController = Get.find<CourseController>();
+
+  late double _sliderValue2 = courseController.time.value.toDouble();
 
   Map<int, String> timeMapping = {
     1: '1시간 이하',
@@ -878,7 +863,7 @@ class _MakeHashtagState extends State<MakeHashtag> {
       children: [
         TextFieldTags(
           textfieldTagsController: _controller,
-          initialTags: const ['연남동맛집', '최애코스', '마포골목대장', '데이트코스'],
+          initialTags: courseController.hashtagList,
           textSeparators: const [' ', ','],
           letterCase: LetterCase.normal,
           validator: (String tag) {
@@ -1047,10 +1032,12 @@ class _ThemeSelectState extends State<ThemeSelect> {
     final List<MultiSelectCard> cards = themeMapping.entries.map((entry) {
       final int id = entry.key;
       final String text = entry.value;
+      final bool isSelected = courseController.themeIdList.contains(id);
       return MultiSelectCard(
         margin: EdgeInsets.all(2.0),
         value: id,
         label: text,
+        selected: isSelected,
         decorations: MultiSelectItemDecorations(
           decoration: BoxDecoration(
             color: Colors.white,
@@ -1108,7 +1095,7 @@ class CheckVisited extends StatefulWidget {
 }
 
 class _CheckVisitedState extends State<CheckVisited> {
-  final CourseController courseController = Get.find();
+  final CourseController courseController = Get.find<CourseController>();
 
   bool get _isVisited => courseController.visited.value;
 
