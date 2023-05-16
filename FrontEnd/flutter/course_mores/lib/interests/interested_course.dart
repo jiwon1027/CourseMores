@@ -4,7 +4,7 @@ import 'package:coursemores/controller/search_controller.dart';
 import 'package:flutter/material.dart';
 import '../auth/auth_dio.dart';
 import 'package:get/get.dart';
-import '../course_search/course_detail.dart' as detail;
+import '../course_search/course_detail2.dart' as detail;
 import 'package:cached_network_image/cached_network_image.dart';
 
 final interestController = Get.put(InterestedCourseInfo());
@@ -53,11 +53,14 @@ class _InterestedCourseState extends State<InterestedCourse> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
-                      '관심 등록한 코스 : ${courseList.length} 개',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15,
+                    Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: Text(
+                        '관심 등록한 코스 : ${courseList.length} 개',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
                       ),
                     ),
                     Flexible(
@@ -88,15 +91,17 @@ class MyInterestedCourse extends StatelessWidget {
               print('관심 코스리스트 == ${interestController.interestedCourse}');
               int courseId = (interestController.interestedCourse[index]
                   ['courseId'] as int);
-
+              print('코스아이디 == $courseId');
               await searchController.changeNowCourseId(courseId: courseId);
-
+              await detailController.changeNowIndex(courseId);
+              print(searchController.queryParameters);
               await detailController.getCourseInfo('코스 소개');
               await detailController.getIsLikeCourse();
               await detailController.getIsInterestCourse();
               await detailController.getCourseDetailList();
 
-              Get.to(() => detail.Detail());
+              print(detailController.nowCourseInfo);
+              Get.to(detail.Detail2());
 
               // Get.to(() => detail.CourseDetail(index: index));
             },
