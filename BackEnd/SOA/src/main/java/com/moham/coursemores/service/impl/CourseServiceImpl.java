@@ -219,6 +219,7 @@ public class CourseServiceImpl implements CourseService {
         return courseLocationRepository.findByCourseId(courseId)
                 .stream()
                 .map(courseLocation -> CourseDetailResDto.builder()
+                        .courseLocationId(courseLocation.getId())
                         .name(courseLocation.getName())
                         .title(courseLocation.getTitle())
                         .content(courseLocation.getContent())

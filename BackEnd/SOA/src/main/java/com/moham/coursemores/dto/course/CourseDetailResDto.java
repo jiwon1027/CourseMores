@@ -10,6 +10,7 @@ import lombok.ToString;
 @Builder
 public class CourseDetailResDto {
 
+    private Long courseLocationId;
     private String name;
     private String title;
     private String content;
