@@ -10,13 +10,12 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../auth/auth_dio.dart';
 import 'package:get/get.dart';
 import 'package:flutter_multi_select_items/flutter_multi_select_items.dart';
-import 'package:coursemores/controller/search_controller.dart';
 import 'package:lottie/lottie.dart';
+// import 'package:coursemores/controller/search_controller.dart';
 
 final homeController = Get.put(HomeScreenInfo());
 final pageController = Get.put(PageNum());
 final locationController = Get.put(LocationInfo());
-final searchController = Get.put(SearchController());
 // var hotCourse;
 
 class HomeScreen extends StatefulWidget {
@@ -114,6 +113,7 @@ class _HomeScreenState extends State<HomeScreen> {
     getHotCourse();
     getNearCourse();
     _getCurrentLocation();
+    searchController.getMainThemeList();
   }
 
   // @override
@@ -127,7 +127,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> getHotCourse() async {
     final tokenStorage = Get.put(TokenStorage());
-    print('여기서의 토큰 = ${tokenStorage.accessToken}');
     final dio = await authDio();
 
     final response = await dio.get('course/hot',
@@ -335,7 +334,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       color: Colors.black),
                                                   SizedBox(width: 4),
                                                   Text(
-                                                    address,
+                                                    address.length > 10
+                                                        ? '${address.substring(0, 10)}...'
+                                                        : address,
                                                     style: TextStyle(
                                                         fontSize: 18,
                                                         color: Colors.black),
@@ -442,7 +443,6 @@ class _ButtonBar2State extends State<ButtonBar2> {
           InkWell(
             onTap: () {
               pageController.changePageNum(1);
-              print(pageController.pageNum.value);
             },
             child: Container(
               width: 110.0,
@@ -465,7 +465,6 @@ class _ButtonBar2State extends State<ButtonBar2> {
           InkWell(
             onTap: () {
               pageController.changePageNum(3);
-              print(pageController.pageNum.value);
             },
             child: Container(
               width: 110.0,
@@ -485,7 +484,6 @@ class _ButtonBar2State extends State<ButtonBar2> {
           InkWell(
             onTap: () {
               pageController.changePageNum(4);
-              print(pageController.pageNum.value);
             },
             child: Container(
               width: 110.0,
@@ -564,11 +562,15 @@ myNearCourse() {
 }
 
 themeList() {
-  searchController.getThemeList();
-  var themes = [];
-  for (var theme in searchController.themeList) {
-    themes.add(theme["name"]);
-  }
+  // if (searchController.courseList.isEmpty) {
+  //   searchController.getMainThemeList();
+  //   print('요청!!');
+  // }
+  // var themes = [];
+  var themeList = searchController.themeList;
+  // for (var theme in searchController.themeList) {
+  //   themes.add(theme["name"]);
+  // }
 
   return Padding(
     padding: const EdgeInsets.fromLTRB(0, 15.0, 0, 15.0),
@@ -589,39 +591,54 @@ themeList() {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(bottom: 8.0),
+                padding: const EdgeInsets.only(bottom: 16.0),
                 child: Wrap(
                   spacing: 8.0,
                   runSpacing: 8.0,
-                  alignment: WrapAlignment.start,
+                  alignment: WrapAlignment.center,
                   crossAxisAlignment: WrapCrossAlignment.start,
                   textDirection: TextDirection.ltr,
                   runAlignment: WrapAlignment.start,
                   verticalDirection: VerticalDirection.down,
                   clipBehavior: Clip.none,
-                  children: themes.map((theme) {
-                    return Container(
-                      margin: EdgeInsets.all(2.0),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.5),
-                            spreadRadius: 2,
-                            blurRadius: 3,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12.0, vertical: 8.0),
-                        child: Text(
-                          theme,
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 12.0,
+                  children: themeList.map((theme) {
+                    return InkWell(
+                      onTap: () {
+                        pageController.changePageNum(2);
+                        // searchController.savedSelectedThemeList =
+                        //     RxList<dynamic>([theme['themeId'] as int]);
+                        search.Search();
+                        searchController.queryParameters['themeIds'] = [
+                          theme['themeId']
+                        ];
+                        searchController.isSearchResults.value = true;
+                        searchController.changePage(page: 0);
+                        searchController.searchCourse();
+                        search.Search();
+                      },
+                      child: Container(
+                        margin: EdgeInsets.all(2.0),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 2,
+                              blurRadius: 3,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12.0, vertical: 8.0),
+                          child: Text(
+                            theme['name'],
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 12.0,
+                            ),
                           ),
                         ),
                       ),
