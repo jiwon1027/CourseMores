@@ -27,4 +27,15 @@ public class ThemeServiceImpl implements ThemeService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<ThemeResDto> getHomeThemeList() {
+        return themeRepository.findRandomTheme(6)
+                .stream()
+                .map(theme -> ThemeResDto.builder()
+                        .name(theme.getName())
+                        .themeId(theme.getId())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
 }

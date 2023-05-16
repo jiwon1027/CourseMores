@@ -37,4 +37,17 @@ public class ThemeController {
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
 
+    @GetMapping("home")
+    public ResponseEntity<Map<String, Object>> getHomeThemeList() {
+        logger.debug("[0/2][GET][/theme/home] << request : none");
+
+        Map<String, Object> resultMap = new HashMap<>();
+
+        logger.debug("[1/2][GET][/theme/home] ...ts.getHomeThemeList");
+        List<ThemeResDto> themeList = themeService.getHomeThemeList();
+        resultMap.put("themeList", themeList);
+
+        logger.debug("[2/2][GET][/theme/home] >> response : themeList\n themeList = {}\n", themeList);
+        return new ResponseEntity<>(resultMap, HttpStatus.OK);
+    }
 }

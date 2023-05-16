@@ -6,5 +6,5 @@ import java.util.List;
 public interface ThemeService {
 
     List<ThemeResDto> getThemeList();
-
+    List<ThemeResDto> getHomeThemeList();
 }
