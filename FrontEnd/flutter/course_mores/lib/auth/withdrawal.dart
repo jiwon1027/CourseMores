@@ -3,15 +3,12 @@ import 'package:dio/dio.dart';
 // import 'package:get/get.dart' as g;
 import 'auth_dio.dart';
 
-void withdrawal(aToken) async {
+void withdrawal() async {
   try {
     final dio = await authDio();
-    dio.delete('profile/6',
-        options: Options(
-          headers: {
-            'Authorization': 'Bearer $aToken',
-          },
-        ));
+    dio.delete(
+      'profile/6',
+    );
   } catch (e) {
     // DioError 처리
     if (e is DioError) {

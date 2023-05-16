@@ -17,7 +17,8 @@ import 'package:dio/dio.dart';
 import '../auth/auth_dio.dart';
 import '../course_search/course_detail.dart' as detail;
 import 'package:cached_network_image/cached_network_image.dart';
-import 'my_review.dart' as myReview;
+import 'my_review.dart' as my_review;
+import '../auth/withdrawal.dart' as withdrawal;
 
 class MyPage extends StatefulWidget {
   const MyPage({super.key});
@@ -161,7 +162,7 @@ class _MyPageState extends State<MyPage> {
                   (Flexible(
                     child: SizedBox(
                       height: reviewList.isEmpty ? null : 600,
-                      child: myReview.DetailTapCourseCommentsListSection(
+                      child: my_review.DetailTapCourseCommentsListSection(
                           commentsList: reviewList),
                     ),
                   ))
@@ -603,7 +604,7 @@ class ModalBottom extends StatelessWidget {
                                     onTap: () {
                                       Navigator.pop(context);
                                       authController.logout();
-                                      // 로그아웃 메서드 쓰기..
+                                      withdrawal.withdrawal();
                                       print('회원탈퇴!');
                                       // Get.to(main.MyApp());
                                     },

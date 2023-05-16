@@ -11,7 +11,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import '../controller/make_controller.dart';
 import 'package:geocoding/geocoding.dart' as geocoding;
-import 'package:dio/dio.dart';
 import '../auth/auth_dio.dart';
 
 class CourseMake extends StatefulWidget {
