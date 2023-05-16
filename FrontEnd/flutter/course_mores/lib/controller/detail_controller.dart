@@ -630,6 +630,17 @@ class DetailController extends GetxController {
     throw Exception('Error');
   }
 
+  Future deleteCourse() async {
+    try {
+      final dio = await authDio();
+      print("${nowIndex.value}");
+      await dio.delete("course/${nowIndex.value}");
+      print('삭제 성공');
+    } catch (e) {
+      print(e);
+    }
+  }
+
   void getNextCommentResults() async {
     if (isCommentLoading.value) return; // 이미 로딩 중이면 중복 호출 방지
 
