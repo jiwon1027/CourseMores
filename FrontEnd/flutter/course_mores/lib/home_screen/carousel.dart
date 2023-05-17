@@ -83,9 +83,9 @@ final List<String> imgList = [
 //         ))
 //     .toList();
 
-// class CoourseCarousel extends StatelessWidget {
-//   // const CoourseCarousel({super.key});
-//   const CoourseCarousel({Key? key}) : super(key: key);
+// class CourseCarousel extends StatelessWidget {
+//   // const CourseCarousel({super.key});
+//   const CourseCarousel({Key? key}) : super(key: key);
 
 //   @override
 //   Widget build(BuildContext context) {
@@ -157,14 +157,14 @@ final List<String> imgList = [
 //   }
 // }
 
-class CoourseCarousel extends StatefulWidget {
-  const CoourseCarousel({Key? key}) : super(key: key);
+class CourseCarousel extends StatefulWidget {
+  const CourseCarousel({Key? key}) : super(key: key);
 
   @override
-  State<CoourseCarousel> createState() => _CoourseCarouselState();
+  State<CourseCarousel> createState() => _CourseCarouselState();
 }
 
-class _CoourseCarouselState extends State<CoourseCarousel> {
+class _CourseCarouselState extends State<CourseCarousel> {
   List<Map<String, Object>> hotCourse = [];
   @override
   Widget build(BuildContext context) {
@@ -179,12 +179,13 @@ class _CoourseCarouselState extends State<CoourseCarousel> {
 // final homeController = Get.put(HomeScreenInfo());
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      // backgroundColor: Colors.white,
+      backgroundColor: Colors.transparent,
       body: Padding(
-        padding: const EdgeInsets.fromLTRB(0, 15.0, 0, 0),
+        padding: EdgeInsets.fromLTRB(0, 15.0, 0, 0),
         child: Column(
           children: [
-            const Padding(
+            Padding(
               padding: EdgeInsets.fromLTRB(0, 0, 0, 15.0),
               child: Text(
                 '최근 인기 코스 🔥',
@@ -214,10 +215,10 @@ class _CoourseCarouselState extends State<CoourseCarousel> {
                               Get.to(() => detail.Detail());
                             },
                             child: Container(
-                              margin: const EdgeInsets.all(5.0),
+                              margin: EdgeInsets.all(5.0),
                               child: ClipRRect(
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(5.0)),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(5.0)),
                                   child: Stack(
                                     children: <Widget>[
                                       Image.network(item['image'].toString(),
@@ -239,26 +240,28 @@ class _CoourseCarouselState extends State<CoourseCarousel> {
                                               end: Alignment.topCenter,
                                             ),
                                           ),
-                                          padding: const EdgeInsets.symmetric(
+                                          padding: EdgeInsets.symmetric(
                                               vertical: 10.0, horizontal: 10.0),
                                           child: Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                '${item['title'].length > 15 ? item['title'].substring(0, 15) + '...' : item['title']}',
-                                                style: const TextStyle(
+                                                '${item['title'].length > 20 ? item['title'].substring(0, 20) + '...' : item['title']}',
+                                                style: TextStyle(
                                                   color: Colors.white,
                                                   fontSize: 20.0,
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
+                                              SizedBox(height: 5),
                                               Text(
                                                   '${item['sido']} ${item['gugun']}',
                                                   style: TextStyle(
                                                     color: Colors.white,
                                                     fontSize: 10.0,
                                                   )),
+                                              SizedBox(height: 10),
                                               Row(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.start,
@@ -324,12 +327,13 @@ class _NearCarouselState extends State<NearCarousel> {
 // final homeController = Get.put(HomeScreenInfo());
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      // backgroundColor: Colors.white,
+      backgroundColor: Colors.transparent,
       body: Padding(
-        padding: const EdgeInsets.fromLTRB(0, 15.0, 0, 0),
+        padding: EdgeInsets.fromLTRB(0, 15.0, 0, 0),
         child: Column(
           children: [
-            const Padding(
+            Padding(
               padding: EdgeInsets.fromLTRB(0, 0, 0, 15.0),
               child: Text(
                 '지금 내 근처의 코스 👀',
@@ -359,10 +363,10 @@ class _NearCarouselState extends State<NearCarousel> {
                               Get.to(() => detail.Detail());
                             },
                             child: Container(
-                              margin: const EdgeInsets.all(5.0),
+                              margin: EdgeInsets.all(5.0),
                               child: ClipRRect(
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(5.0)),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(5.0)),
                                   child: Stack(
                                     children: <Widget>[
                                       Image.network(item['image'].toString(),
@@ -384,15 +388,15 @@ class _NearCarouselState extends State<NearCarousel> {
                                               end: Alignment.topCenter,
                                             ),
                                           ),
-                                          padding: const EdgeInsets.symmetric(
+                                          padding: EdgeInsets.symmetric(
                                               vertical: 10.0, horizontal: 10.0),
                                           child: Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                '${item['title'].length > 15 ? item['title'].substring(0, 15) + '...' : item['title']}',
-                                                style: const TextStyle(
+                                                '${item['title'].length > 20 ? item['title'].substring(0, 20) + '...' : item['title']}',
+                                                style: TextStyle(
                                                   color: Colors.white,
                                                   fontSize: 20.0,
                                                   fontWeight: FontWeight.bold,
@@ -446,7 +450,7 @@ class _NearCarouselState extends State<NearCarousel> {
                 } else if (snapshot.hasError) {
                   return Text('${snapshot.error}');
                 } else {
-                  return const CircularProgressIndicator();
+                  return CircularProgressIndicator();
                 }
               },
             ),
