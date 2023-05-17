@@ -6,10 +6,8 @@ import 'package:get/get.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-// import 'package:flutter_dotenv/flutter_dotenv.dart';
-// import 'package:dio/dio.dart';
 
-CarouselController _controller = CarouselController();
+CarouselController carouselController = CarouselController();
 
 class CourseDetail extends StatelessWidget {
   CourseDetail({super.key});
@@ -32,35 +30,32 @@ class CourseDetail extends StatelessWidget {
                     padding: EdgeInsets.all(15),
                     child: Column(
                       children: [
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(0, 15, 0, 15),
-                          child: Column(
-                            children: [
-                              if (detailController
-                                  .nowCourseDetail[detailController.placeIndex.value]['locationImageList'].isNotEmpty)
-                                ImageGridView(),
-                              if (detailController.nowCourseDetail[detailController.placeIndex.value]['title'] != "" ||
-                                  detailController.nowCourseDetail[detailController.placeIndex.value]['content'] != "")
-                                Column(
-                                  children: [
-                                    SizedBox(height: 15),
-                                    Text(
-                                      "${detailController.nowCourseDetail[detailController.placeIndex.value]['title'] ?? ' '}",
-                                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.black),
-                                    ),
-                                    SizedBox(height: 10),
-                                    Text(
-                                      "${detailController.nowCourseDetail[detailController.placeIndex.value]['content'] ?? ' '}",
-                                      style: TextStyle(fontSize: 16, color: Colors.black, height: 1.7),
-                                    ),
-                                    SizedBox(height: 10),
-                                    PlaceMap(),
-                                    // SizedBox(height: 10),
-                                    // GetDistanceTime()
-                                  ],
-                                ),
-                            ],
-                          ),
+                        Column(
+                          children: [
+                            if (detailController
+                                .nowCourseDetail[detailController.placeIndex.value]['locationImageList'].isNotEmpty)
+                              ImageGridView(),
+                            if (detailController.nowCourseDetail[detailController.placeIndex.value]['title'] != "" ||
+                                detailController.nowCourseDetail[detailController.placeIndex.value]['content'] != "")
+                              Column(
+                                children: [
+                                  SizedBox(height: 30),
+                                  Text(
+                                    "${detailController.nowCourseDetail[detailController.placeIndex.value]['title'] ?? ' '}",
+                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black),
+                                  ),
+                                  SizedBox(height: 20),
+                                  Text(
+                                    "${detailController.nowCourseDetail[detailController.placeIndex.value]['content'] ?? ' '}",
+                                    style: TextStyle(fontSize: 14, color: Colors.black, height: 1.7),
+                                  ),
+                                  SizedBox(height: 20),
+                                  PlaceMap(),
+                                  // SizedBox(height: 10),
+                                  // GetDistanceTime()
+                                ],
+                              ),
+                          ],
                         ),
                       ],
                     ),
@@ -206,7 +201,7 @@ class CarouselIndicator extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: (detailController.nowCourseDetail.asMap().entries.map((entry) {
           return GestureDetector(
-            onTap: () => _controller.animateToPage(entry.key),
+            onTap: () => carouselController.animateToPage(entry.key),
             child: Container(
               width: 12.0,
               height: 10.0,
@@ -226,62 +221,64 @@ class CarouselSliderText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CarouselSlider.builder(
-      carouselController: _controller,
-      options: CarouselOptions(
-        height: 250,
-        enlargeCenterPage: true,
-        onPageChanged: (index, reason) {
-          detailController.changePlaceIndex(index);
-        },
-        enableInfiniteScroll: false,
-      ),
-      itemCount: detailController.nowCourseDetail.length,
-      itemBuilder: (context, index, realIndex) => Container(
-        clipBehavior: Clip.antiAlias,
-        width: MediaQuery.of(context).size.width,
-        margin: EdgeInsets.fromLTRB(10, 20, 10, 30),
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: CachedNetworkImageProvider(detailController.nowCourseDetail[index]['roadViewImage']),
-            fit: BoxFit.cover,
+    return Obx(() => CarouselSlider.builder(
+          carouselController: carouselController,
+          options: CarouselOptions(
+            initialPage: detailController.initialPage.value,
+            height: 250,
+            enlargeCenterPage: true,
+            onPageChanged: (index, reason) {
+              detailController.changePlaceIndex(index);
+              detailController.initialPage.value = index;
+            },
+            enableInfiniteScroll: false,
           ),
-          color: Color.fromARGB(255, 241, 241, 241),
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: const [
-            BoxShadow(
-              color: Color.fromARGB(255, 157, 157, 157),
-              blurRadius: 10,
-              spreadRadius: 1,
-              offset: Offset(0, 10),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    padding: EdgeInsets.all(10),
-                    decoration:
-                        BoxDecoration(gradient: LinearGradient(colors: const [Colors.black, Colors.transparent])),
-                    child: Text(
-                      "${index + 1}. ${detailController.nowCourseDetail[index]['name']}",
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.white),
-                    ),
-                  ),
+          itemCount: detailController.nowCourseDetail.length,
+          itemBuilder: (context, index, realIndex) => Container(
+            clipBehavior: Clip.antiAlias,
+            width: MediaQuery.of(context).size.width,
+            margin: EdgeInsets.fromLTRB(10, 20, 10, 30),
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: CachedNetworkImageProvider(detailController.nowCourseDetail[index]['roadViewImage']),
+                fit: BoxFit.cover,
+              ),
+              color: Color.fromARGB(255, 241, 241, 241),
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color.fromARGB(255, 157, 157, 157),
+                  blurRadius: 10,
+                  spreadRadius: 1,
+                  offset: Offset(0, 10),
                 ),
               ],
             ),
-          ],
-        ),
-      ),
-    );
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        padding: EdgeInsets.all(10),
+                        decoration:
+                            BoxDecoration(gradient: LinearGradient(colors: const [Colors.black, Colors.transparent])),
+                        child: Text(
+                          "${index + 1}. ${detailController.nowCourseDetail[index]['name']}",
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ));
   }
 }
 

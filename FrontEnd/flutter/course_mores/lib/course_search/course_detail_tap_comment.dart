@@ -4,8 +4,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:coursemores/course_search/search.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:like_button/like_button.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
+// ignore: depend_on_referenced_packages
+import 'package:intl/intl.dart' show DateFormat;
 
 import 'course_change_comment.dart';
 import 'course_new_comment.dart';
@@ -18,18 +21,15 @@ class CourseComments extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
-      child: Obx(() => Column(
-            children: [
-              CommentsCreateSection(),
-              SortButtonBar(),
-              SizedBox(
-                height: detailController.nowCourseCommentList.isEmpty ? null : 600,
-                child: CommentsListSection(),
-              ),
-            ],
-          )),
-    );
+        padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
+        child: Column(children: [
+          CommentsCreateSection(),
+          SortButtonBar(),
+          SizedBox(
+            height: detailController.nowCourseCommentList.isEmpty ? null : 600,
+            child: CommentsListSection(),
+          ),
+        ]));
   }
 }
 
@@ -58,7 +58,7 @@ class SortButtonBar extends StatelessWidget {
                   foregroundColor: MaterialStateProperty.all<Color>(
                       detailController.isCommentLatestSelected.value ? Colors.blue : Colors.grey),
                 ),
-                child: Text('최신순', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
+                child: Text('최신순', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14)),
               ),
               ElevatedButton(
                 onPressed: () {
@@ -73,7 +73,7 @@ class SortButtonBar extends StatelessWidget {
                   foregroundColor: MaterialStateProperty.all<Color>(
                       detailController.isCommentPopularSelected.value ? Colors.blue : Colors.grey),
                 ),
-                child: Text('인기순', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
+                child: Text('인기순', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14)),
               ),
             ],
           ),
@@ -83,26 +83,13 @@ class SortButtonBar extends StatelessWidget {
 
 class CommentsListSection extends StatelessWidget {
   CommentsListSection({super.key});
-  final createTime = detailController.nowCourseInfo['createTime'] ?? "";
-  late final year;
-  late final month;
-  late final date;
 
   @override
   Widget build(BuildContext context) {
-    try {
-      year = createTime.substring(0, 4);
-      month = createTime.substring(5, 7);
-      date = createTime.substring(8, 10);
-    } catch (e) {
-      year = "";
-      month = "";
-      date = "";
-      print(e);
-    }
-
     commentScrollController.addListener(() {
+      print("=============");
       if (commentScrollController.position.pixels == commentScrollController.position.maxScrollExtent) {
+        print("불러오기");
         // 스크롤이 리스트의 끝까지 도달하면 다음 검색 결과 호출
         detailController.getNextCommentResults();
       }
@@ -120,105 +107,283 @@ class CommentsListSection extends StatelessWidget {
               ],
             ),
           )
-        : Column(
-            children: [
-              Expanded(
+        : Column(children: [
+            Expanded(
                 child: ListView.builder(
-                  controller: commentScrollController, // ScrollController 설정
-                  padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
-                  itemCount: detailController.nowCourseCommentList.length,
-                  itemBuilder: (context, index) {
-                    return Card(
-                      elevation: 6,
-                      margin: EdgeInsets.fromLTRB(4, 10, 4, 0),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                      child: Padding(
-                        padding: EdgeInsets.all(15),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+              controller: commentScrollController, // ScrollController 설정
+              padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
+              itemCount: detailController.nowCourseCommentList.length,
+              itemBuilder: (context, index) {
+                return Card(
+                  elevation: 6,
+                  margin: EdgeInsets.fromLTRB(4, 10, 4, 0),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  child: Padding(
+                    padding: EdgeInsets.all(15),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(children: [
-                                  ProfileImage(index: index),
-                                  SizedBox(width: 5),
-                                  Text(detailController.nowCourseCommentList[index]['writeUser']['nickname']),
-                                ]),
-                                // TODO: 좋아요 눌렀을 때 화면에는 실시간으로 바로 반영되지는 않음, Rx가 아니어서
-                                Obx(() => InkWell(
-                                    onTap: () {
-                                      if (!detailController.nowCourseCommentList[index]['like']) {
-                                        detailController.addIsLikeComment(index);
-                                      } else {
-                                        detailController.deleteIsLikeComment(index);
-                                      }
-                                      detailController.update();
-                                    },
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        if (detailController.nowCourseCommentList[index]['like']) Icon(Icons.favorite),
-                                        if (!detailController.nowCourseCommentList[index]['like'])
-                                          Icon(Icons.favorite_outline),
-                                        SizedBox(width: 5),
-                                        Text("${detailController.nowCourseCommentList[index]['likeCount']}",
-                                            style: TextStyle(fontSize: 16)),
-                                      ],
-                                    ))),
-                              ],
-                            ),
-                            SizedBox(height: 5),
-                            Row(
-                              children: [
-                                Icon(Icons.calendar_month, size: 16),
-                                SizedBox(width: 5),
-                                Text("$year. $month. $date", style: TextStyle(fontSize: 12)),
-                                SizedBox(width: 10),
-                                Icon(Icons.people, size: 16),
-                                SizedBox(width: 5),
-                                if (detailController.nowCourseCommentList[index]['people'] != 0)
-                                  if (detailController.nowCourseCommentList[index]['people'] != 5)
-                                    Text('${detailController.nowCourseCommentList[index]['people']}명',
-                                        style: TextStyle(fontSize: 12)),
-                                if (detailController.nowCourseCommentList[index]['people'] >= 5)
-                                  Text('5명 이상', style: TextStyle(fontSize: 12)),
-                              ],
-                            ),
-                            SizedBox(height: 10),
-                            if (detailController.nowCourseCommentList[index]['imageList'].length != 0)
-                              ImageGridView(index: index),
-                            SizedBox(height: 10),
-                            Text('${detailController.nowCourseCommentList[index]['content']}'),
-                            SizedBox(height: 10),
-                            if (detailController.nowCourseCommentList[index]['write'])
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Expanded(child: Container()),
-                                  TextButton(
-                                      onPressed: () async {
-                                        await detailController.setComment(index);
-                                        Get.to(ChangeComment(index));
-                                      },
-                                      child: Text("수정")),
-                                  TextButton(
-                                      onPressed: () {
-                                        detailController.deleteComment(index);
-                                      },
-                                      child: Text("삭제")),
-                                ],
+                            Row(children: [
+                              ProfileImage(index: index),
+                              SizedBox(width: 8),
+                              Text(detailController.nowCourseCommentList[index]['writeUser']['nickname']),
+                            ]),
+                            Obx(
+                              () => LikeButton(
+                                isLiked: detailController.nowCourseCommentList[index]['like'],
+                                onTap: (isLiked) => detailController.onCommentLikeButtonTapped(index),
+                                size: 26,
+                                likeCountPadding: EdgeInsets.symmetric(horizontal: 6),
+                                likeCount: detailController.nowCourseCommentList[index]['likeCount'],
                               ),
+                            ),
                           ],
                         ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-              if (detailController.isCommentLoading.value) CircularProgressIndicator(), // 로딩 중인 경우 표시할 위젯
-            ],
-          ));
+                        SizedBox(height: 8),
+                        Row(
+                          children: [
+                            Icon(Icons.calendar_month, size: 16),
+                            SizedBox(width: 5),
+                            Text(
+                                DateFormat('yyyy. MM.dd')
+                                    .format(DateTime.parse(detailController.nowCourseInfo['createTime'])),
+                                style: TextStyle(fontSize: 12)),
+                            SizedBox(width: 10),
+                            Icon(Icons.people, size: 16),
+                            SizedBox(width: 5),
+                            if (detailController.nowCourseCommentList[index]['people'] != 0)
+                              if (detailController.nowCourseCommentList[index]['people'] != 5)
+                                Text('${detailController.nowCourseCommentList[index]['people']}명',
+                                    style: TextStyle(fontSize: 12)),
+                            if (detailController.nowCourseCommentList[index]['people'] >= 5)
+                              Text('5명 이상', style: TextStyle(fontSize: 12)),
+                          ],
+                        ),
+                        // SizedBox(height: 10),
+                        if (detailController.nowCourseCommentList[index]['imageList'].length != 0)
+                          ImageGridView(index: index),
+                        SizedBox(height: 10),
+                        Text('${detailController.nowCourseCommentList[index]['content']}',
+                            style: TextStyle(height: 1.6)),
+                        SizedBox(height: 10),
+                        if (detailController.nowCourseCommentList[index]['write'])
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Expanded(child: Container()),
+                              IconButton(
+                                  icon: Icon(Icons.edit),
+                                  onPressed: () async {
+                                    await detailController.setComment(index);
+                                    Get.to(ChangeComment(index));
+                                  },
+                                  tooltip: "수정"),
+                              IconButton(
+                                  icon: Icon(Icons.delete_forever_rounded),
+                                  onPressed: () async {
+                                    detailController.deleteComment(index);
+                                  },
+                                  tooltip: "삭제"),
+                            ],
+                          ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ))
+          ]));
+    // :
+    // Padding(
+    //     padding: EdgeInsets.all(8.0),
+    //     child: Column(
+    //         children: List.generate(
+    //       detailController.nowCourseCommentList.length,
+    //       (index) {
+    //         // padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
+    //         // itemCount: detailController.nowCourseCommentList.length,
+    //         // itemBuilder: (context, index) {
+    //         return Card(
+    //           elevation: 6,
+    //           margin: EdgeInsets.fromLTRB(4, 10, 4, 0),
+    //           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+    //           child: Padding(
+    //             padding: EdgeInsets.all(15),
+    //             child: Column(
+    //               crossAxisAlignment: CrossAxisAlignment.start,
+    //               children: [
+    //                 Row(
+    //                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //                   children: [
+    //                     Row(children: [
+    //                       ProfileImage(index: index),
+    //                       SizedBox(width: 8),
+    //                       Text(detailController.nowCourseCommentList[index]['writeUser']['nickname']),
+    //                     ]),
+    //                     Obx(
+    //                       () => LikeButton(
+    //                         isLiked: detailController.nowCourseCommentList[index]['like'],
+    //                         onTap: (isLiked) => detailController.onCommentLikeButtonTapped(index),
+    //                         size: 26,
+    //                         likeCountPadding: EdgeInsets.symmetric(horizontal: 6),
+    //                         likeCount: detailController.nowCourseCommentList[index]['likeCount'],
+    //                       ),
+    //                     ),
+    //                   ],
+    //                 ),
+    //                 SizedBox(height: 8),
+    //                 Row(
+    //                   children: [
+    //                     Icon(Icons.calendar_month, size: 16),
+    //                     SizedBox(width: 5),
+    //                     Text(
+    //                         DateFormat('yyyy. MM.dd')
+    //                             .format(DateTime.parse(detailController.nowCourseInfo['createTime'])),
+    //                         style: TextStyle(fontSize: 12)),
+    //                     SizedBox(width: 10),
+    //                     Icon(Icons.people, size: 16),
+    //                     SizedBox(width: 5),
+    //                     if (detailController.nowCourseCommentList[index]['people'] != 0)
+    //                       if (detailController.nowCourseCommentList[index]['people'] != 5)
+    //                         Text('${detailController.nowCourseCommentList[index]['people']}명',
+    //                             style: TextStyle(fontSize: 12)),
+    //                     if (detailController.nowCourseCommentList[index]['people'] >= 5)
+    //                       Text('5명 이상', style: TextStyle(fontSize: 12)),
+    //                   ],
+    //                 ),
+    //                 // SizedBox(height: 10),
+    //                 if (detailController.nowCourseCommentList[index]['imageList'].length != 0)
+    //                   ImageGridView(index: index),
+    //                 SizedBox(height: 10),
+    //                 Text('${detailController.nowCourseCommentList[index]['content']}',
+    //                     style: TextStyle(height: 1.6)),
+    //                 SizedBox(height: 10),
+    //                 if (detailController.nowCourseCommentList[index]['write'])
+    //                   Row(
+    //                     crossAxisAlignment: CrossAxisAlignment.end,
+    //                     children: [
+    //                       Expanded(child: Container()),
+    //                       IconButton(
+    //                           icon: Icon(Icons.edit),
+    //                           onPressed: () async {
+    //                             await detailController.setComment(index);
+    //                             Get.to(ChangeComment(index));
+    //                           },
+    //                           tooltip: "수정"),
+    //                       IconButton(
+    //                           icon: Icon(Icons.delete_forever_rounded),
+    //                           onPressed: () async {
+    //                             await detailController.setComment(index);
+    //                             Get.to(ChangeComment(index));
+    //                           },
+    //                           tooltip: "삭제"),
+    //                     ],
+    //                   ),
+    //               ],
+    //             ),
+    //           ),
+    //         );
+    //       },
+    //     ))));
+
+    // Column(
+    //     children: [
+    //       Expanded(
+    //         child: ListView.builder(
+    //           controller: commentScrollController, // ScrollController 설정
+    //           padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
+    //           itemCount: detailController.nowCourseCommentList.length,
+    //           itemBuilder: (context, index) {
+    //             return Card(
+    //               elevation: 6,
+    //               margin: EdgeInsets.fromLTRB(4, 10, 4, 0),
+    //               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+    //               child: Padding(
+    //                 padding: EdgeInsets.all(15),
+    //                 child: Column(
+    //                   crossAxisAlignment: CrossAxisAlignment.start,
+    //                   children: [
+    //                     Row(
+    //                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //                       children: [
+    //                         Row(children: [
+    //                           ProfileImage(index: index),
+    //                           SizedBox(width: 8),
+    //                           Text(detailController.nowCourseCommentList[index]['writeUser']['nickname']),
+    //                         ]),
+    //                         Obx(
+    //                           () => LikeButton(
+    //                             isLiked: detailController.nowCourseCommentList[index]['like'],
+    //                             onTap: (isLiked) => detailController.onCommentLikeButtonTapped(index),
+    //                             size: 26,
+    //                             likeCountPadding: EdgeInsets.symmetric(horizontal: 6),
+    //                             likeCount: detailController.nowCourseCommentList[index]['likeCount'],
+    //                           ),
+    //                         ),
+    //                       ],
+    //                     ),
+    //                     SizedBox(height: 8),
+    //                     Row(
+    //                       children: [
+    //                         Icon(Icons.calendar_month, size: 16),
+    //                         SizedBox(width: 5),
+    //                         Text(
+    //                             DateFormat('yyyy. MM.dd')
+    //                                 .format(DateTime.parse(detailController.nowCourseInfo['createTime'])),
+    //                             style: TextStyle(fontSize: 12)),
+    //                         SizedBox(width: 10),
+    //                         Icon(Icons.people, size: 16),
+    //                         SizedBox(width: 5),
+    //                         if (detailController.nowCourseCommentList[index]['people'] != 0)
+    //                           if (detailController.nowCourseCommentList[index]['people'] != 5)
+    //                             Text('${detailController.nowCourseCommentList[index]['people']}명',
+    //                                 style: TextStyle(fontSize: 12)),
+    //                         if (detailController.nowCourseCommentList[index]['people'] >= 5)
+    //                           Text('5명 이상', style: TextStyle(fontSize: 12)),
+    //                       ],
+    //                     ),
+    //                     // SizedBox(height: 10),
+    //                     if (detailController.nowCourseCommentList[index]['imageList'].length != 0)
+    //                       ImageGridView(index: index),
+    //                     SizedBox(height: 10),
+    //                     Text('${detailController.nowCourseCommentList[index]['content']}',
+    //                         style: TextStyle(height: 1.6)),
+    //                     SizedBox(height: 10),
+    //                     if (detailController.nowCourseCommentList[index]['write'])
+    //                       Row(
+    //                         crossAxisAlignment: CrossAxisAlignment.end,
+    //                         children: [
+    //                           Expanded(child: Container()),
+    //                           IconButton(
+    //                               icon: Icon(Icons.edit),
+    //                               onPressed: () async {
+    //                                 await detailController.setComment(index);
+    //                                 Get.to(ChangeComment(index));
+    //                               },
+    //                               tooltip: "수정"),
+    //                           IconButton(
+    //                               icon: Icon(Icons.delete_forever_rounded),
+    //                               onPressed: () async {
+    //                                 await detailController.setComment(index);
+    //                                 Get.to(ChangeComment(index));
+    //                               },
+    //                               tooltip: "삭제"),
+    //                         ],
+    //                       ),
+    //                   ],
+    //                 ),
+    //               ),
+    //             );
+    //           },
+    //         ),
+    //       ),
+    //       if (detailController.isCommentLoading.value) CircularProgressIndicator(), // 로딩 중인 경우 표시할 위젯
+    //     ],
+    //   )
+    // );
   }
 }
 
@@ -414,12 +579,12 @@ class CommentsCreateSection extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    "${detailController.nowCourseInfo['commentCount']}개의 코멘트가 있어요",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
-                  ),
+                  Obx(() => Text(
+                        "${detailController.nowCourseInfo['commentCount']}개의 코멘트가 있어요",
+                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.w800),
+                      )),
                   SizedBox(height: 8),
-                  Text("코멘트를 남겨보세요"),
+                  Text("코멘트를 남겨보세요", style: TextStyle(fontSize: 12)),
                 ],
               ),
             ),
@@ -434,7 +599,7 @@ class CommentsCreateSection extends StatelessWidget {
                 elevation: 2,
                 padding: EdgeInsets.fromLTRB(20, 3, 20, 3),
               ),
-              child: Text("작성하러 가기 →", style: TextStyle(color: Colors.white, fontSize: 14)),
+              child: Text("작성하러 가기 →", style: TextStyle(color: Colors.white, fontSize: 12)),
             ),
           ],
         ),

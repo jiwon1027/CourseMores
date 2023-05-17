@@ -6,8 +6,13 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:timelines/timelines.dart';
 
+import '../controller/make_controller.dart';
+
 class CourseIntroduction extends StatelessWidget {
   CourseIntroduction({super.key});
+
+  // list of tiles
+  late final List<LocationData> _items = <LocationData>[];
 
   @override
   Widget build(BuildContext context) {
@@ -17,22 +22,24 @@ class CourseIntroduction extends StatelessWidget {
       flipOnTouch: false,
       alignment: Alignment.topRight,
       front: Container(
-        alignment: Alignment.topRight,
-        decoration: BoxDecoration(
-            color: Color.fromARGB(255, 46, 85, 57),
-            borderRadius: BorderRadius.circular(10)),
-        margin: EdgeInsets.symmetric(horizontal: 0, vertical: 30),
-        padding: EdgeInsets.all(10),
-        width: double.infinity,
-        height: 600,
-        child: ListView(
-          children: [
-            ChangeButton(icon: Icons.map, text: "지도로 보기"),
-            SizedBox(height: 10),
-            DetailTapCourseIntroductionTimeline()
-          ],
-        ),
-      ),
+          alignment: Alignment.topRight,
+          decoration: BoxDecoration(color: Color.fromARGB(255, 46, 85, 57), borderRadius: BorderRadius.circular(10)),
+          margin: EdgeInsets.symmetric(horizontal: 0, vertical: 30),
+          padding: EdgeInsets.all(10),
+          width: double.infinity,
+          child: SingleChildScrollView(
+            child: Padding(
+                padding: EdgeInsets.all(8),
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+                  Row(
+                    children: [
+                      Expanded(child: ChangeButton(icon: Icons.map, text: "지도로 보기")),
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                  DetailTapCourseIntroductionTimeline()
+                ])),
+          )),
       back: Container(
         alignment: Alignment.topRight,
         decoration: BoxDecoration(
@@ -46,7 +53,37 @@ class CourseIntroduction extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            ChangeButton(icon: Icons.image_rounded, text: "코스로 보기"),
+            Row(
+              children: [
+                ChangeButton(icon: Icons.image_rounded, text: "코스로 보기"),
+                SizedBox(width: 10),
+                Expanded(
+                  child: SizedBox(
+                    height: 38,
+                    child: FilledButton(
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const [Icon(Icons.route, size: 18), SizedBox(width: 8), Text('동선 움직여 보기')]),
+                      onPressed: () {
+                        final List<LocationData> items = _items;
+                        if (items.length <= 1) {
+                          showDialog(
+                            context: context,
+                            builder: (_) => Dialog(
+                              child: SizedBox(
+                                height: 700,
+                                width: 400,
+                                child: LineMap(),
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
             SizedBox(height: 10),
             Expanded(child: LineMap()),
           ],
@@ -117,9 +154,8 @@ class LineMap extends StatelessWidget {
     ];
 
     return Obx(() {
-      final List<LatLng> positions = detailController.markerPositions
-          .map((position) => LatLng(position.latitude, position.longitude))
-          .toList();
+      final List<LatLng> positions =
+          detailController.markerPositions.map((position) => LatLng(position.latitude, position.longitude)).toList();
       final markersFuture = Future.wait(markerIconPaths.map((iconPath) {
         return BitmapDescriptor.fromAssetImage(
           ImageConfiguration(size: Size(24, 24)),
@@ -129,8 +165,7 @@ class LineMap extends StatelessWidget {
 
       return FutureBuilder<List<BitmapDescriptor>>(
         future: markersFuture,
-        builder: (BuildContext context,
-            AsyncSnapshot<List<BitmapDescriptor>> snapshot) {
+        builder: (BuildContext context, AsyncSnapshot<List<BitmapDescriptor>> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Container(
               color: Colors.grey,
@@ -183,38 +218,36 @@ class DetailTapCourseIntroductionTimeline extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(() => FixedTimeline.tileBuilder(
           theme: TimelineThemeData(
-              connectorTheme: ConnectorThemeData(
-                  color: Color.fromARGB(69, 255, 255, 255), space: 30),
-              indicatorTheme: IndicatorThemeData(
-                  color: Color.fromARGB(255, 141, 233, 127))),
+              connectorTheme: ConnectorThemeData(color: Color.fromARGB(69, 255, 255, 255), space: 30),
+              indicatorTheme: IndicatorThemeData(color: Color.fromARGB(255, 141, 233, 127))),
           builder: TimelineTileBuilder.connectedFromStyle(
             contentsAlign: ContentsAlign.alternating,
             contentsBuilder: (context, index) => Padding(
               padding: EdgeInsets.all(15),
-              child: Obx(() => Text(
-                  "${detailController.nowCourseDetail[index]['title']}",
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontFamily: 'KyoboHandwriting2020pdy'))),
+              child: Obx(() => Text("${detailController.nowCourseDetail[index]['title']}",
+                  style: TextStyle(color: Colors.white, fontSize: 18, fontFamily: 'KyoboHandwriting2020pdy'))),
             ),
-            oppositeContentsBuilder: (context, index) => Card(
-              elevation: 6,
-              child: Container(
-                padding: EdgeInsets.all(6.0),
-                child: Column(
-                  children: [
-                    ThumbnailImage(index: index),
-                    Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text(
-                          "${detailController.nowCourseDetail[index]['name']}",
-                          style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w800,
-                              fontFamily: 'KyoboHandwriting2020pdy')),
-                    ),
-                  ],
+            oppositeContentsBuilder: (context, index) => InkWell(
+              onTap: () {
+                detailController.selectedSegment.value = "코스 상세";
+                detailController.changePlaceIndex(index);
+                detailController.initialPage.value = index;
+              },
+              child: Card(
+                elevation: 6,
+                child: Container(
+                  padding: EdgeInsets.all(6.0),
+                  child: Column(
+                    children: [
+                      ThumbnailImage(index: index),
+                      Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text("${detailController.nowCourseDetail[index]['name']}",
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w800, fontFamily: 'KyoboHandwriting2020pdy')),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -233,11 +266,8 @@ class ThumbnailImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     try {
-      late final image = detailController.nowCourseDetail[index]
-                      ['locationImageList'] !=
-                  null &&
-              detailController
-                  .nowCourseDetail[index]['locationImageList'].isNotEmpty
+      late final image = detailController.nowCourseDetail[index]['locationImageList'] != null &&
+              detailController.nowCourseDetail[index]['locationImageList'].isNotEmpty
           ? detailController.nowCourseDetail[index]['locationImageList'][0]
           : detailController.nowCourseDetail[index]['roadViewImage'];
       return ClipRRect(
@@ -253,8 +283,7 @@ class ThumbnailImage extends StatelessWidget {
     } catch (e) {
       print(e);
       const image = 'assets/img1.jpg';
-      return Image(
-          image: AssetImage(image), height: 150, width: 130, fit: BoxFit.cover);
+      return Image(image: AssetImage(image), height: 150, width: 130, fit: BoxFit.cover);
     }
   }
 }

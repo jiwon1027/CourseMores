@@ -47,13 +47,9 @@ class NewComment extends StatelessWidget {
               AddText(),
               SizedBox(height: 10),
               ElevatedButton(
-                onPressed: () {
-                  detailController.addComment();
-                  Fluttertoast.showToast(
-                    msg: "작성 내용 : ${textController.text}",
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.CENTER,
-                  );
+                onPressed: () async {
+                  await detailController.changeCommentPage(0);
+                  await detailController.addComment();
                   Get.back();
                 },
                 child: Text("저장하기"),
