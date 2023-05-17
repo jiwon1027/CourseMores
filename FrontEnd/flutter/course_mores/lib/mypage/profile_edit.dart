@@ -63,6 +63,7 @@ class ProfileImage extends StatefulWidget {
 
 class _ProfileImageState extends State<ProfileImage> {
   XFile? _pickedFile = userInfoController.profileImage;
+  bool isDelete = false;
   @override
   Widget build(BuildContext context) {
     final imageSize = MediaQuery.of(context).size.width / 16;
@@ -78,7 +79,8 @@ class _ProfileImageState extends State<ProfileImage> {
             child: Text('프로필 사진'),
           ),
         ),
-        if (_pickedFile == null)
+        if (userInfoController.imageUrl.value == 'default' &&
+            userInfoController.profileImage == null)
           InkWell(
             onTap: () {
               _showBottomSheet();
@@ -108,7 +110,7 @@ class _ProfileImageState extends State<ProfileImage> {
                 border: Border.all(),
                 borderRadius: BorderRadius.circular(10),
                 image: DecorationImage(
-                    image: FileImage(File(_pickedFile!.path)),
+                    image: NetworkImage(userInfoController.imageUrl.value),
                     fit: BoxFit.cover),
               ),
             ),
@@ -117,7 +119,7 @@ class _ProfileImageState extends State<ProfileImage> {
     );
   }
 
-  _getCameraImage() async {
+  _getCameraImage1() async {
     final pickedFile =
         await ImagePicker().pickImage(source: ImageSource.camera);
     if (pickedFile != null) {
@@ -134,7 +136,24 @@ class _ProfileImageState extends State<ProfileImage> {
     }
   }
 
-  _getPhotoLibraryImage() async {
+  _getCameraImage2() async {
+    final pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.camera);
+    if (pickedFile != null) {
+      setState(() {
+        _pickedFile = pickedFile;
+        userInfoController.saveImage(pickedFile);
+        userInfoController.imageIsDelete(true);
+        print(pickedFile);
+      });
+    } else {
+      if (kDebugMode) {
+        print('이미지 선택안함');
+      }
+    }
+  }
+
+  _getPhotoLibraryImage1() async {
     final pickedFile =
         await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
@@ -149,7 +168,24 @@ class _ProfileImageState extends State<ProfileImage> {
     }
   }
 
+  _getPhotoLibraryImage2() async {
+    final pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _pickedFile = pickedFile;
+        userInfoController.saveImage(pickedFile);
+        userInfoController.imageIsDelete(true);
+      });
+    } else {
+      if (kDebugMode) {
+        print('이미지 선택안함');
+      }
+    }
+  }
+
   _showBottomSheet() {
+    // 기본 이미지가 없을 때
     return showModalBottomSheet<void>(
         context: context,
         builder: (BuildContext context) {
@@ -165,7 +201,7 @@ class _ProfileImageState extends State<ProfileImage> {
                       Expanded(
                         child: InkWell(
                             onTap: () {
-                              _getCameraImage();
+                              _getCameraImage1();
                               Navigator.pop(context);
                             },
                             child: const Center(
@@ -180,7 +216,7 @@ class _ProfileImageState extends State<ProfileImage> {
                       Expanded(
                         child: InkWell(
                             onTap: () {
-                              _getPhotoLibraryImage();
+                              _getPhotoLibraryImage1();
                               Navigator.pop(context);
                             },
                             child: Container(
@@ -205,6 +241,7 @@ class _ProfileImageState extends State<ProfileImage> {
   }
 
   _showBottomSheet2() {
+    // 기존 이미지가 있을 떄
     return showModalBottomSheet<void>(
         context: context,
         builder: (BuildContext context) {
@@ -222,6 +259,7 @@ class _ProfileImageState extends State<ProfileImage> {
                             onTap: () {
                               userInfoController.saveImage(null);
                               userInfoController.saveImageUrl(null);
+                              userInfoController.imageIsDelete(true);
 
                               setState(() {
                                 _pickedFile = null;
@@ -241,7 +279,7 @@ class _ProfileImageState extends State<ProfileImage> {
                       Expanded(
                         child: InkWell(
                             onTap: () {
-                              _getCameraImage();
+                              _getCameraImage2();
                               Navigator.pop(context);
                             },
                             child: Container(
@@ -262,7 +300,7 @@ class _ProfileImageState extends State<ProfileImage> {
                       Expanded(
                         child: InkWell(
                             onTap: () {
-                              _getPhotoLibraryImage();
+                              _getPhotoLibraryImage2();
                             },
                             child: Container(
                               decoration: const BoxDecoration(
@@ -562,6 +600,7 @@ confirmButton() {
           userInfoController.gender.value,
           userInfoController.profileImage,
           tokenController.accessToken.value,
+          userInfoController.isDeleteImage.value,
         );
       },
       child: Text('수정하기'),

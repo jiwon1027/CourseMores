@@ -444,8 +444,8 @@ final options = BaseOptions(baseUrl: baseURL);
 final dio = Dio(options);
 bool? isDuplicate;
 void duplicateCheck(nickname) async {
-  dynamic nicknameData = json.encode({'nickname': nickname});
-  final response = await dio.post('user/validation', data: nicknameData);
+  // dynamic nicknameData = json.encode({'nickname': nickname});
+  final response = await dio.get('user/validation/nickname/$nickname');
 
   if (response.statusCode == 200) {
     print('닉네임 중복 검사!');

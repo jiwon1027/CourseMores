@@ -230,7 +230,7 @@ void postLogin(accessToken) async {
   dynamic bodyData = json.encode({'accessToken': accessToken});
 
   final response = await dio.post('auth/kakao/login', data: bodyData);
-
+  print(response);
   if (response.statusCode == 200) {
     if (response.data['agree'] == false) {
       Get.dialog(
@@ -253,6 +253,8 @@ void postLogin(accessToken) async {
         response.data['accessToken'],
       );
       if (response.data['userInfo'] == null) {
+        print('여기');
+
         Get.to(signup.SignUp());
       } else {
         loginController.changeLoginStatus(true);
@@ -264,8 +266,8 @@ void postLogin(accessToken) async {
         firstLoginController.changeFirstLogin(false);
         print(loginController.isLoggedIn);
         print(pageController.pageNum());
+        Get.back();
       }
-      Get.back();
     }
   }
 }
