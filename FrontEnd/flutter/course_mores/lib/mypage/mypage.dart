@@ -20,6 +20,12 @@ import '../course_search/course_detail.dart' as detail;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'my_review.dart' as my_review;
 import '../auth/withdrawal.dart' as withdrawal;
+import 'profile_edit.dart' as edit;
+import 'package:dio/dio.dart' as dio;
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 class MyPage extends StatefulWidget {
   const MyPage({super.key});
@@ -34,20 +40,42 @@ class _MyPageState extends State<MyPage> {
   List<Map<String, Object>> courseList = myPageController.myCourse;
   List<Map<String, Object>> reviewList = myPageController.myReview;
   var status = myPageController.status;
+
   @override
   void initState() {
     super.initState();
     status = 'course';
     fetchData(tokenController.accessToken);
     updateUserInfo();
+    downloadImage();
+  }
+
+  Future<void> downloadImage() async {
+    if (userInfoController.imageUrl.value != 'default') {
+      dio.Response response = await dio.Dio().get(
+          '${userInfoController.imageUrl}',
+          options: dio.Options(responseType: dio.ResponseType.bytes));
+      String tempDir = (await getTemporaryDirectory()).path;
+      String filePath = join(tempDir, 'image.jpg');
+      await File(filePath).writeAsBytes(response.data);
+      XFile xFile = XFile(filePath);
+      userInfoController.saveImage(xFile);
+      print('서버에서 받은 이미지 다운로드! : ${userInfoController.profileImage}');
+    } else {
+      print('프로필이미지 등록되어있지 않음!');
+      userInfoController.profileImage = null;
+      print(userInfoController.profileImage);
+    }
   }
 
   Future<void> updateUserInfo() async {
     final dio = await authDio();
     final response = await dio.get('profile/');
-    // print(response);
+    print('userinfo update ! : $response');
 
     userInfoController.saveImageUrl(response.data['userInfo']['profileImage']);
+    print(userInfoController.imageUrl);
+    await downloadImage();
   }
 
   Future<void> fetchData(aToken) async {
@@ -79,6 +107,8 @@ class _MyPageState extends State<MyPage> {
     setState(() {
       reviewList = myPageController.myReview;
     });
+
+    await updateUserInfo();
   }
 
   buttonBar() {
@@ -442,17 +472,17 @@ final userInfoController = Get.put(UserInfo());
 profileBox() {
   final profileImageUrl;
   var gender;
-  if (userInfoController.gender.value == 'M') {
-    gender = '남성';
-  } else {
-    gender = '여성';
-  }
-  if (userInfoController.imageUrl.value == 'default') {
-    profileImageUrl =
-        'https://media.istockphoto.com/id/1316947194/vector/messenger-profile-icon-on-white-isolated-background-vector-illustration.jpg?s=612x612&w=0&k=20&c=1iQ926GXQTJkopoZAdYXgU17NCDJIRUzx6bhzgLm9ps=';
-  } else {
-    profileImageUrl = userInfoController.imageUrl.value;
-  }
+  // if (userInfoController.gender.value == 'M') {
+  //   gender = '남성'.obs;
+  // } else {
+  //   gender = '여성'.obs;
+  // }
+  // if (userInfoController.imageUrl.value == 'default') {
+  //   profileImageUrl =
+  //       'https://media.istockphoto.com/id/1316947194/vector/messenger-profile-icon-on-white-isolated-background-vector-illustration.jpg?s=612x612&w=0&k=20&c=1iQ926GXQTJkopoZAdYXgU17NCDJIRUzx6bhzgLm9ps=';
+  // } else {
+  //   profileImageUrl = userInfoController.imageUrl.value;
+  // }
   return Padding(
     padding: const EdgeInsets.all(8.0),
     child: Container(
@@ -463,24 +493,31 @@ profileBox() {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Container(
-                padding: const EdgeInsets.all(5),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    begin: Alignment.bottomRight,
-                    end: Alignment.topLeft,
-                    colors: [
-                      Color(0xff4dabf7),
-                      Color(0xffda77f2),
-                      Color(0xfff783ac),
-                    ],
+                  padding: const EdgeInsets.all(5),
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      begin: Alignment.bottomRight,
+                      end: Alignment.topLeft,
+                      colors: [
+                        Color(0xff4dabf7),
+                        Color(0xffda77f2),
+                        Color(0xfff783ac),
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(120),
                   ),
-                  borderRadius: BorderRadius.circular(120),
-                ),
-                child: CircleAvatar(
-                  radius: 60,
-                  backgroundImage: NetworkImage(profileImageUrl),
-                ),
-              ),
+                  child: Obx(
+                    () => CircleAvatar(
+                      radius: 60,
+                      backgroundImage: NetworkImage(
+                          (userInfoController.imageUrl.value == 'default')
+                              ? 'https://coursemores.s3.amazonaws.com/default_profile.png'
+                              : userInfoController.imageUrl.value
+
+                          // profileImageUrl
+                          ),
+                    ),
+                  )),
             ),
             Expanded(
               child: Column(
@@ -489,27 +526,27 @@ profileBox() {
                 children: [
                   Padding(
                     padding: EdgeInsets.fromLTRB(15.0, 20.0, 15.0, 15.0),
-                    child: Text(
-                      userInfoController.nickname.value,
-                      style:
-                          TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-                    ),
+                    child: Obx(() => Text(
+                          userInfoController.nickname.value,
+                          style: TextStyle(
+                              fontSize: 25, fontWeight: FontWeight.bold),
+                        )),
                   ),
                   Padding(
                     padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 0),
-                    child: Text(
-                      '${userInfoController.age.value.toString()} 대',
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-                    ),
+                    child: Obx(() => Text(
+                          '${userInfoController.age.value.toString()} 대',
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.w600),
+                        )),
                   ),
                   Padding(
                     padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
-                    child: Text(
-                      gender,
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-                    ),
+                    child: Obx(() => Text(
+                          userInfoController.gender.value == 'M' ? '남성' : '여성',
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.w600),
+                        )),
                   )
                 ],
               ),

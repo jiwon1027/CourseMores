@@ -106,7 +106,7 @@ class UserInfo extends GetxController {
     }
   }
 
-  void imageIsDelete(isDelete) async {
+  void imageIsDelete(bool isDelete) async {
     isDeleteImage.value = isDelete;
   }
 

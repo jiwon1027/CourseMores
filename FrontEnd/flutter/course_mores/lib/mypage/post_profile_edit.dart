@@ -7,6 +7,7 @@ import '../main.dart' as main;
 import 'dart:convert';
 import 'package:http_parser/http_parser.dart';
 import '../auth/auth_dio.dart';
+import 'mypage.dart' as mypage;
 // import '../home_screen/home_screen.dart' as home;
 
 // void postSignUp(nickname, age, gender, image, aToken) async {
@@ -72,20 +73,18 @@ void postProfileEdit(nickname, age, gender, image, aToken, isDelete) async {
     });
   }
   try {
+    print('요청보낼때 isDelete : $isDelete');
     final dio = await authDio();
-    final response = await dio.put('profile/',
-        data: formData,
-        options: Options(
-          headers: {
-            'Authorization': 'Bearer $aToken',
-            'Content-Type': 'multipart/form-data',
-          },
-        ));
+    final response = await dio.put(
+      'profile/',
+      data: formData,
+    );
     if (response.statusCode == 200) {
       // g.Get.to(main.MyApp());
       print('수정!!!');
+      print(response);
       g.Get.back();
-      g.Get.to(main.MyApp());
+      updateUserInfo(); // g.Get.replace(main.MyApp());
     }
   } catch (e) {
     // DioError 처리
@@ -98,4 +97,13 @@ void postProfileEdit(nickname, age, gender, image, aToken, isDelete) async {
       // DioError가 아닌 다른 예외 처리
     }
   }
+}
+
+Future<void> updateUserInfo() async {
+  final dio = await authDio();
+  final response = await dio.get('profile/');
+  print('userinfo update ! : $response');
+
+  userInfoController.saveImageUrl(response.data['userInfo']['profileImage']);
+  print(userInfoController.imageUrl);
 }
