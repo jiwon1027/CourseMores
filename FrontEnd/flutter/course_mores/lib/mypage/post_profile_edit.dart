@@ -42,13 +42,18 @@ import '../auth/auth_dio.dart';
 //       };
 // }
 
-void postProfileEdit(nickname, age, gender, image, aToken) async {
+void postProfileEdit(nickname, age, gender, image, aToken, isDelete) async {
   print('image===$image');
   FormData formData;
   if (image != null) {
     formData = FormData.fromMap({
       'userInfoUpdateReqDto': MultipartFile.fromString(
-          jsonEncode({'nickname': nickname, 'age': age, 'gender': gender}),
+          jsonEncode({
+            'nickname': nickname,
+            'age': age,
+            'gender': gender,
+            'isDelete': isDelete
+          }),
           contentType: MediaType.parse('application/json')),
       'profileImage': await MultipartFile.fromFile(image.path,
           contentType: MediaType("image", "jpg")),
@@ -56,7 +61,12 @@ void postProfileEdit(nickname, age, gender, image, aToken) async {
   } else {
     formData = FormData.fromMap({
       'userInfoUpdateReqDto': MultipartFile.fromString(
-          jsonEncode({'nickname': nickname, 'age': age, 'gender': gender}),
+          jsonEncode({
+            'nickname': nickname,
+            'age': age,
+            'gender': gender,
+            'isDelete': isDelete
+          }),
           contentType: MediaType.parse('application/json')),
       'profileImage': null,
     });

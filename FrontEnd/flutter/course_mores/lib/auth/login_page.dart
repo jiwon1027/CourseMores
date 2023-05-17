@@ -282,13 +282,7 @@ void signInWithGoogle() async {
 
     if (response.statusCode == 200) {
       // 추후에 issignup으로 교체
-<<<<<<< HEAD
       tokenController.saveToken(response.data['accessToken']);
-=======
-      tokenController.saveToken(
-        response.data['accessToken'],
-      );
->>>>>>> 2d4ef37 (⛏ fix : 회원가입 안넘어가지는 버그 수정)
       if (response.data['userInfo'] == null) {
         Get.to(signup.SignUp());
       } else {
