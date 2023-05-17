@@ -9,8 +9,8 @@ import 'course_detail_tap_intro.dart';
 import 'course_detail_tap_detail.dart';
 import 'course_detail_tap_comment.dart';
 import 'package:coursemores/course_make/make2.dart';
-import '../controller/make_controller.dart';
 import 'package:coursemores/course_modify/modify2.dart';
+import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 
 class Detail2 extends StatelessWidget {
   Detail2({Key? key}) : super(key: key);
@@ -530,16 +530,90 @@ class DetailScrap extends StatelessWidget {
 class DetailShare extends StatelessWidget {
   DetailShare({super.key});
 
+  Future<void> _shareToKakaoTalk() async {
+    // 사용자 정의 템플릿 ID
+    int templateId = 93826;
+    // 카카오톡 실행 가능 여부 확인
+    bool isKakaoTalkSharingAvailable =
+        await ShareClient.instance.isKakaoTalkSharingAvailable();
+
+    // 이후에 nowCourseDetail을 사용하여 locationDataList 구성
+    List<Map<String, String>> locationDataList = [];
+    for (int i = 0; i < detailController.nowCourseDetail.length; i++) {
+      Map<String, dynamic> detail = detailController.nowCourseDetail[i];
+
+      String title = detail['name'] ?? '';
+      String sido = detail['sido'] ?? '';
+      String gugun = detail['gugun'] ?? '';
+      String address = '$sido $gugun';
+      String picture = '';
+
+      if (detail['locationImageList'] != null &&
+          detail['locationImageList'].isNotEmpty) {
+        picture = detail['locationImageList'][0] ?? '';
+      } else {
+        picture = detail['roadViewImage'] ?? '';
+      }
+
+      // String picture = detail['roadViewImage'];
+      print(detail);
+
+      Map<String, String> locationData = {
+        'locationTitle': title,
+        'locationAddress': address,
+        'locationPicture': picture,
+      };
+      locationDataList.add(locationData);
+    }
+    print(locationDataList);
+
+    Map<String, String> templateArgs = {
+      'courseTitle': detailController.nowCourseInfo['title'] ?? '',
+    };
+
+    // Add location data to templateArgs
+    for (int i = 0; i < locationDataList.length; i++) {
+      templateArgs['locationTitle${i + 1}'] =
+          locationDataList[i]['locationTitle']!;
+      templateArgs['locationAddress${i + 1}'] =
+          locationDataList[i]['locationAddress']!;
+      templateArgs['locationPicture${i + 1}'] =
+          locationDataList[i]['locationPicture']!;
+    }
+
+    if (isKakaoTalkSharingAvailable) {
+      try {
+        Uri uri = await ShareClient.instance.shareCustom(
+          templateId: templateId,
+          templateArgs: templateArgs,
+        );
+        await ShareClient.instance.launchKakaoTalk(uri);
+        print('카카오톡 공유 완료');
+      } catch (error) {
+        print('카카오톡 공유 실패 $error');
+      }
+    } else {
+      try {
+        // // 호출하여 nowCourseDetail 업데이트
+        // await detailcontroller.getCourseDetailList();
+
+        Uri shareUrl = await WebSharerClient.instance.makeCustomUrl(
+          templateId: templateId,
+          templateArgs: templateArgs,
+        );
+        await launchBrowserTab(shareUrl, popupOpen: true);
+      } catch (error) {
+        print('카카오톡 공유 실패 $error');
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Expanded(
       child: InkWell(
         onTap: () {
-          Fluttertoast.showToast(
-            msg: "공유하기 실행!",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.CENTER,
-          );
+          _shareToKakaoTalk();
         },
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -572,7 +646,7 @@ class DetailTheme extends StatelessWidget {
       spacing: 6,
       children: themeList.map((theme) {
         return Chip(
-          label: Text(theme.toString()),
+          label: Text(theme['name'].toString()),
           backgroundColor: Color.fromARGB(255, 115, 81, 255),
           labelStyle: TextStyle(color: Colors.white, fontSize: 12),
         );
