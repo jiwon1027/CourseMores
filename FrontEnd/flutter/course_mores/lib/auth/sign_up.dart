@@ -1,5 +1,5 @@
 // import 'dart:convert';
-import '../controller/getx_controller.dart';
+// import '../controller/getx_controller.dart';
 import 'package:coursemores/auth/login_page.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -7,9 +7,9 @@ import '../notification/notification.dart' as noti;
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
-import 'package:dio/dio.dart';
+// import 'package:dio/dio.dart';
 import 'package:get/get.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+// import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'post_signup.dart' as post_signup;
 import 'package:draggable_home/draggable_home.dart';
 import 'auth_dio.dart';
