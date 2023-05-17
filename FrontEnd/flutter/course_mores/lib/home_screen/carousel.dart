@@ -182,11 +182,11 @@ class _CourseCarouselState extends State<CourseCarousel> {
       // backgroundColor: Colors.white,
       backgroundColor: Colors.transparent,
       body: Padding(
-        padding: EdgeInsets.fromLTRB(0, 15.0, 0, 0),
+        padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
         child: Column(
           children: [
             Padding(
-              padding: EdgeInsets.fromLTRB(0, 0, 0, 15.0),
+              padding: EdgeInsets.fromLTRB(0, 0, 0, 15),
               child: Text(
                 '최근 인기 코스 🔥',
                 style: TextStyle(
@@ -221,8 +221,12 @@ class _CourseCarouselState extends State<CourseCarousel> {
                                       BorderRadius.all(Radius.circular(5.0)),
                                   child: Stack(
                                     children: <Widget>[
-                                      Image.network(item['image'].toString(),
-                                          fit: BoxFit.cover, width: 1000.0),
+                                      Image.network(
+                                        item['image'].toString(),
+                                        fit: BoxFit.cover,
+                                        width: 300,
+                                        height: 300,
+                                      ),
                                       Positioned(
                                         bottom: 0.0,
                                         left: 0.0,
@@ -247,7 +251,9 @@ class _CourseCarouselState extends State<CourseCarousel> {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                '${item['title'].length > 20 ? item['title'].substring(0, 20) + '...' : item['title']}',
+                                                item['title'],
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
                                                 style: TextStyle(
                                                   color: Colors.white,
                                                   fontSize: 20.0,
@@ -262,18 +268,14 @@ class _CourseCarouselState extends State<CourseCarousel> {
                                                     fontSize: 10.0,
                                                   )),
                                               SizedBox(height: 10),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                      '${item['content'].length > 15 ? item['content'].substring(0, 15) + '...' : item['content']}',
-                                                      style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 14.0,
-                                                      ))
-                                                ],
-                                              )
+                                              Text(item['content'],
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 14.0,
+                                                  )),
                                             ],
                                           ),
                                         ),
@@ -370,7 +372,9 @@ class _NearCarouselState extends State<NearCarousel> {
                                   child: Stack(
                                     children: <Widget>[
                                       Image.network(item['image'].toString(),
-                                          fit: BoxFit.cover, width: 1000.0),
+                                          fit: BoxFit.cover,
+                                          width: 300,
+                                          height: 300),
                                       Positioned(
                                         bottom: 0.0,
                                         left: 0.0,
@@ -395,35 +399,31 @@ class _NearCarouselState extends State<NearCarousel> {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                '${item['title'].length > 20 ? item['title'].substring(0, 20) + '...' : item['title']}',
+                                                item['title'],
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
                                                 style: TextStyle(
                                                   color: Colors.white,
                                                   fontSize: 20.0,
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
+                                              SizedBox(height: 5),
                                               Text(
                                                   '${item['sido']} ${item['gugun']}',
                                                   style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 10.0,
-                                                  )),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    '${item['content'].length > 15 ? item['content'].substring(0, 15) + '...' : item['content']}',
-                                                    style: TextStyle(
                                                       color: Colors.white,
-                                                      fontSize: 14.0,
-                                                    ),
-                                                    maxLines: 1,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                  ),
-                                                ],
+                                                      fontSize: 10.0)),
+                                              SizedBox(height: 10),
+                                              Text(
+                                                item['content'],
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 14.0),
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
                                               ),
+                                              SizedBox(height: 5),
                                               Text(
                                                   '내 위치로부터 ${item['distance'].round()}km',
                                                   style: TextStyle(

@@ -1,18 +1,17 @@
-import 'package:coursemores/controller/detail_controller.dart';
 import 'package:coursemores/controller/getx_controller.dart';
-import 'package:coursemores/controller/search_controller.dart';
+import 'package:draggable_home/draggable_home.dart';
 import 'package:flutter/material.dart';
 import '../auth/auth_dio.dart';
 import 'package:get/get.dart';
-import '../course_search/course_detail2.dart' as detail;
+import '../course_search/course_detail.dart' as detail;
 import 'package:cached_network_image/cached_network_image.dart';
 
+import '../course_search/search.dart';
+
 final interestController = Get.put(InterestedCourseInfo());
-final searchController = Get.put(SearchController());
-final detailController = Get.put(DetailController());
 
 class InterestedCourse extends StatefulWidget {
-  const InterestedCourse({super.key});
+  InterestedCourse({super.key});
 
   @override
   State<InterestedCourse> createState() => _InterestedCourseState();
@@ -30,9 +29,6 @@ class _InterestedCourseState extends State<InterestedCourse> {
   Future<void> fetchData() async {
     final dio = await authDio();
     final response = await dio.get('interest');
-    // List<dynamic> data = response.data['myInterestCourseList'];
-    // interestController.saveInterestedCourse(
-    //     data.map((item) => Map<String, Object>.from(item)).toList());
     List<dynamic> data = response.data['myInterestCourseList'];
     interestController.saveInterestedCourse(data
         .map((item) => Map<String, Object>.from(item['coursePreviewResDto']))
@@ -45,29 +41,27 @@ class _InterestedCourseState extends State<InterestedCourse> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: SingleChildScrollView(
-            child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(15.0),
-                      child: Text(
-                        '관심 등록한 코스 : ${courseList.length} 개',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                        ),
-                      ),
-                    ),
-                    Flexible(
-                      child: MyInterestedCourse(),
-                    )
-                  ],
-                ))));
+    return DraggableHome(
+      title: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            '관심 등록한 코스 : ${courseList.length} 개',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+          ),
+        ],
+      ),
+      headerWidget: headerWidget(context),
+      headerExpandedHeight: 0.3,
+      body: [
+        MyInterestedCourse(),
+      ],
+      fullyStretchable: false,
+      expandedBody: headerWidget(context),
+      backgroundColor: Colors.white,
+      appBarColor: Color.fromARGB(255, 95, 207, 255),
+    );
   }
 }
 
@@ -77,14 +71,12 @@ class MyInterestedCourse extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Color.fromARGB(221, 244, 244, 244),
+      color: Colors.white,
       child: ListView.builder(
         shrinkWrap: true,
         scrollDirection: Axis.vertical,
         padding: EdgeInsets.all(8),
         itemCount: interestController.interestedCourse.length,
-
-        // index 말고 코스id로??
         itemBuilder: (BuildContext context, int index) {
           return InkWell(
             onTap: () async {
@@ -97,9 +89,7 @@ class MyInterestedCourse extends StatelessWidget {
               await detailController.getIsInterestCourse();
               await detailController.getCourseDetailList();
 
-              Get.to(detail.Detail2());
-
-              // Get.to(() => detail.CourseDetail(index: index));
+              Get.to(detail.Detail());
             },
             child: Container(
               margin: EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 5),
@@ -166,7 +156,7 @@ class MyInterestedCourseList extends StatelessWidget {
                       true)
                     Container(
                       decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 107, 211, 66),
+                        color: Color.fromARGB(255, 107, 211, 66),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Row(
@@ -283,13 +273,35 @@ class ThumbnailImage extends StatelessWidget {
         width: 80,
         fit: BoxFit.cover,
       ),
-      // child: Image(
-      //   image: AssetImage(courseList[widget.index]['image']),
-      //   // image: AssetImage('assets/img1.jpg'),
-      //   height: 80,
-      //   width: 80,
-      //   fit: BoxFit.cover,
-      // ),
     );
   }
+}
+
+Widget headerWidget(BuildContext context) {
+  return Container(
+    decoration: BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: const [
+          Color.fromARGB(255, 0, 90, 129),
+          Color.fromARGB(232, 255, 218, 218),
+        ],
+        stops: const [0.0, 0.9],
+      ),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: const [
+        Text("관심 등록한 코스", style: TextStyle(fontSize: 30, color: Colors.white)),
+        SizedBox(height: 30),
+        Text("나중에 가고 싶은 코스가 있다면",
+            style: TextStyle(fontSize: 16, color: Colors.white)),
+        SizedBox(height: 10),
+        Text("관심 등록으로 저장할 수 있어요",
+            style: TextStyle(fontSize: 16, color: Colors.white)),
+      ],
+    ),
+  );
 }

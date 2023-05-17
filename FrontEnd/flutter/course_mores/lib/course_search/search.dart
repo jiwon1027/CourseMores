@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 import 'elastic_search.dart';
+import 'search_filter.dart';
 
 SearchController searchController = SearchController();
 DetailController detailController = DetailController();
@@ -23,12 +24,25 @@ class Search extends StatelessWidget {
     searchController.getThemeList();
     searchController.getSidoList();
     Get.put(SearchController());
-    return Obx(() => Scaffold(
+    return Obx(
+      () => Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+              image: AssetImage('assets/background-pink.jpg'),
+              // image: AssetImage('assets/background.gif'),
+              // image: AssetImage('assets/blue_background.gif'),
+              opacity: 1,
+              fit: BoxFit.cover),
+        ),
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
           appBar: searchPageHeader(),
           body: searchController.courseList.isEmpty
               ? displayNoSearchResultScreen()
               : SearchResult(),
-        ));
+        ),
+      ),
+    );
   }
 }
 
@@ -36,8 +50,9 @@ controlSearching(str) {}
 
 searchPageHeader() {
   return AppBar(
+      backgroundColor: Colors.white,
       automaticallyImplyLeading: false,
-      toolbarHeight: 110,
+      toolbarHeight: 90,
       title: Column(
         children: [
           SizedBox(
@@ -51,6 +66,7 @@ searchPageHeader() {
                     word: searchTextEditingController.text);
               },
               decoration: InputDecoration(
+                fillColor: Colors.white,
                 hintText: "코스를 검색해보세요",
                 hintStyle: TextStyle(color: Colors.grey),
                 enabledBorder: UnderlineInputBorder(
@@ -58,8 +74,13 @@ searchPageHeader() {
                 focusedBorder: UnderlineInputBorder(
                     borderSide: BorderSide(color: Colors.black)),
                 filled: true,
-                // prefixIcon: FilterButton(context: context),
-                prefixIcon: filterButton(),
+                prefixIcon: IconButton(
+                    icon: Icon(Icons.tune),
+                    color: Colors.blue,
+                    iconSize: 25,
+                    onPressed: () {
+                      Get.to(() => SearchFilter());
+                    }),
                 suffixIcon: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -181,16 +202,6 @@ sortButtonBar() {
   );
 }
 
-filterButton() {
-  return IconButton(
-      icon: Icon(Icons.tune),
-      color: Colors.grey,
-      iconSize: 25,
-      onPressed: () {
-        Get.to(() => SearchFilter());
-      });
-}
-
 displayNoSearchResultScreen() {
   return Center(
     child: Column(
@@ -219,7 +230,7 @@ class SearchResult extends StatelessWidget {
       }
     });
     return Obx(() => Container(
-          color: Color.fromARGB(221, 244, 244, 244),
+          color: Colors.transparent,
           child: Column(
             children: [
               Expanded(
@@ -247,10 +258,10 @@ class SearchResult extends StatelessWidget {
                         decoration: const BoxDecoration(
                             boxShadow: [
                               BoxShadow(
-                                  color: Color.fromARGB(255, 211, 211, 211),
-                                  blurRadius: 10.0,
-                                  spreadRadius: 1.0,
-                                  offset: Offset(3, 3)),
+                                  color: Color.fromARGB(33, 0, 0, 0),
+                                  blurRadius: 4,
+                                  spreadRadius: 3,
+                                  offset: Offset(0, 3)),
                             ],
                             color: Colors.white,
                             borderRadius:
@@ -300,13 +311,6 @@ class ThumbnailImage extends StatelessWidget {
         width: 80,
         fit: BoxFit.cover,
       ),
-      // child: Image(
-      //   image: AssetImage(courseList[widget.index]['image']),
-      //   // image: AssetImage('assets/img1.jpg'),
-      //   height: 80,
-      //   width: 80,
-      //   fit: BoxFit.cover,
-      // ),
     );
   }
 }
@@ -412,12 +416,14 @@ class CourseSearchList extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              "${searchController.courseList[index]['locationName']}",
-              style: TextStyle(fontSize: 12, color: Colors.black45),
-              overflow: TextOverflow.ellipsis,
-              maxLines: 1,
-              softWrap: true,
+            Expanded(
+              child: Text(
+                "${searchController.courseList[index]['locationName']}",
+                style: TextStyle(fontSize: 12, color: Colors.black45),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+                softWrap: true,
+              ),
             ),
             SizedBox(width: 8),
             Row(
@@ -451,152 +457,31 @@ class CourseSearchList extends StatelessWidget {
   }
 }
 
-class SearchFilter extends StatelessWidget {
-  const SearchFilter({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    // searchController.settingCard();
-
-    searchController.getThemeList();
-    searchController.getSidoList();
-
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.navigate_before, color: Colors.black),
-          onPressed: () {
-            Get.back();
-          },
-        ),
-        title: RichText(
-            text: TextSpan(
-          children: const [
-            WidgetSpan(child: Icon(Icons.tune, color: Colors.black)),
-            WidgetSpan(child: SizedBox(width: 5)),
-            TextSpan(
-                text: '검색 필터 설정',
-                style: TextStyle(fontSize: 22, color: Colors.black)),
-          ],
-        )),
-        actions: [
-          IconButton(
-              onPressed: () {
-                Get.back();
-              },
-              icon: Icon(Icons.close, color: Colors.black)),
+Widget headerWidget(BuildContext context) {
+  return Container(
+    decoration: BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: const [
+          Color.fromARGB(255, 0, 90, 129),
+          Color.fromARGB(232, 255, 218, 218),
         ],
+        stops: const [0.0, 0.9],
       ),
-      body: Container(
-        color: Color.fromARGB(221, 244, 244, 244),
-        child: Column(children: [
-          SizedBox(height: 20),
-          Text("이런 테마는 어때요? 😊", style: TextStyle(fontSize: 20)),
-          SearchFilterTheme(),
-          SizedBox(height: 20),
-          Text("지역을 선택해보세요 🗺", style: TextStyle(fontSize: 20)),
-          SearchFilterRegion(),
-          SizedBox(height: 20),
-          SearchFilterButtons(),
-        ]),
-      ),
-    );
-  }
-}
-
-class SearchFilterButtons extends StatelessWidget {
-  const SearchFilterButtons({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            backgroundColor: Colors.white,
-          ),
-          onPressed: () {
-            multiSelectController.deselectAll(); // 보여지는 테마 리스트 선택 취소
-            searchController.changeSelectedThemeList(list: [].obs);
-            searchController.changeSido(sido: "전체");
-            searchController.changeGugun(gugun: "전체");
-          },
-          child: Text("초기화", style: TextStyle(color: Colors.black)),
-        ),
-        SizedBox(width: 30),
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            backgroundColor: Colors.white,
-          ),
-          onPressed: () {
-            searchController.saveFilter();
-            Get.back();
-          },
-          child: Text("저장", style: TextStyle(color: Colors.black)),
-        ),
+      children: const [
+        Text("검색 필터 설정", style: TextStyle(fontSize: 30, color: Colors.white)),
+        SizedBox(height: 30),
+        Text("지역과 테마 선택을 통해",
+            style: TextStyle(fontSize: 16, color: Colors.white)),
+        SizedBox(height: 10),
+        Text("원하는 코스를 편리하게 검색할 수 있어요",
+            style: TextStyle(fontSize: 16, color: Colors.white)),
       ],
-    );
-  }
-}
-
-class SearchFilterTheme extends StatelessWidget {
-  const SearchFilterTheme({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(20),
-      child: MultiSelectContainer(
-        items: searchController.cards,
-        controller: multiSelectController,
-        onChange: (allSelectedItems, selectedItem) {
-          searchController.selectedThemeList.value = allSelectedItems;
-        },
-      ),
-    );
-  }
-}
-
-class SearchFilterRegion extends StatelessWidget {
-  SearchFilterRegion({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Obx(() => Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            DropdownButton(
-              value: searchController.selectedAddress['sido'],
-              items: searchController.sidoList.map((String value) {
-                return DropdownMenuItem(value: value, child: Text(value));
-              }).toList(),
-              onChanged: (value) async {
-                searchController.changeSido(sido: value);
-              },
-            ),
-            SizedBox(width: 15),
-            DropdownButton(
-              value: searchController.selectedAddress['gugun'],
-              items: searchController.gugunList.map((value) {
-                return DropdownMenuItem(
-                  value: value['gugun'],
-                  child: Text(value['gugun'] as String),
-                );
-              }).toList(),
-              onChanged: (newValue) {
-                searchController.changeGugun(gugun: newValue as String);
-              },
-            ),
-          ],
-        ));
-  }
+    ),
+  );
 }

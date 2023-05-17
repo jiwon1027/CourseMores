@@ -29,6 +29,8 @@ class SearchController extends GetxController {
 
   // themeList: 불러온 테마 리스트를 저장
   RxList<Map<String, dynamic>> themeList = <Map<String, dynamic>>[].obs;
+  // themeList: 홈에서 사용하는 테마 리스트를 저장
+  RxList<Map<String, dynamic>> homeThemeList = <Map<String, dynamic>>[].obs;
 
   // selectedAddress : 바뀌고 있는 주소 임시 리스트 (저장 안 됨)
   // savedSelectedAddress : 저장버튼을 누를 때만 바뀌는 주소 저장 리스트
@@ -94,7 +96,8 @@ class SearchController extends GetxController {
         // 요청이 성공한 경우
         dynamic data = response.data;
         // 데이터 처리
-        themeList.value = RxList<Map<String, dynamic>>.from(data['themeList']);
+        homeThemeList.value =
+            RxList<Map<String, dynamic>>.from(data['themeList']);
         settingCard();
       } else {
         // 요청이 실패한 경우
@@ -103,6 +106,8 @@ class SearchController extends GetxController {
     } catch (e) {
       print(e);
     }
+
+    print("홈 테마 불러오기 완료");
   }
 
   // 지역 중 충북 -> 하위 단계까지 노출됨. 청주시와 서원구가 같이 보임
