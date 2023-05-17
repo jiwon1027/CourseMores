@@ -42,6 +42,8 @@ public class CourseServiceImpl implements CourseService {
     private final CommentRepository commentRepository;
 
     private static final String ALL = "전체";
+    private static final String DEFAULT_NICKNAME = "(알 수 없음)";
+    private static final String DEFAULT_IMAGE_URL = "https://coursemores.s3.amazonaws.com/default_profile.png";
 
     @Override
     public List<HotPreviewResDto> getHotCourseList() {
@@ -172,8 +174,8 @@ public class CourseServiceImpl implements CourseService {
         Course course = courseRepository.findByIdAndDeleteTimeIsNull(courseId)
                 .orElseThrow(() -> new CustomException(courseId,CustomErrorCode.COURSE_NOT_FOUND));
 
-        if (course.getUser().getDeleteTime() != null)
-            throw new CustomException(CustomErrorCode.ALREADY_DELETE_COURSE);
+//        if (course.getUser().getDeleteTime() != null)
+//            throw new CustomException(CustomErrorCode.ALREADY_DELETE_COURSE);
 
         return CourseInfoResDto.builder()
                 .title(course.getTitle())
@@ -200,8 +202,8 @@ public class CourseServiceImpl implements CourseService {
                                 .build())
                         .collect(Collectors.toList()))
                 .simpleInfoOfWriter(UserSimpleInfoResDto.builder()
-                        .nickname(course.getUser().getNickname())
-                        .profileImage(course.getUser().getProfileImage())
+                        .nickname(course.getUser().getDeleteTime() == null ? DEFAULT_NICKNAME : course.getUser().getNickname())
+                        .profileImage(course.getUser().getDeleteTime() == null ? DEFAULT_IMAGE_URL : course.getUser().getProfileImage())
                         .build())
                 .isWrite(Objects.equals(course.getUser().getId(), user.getId()))
                 .build();
