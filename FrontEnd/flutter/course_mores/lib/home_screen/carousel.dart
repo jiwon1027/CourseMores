@@ -246,7 +246,7 @@ class _CoourseCarouselState extends State<CoourseCarousel> {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                '${item['title'].length > 20 ? item['title'].substring(0, 20) + '...' : item['title']}',
+                                                '${item['title'].length > 15 ? item['title'].substring(0, 15) + '...' : item['title']}',
                                                 style: const TextStyle(
                                                   color: Colors.white,
                                                   fontSize: 20.0,
@@ -264,7 +264,7 @@ class _CoourseCarouselState extends State<CoourseCarousel> {
                                                     MainAxisAlignment.start,
                                                 children: [
                                                   Text(
-                                                      '${item['content'].length > 20 ? item['content'].substring(0, 20) + '...' : item['content']}',
+                                                      '${item['content'].length > 15 ? item['content'].substring(0, 15) + '...' : item['content']}',
                                                       style: TextStyle(
                                                         color: Colors.white,
                                                         fontSize: 14.0,
@@ -391,7 +391,7 @@ class _NearCarouselState extends State<NearCarousel> {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                '${item['title'].length > 20 ? item['title'].substring(0, 20) + '...' : item['title']}',
+                                                '${item['title'].length > 15 ? item['title'].substring(0, 15) + '...' : item['title']}',
                                                 style: const TextStyle(
                                                   color: Colors.white,
                                                   fontSize: 20.0,
@@ -409,7 +409,7 @@ class _NearCarouselState extends State<NearCarousel> {
                                                     MainAxisAlignment.start,
                                                 children: [
                                                   Text(
-                                                    '${item['content'].length > 20 ? item['content'].substring(0, 20) + '...' : item['content']}',
+                                                    '${item['content'].length > 15 ? item['content'].substring(0, 15) + '...' : item['content']}',
                                                     style: TextStyle(
                                                       color: Colors.white,
                                                       fontSize: 14.0,
