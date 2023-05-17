@@ -29,7 +29,7 @@ public class ThemeServiceImpl implements ThemeService {
 
     @Override
     public List<ThemeResDto> getHomeThemeList() {
-        return themeRepository.findRandomTheme(8)
+        return themeRepository.findRandomTheme(7)
                 .stream()
                 .map(theme -> ThemeResDto.builder()
                         .name(theme.getName())
