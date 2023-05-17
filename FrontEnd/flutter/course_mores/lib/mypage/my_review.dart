@@ -40,7 +40,8 @@ class DetailTapCourseCommentsListSection extends StatelessWidget {
               return Card(
                 elevation: 6,
                 margin: EdgeInsets.fromLTRB(4, 10, 4, 0),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
                 child: Padding(
                   padding: const EdgeInsets.all(15),
                   child: Column(
@@ -55,10 +56,13 @@ class DetailTapCourseCommentsListSection extends StatelessWidget {
                               SizedBox(width: 5),
                               InkWell(
                                 onTap: () async {
-                                  print('mypage 코스리스트 == ${myPageController.myReview}');
-                                  int courseId = (myPageController.myReview[index]['courseId'] as int);
+                                  print(
+                                      'mypage 코스리스트 == ${myPageController.myReview}');
+                                  int courseId = (myPageController
+                                      .myReview[index]['courseId'] as int);
 
-                                  await searchController.changeNowCourseId(courseId: courseId);
+                                  await searchController.changeNowCourseId(
+                                      courseId: courseId);
 
                                   await detailController.getCourseInfo('코스 소개');
                                   await detailController.getIsLikeCourse();
@@ -70,7 +74,8 @@ class DetailTapCourseCommentsListSection extends StatelessWidget {
                                   // Get.to(() => detail.CourseDetail(index: index));
                                 },
                                 child: Text(
-                                  commentsList[index]['courseTitle'].length >= 13
+                                  commentsList[index]['courseTitle'].length >=
+                                          13
                                       ? '${commentsList[index]['courseTitle'].substring(0, 13)}...'
                                       : commentsList[index]['courseTitle'],
                                   style: TextStyle(
@@ -101,7 +106,8 @@ class DetailTapCourseCommentsListSection extends StatelessWidget {
                           SizedBox(width: 5),
                           // Text(
                           //     '${DateFormat('MM-dd').format(DateTime.parse(commentsList[index]['date']))}'),
-                          Text(DateFormat('MM-dd').format(DateTime.parse(commentsList[index]['createTime']))),
+                          Text(DateFormat('MM-dd').format(DateTime.parse(
+                              commentsList[index]['createTime']))),
                           SizedBox(width: 10),
                           Icon(Icons.people, size: 16),
                           SizedBox(width: 5),
@@ -113,7 +119,8 @@ class DetailTapCourseCommentsListSection extends StatelessWidget {
                       Text('${commentsList[index]['content']}'),
                       SizedBox(height: 10),
                       if (commentsList[index]['imageList'].length > 0)
-                        ImageGridView(commentImageList: commentsList[index]['imageList']),
+                        ImageGridView(
+                            commentImageList: commentsList[index]['imageList']),
                     ],
                   ),
                 ),
@@ -144,7 +151,8 @@ class ImageGridView extends StatelessWidget {
         if (imageIndex == 2 && commentImageList.length > 3) {
           return Stack(
             children: [
-              ImageInkWell(commentImageList: commentImageList, imageIndex: imageIndex),
+              ImageInkWell(
+                  commentImageList: commentImageList, imageIndex: imageIndex),
               Positioned(
                 right: 9,
                 bottom: 9,
@@ -173,7 +181,8 @@ class ImageGridView extends StatelessWidget {
             ],
           );
         } else {
-          return ImageInkWell(commentImageList: commentImageList, imageIndex: imageIndex);
+          return ImageInkWell(
+              commentImageList: commentImageList, imageIndex: imageIndex);
         }
       },
     );
@@ -301,7 +310,9 @@ class _CommentGalleryState extends State<CommentGallery> {
                   margin: EdgeInsets.symmetric(horizontal: 2.0),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: _currentIndex == index ? Colors.grey.shade800 : Colors.grey.shade600,
+                    color: _currentIndex == index
+                        ? Colors.grey.shade800
+                        : Colors.grey.shade600,
                   ),
                 );
               }).toList(),
