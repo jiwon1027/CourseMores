@@ -1,6 +1,16 @@
 package com.moham.coursemores.api;
 
-import com.moham.coursemores.dto.course.*;
+import com.moham.coursemores.dto.course.CourseCreateReqDto;
+import com.moham.coursemores.dto.course.CourseDetailResDto;
+import com.moham.coursemores.dto.course.CourseImportResDto;
+import com.moham.coursemores.dto.course.CourseInfoResDto;
+import com.moham.coursemores.dto.course.CoursePreviewResDto;
+import com.moham.coursemores.dto.course.CourseUpdateReqDto;
+import com.moham.coursemores.dto.course.HotPreviewResDto;
+import com.moham.coursemores.dto.course.LocationCreateReqDto;
+import com.moham.coursemores.dto.course.LocationUpdateReqDto;
+import com.moham.coursemores.dto.course.MyCourseResDto;
+import com.moham.coursemores.dto.course.NearPreviewResDto;
 import com.moham.coursemores.dto.elasticsearch.IndexDataReqDTO;
 import com.moham.coursemores.service.CourseService;
 import com.moham.coursemores.service.ElasticSearchService;
@@ -34,10 +44,9 @@ import org.springframework.web.multipart.MultipartFile;
 public class CourseController {
 
     private static final Logger logger = LoggerFactory.getLogger(CourseController.class);
-
+    private static final String COURSE_LIST = "courseList";
     private final CourseService courseService;
     private final ElasticSearchService elasticSearchService;
-    private static final String COURSE_LIST = "courseList";
 
     @GetMapping("hot")
     public ResponseEntity<Map<String, Object>> getHotCourse() {
@@ -175,7 +184,7 @@ public class CourseController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> addCourse(
+    public ResponseEntity<Map<String, Object>> addCourse(
             @AuthenticationPrincipal User user,
             @RequestPart CourseCreateReqDto courseCreateReqDto,
             @RequestPart(required = false) List<MultipartFile> imageList) {
@@ -183,8 +192,11 @@ public class CourseController {
         logger.debug("[0/3][POST][/course][{}] << request : courseCreateReqDto, imageList\n courseCreateReqDto = {}\n imageList = {}",
                 userId, courseCreateReqDto, imageList);
 
-        logger.debug("[1/3][POST][/course][{}] ... cd.addCourse", userId);
+        Map<String, Object> resultMap = new HashMap<>();
+
+        logger.debug("[1/3][POST][/course][{}] ... cs.addCourse", userId);
         Long courseId = courseService.addCourse(userId, courseCreateReqDto, imageList);
+        resultMap.put("courseId", courseId);
 
         logger.debug("[2/3][POST][/course][{}] ... ess.addIndex", userId);
         // elasticsearch index 데이터 추가
@@ -198,8 +210,8 @@ public class CourseController {
                 .hashtagList(courseCreateReqDto.getHashtagList())
                 .build());
 
-        logger.debug("[3/3][POST][/course][{}] >> response : none\n", userId);
-        return new ResponseEntity<>(HttpStatus.OK);
+        logger.debug("[3/3][POST][/course][{}] >> response : courseId = {}\n", userId, courseId);
+        return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
 
     @PutMapping("{courseId}")
