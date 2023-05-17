@@ -67,18 +67,18 @@ class _MyPageState extends State<MyPage> {
     }
   }
 
-  Future<void> updateUserInfo() async {
-    final dio = await authDio();
-    final response = await dio.get('profile/');
-    print('userinfo update ! : $response');
-    print('editcheck?? ${userInfoController.editCheck.value}');
-    print('review : $reviewList');
-    userInfoController
-        .saveCurrentNickname('${response.data['userInfo']['nickname']}');
-    userInfoController.saveImageUrl(response.data['userInfo']['profileImage']);
-    print(userInfoController.imageUrl);
-    await downloadImage();
-  }
+  // Future<void> updateUserInfo() async {
+  //   final dio = await authDio();
+  //   final response = await dio.get('profile/');
+  //   print('userinfo update ! : $response');
+  //   print('editcheck?? ${userInfoController.editCheck.value}');
+  //   print('review : $reviewList');
+  //   userInfoController
+  //       .saveCurrentNickname('${response.data['userInfo']['nickname']}');
+  //   userInfoController.saveImageUrl(response.data['userInfo']['profileImage']);
+  //   print(userInfoController.imageUrl);
+  //   await downloadImage();
+  // }
 
   Future<void> fetchData(aToken) async {
     final dio = await authDio();
