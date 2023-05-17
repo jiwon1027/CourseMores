@@ -45,7 +45,7 @@ class _MyPageState extends State<MyPage> {
     super.initState();
     status = 'course';
     fetchData(tokenController.accessToken);
-    updateUserInfo();
+    // updateUserInfo();
     downloadImage();
   }
 
@@ -67,17 +67,18 @@ class _MyPageState extends State<MyPage> {
     }
   }
 
-  Future<void> updateUserInfo() async {
-    final dio = await authDio();
-    final response = await dio.get('profile/');
-    print('userinfo update ! : $response');
-    print('editcheck?? ${userInfoController.editCheck.value}');
-    userInfoController
-        .saveCurrentNickname('${response.data['userInfo']['nickname']}');
-    userInfoController.saveImageUrl(response.data['userInfo']['profileImage']);
-    print(userInfoController.imageUrl);
-    await downloadImage();
-  }
+  // Future<void> updateUserInfo() async {
+  //   final dio = await authDio();
+  //   final response = await dio.get('profile/');
+  //   print('userinfo update ! : $response');
+  //   print('editcheck?? ${userInfoController.editCheck.value}');
+  //   print('review : $reviewList');
+  //   userInfoController
+  //       .saveCurrentNickname('${response.data['userInfo']['nickname']}');
+  //   userInfoController.saveImageUrl(response.data['userInfo']['profileImage']);
+  //   print(userInfoController.imageUrl);
+  //   await downloadImage();
+  // }
 
   Future<void> fetchData(aToken) async {
     final dio = await authDio();
@@ -109,7 +110,7 @@ class _MyPageState extends State<MyPage> {
       reviewList = myPageController.myReview;
     });
 
-    await updateUserInfo();
+    // await updateUserInfo();
   }
 
   buttonBar() {
