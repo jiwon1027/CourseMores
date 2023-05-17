@@ -8,6 +8,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart' as geocoding;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter_multi_select_items/flutter_multi_select_items.dart';
 import 'package:lottie/lottie.dart';
 import '../auth/auth_dio.dart';
@@ -16,10 +17,9 @@ import '../auth/auth_dio.dart';
 final homeController = Get.put(HomeScreenInfo());
 final pageController = Get.put(PageNum());
 final locationController = Get.put(LocationInfo());
-// var hotCourse;
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -27,8 +27,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   Position? _currentPosition;
-  // late Function changePageNum = widget.changePageNum;
-  // List<Map<String, Object>> hotCourse = homeController.hotCourse;
   List<Map<String, Object>> hotCourse = [];
   List<Map<String, Object>> nearCourse = [];
 
@@ -36,58 +34,37 @@ class _HomeScreenState extends State<HomeScreen> {
     switch (iconCode) {
       case '01d':
       case '01n':
-        return Lottie.asset(
-          'assets/weather_sunny.json',
-          fit: BoxFit.fitWidth,
-          width: 200,
-        );
+        return Lottie.asset('assets/weather_sunny.json',
+            fit: BoxFit.fitWidth, width: 200);
       case '02d':
       case '02n':
       case '03d':
       case '03n':
       case '04d':
       case '04n':
-        return Lottie.asset(
-          'assets/weather_cloudy.json',
-          fit: BoxFit.fitWidth,
-          width: 200,
-        );
+        return Lottie.asset('assets/weather_cloudy.json',
+            fit: BoxFit.fitWidth, width: 200);
       case '09d':
       case '09n':
       case '10d':
       case '10n':
-        return Lottie.asset(
-          'assets/weather_rainy.json',
-          fit: BoxFit.fitWidth,
-          width: 200,
-        );
+        return Lottie.asset('assets/weather_rainy.json',
+            fit: BoxFit.fitWidth, width: 200);
       case '11d':
       case '11n':
-        return Lottie.asset(
-          'assets/weather_thunderstorm.json',
-          fit: BoxFit.fitWidth,
-          width: 200,
-        );
+        return Lottie.asset('assets/weather_thunderstorm.json',
+            fit: BoxFit.fitWidth, width: 200);
       case '13d':
       case '13n':
-        return Lottie.asset(
-          'assets/weather_snow.json',
-          fit: BoxFit.fitWidth,
-          width: 200,
-        );
+        return Lottie.asset('assets/weather_snow.json',
+            fit: BoxFit.fitWidth, width: 200);
       case '50d':
       case '50n':
-        return Lottie.asset(
-          'assets/weather_mist.json',
-          fit: BoxFit.fitWidth,
-          width: 200,
-        );
+        return Lottie.asset('assets/weather_mist.json',
+            fit: BoxFit.fitWidth, width: 200);
       default:
-        return Lottie.asset(
-          'assets/weather_sunny.json',
-          fit: BoxFit.fitWidth,
-          width: 200,
-        );
+        return Lottie.asset('assets/weather_sunny.json',
+            fit: BoxFit.fitWidth, width: 200);
     }
   }
 
@@ -117,15 +94,6 @@ class _HomeScreenState extends State<HomeScreen> {
     print(searchController.courseList);
   }
 
-  // @override
-  // void initState() {
-  //   super.initState();
-
-  //   // tokenStorage.onInit();
-  //   getHotCourse();
-  //   // getNearCourse();
-  // }
-
   Future<void> getHotCourse() async {
     final tokenStorage = Get.put(TokenStorage());
     final dio = await authDio();
@@ -145,8 +113,6 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> getNearCourse() async {
     final tokenStorage = Get.put(TokenStorage());
     final dio = await authDio();
-    // if (_currentPosition?.latitude != null &&
-    //     _currentPosition?.longitude != null) {
     final response = await dio.get(
         'course/around?latitude=${locationController.latitude}&longitude=${locationController.longitude}',
         options: Options(
@@ -209,165 +175,116 @@ class _HomeScreenState extends State<HomeScreen> {
     return '';
   }
 
-  // Future<void> getNearCourse() async {
-  //   final dio = await authDio();
-  //   final response = await dio.get(
-  //     '/course/around?latitude=${_currentPosition?.latitude}&longitude=${_currentPosition?.longitude}',
-  //   );
-  //   print('777777777777');
-  //   print(response);
-
-  //   // List<dynamic> data = response.data['courseList'];
-  //   // hotCourse = data.map((item) => Map<String, Object>.from(item)).toList();
-  //   // // homeController.saveHotCourse(
-  //   // //     data.map((item) => Map<String, Object>.from(item)).toList());
-  //   // // setState(() {
-  //   // //   hotCourse = homeController.hotCourse;
-  //   // // });
-  //   // print('홈에서 받아온 hotcourse');
-  //   // print(hotCourse);
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        // resizeToAvoidBottomInset: false,
-        // backgroundColor: const Color.fromARGB(255, 240, 240, 240),
-        // backgroundColor: const Color.fromARGB(100, 157, 141, 255), // 보라
-        // backgroundColor: Color.fromARGB(255, 255, 216, 216), // 분홍
         body: Container(
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: AssetImage('assets/background-pink.jpg'),
-          opacity: 0.5,
-          fit: BoxFit.cover,
-        ),
+            image: AssetImage('assets/background-pink.jpg'),
+            // image: AssetImage('assets/background.gif'),
+            // image: AssetImage('assets/blue_background.gif'),
+            opacity: 1,
+            fit: BoxFit.cover),
       ),
-      // decoration: BoxDecoration(
-      //   gradient: LinearGradient(
-      //     begin: Alignment.topCenter,
-      //     end: Alignment.bottomCenter,
-      //     colors: const [
-      //       Color.fromARGB(100, 95, 207, 255), // 보라색
-      //       Color.fromARGB(150, 255, 216, 216), // 분홍색
-      //     ],
-      //     stops: const [0.0, 0.4],
-      //   ),
-      //   // 이외의 다른 설정
-      // ),
       child: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.fromLTRB(20, 60, 20, 20),
+          padding: EdgeInsets.fromLTRB(20, 40, 20, 20),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               SizedBox(
                 width: double.infinity,
-                height: 200.0,
-                // color: Colors.white,
-                // decoration: BoxDecoration(
-                //   image: DecorationImage(
-                //     image: AssetImage('assets/blue_background.gif'),
-                //     fit: BoxFit.cover,
-                //   ),
-                // ),
-
+                height: 200,
                 child: Center(
                   child: Column(children: [
-                    // Text('날씨~~'),
-                    SizedBox(
-                      child: FutureBuilder<Map<String, dynamic>>(
-                        future: _getWeather(),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            final weatherData = snapshot.data!;
-                            final temp = weatherData['main']['temp'].toString();
-                            final weather = weatherData['weather'][0]
-                                    ['description']
-                                .toString();
-                            final iconCode =
-                                weatherData['weather'][0]['icon'].toString();
-                            return Row(
-                              children: [
-                                // SizedBox(width: 10),
-                                Expanded(
-                                  flex: 5,
-                                  child: Container(
-                                    padding: EdgeInsets.all(15),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      color: Colors.white.withOpacity(0.5),
-                                    ),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          '${temp.split('.')[0]} °C',
-                                          style: TextStyle(
-                                              fontSize: 35,
-                                              color: Colors.black),
-                                        ),
-                                        SizedBox(height: 10),
-                                        Text(
-                                          weather,
-                                          style: TextStyle(
-                                              fontSize: 18,
-                                              color: Colors.black),
-                                        ),
-                                        SizedBox(height: 16),
-                                        FutureBuilder<String>(
-                                          future: _getAddress(
-                                              _currentPosition?.latitude ?? 0,
-                                              _currentPosition?.longitude ?? 0),
-                                          builder: (context, snapshot) {
-                                            if (snapshot.connectionState ==
-                                                ConnectionState.waiting) {
-                                              return Text('검색중...');
-                                            } else if (snapshot.hasData) {
-                                              final address = snapshot.data!;
-                                              return Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  Icon(Icons.location_on,
+                    FutureBuilder<Map<String, dynamic>>(
+                      future: _getWeather(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          final weatherData = snapshot.data!;
+                          final temp = weatherData['main']['temp'].toString();
+                          final weather = weatherData['weather'][0]
+                                  ['description']
+                              .toString();
+                          final iconCode =
+                              weatherData['weather'][0]['icon'].toString();
+                          return Row(
+                            children: [
+                              Expanded(
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      color: Color.fromARGB(168, 255, 255, 255),
+                                      borderRadius: BorderRadius.circular(20)),
+                                  padding: EdgeInsets.symmetric(vertical: 20),
+                                  alignment: Alignment.bottomCenter,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        '${temp.split('.')[0]} °C',
+                                        style: TextStyle(
+                                            fontSize: 35, color: Colors.black),
+                                      ),
+                                      SizedBox(height: 10),
+                                      Text(
+                                        weather,
+                                        style: TextStyle(
+                                            fontSize: 18, color: Colors.black),
+                                      ),
+                                      SizedBox(height: 16),
+                                      FutureBuilder<String>(
+                                        future: _getAddress(
+                                            _currentPosition?.latitude ?? 0,
+                                            _currentPosition?.longitude ?? 0),
+                                        builder: (context, snapshot) {
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.waiting) {
+                                            return Text('검색중...');
+                                          } else if (snapshot.hasData) {
+                                            final address = snapshot.data!;
+                                            return Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Icon(Icons.location_on,
+                                                    color: Colors.black),
+                                                SizedBox(width: 4),
+                                                Text(
+                                                  address.length > 10
+                                                      ? '${address.substring(0, 10)}...'
+                                                      : address,
+                                                  style: TextStyle(
+                                                      fontSize: 18,
                                                       color: Colors.black),
-                                                  SizedBox(width: 4),
-                                                  Text(
-                                                    address.length > 10
-                                                        ? '${address.substring(0, 10)}...'
-                                                        : address,
-                                                    style: TextStyle(
-                                                        fontSize: 18,
-                                                        color: Colors.black),
-                                                  ),
-                                                ],
-                                              );
-                                            } else if (snapshot.hasError) {
-                                              return Text(
-                                                  'Error: ${snapshot.error}');
-                                            } else {
-                                              return Text('');
-                                            }
-                                          },
-                                        ),
-                                      ],
-                                    ),
+                                                ),
+                                              ],
+                                            );
+                                          } else if (snapshot.hasError) {
+                                            return Text(
+                                                'Error: ${snapshot.error}');
+                                          } else {
+                                            return Text('');
+                                          }
+                                        },
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                Expanded(
-                                    flex: 5, child: _getWeatherIcon(iconCode)),
-                              ],
-                            );
-                          } else if (snapshot.hasError) {
-                            return Text('Error: ${snapshot.error}');
-                          } else {
-                            return CircularProgressIndicator();
-                          }
-                        },
-                      ),
-                    )
+                              ),
+                              _getWeatherIcon(iconCode),
+                              // Expanded(
+                              //     flex: 5, child: _getWeatherIcon(iconCode)),
+                            ],
+                          );
+                        } else if (snapshot.hasError) {
+                          return Text('Error: ${snapshot.error}');
+                        } else {
+                          return CircularProgressIndicator();
+                        }
+                      },
+                    ),
                   ]),
                 ),
               ),
@@ -390,16 +307,6 @@ buttonBar1() {
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        // Container(
-        //   width: 50.0,
-        //   decoration: boxDeco(),
-        //   child: IconButton(
-        //     onPressed: () {
-        //       Get.to(() => SearchFilter());
-        //     },
-        //     icon: Icon(Icons.tune),
-        //   ),
-        // ),
         Expanded(
           child: Container(
             clipBehavior: Clip.antiAlias,
@@ -408,14 +315,13 @@ buttonBar1() {
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withOpacity(0.5),
+                  color: Colors.grey.withOpacity(0.4),
                   spreadRadius: 2,
                   blurRadius: 3,
-                  offset: Offset(0, 2), // changes position of shadow
+                  offset: Offset(0, 2),
                 ),
               ],
             ),
-            // width: 320.0,
             child: searchButtonBar(),
           ),
         )
@@ -437,7 +343,7 @@ class _ButtonBar2State extends State<ButtonBar2> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 0, 0, 15.0),
+      padding: EdgeInsets.fromLTRB(0, 0, 0, 15.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -446,8 +352,8 @@ class _ButtonBar2State extends State<ButtonBar2> {
               pageController.changePageNum(1);
             },
             child: Container(
-              width: 110.0,
-              height: 80.0,
+              width: 110,
+              height: 80,
               decoration: boxDeco(),
               child: SizedBox(
                 child: Column(
@@ -468,8 +374,8 @@ class _ButtonBar2State extends State<ButtonBar2> {
               pageController.changePageNum(3);
             },
             child: Container(
-              width: 110.0,
-              height: 80.0,
+              width: 110,
+              height: 80,
               decoration: boxDeco(),
               child: SizedBox(
                 child: Column(
@@ -487,8 +393,8 @@ class _ButtonBar2State extends State<ButtonBar2> {
               pageController.changePageNum(4);
             },
             child: Container(
-              width: 110.0,
-              height: 80.0,
+              width: 110,
+              height: 80,
               decoration: boxDeco(),
               child: SizedBox(
                 child: Column(
@@ -519,10 +425,10 @@ boxDeco() {
     borderRadius: BorderRadius.circular(20),
     boxShadow: [
       BoxShadow(
-        color: Colors.grey.withOpacity(0.5),
+        color: Colors.grey.withOpacity(0.4),
         spreadRadius: 2,
         blurRadius: 3,
-        offset: const Offset(0, 2), // changes position of shadow
+        offset: Offset(0, 2), // changes position of shadow
       ),
     ],
   );
@@ -530,15 +436,17 @@ boxDeco() {
 
 popularCourse() {
   if (homeController.hotCourse.isEmpty) {
-    return const Center(child: CircularProgressIndicator());
+    return Center(child: CircularProgressIndicator());
   } else {
     return Container(
+      width: double.maxFinite,
+      height: 280,
       decoration: boxDeco(),
-      child: const Padding(
+      child: Padding(
         padding: EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0),
         child: SizedBox(
-          height: 300.0,
-          child: carousel.CoourseCarousel(),
+          height: 280.0,
+          child: carousel.CourseCarousel(),
         ),
       ),
     );
@@ -547,14 +455,16 @@ popularCourse() {
 
 myNearCourse() {
   if (homeController.nearCourse.isEmpty) {
-    return const Center(child: CircularProgressIndicator());
+    return Center(child: CircularProgressIndicator());
   } else {
     return Container(
+      width: double.maxFinite,
+      height: 280,
       decoration: boxDeco(),
-      child: const Padding(
+      child: Padding(
         padding: EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0),
         child: SizedBox(
-          height: 300.0,
+          height: 280.0,
           child: carousel.NearCarousel(),
         ),
       ),
@@ -563,26 +473,22 @@ myNearCourse() {
 }
 
 themeList() {
-  // if (searchController.courseList.isEmpty) {
-  //   searchController.getMainThemeList();
-  //   print('요청!!');
-  // }
-  // var themes = [];
   var themeList = searchController.themeList;
-  // for (var theme in searchController.themeList) {
-  //   themes.add(theme["name"]);
-  // }
 
   return Padding(
-    padding: const EdgeInsets.fromLTRB(0, 15.0, 0, 15.0),
+    padding: EdgeInsets.fromLTRB(0, 15.0, 0, 15.0),
     child: Container(
+      clipBehavior: Clip.hardEdge,
+      width: double.maxFinite,
+      height: 150,
+      // height: 200,
       decoration: boxDeco(),
       child: Padding(
-          padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0),
+          padding: EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0),
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.only(top: 15.0, bottom: 15.0),
+                padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
                 child: Text(
                   '이런 테마는 어때요? 😊',
                   style: TextStyle(
@@ -592,7 +498,7 @@ themeList() {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(bottom: 16.0),
+                padding: EdgeInsets.only(bottom: 16.0),
                 child: Wrap(
                   spacing: 8.0,
                   runSpacing: 8.0,
@@ -606,8 +512,6 @@ themeList() {
                     return InkWell(
                       onTap: () {
                         pageController.changePageNum(2);
-                        // searchController.savedSelectedThemeList =
-                        //     RxList<dynamic>([theme['themeId'] as int]);
                         search.Search();
                         searchController.queryParameters['themeIds'] = [
                           theme['themeId']
@@ -627,12 +531,12 @@ themeList() {
                               color: Colors.grey.withOpacity(0.5),
                               spreadRadius: 2,
                               blurRadius: 3,
-                              offset: const Offset(0, 2),
+                              offset: Offset(0, 2),
                             ),
                           ],
                         ),
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(
+                          padding: EdgeInsets.symmetric(
                               horizontal: 12.0, vertical: 8.0),
                           child: Text(
                             theme['name'],
@@ -647,52 +551,11 @@ themeList() {
                   }).toList(),
                 ),
               )
-              // SearchFilterTheme(),
-              // SizedBox(
-              //   height: 200.0,
-              //   child: ListView.builder(
-              //       padding: const EdgeInsets.all(8),
-              //       itemCount: themes.length,
-              //       itemBuilder: (BuildContext context, int index) {
-              //         return Container(
-              //           height: 30.0,
-              //           decoration: BoxDecoration(
-              //             color: Colors.white,
-              //             borderRadius: BorderRadius.circular(20),
-              //             boxShadow: [
-              //               BoxShadow(
-              //                 color: Colors.grey.withOpacity(0.5),
-              //                 spreadRadius: 2,
-              //                 blurRadius: 3,
-              //                 offset: const Offset(
-              //                     0, 2), // changes position of shadow
-              //               ),
-              //             ],
-              //           ),
-              //           child: Center(child: Text('${themes[index]}')),
-              //         );
-              //       }),
-              // )
             ],
           )),
     ),
   );
 }
-
-// reviews() {
-//   return Container(
-//     decoration: boxDeco(),
-//     child: const Padding(
-//       padding: EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0),
-//       child: SizedBox(
-//         height: 300.0,
-//         child: carousel.ReviewCarousel(),
-//       ),
-//     ),
-//   );
-// }
-
-// TextEditingController searchTextEditingController = TextEditingController();
 
 emptyTheTextFormField() {
   searchTextEditingController.clear();
@@ -712,20 +575,18 @@ searchButtonBar() {
       },
       decoration: InputDecoration(
         hintText: "코스, 장소, 해시태그 등을 검색해보세요",
-        hintStyle: TextStyle(color: Colors.grey, fontSize: 14),
+        hintStyle: TextStyle(color: Colors.black, fontSize: 14),
         enabledBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: Colors.transparent)),
         focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: Colors.transparent)),
-        // filled: true,
-        // prefixIcon: FilterButton(context: context),
         prefixIcon: filterButton(),
         suffixIcon: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             IconButton(
               icon: Icon(Icons.clear),
-              color: Colors.grey,
+              color: Colors.black,
               visualDensity: VisualDensity.comfortable,
               onPressed: () {
                 searchTextEditingController.clear();
@@ -735,7 +596,7 @@ searchButtonBar() {
             ),
             IconButton(
               icon: Icon(Icons.search),
-              color: Colors.grey,
+              color: Colors.black,
               iconSize: 25,
               padding: EdgeInsets.symmetric(horizontal: 0),
               onPressed: () {
@@ -753,4 +614,14 @@ searchButtonBar() {
       onFieldSubmitted: controlSearching,
     ),
   );
+}
+
+filterButton() {
+  return IconButton(
+      icon: Icon(Icons.tune),
+      color: Colors.black,
+      iconSize: 25,
+      onPressed: () {
+        Get.to(() => SearchFilter());
+      });
 }
