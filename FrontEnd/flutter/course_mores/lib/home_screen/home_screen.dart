@@ -7,10 +7,10 @@ import './carousel.dart' as carousel;
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart' as geocoding;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import '../auth/auth_dio.dart';
 import 'package:get/get.dart';
 import 'package:flutter_multi_select_items/flutter_multi_select_items.dart';
 import 'package:lottie/lottie.dart';
+import '../auth/auth_dio.dart';
 // import 'package:coursemores/controller/search_controller.dart';
 
 final homeController = Get.put(HomeScreenInfo());
