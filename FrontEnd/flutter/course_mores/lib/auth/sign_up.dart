@@ -12,6 +12,8 @@ import 'package:get/get.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'post_signup.dart' as post_signup;
 import 'package:draggable_home/draggable_home.dart';
+import 'auth_dio.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class SignUp extends StatelessWidget {
   const SignUp({super.key});
@@ -129,7 +131,7 @@ class ProfileImage extends StatefulWidget {
 }
 
 class _ProfileImageState extends State<ProfileImage> {
-  XFile? _pickedFile;
+  XFile? _pickedFile = userInfoController.profileImage;
   @override
   Widget build(BuildContext context) {
     final imageSize = MediaQuery.of(context).size.width / 16;
@@ -282,8 +284,12 @@ class _ProfileImageState extends State<ProfileImage> {
                       Expanded(
                         child: InkWell(
                             onTap: () {
+                              userInfoController.saveImage(null);
+                              userInfoController.saveImageUrl(null);
+
                               setState(() {
                                 _pickedFile = null;
+                                userInfoController.profileImage = null;
                                 Navigator.pop(context);
                               });
                             },
@@ -373,11 +379,11 @@ class _RegisterNicknameState extends State<RegisterNickname> {
                         '이미 존재하는 닉네임입니다.',
                         _helperText)),
               ),
-              IconButton(
+              OutlinedButton(
                   onPressed: () {
                     _submit();
                   },
-                  icon: Icon(Icons.check))
+                  child: Text('중복체크')),
             ],
           ),
         ],
@@ -387,6 +393,7 @@ class _RegisterNicknameState extends State<RegisterNickname> {
 
   Future<void> _submit() async {
     if (formKey.currentState!.validate() == false) {
+      userInfoController.changeSignupCheck(false);
       return;
     } else {
       formKey.currentState!.save();
@@ -433,18 +440,16 @@ Widget textFormFieldComponent(
       } else if (isDuplicate == true) {
         return duplicateError;
       } else {
+        userInfoController.changeSignupCheck(true);
         return null;
       }
     },
   );
 }
 
-String baseURL = dotenv.get('BASE_URL');
-
-final options = BaseOptions(baseUrl: baseURL);
-final dio = Dio(options);
 bool? isDuplicate;
 void duplicateCheck(nickname) async {
+  final dio = await authDio();
   // dynamic nicknameData = json.encode({'nickname': nickname});
   final response = await dio.get('user/validation/nickname/$nickname');
 
@@ -454,7 +459,7 @@ void duplicateCheck(nickname) async {
   }
 }
 
-final userInfoController = Get.put(UserInfo());
+// final userInfoController = Get.put(UserInfo());
 
 class GenderChoice extends StatefulWidget {
   const GenderChoice({super.key});
@@ -598,17 +603,29 @@ confirmButton() {
     padding: EdgeInsets.only(top: 60),
     child: ElevatedButton(
       onPressed: () {
-        // print(userInfoController.nickname);
-        // print(userInfoController.age);
-        // print(userInfoController.gender);
-        // print(userInfoController.profileImage);
-        post_signup.postSignUp(
-          userInfoController.nickname.value,
-          userInfoController.age.value,
-          userInfoController.gender.value,
-          userInfoController.profileImage,
-          tokenController.accessToken.value,
-        );
+        if (userInfoController.signupCheck.value == true) {
+          // print(userInfoController.nickname);
+          // print(userInfoController.age);
+          // print(userInfoController.gender);
+          // print(userInfoController.profileImage);
+          post_signup.postSignUp(
+            userInfoController.nickname.value,
+            userInfoController.age.value,
+            userInfoController.gender.value,
+            userInfoController.profileImage,
+            tokenController.accessToken.value,
+          );
+          userInfoController.changeSignupCheck(false);
+        } else {
+          print('빼애애애액!');
+          Fluttertoast.showToast(
+            msg: '닉네임 중복확인을 해 주세요',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: Colors.grey[400],
+            textColor: Colors.red,
+          );
+        }
       },
       style: ElevatedButton.styleFrom(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),

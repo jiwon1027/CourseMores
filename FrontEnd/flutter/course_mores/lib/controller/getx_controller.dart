@@ -93,6 +93,7 @@ class UserInfo extends GetxController {
   final isDeleteImage = false.obs;
   final editCheck = false.obs;
   final currentNickname = 'default'.obs;
+  final signupCheck = false.obs;
 
   @override
   void onInit() async {
@@ -110,6 +111,10 @@ class UserInfo extends GetxController {
 
   void saveCurrentNickname(value) async {
     currentNickname.value = value;
+  }
+
+  void changeSignupCheck(bool checked) async {
+    signupCheck.value = checked;
   }
 
   void changeEditCheck(bool checked) async {
