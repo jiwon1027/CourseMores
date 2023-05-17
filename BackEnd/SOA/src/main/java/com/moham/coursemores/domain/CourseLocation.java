@@ -35,7 +35,6 @@ public class CourseLocation extends UpdateTimeEntity {
     private Long id;
 
     @NotNull
-    @Column(length = 50)
     private String name;
 
     @Column(length = 50)
