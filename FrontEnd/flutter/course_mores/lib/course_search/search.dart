@@ -108,7 +108,7 @@ searchPageHeader() {
                   ],
                 ),
               ),
-              style: TextStyle(fontSize: 18, color: Colors.black),
+              style: TextStyle(fontSize: 14, color: Colors.black),
               onFieldSubmitted: controlSearching,
             ),
           ),
@@ -129,22 +129,29 @@ isVisitedCheckBox() {
     // color: Colors.amber,
     alignment: Alignment.center,
     child: SizedBox(
-        width: 160,
-        height: 45,
-        child: Obx(
-          () => CheckboxListTile(
-            dense: true,
-            contentPadding: EdgeInsets.all(0),
-            controlAffinity: ListTileControlAffinity.leading,
-            title: Text('방문여부',
-                style: TextStyle(color: Colors.black, fontSize: 16)),
-            value: searchController.isVisited.value,
-            onChanged: (value) {
-              searchController.changePage(page: 0);
-              searchController.changeIsVisited();
-            },
-          ),
-        )),
+        width: 150,
+        height: 40,
+        child: Obx(() => Row(
+              children: [
+                InkWell(
+                  child: Row(children: [
+                    CheckboxMenuButton(
+                      value: searchController.isVisited.value,
+                      onChanged: (value) {
+                        searchController.changePage(page: 0);
+                        searchController.changeIsVisited();
+                      },
+                      child: Padding(
+                        padding: EdgeInsets.fromLTRB(0, 8, 8, 8),
+                        child: Text('방문여부',
+                            style:
+                                TextStyle(color: Colors.black, fontSize: 14)),
+                      ),
+                    ),
+                  ]),
+                )
+              ],
+            ))),
   );
 }
 
@@ -173,7 +180,7 @@ sortButtonBar() {
                     : Colors.grey),
           ),
           child: Text('최신순',
-              style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
+              style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14)),
         ),
         ElevatedButton(
           onPressed: () {
@@ -195,7 +202,7 @@ sortButtonBar() {
                     : Colors.grey),
           ),
           child: Text('인기순',
-              style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
+              style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14)),
         ),
       ],
     ),
@@ -331,157 +338,134 @@ class CourseSearchList extends StatelessWidget {
       people = "${searchController.courseList[index]['people']}명";
     }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Obx(() => Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      "${searchController.courseList[index]['title']}",
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                      softWrap: true,
-                    ),
-                  ),
-                  SizedBox(width: 10),
-                  if (searchController.courseList[index]["visited"] == true)
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Color.fromARGB(255, 107, 211, 66),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Row(
-                        children: const [
-                          Padding(
-                            padding: EdgeInsets.all(4.0),
-                            child: Icon(Icons.check,
-                                size: 14, color: Colors.white),
-                          ),
-                          Text("방문",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 12)),
-                          SizedBox(width: 7),
-                        ],
-                      ),
-                    )
-                ],
-              ),
-            ),
-            if (searchController.courseList[index]["interest"])
-              Icon(Icons.bookmark, size: 24),
-            if (!searchController.courseList[index]["interest"])
-              Icon(Icons.bookmark_outline_rounded, size: 24),
-          ],
-        ),
-        SizedBox(height: 2),
-        Row(
-          children: [
-            Icon(Icons.map, size: 12, color: Colors.black54),
-            SizedBox(width: 3),
-            Text(
-              "${searchController.courseList[index]["sido"].toString()} ${searchController.courseList[index]["gugun"].toString()}",
-              style: TextStyle(fontSize: 12, color: Colors.black54),
-              overflow: TextOverflow.ellipsis,
-              maxLines: 1,
-              softWrap: true,
-            ),
-            SizedBox(width: 8),
-            Icon(Icons.people, size: 12, color: Colors.black54),
-            SizedBox(width: 3),
-            Text(
-              people,
-              style: TextStyle(fontSize: 12, color: Colors.black54),
-              overflow: TextOverflow.ellipsis,
-              maxLines: 1,
-              softWrap: true,
-            ),
-          ],
-        ),
-        SizedBox(height: 6),
-        Text(
-          "${searchController.courseList[index]['content']}",
-          style: TextStyle(fontSize: 14),
-          overflow: TextOverflow.ellipsis,
-          maxLines: 1,
-          softWrap: true,
-        ),
-        SizedBox(height: 5),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: Text(
-                "${searchController.courseList[index]['locationName']}",
-                style: TextStyle(fontSize: 12, color: Colors.black45),
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
-                softWrap: true,
-              ),
-            ),
-            SizedBox(width: 8),
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  children: [
-                    if (searchController.courseList[index]["like"])
-                      Icon(Icons.favorite, size: 14),
-                    if (!searchController.courseList[index]["like"])
-                      Icon(Icons.favorite_border_outlined, size: 14),
-                    SizedBox(width: 3),
-                    Text(searchController.courseList[index]["likeCount"]
-                        .toString()),
-                  ],
+                Expanded(
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          searchController.courseList[index]['title'],
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.bold),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          softWrap: true,
+                        ),
+                      ),
+                      SizedBox(width: 10),
+                      if (searchController.courseList[index]["visited"] == true)
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Color.fromARGB(255, 107, 211, 66),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Row(
+                            children: const [
+                              Padding(
+                                padding: EdgeInsets.all(4.0),
+                                child: Icon(Icons.check,
+                                    size: 12, color: Colors.white),
+                              ),
+                              Text("방문",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 10)),
+                              SizedBox(width: 7),
+                            ],
+                          ),
+                        )
+                    ],
+                  ),
+                ),
+                if (searchController.courseList[index]["interest"])
+                  Icon(Icons.bookmark, size: 24, color: Colors.purple),
+                if (!searchController.courseList[index]["interest"])
+                  Icon(Icons.bookmark_outline_rounded,
+                      size: 24, color: Colors.purple),
+              ],
+            ),
+            SizedBox(height: 2),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Icon(Icons.map, size: 12, color: Colors.black54),
+                SizedBox(width: 3),
+                Text(
+                  "${searchController.courseList[index]["sido"].toString()} ${searchController.courseList[index]["gugun"].toString()}",
+                  style: TextStyle(fontSize: 10, color: Colors.black54),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                  softWrap: true,
                 ),
                 SizedBox(width: 8),
+                Icon(Icons.people, size: 12, color: Colors.black54),
+                SizedBox(width: 3),
+                Text(
+                  people,
+                  style: TextStyle(fontSize: 10, color: Colors.black54),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                  softWrap: true,
+                ),
+              ],
+            ),
+            SizedBox(height: 6),
+            Text(
+              "${searchController.courseList[index]['content']}",
+              style: TextStyle(fontSize: 12),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+              softWrap: true,
+            ),
+            SizedBox(height: 5),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    "${searchController.courseList[index]['locationName']}",
+                    style: TextStyle(fontSize: 10, color: Colors.black45),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                    softWrap: true,
+                  ),
+                ),
+                SizedBox(width: 5),
                 Row(
                   children: [
-                    Icon(Icons.comment, size: 14),
-                    SizedBox(width: 3),
-                    Text(searchController.courseList[index]["commentCount"]
-                        .toString()),
+                    Row(
+                      children: [
+                        if (searchController.courseList[index]["like"])
+                          Icon(Icons.favorite, size: 14),
+                        if (!searchController.courseList[index]["like"])
+                          Icon(Icons.favorite_border_outlined, size: 14),
+                        SizedBox(width: 3),
+                        Text(
+                            searchController.courseList[index]["likeCount"]
+                                .toString(),
+                            style: TextStyle(fontSize: 12)),
+                      ],
+                    ),
+                    SizedBox(width: 8),
+                    Row(
+                      children: [
+                        Icon(Icons.comment, size: 14),
+                        SizedBox(width: 3),
+                        Text(
+                            searchController.courseList[index]["commentCount"]
+                                .toString(),
+                            style: TextStyle(fontSize: 12)),
+                      ],
+                    ),
                   ],
                 ),
               ],
             ),
           ],
-        ),
-      ],
-    );
+        ));
   }
-}
-
-Widget headerWidget(BuildContext context) {
-  return Container(
-    decoration: BoxDecoration(
-      gradient: LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: const [
-          Color.fromARGB(255, 0, 90, 129),
-          Color.fromARGB(232, 255, 218, 218),
-        ],
-        stops: const [0.0, 0.9],
-      ),
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: const [
-        Text("검색 필터 설정", style: TextStyle(fontSize: 30, color: Colors.white)),
-        SizedBox(height: 30),
-        Text("지역과 테마 선택을 통해",
-            style: TextStyle(fontSize: 16, color: Colors.white)),
-        SizedBox(height: 10),
-        Text("원하는 코스를 편리하게 검색할 수 있어요",
-            style: TextStyle(fontSize: 16, color: Colors.white)),
-      ],
-    ),
-  );
 }

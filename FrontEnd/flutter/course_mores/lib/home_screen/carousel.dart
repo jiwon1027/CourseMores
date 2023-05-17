@@ -15,148 +15,6 @@ final List<String> imgList = [
   'https://images.unsplash.com/photo-1519985176271-adb1088fa94c?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=a0c8d632e977f94e5d312d9893258f59&auto=format&fit=crop&w=1355&q=80'
 ];
 
-// final hotCourse = homeController.hotCourse;
-
-// final List<Widget> imageSliders = hotCourse
-//     .map((item) => Container(
-//           margin: const EdgeInsets.all(5.0),
-//           child: ClipRRect(
-//               borderRadius: const BorderRadius.all(Radius.circular(5.0)),
-//               child: Stack(
-//                 children: <Widget>[
-//                   Image.network(item['image'].toString(),
-//                       // Image.network(
-//                       //     'https://images.unsplash.com/photo-1520342868574-5fa3804e551c?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=6ff92caffcdd63681a35134a6770ed3b&auto=format&fit=crop&w=1951&q=80',
-//                       fit: BoxFit.cover,
-//                       width: 1000.0),
-//                   Positioned(
-//                     bottom: 0.0,
-//                     left: 0.0,
-//                     right: 0.0,
-//                     height: null,
-//                     child: Container(
-//                       decoration: BoxDecoration(
-//                         color: Colors.black,
-//                         gradient: LinearGradient(
-//                           colors: const [
-//                             Color.fromARGB(200, 0, 0, 0),
-//                             Color.fromARGB(0, 0, 0, 0)
-//                           ],
-//                           begin: Alignment.bottomCenter,
-//                           end: Alignment.topCenter,
-//                         ),
-//                       ),
-//                       padding: const EdgeInsets.symmetric(
-//                           vertical: 10.0, horizontal: 10.0),
-//                       child: Column(
-//                         crossAxisAlignment: CrossAxisAlignment.start,
-//                         children: [
-//                           Text(
-//                             '${item['title']}',
-//                             style: const TextStyle(
-//                               color: Colors.white,
-//                               fontSize: 20.0,
-//                               fontWeight: FontWeight.bold,
-//                             ),
-//                           ),
-//                           Text('${item['sido']} ${item['gugun']}',
-//                               style: TextStyle(
-//                                 color: Colors.white,
-//                                 fontSize: 10.0,
-//                               )),
-//                           Row(
-//                             mainAxisAlignment: MainAxisAlignment.start,
-//                             children: [
-//                               Text('content',
-//                                   style: TextStyle(
-//                                     color: Colors.white,
-//                                     fontSize: 14.0,
-//                                   ))
-//                             ],
-//                           )
-//                         ],
-//                       ),
-//                     ),
-//                   ),
-//                 ],
-//               )),
-//         ))
-//     .toList();
-
-// class CourseCarousel extends StatelessWidget {
-//   // const CourseCarousel({super.key});
-//   const CourseCarousel({Key? key}) : super(key: key);
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       backgroundColor: Colors.white,
-//       body: Padding(
-//         padding: const EdgeInsets.fromLTRB(0, 15.0, 0, 0),
-//         child: Column(
-//           children: [
-//             const Padding(
-//               padding: EdgeInsets.fromLTRB(0, 0, 0, 15.0),
-//               child: Text(
-//                 '최근 인기 코스 🔥',
-//                 style: TextStyle(
-//                     color: Colors.black,
-//                     fontSize: 20.0,
-//                     fontWeight: FontWeight.bold),
-//               ),
-//             ),
-//             // Text('${homeController.hotCourse[0]['title']}'),
-//             CarouselSlider(
-//               options: CarouselOptions(
-//                 autoPlay: true,
-//                 // aspectRatio: 2.0,
-//                 enlargeCenterPage: false,
-//               ),
-//               items: imageSliders,
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
-
-// class ReviewCarousel extends StatelessWidget {
-//   const ReviewCarousel({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       backgroundColor: Colors.white,
-//       body: Padding(
-//         padding: const EdgeInsets.fromLTRB(0, 15.0, 0, 0),
-//         child: Column(
-//           children: [
-//             const Padding(
-//               padding: EdgeInsets.fromLTRB(0, 0, 0, 15.0),
-//               child: Text(
-//                 '지금 내 근처의 코스 👀',
-//                 style: TextStyle(
-//                     color: Colors.black,
-//                     fontSize: 20.0,
-//                     fontWeight: FontWeight.bold),
-//               ),
-//             ),
-//             CarouselSlider(
-//               options: CarouselOptions(
-//                 autoPlay: true,
-//                 // aspectRatio: 2.0,
-//                 enlargeCenterPage: false,
-//               ),
-//               items: imageSliders,
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
-
 class CourseCarousel extends StatefulWidget {
   const CourseCarousel({Key? key}) : super(key: key);
 
@@ -176,10 +34,8 @@ class _CourseCarouselState extends State<CourseCarousel> {
     setState(() {
       hotCourse = homeController.hotCourse;
     });
-// final homeController = Get.put(HomeScreenInfo());
 
     return Scaffold(
-      // backgroundColor: Colors.white,
       backgroundColor: Colors.transparent,
       body: Padding(
         padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
@@ -191,7 +47,7 @@ class _CourseCarouselState extends State<CourseCarousel> {
                 '최근 인기 코스 🔥',
                 style: TextStyle(
                     color: Colors.black,
-                    fontSize: 20.0,
+                    fontSize: 18,
                     fontWeight: FontWeight.bold),
               ),
             ),
@@ -256,7 +112,7 @@ class _CourseCarouselState extends State<CourseCarousel> {
                                                 overflow: TextOverflow.ellipsis,
                                                 style: TextStyle(
                                                   color: Colors.white,
-                                                  fontSize: 20.0,
+                                                  fontSize: 16,
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
@@ -264,18 +120,20 @@ class _CourseCarouselState extends State<CourseCarousel> {
                                               Text(
                                                   '${item['sido']} ${item['gugun']}',
                                                   style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 10.0,
+                                                    color: Color.fromARGB(
+                                                        196, 255, 255, 255),
+                                                    fontSize: 10,
                                                   )),
                                               SizedBox(height: 10),
-                                              Text(item['content'],
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 14.0,
-                                                  )),
+                                              if (item['content'] != "")
+                                                Text(item['content'],
+                                                    maxLines: 1,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 12,
+                                                    )),
                                             ],
                                           ),
                                         ),
@@ -341,7 +199,7 @@ class _NearCarouselState extends State<NearCarousel> {
                 '지금 내 근처의 코스 👀',
                 style: TextStyle(
                     color: Colors.black,
-                    fontSize: 20.0,
+                    fontSize: 18,
                     fontWeight: FontWeight.bold),
               ),
             ),
@@ -404,7 +262,7 @@ class _NearCarouselState extends State<NearCarousel> {
                                                 overflow: TextOverflow.ellipsis,
                                                 style: TextStyle(
                                                   color: Colors.white,
-                                                  fontSize: 20.0,
+                                                  fontSize: 16,
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
@@ -412,23 +270,26 @@ class _NearCarouselState extends State<NearCarousel> {
                                               Text(
                                                   '${item['sido']} ${item['gugun']}',
                                                   style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 10.0)),
+                                                      color: Color.fromARGB(
+                                                          196, 255, 255, 255),
+                                                      fontSize: 10)),
                                               SizedBox(height: 10),
-                                              Text(
-                                                item['content'],
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 14.0),
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
+                                              if (item['content'] != "")
+                                                Text(
+                                                  item['content'],
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 12),
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
                                               SizedBox(height: 5),
                                               Text(
                                                   '내 위치로부터 ${item['distance'].round()}km',
                                                   style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 10.0,
+                                                    color: Colors.purple[200],
+                                                    fontSize: 10,
                                                   ))
                                             ],
                                           ),

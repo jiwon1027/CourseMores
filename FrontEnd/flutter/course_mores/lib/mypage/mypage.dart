@@ -1,26 +1,22 @@
-// import 'login_page.dart' as login;
 import 'package:coursemores/auth/login_page.dart';
-import 'package:coursemores/course_search/course_list.dart';
+// import 'package:coursemores/course_search/course_list.dart';
 // import 'package:coursemores/home_screen/home_screen.dart';
 import 'package:flutter/material.dart';
-import '../auth/sign_up.dart' as signup;
+// import '../auth/sign_up.dart' as signup;
 import 'package:animated_button_bar/animated_button_bar.dart';
-import '../course_search/search.dart' as search;
 // import '../course_search/course_list.dart' as course;
 import 'package:get/get.dart';
-import '../main.dart' as main;
+// import '../main.dart' as main;
 import '../controller/getx_controller.dart';
 import '../course_search/search.dart';
 import 'profile_edit.dart' as profie_edit;
 import 'package:dio/dio.dart';
-// import 'package:flutter_dotenv/flutter_dotenv.dart';
-// import 'dart:convert';
 import '../auth/auth_dio.dart';
 import '../course_search/course_detail.dart' as detail;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'my_review.dart' as my_review;
 import '../auth/withdrawal.dart' as withdrawal;
-import 'profile_edit.dart' as edit;
+// import 'profile_edit.dart' as edit;
 import 'package:dio/dio.dart' as dio;
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart';
@@ -164,24 +160,14 @@ class _MyPageState extends State<MyPage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 profileBox(),
-                // OutlinedButton(
-                //     onPressed: () {
-                //       Navigator.push(
-                //           context,
-                //           MaterialPageRoute(
-                //               builder: (context) => const login.LoginPage()));
-                //     },
-                //     child: Text('로그인페이지')),
                 buttonBar(),
                 if (status == 'course')
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: (Text(
                       '내가 작성한 코스 : ${courseList.length} 개',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15,
-                      ),
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                     )),
                   ),
                 if (status == 'review')
@@ -189,10 +175,8 @@ class _MyPageState extends State<MyPage> {
                     padding: const EdgeInsets.all(8.0),
                     child: (Text(
                       '내가 작성한 리뷰 : ${reviewList.length} 개',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15,
-                      ),
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                     )),
                   ),
                 if (status == 'course')
@@ -207,44 +191,6 @@ class _MyPageState extends State<MyPage> {
                           commentsList: reviewList),
                     ),
                   ))
-                // Container(
-                //   margin: const EdgeInsets.only(
-                //       left: 10, right: 10, top: 10, bottom: 5),
-                //   padding: const EdgeInsets.all(10),
-                //   decoration: const BoxDecoration(
-                //       boxShadow: [
-                //         BoxShadow(
-                //             // color: Colors.white24,
-                //             color: Color.fromARGB(255, 211, 211, 211),
-                //             blurRadius: 10.0,
-                //             spreadRadius: 1.0,
-                //             offset: Offset(3, 3)),
-                //       ],
-                //       color: Color.fromARGB(255, 255, 255, 255),
-                //       borderRadius: BorderRadius.all(Radius.circular(10))),
-                //   child: Row(
-                //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //     children: [
-                //       Expanded(
-                //           child: SizedBox(
-                //               width: 350,
-                //               child: Row(
-                //                 children: const [
-                //                   search.ThumbnailImage(),
-                //                   SizedBox(
-                //                     width: 10,
-                //                   ),
-                //                   Expanded(
-                //                     child: search.CourseSearchList(
-                //                       // courseList: courseList,
-                //                       index: 1,
-                //                     ),
-                //                   ),
-                //                 ],
-                //               )))
-                //     ],
-                //   ),
-                // ),
               ])),
     ));
   }
