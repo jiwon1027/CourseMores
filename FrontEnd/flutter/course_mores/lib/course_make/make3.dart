@@ -93,24 +93,6 @@ class _MakeStepperState extends State<MakeStepper> {
                       ],
                     ),
                     SizedBox(height: 8), // 간격 추가
-                    // TextField(
-                    //   decoration: InputDecoration(
-                    //     border: OutlineInputBorder(),
-                    //     labelText: '코스 이름을 입력하세요',
-                    //   ),
-                    //   onChanged: (text) {
-                    //     // 사용자의 입력이 변화할 때마다 실행되는 콜백 함수
-                    //     print('User typed: $text');
-                    //     // CourseController의 title 변수 업데이트
-                    //     Get.find<CourseController>().title.value = text;
-                    //   },
-                    //   maxLength: 50,
-                    //   maxLines: null,
-                    // ),
-                    // Text(
-                    //   '(30자 이상, 기타 입력조건)',
-                    //   style: TextStyle(color: Colors.grey),
-                    // ),
                     SingleChildScrollView(
                       child: Container(
                         constraints: BoxConstraints(
@@ -878,7 +860,7 @@ class _MakeHashtagState extends State<MakeHashtag> {
       children: [
         TextFieldTags(
           textfieldTagsController: _controller,
-          initialTags: const ['연남동맛집', '최애코스', '마포골목대장', '데이트코스'],
+          initialTags: const ['최애코스', '데이트코스'],
           textSeparators: const [' ', ','],
           letterCase: LetterCase.normal,
           validator: (String tag) {
@@ -911,14 +893,8 @@ class _MakeHashtagState extends State<MakeHashtag> {
                         width: 3.0,
                       ),
                     ),
-                    // helperText: 'Enter language...',
-                    // helperStyle: const TextStyle(
-                    //   color: Color.fromARGB(255, 74, 137, 92),
-                    // ),
                     hintText: _controller.hasTags ? '' : "태그를 입력하세요",
                     errorText: error,
-                    // prefixIconConstraints:
-                    //     BoxConstraints(maxWidth: _distanceToField * 0.74),
                     prefixIcon: tags.isNotEmpty
                         ? SingleChildScrollView(
                             controller: sc,

@@ -147,10 +147,10 @@ class _EditItemPageState extends State<EditItemPage> {
                     // numberOfImage: _imageUploaderState.getNumberOfImage(),
                     title: _titleController.text.isNotEmpty
                         ? _titleController.text
-                        : null,
+                        : '',
                     content: _contentController.text.isNotEmpty
                         ? _contentController.text
-                        : null,
+                        : '',
                     sido: widget.locationData.sido,
                     gugun: widget.locationData.gugun,
                     // temporaryImageList: _imageUploaderState._temporaryImageList,
