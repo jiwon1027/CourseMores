@@ -36,6 +36,9 @@ public class CommentServiceImpl implements CommentService {
     private final UserRepository userRepository;
     private final CourseRepository courseRepository;
 
+    private static final String DEFAULT_NICKNAME = "(알 수 없음)";
+    private static final String DEFAULT_IMAGE_URL = "https://coursemores.s3.amazonaws.com/default_profile.png";
+
     @Override
     public List<CommentResDTO> getCommentList(Long courseId, Long userId, int page, String sortby) {
         // user를 불러와서 그 유저가 작성한 코멘트인지 확인하기
@@ -74,8 +77,8 @@ public class CommentServiceImpl implements CommentService {
                         .isWrite(Objects.equals(comment.getUser().getId(), user.getId()))
                         .isLike(userLikeComment.contains(comment.getId()))
                         .writeUser(UserSimpleInfoResDto.builder()
-                                .nickname(comment.getUser().getNickname())
-                                .profileImage(comment.getUser().getProfileImage())
+                                .nickname(comment.getUser().getDeleteTime() == null ? DEFAULT_NICKNAME : comment.getUser().getNickname())
+                                .profileImage(comment.getUser().getDeleteTime() == null ? DEFAULT_IMAGE_URL : comment.getUser().getProfileImage())
                                 .build())
                         .build()
                 )
