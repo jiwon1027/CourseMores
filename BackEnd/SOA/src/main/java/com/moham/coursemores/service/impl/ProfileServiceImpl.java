@@ -47,9 +47,13 @@ public class ProfileServiceImpl implements ProfileService {
         User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
                 .orElseThrow(() -> new CustomException(userId,CustomErrorCode.USER_NOT_FOUND));
 
-        String imageUrl = "default";
-        if (profileImage != null)
-            imageUrl = fileUploadService.uploadImage(profileImage);
+        String imageUrl = user.getProfileImage();
+        if(userInfoUpdateReqDto.isDelete()){
+            if (profileImage != null)
+                imageUrl = fileUploadService.uploadImage(profileImage);
+            else
+                imageUrl = "default";
+        }
 
         user.update(userInfoUpdateReqDto, imageUrl);
     }

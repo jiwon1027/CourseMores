@@ -17,5 +17,7 @@ public class UserInfoUpdateReqDto {
     private Integer age;
     @NotBlank(message = "성별은 필수 입력 값입니다.")
     private String gender;
+    @NotBlank(message = "프로필 사진의 삭제 여부는 필수 입력 값입니다.")
+    private boolean isDelete;
 
 }
