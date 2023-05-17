@@ -21,49 +21,49 @@ class CourseDetail extends StatelessWidget {
               CarouselSliderText(),
               CarouselIndicator(),
               SizedBox(height: 10),
-              Card(
-                elevation: 6,
-                child: Padding(
-                  padding: EdgeInsets.all(15),
-                  child: Column(
-                    children: [
-                      Column(
-                        children: [
-                          if (detailController
-                              .nowCourseDetail[detailController.placeIndex.value]['locationImageList'].isNotEmpty)
-                            ImageGridView(),
-                          Column(
+              if (detailController.nowCourseDetail[detailController.placeIndex.value]['title'] != "" ||
+                  detailController.nowCourseDetail[detailController.placeIndex.value]['content'] != "" ||
+                  detailController.nowCourseDetail[detailController.placeIndex.value]['locationImageList'].isNotEmpty)
+                Card(
+                  elevation: 6,
+                  child: Padding(
+                    padding: EdgeInsets.all(15),
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(0, 15, 0, 15),
+                          child: Column(
                             children: [
-                              if (detailController.nowCourseDetail[detailController.placeIndex.value]['title'] != "")
+                              if (detailController
+                                  .nowCourseDetail[detailController.placeIndex.value]['locationImageList'].isNotEmpty)
+                                ImageGridView(),
+                              if (detailController.nowCourseDetail[detailController.placeIndex.value]['title'] != "" ||
+                                  detailController.nowCourseDetail[detailController.placeIndex.value]['content'] != "")
                                 Column(
                                   children: [
-                                    SizedBox(height: 30),
+                                    SizedBox(height: 15),
                                     Text(
                                       "${detailController.nowCourseDetail[detailController.placeIndex.value]['title'] ?? ' '}",
-                                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black),
+                                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.black),
                                     ),
-                                  ],
-                                ),
-                              if (detailController.nowCourseDetail[detailController.placeIndex.value]['content'] != "")
-                                Column(
-                                  children: [
-                                    SizedBox(height: 20),
+                                    SizedBox(height: 10),
                                     Text(
                                       "${detailController.nowCourseDetail[detailController.placeIndex.value]['content'] ?? ' '}",
-                                      style: TextStyle(fontSize: 14, color: Colors.black, height: 1.7),
+                                      style: TextStyle(fontSize: 16, color: Colors.black, height: 1.7),
                                     ),
-                                    SizedBox(height: 20),
+                                    SizedBox(height: 10),
+                                    PlaceMap(),
+                                    // SizedBox(height: 10),
+                                    // GetDistanceTime()
                                   ],
                                 ),
-                              PlaceMap(),
                             ],
                           ),
-                        ],
-                      ),
-                    ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
             ],
           ),
         ));

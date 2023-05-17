@@ -31,8 +31,12 @@ class _SearchState extends State<Search> {
     Get.put(SearchController());
     return Obx(() => Scaffold(
           appBar: searchPageHeader(),
-          body: searchController.courseList.isEmpty ? displayNoSearchResultScreen() : SearchResult(),
-        ));
+          body: searchController.courseList.isEmpty
+              ? displayNoSearchResultScreen()
+              : SearchResult(),
+        ),
+      ),
+    );
   }
 
   emptyTheTextFormField() {
@@ -120,21 +124,29 @@ isVisitedCheckBox() {
     // color: Colors.amber,
     alignment: Alignment.center,
     child: SizedBox(
-        width: 160,
-        height: 45,
-        child: Obx(
-          () => CheckboxListTile(
-            dense: true,
-            contentPadding: EdgeInsets.all(0),
-            controlAffinity: ListTileControlAffinity.leading,
-            title: Text('방문여부', style: TextStyle(color: Colors.black, fontSize: 16)),
-            value: searchController.isVisited.value,
-            onChanged: (value) {
-              searchController.changePage(page: 0);
-              searchController.changeIsVisited();
-            },
-          ),
-        )),
+        width: 150,
+        height: 40,
+        child: Obx(() => Row(
+              children: [
+                InkWell(
+                  child: Row(children: [
+                    CheckboxMenuButton(
+                      value: searchController.isVisited.value,
+                      onChanged: (value) {
+                        searchController.changePage(page: 0);
+                        searchController.changeIsVisited();
+                      },
+                      child: Padding(
+                        padding: EdgeInsets.fromLTRB(0, 8, 8, 8),
+                        child: Text('방문여부',
+                            style:
+                                TextStyle(color: Colors.black, fontSize: 14)),
+                      ),
+                    ),
+                  ]),
+                )
+              ],
+            ))),
   );
 }
 
@@ -158,7 +170,8 @@ sortButtonBar() {
             foregroundColor:
                 MaterialStateProperty.all<Color>(searchController.isLatestSelected.value ? Colors.blue : Colors.grey),
           ),
-          child: Text('최신순', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
+          child: Text('최신순',
+              style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14)),
         ),
         ElevatedButton(
           onPressed: () {
@@ -175,7 +188,8 @@ sortButtonBar() {
             foregroundColor:
                 MaterialStateProperty.all<Color>(searchController.isPopularSelected.value ? Colors.blue : Colors.grey),
           ),
-          child: Text('인기순', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
+          child: Text('인기순',
+              style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14)),
         ),
       ],
     ),
@@ -288,13 +302,17 @@ class _SearchResultState extends State<SearchResult> {
                       child: Container(
                         margin: EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 5),
                         padding: EdgeInsets.all(10),
-                        decoration: const BoxDecoration(boxShadow: [
-                          BoxShadow(
-                              color: Color.fromARGB(255, 211, 211, 211),
-                              blurRadius: 10.0,
-                              spreadRadius: 1.0,
-                              offset: Offset(3, 3)),
-                        ], color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(10))),
+                        decoration: const BoxDecoration(
+                            boxShadow: [
+                              BoxShadow(
+                                  color: Color.fromARGB(33, 0, 0, 0),
+                                  blurRadius: 4,
+                                  spreadRadius: 3,
+                                  offset: Offset(0, 3)),
+                            ],
+                            color: Colors.white,
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10))),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -361,93 +379,90 @@ class _CourseSearchListState extends State<CourseSearchList> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    if (searchController.courseList[index]['people'] <= 0) {
+      people = "상관 없음";
+    } else if (searchController.courseList[index]['people'] >= 5) {
+      people = "5명 이상";
+    } else {
+      people = "${searchController.courseList[index]['people']}명";
+    }
+
+    return Obx(() => Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      "${searchController.courseList[index]['title']}",
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                      softWrap: true,
-                    ),
-                  ),
-                  SizedBox(width: 10),
-                  if (searchController.courseList[index]["visited"] == true)
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Color.fromARGB(255, 107, 211, 66),
-                        borderRadius: BorderRadius.circular(10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          searchController.courseList[index]['title'],
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.bold),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          softWrap: true,
+                        ),
                       ),
-                      child: Row(
-                        children: const [
-                          Padding(
-                            padding: EdgeInsets.all(4.0),
-                            child: Icon(Icons.check, size: 14, color: Colors.white),
+                      SizedBox(width: 10),
+                      if (searchController.courseList[index]["visited"] == true)
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Color.fromARGB(255, 107, 211, 66),
+                            borderRadius: BorderRadius.circular(10),
                           ),
-                          Text("방문", style: TextStyle(color: Colors.white, fontSize: 12)),
-                          SizedBox(width: 7),
-                        ],
-                      ),
-                    )
-                ],
-              ),
+                          child: Row(
+                            children: const [
+                              Padding(
+                                padding: EdgeInsets.all(4.0),
+                                child: Icon(Icons.check,
+                                    size: 12, color: Colors.white),
+                              ),
+                              Text("방문",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 10)),
+                              SizedBox(width: 7),
+                            ],
+                          ),
+                        )
+                    ],
+                  ),
+                ),
+                if (searchController.courseList[index]["interest"])
+                  Icon(Icons.bookmark, size: 24, color: Colors.purple),
+                if (!searchController.courseList[index]["interest"])
+                  Icon(Icons.bookmark_outline_rounded,
+                      size: 24, color: Colors.purple),
+              ],
             ),
-            if (searchController.courseList[index]["interest"]) Icon(Icons.bookmark, size: 24),
-            if (!searchController.courseList[index]["interest"]) Icon(Icons.bookmark_outline_rounded, size: 24),
-          ],
-        ),
-        const SizedBox(height: 2),
-        Row(
-          children: [
-            const Icon(Icons.map, size: 12, color: Colors.black54),
-            const SizedBox(width: 3),
-            Text(
-              courseList[widget.index]["address"].toString(),
-              style: const TextStyle(
-                fontSize: 12,
-                color: Colors.black54,
-              ),
-              overflow: TextOverflow.ellipsis,
-              maxLines: 1,
-              softWrap: true,
+            SizedBox(height: 2),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Icon(Icons.map, size: 12, color: Colors.black54),
+                SizedBox(width: 3),
+                Text(
+                  "${searchController.courseList[index]["sido"].toString()} ${searchController.courseList[index]["gugun"].toString()}",
+                  style: TextStyle(fontSize: 10, color: Colors.black54),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                  softWrap: true,
+                ),
+                SizedBox(width: 8),
+                Icon(Icons.people, size: 12, color: Colors.black54),
+                SizedBox(width: 3),
+                Text(
+                  people,
+                  style: TextStyle(fontSize: 10, color: Colors.black54),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                  softWrap: true,
+                ),
+              ],
             ),
-            const SizedBox(width: 8),
-            const Icon(Icons.people, size: 12, color: Colors.black54),
-            const SizedBox(width: 3),
-            Text(
-              "${courseList[widget.index]['people'].toString()}명",
-              style: const TextStyle(
-                fontSize: 12,
-                color: Colors.black54,
-              ),
-              overflow: TextOverflow.ellipsis,
-              maxLines: 1,
-              softWrap: true,
-            ),
-          ],
-        ),
-        const SizedBox(height: 6),
-        Text(
-          "${courseList[widget.index]['text']}",
-          style: const TextStyle(
-            fontSize: 14,
-          ),
-          overflow: TextOverflow.ellipsis,
-          maxLines: 1,
-          softWrap: true,
-        ),
-        const SizedBox(height: 5),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
+            SizedBox(height: 6),
             Text(
               "${courseList[widget.index]['summary']}",
               style: const TextStyle(
@@ -474,18 +489,30 @@ class _CourseSearchListState extends State<CourseSearchList> {
                 SizedBox(width: 5),
                 Row(
                   children: [
-                    if (searchController.courseList[index]["like"]) Icon(Icons.favorite, size: 14),
-                    if (!searchController.courseList[index]["like"]) Icon(Icons.favorite_border_outlined, size: 14),
-                    SizedBox(width: 3),
-                    Text(searchController.courseList[index]["likeCount"].toString()),
-                  ],
-                ),
-                const SizedBox(width: 8),
-                Row(
-                  children: [
-                    Icon(Icons.comment, size: 14),
-                    SizedBox(width: 3),
-                    Text(searchController.courseList[index]["commentCount"].toString()),
+                    Row(
+                      children: [
+                        if (searchController.courseList[index]["like"])
+                          Icon(Icons.favorite, size: 14),
+                        if (!searchController.courseList[index]["like"])
+                          Icon(Icons.favorite_border_outlined, size: 14),
+                        SizedBox(width: 3),
+                        Text(
+                            searchController.courseList[index]["likeCount"]
+                                .toString(),
+                            style: TextStyle(fontSize: 12)),
+                      ],
+                    ),
+                    SizedBox(width: 8),
+                    Row(
+                      children: [
+                        Icon(Icons.comment, size: 14),
+                        SizedBox(width: 3),
+                        Text(
+                            searchController.courseList[index]["commentCount"]
+                                .toString(),
+                            style: TextStyle(fontSize: 12)),
+                      ],
+                    ),
                   ],
                 ),
               ],

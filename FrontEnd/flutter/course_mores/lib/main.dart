@@ -60,9 +60,6 @@ class MyApp extends StatelessWidget {
                 : FlashyTabBar(
                     selectedIndex: pageNum,
                     showElevation: true,
-                    // onItemSelected: (index) => setState(() {
-                    //   changePageNum(index);
-                    // }),
                     onItemSelected: (index) =>
                         pageController.changePageNum(index),
                     items: [

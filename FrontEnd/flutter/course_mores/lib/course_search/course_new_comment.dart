@@ -64,13 +64,13 @@ class NewComment extends StatelessWidget {
               SizedBox(height: 10),
               ElevatedButton(
                 onPressed: () {
-                  // 이미지 업로드 코드
+                  detailController.addComment();
                   Fluttertoast.showToast(
-                    msg: "작성 내용 : ${_textController.text}",
+                    msg: "작성 내용 : ${textController.text}",
                     toastLength: Toast.LENGTH_SHORT,
                     gravity: ToastGravity.CENTER,
                   );
-                  Navigator.pop(context);
+                  Get.back();
                 },
                 child: Text("저장하기"),
               ),

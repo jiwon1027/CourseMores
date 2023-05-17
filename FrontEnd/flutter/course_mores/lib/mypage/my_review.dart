@@ -16,48 +16,57 @@ class DetailTapCourseCommentsListSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return commentsList.isEmpty
-        ? Container(
-            margin: EdgeInsets.only(top: 50),
-            child: Column(
-              children: const [
-                Text("☺", style: TextStyle(fontSize: 70)),
-                SizedBox(height: 20),
-                Text("아직 코멘트가 없어요."),
-                SizedBox(height: 10),
-                Text("첫 작성자가 되어보시는 건 어떨까요?"),
-              ],
+        ? Center(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 60),
+              child: Column(
+                children: const [
+                  Text("☺", style: TextStyle(fontSize: 70)),
+                  SizedBox(height: 20),
+                  Text("아직 코멘트가 없어요."),
+                  SizedBox(height: 10),
+                  Text("첫 작성자가 되어보시는 건 어떨까요?"),
+                ],
+              ),
             ),
           )
-        : ListView.builder(
-            padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
-            itemCount: commentsList.length,
-            itemBuilder: (context, index) {
-              return Card(
-                elevation: 6,
-                margin: EdgeInsets.fromLTRB(4, 10, 4, 0),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
-                child: Padding(
-                  padding: const EdgeInsets.all(15),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              // Icon(Icons.account_circle),
-                              SizedBox(width: 5),
-                              InkWell(
+        : SingleChildScrollView(
+            child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+                children: List.generate(
+              commentsList.length,
+              (index) {
+                // ListView.builder(
+                //     // padding: EdgeInsets.fromLTRB(10, 10, 10, 20),
+                //     padding: EdgeInsets.all(8),
+                //     itemCount: commentsList.length,
+                //     itemBuilder: (context, index) {
+                return Card(
+                  // elevation: 6,
+                  margin: EdgeInsets.fromLTRB(10, 10, 10, 5),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  child: Container(
+                    decoration: const BoxDecoration(boxShadow: [
+                      BoxShadow(
+                          color: Color.fromARGB(255, 211, 211, 211),
+                          blurRadius: 10.0,
+                          spreadRadius: 1.0,
+                          offset: Offset(3, 3)),
+                    ], color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(10))),
+                    padding: EdgeInsets.all(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: InkWell(
                                 onTap: () async {
-                                  print(
-                                      'mypage 코스리스트 == ${myPageController.myReview}');
-                                  int courseId = (myPageController
-                                      .myReview[index]['courseId'] as int);
+                                  print('mypage 코스리스트 == ${myPageController.myReview}');
+                                  int courseId = (myPageController.myReview[index]['courseId'] as int);
 
-                                  await searchController.changeNowCourseId(
-                                      courseId: courseId);
+                                  await searchController.changeNowCourseId(courseId: courseId);
 
                                     await detailController.getCourseInfo('코스 소개');
                                     await detailController.getIsLikeCourse();
@@ -84,36 +93,14 @@ class DetailTapCourseCommentsListSection extends StatelessWidget {
                               Text(' 코스에 작성한 리뷰')
                             ],
                           ),
-                          SizedBox(height: 5),
                           Row(
                             children: [
-                              Icon(Icons.calendar_month, size: 14, color: Colors.black38),
+                              // Text('받은 좋아요 '),
+                              Icon(Icons.favorite_outline),
                               SizedBox(width: 5),
-                              Text(DateFormat('MM.dd').format(DateTime.parse(commentsList[index]['createTime'])),
-                                  style: TextStyle(fontSize: 10, color: Colors.black38)),
-                              SizedBox(width: 10),
-                              Icon(Icons.people, size: 14, color: Colors.black38),
-                              SizedBox(width: 5),
-                              Text(
-                                (commentsList[index]['people']! as int) <= 0
-                                    ? "상관 없음"
-                                    : (commentsList[index]['people']! as int) >= 5
-                                        ? "5명 이상"
-                                        : "${commentsList[index]['people']}명",
-                                style: TextStyle(fontSize: 10, color: Colors.black38),
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                                softWrap: true,
-                              ),
+                              Text('${commentsList[index]['likeCount']}'),
                             ],
                           ),
-                          // SizedBox(height: 10),
-                          // SizedBox(height: 10),
-                          if (commentsList[index]['imageList'].length > 0)
-                            ImageGridView(commentImageList: commentsList[index]['imageList']),
-                          SizedBox(height: 10),
-                          Text('${commentsList[index]['content']}', style: TextStyle(fontSize: 12, height: 1.5)),
-                          SizedBox(height: 10),
                         ],
                       ),
                       SizedBox(height: 5),
@@ -140,10 +127,10 @@ class DetailTapCourseCommentsListSection extends StatelessWidget {
                             commentImageList: commentsList[index]['imageList']),
                     ],
                   ),
-                );
-              },
-            )),
-          ));
+                ),
+              );
+            },
+          );
   }
 }
 

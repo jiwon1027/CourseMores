@@ -16,122 +16,45 @@ class CourseIntroduction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 0, vertical: 30),
-      decoration: BoxDecoration(
-        // borderRadius: BorderRadius.circular(10),
-        border: Border.symmetric(
-          horizontal: BorderSide(
-            color: Color.fromARGB(255, 129, 61, 13),
-            width: 10,
-          ),
-          vertical: BorderSide(
-            color: Color.fromARGB(255, 84, 35, 0),
-            width: 10,
-          ),
-        ),
-      ),
-      child: FlipCard(
-        key: detailController.cardKey,
-        fill: Fill.fillBack,
-        flipOnTouch: false,
+    return FlipCard(
+      key: detailController.cardKey,
+      fill: Fill.fillBack,
+      flipOnTouch: false,
+      alignment: Alignment.topRight,
+      front: Container(
         alignment: Alignment.topRight,
-        front: Column(
+        decoration: BoxDecoration(
+            color: Color.fromARGB(255, 46, 85, 57),
+            borderRadius: BorderRadius.circular(10)),
+        margin: EdgeInsets.symmetric(horizontal: 0, vertical: 30),
+        padding: EdgeInsets.all(10),
+        width: double.infinity,
+        height: 600,
+        child: ListView(
           children: [
-            Container(
-                alignment: Alignment.topRight,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: const [
-                      Color.fromARGB(255, 85, 103, 90),
-                      Color.fromARGB(255, 30, 61, 39),
-                    ],
-                  ),
-                  // color: Color.fromARGB(255, 46, 85, 57),
-                ),
-                padding: EdgeInsets.all(10),
-                width: double.infinity,
-                child: SingleChildScrollView(
-                  child: Padding(
-                      padding: EdgeInsets.all(8),
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Row(
-                              children: [
-                                Expanded(child: ChangeButton(icon: Icons.map, text: "지도로 보기")),
-                              ],
-                            ),
-                            SizedBox(height: 10),
-                            DetailTapCourseIntroductionTimeline()
-                          ])),
-                )),
-            Row(
-              children: [
-                Container(color: Color.fromARGB(255, 30, 61, 39), height: 5, width: 50),
-                Container(color: Colors.white, height: 5, width: 40),
-                Expanded(child: Container(color: Color.fromARGB(255, 30, 61, 39), height: 5)),
-              ],
-            )
+            ChangeButton(icon: Icons.map, text: "지도로 보기"),
+            SizedBox(height: 10),
+            DetailTapCourseIntroductionTimeline()
           ],
         ),
-        back: Container(
-          alignment: Alignment.topRight,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: const [
-                Color.fromARGB(255, 85, 103, 90),
-                Color.fromARGB(255, 30, 61, 39),
-              ],
-            ),
-          ),
-          padding: EdgeInsets.all(20),
-          width: double.infinity,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Row(
-                children: [
-                  ChangeButton(icon: Icons.image_rounded, text: "코스로 보기"),
-                  SizedBox(width: 10),
-                  Expanded(
-                    child: SizedBox(
-                      height: 38,
-                      child: FilledButton(
-                        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: const [
-                          Icon(Icons.route, size: 18),
-                          SizedBox(width: 8),
-                          Text('동선 움직여 보기', style: TextStyle(fontSize: 12))
-                        ]),
-                        onPressed: () {
-                          final List<LocationData> items = _items;
-                          if (items.length <= 1) {
-                            showDialog(
-                              context: context,
-                              builder: (_) => Dialog(
-                                child: SizedBox(
-                                  height: 700,
-                                  width: 400,
-                                  child: LineMap(),
-                                ),
-                              ),
-                            );
-                          }
-                        },
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 10),
-              Expanded(child: LineMap()),
-            ],
-          ),
+      ),
+      back: Container(
+        alignment: Alignment.topRight,
+        decoration: BoxDecoration(
+          color: Color.fromARGB(255, 46, 85, 57),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        margin: EdgeInsets.symmetric(horizontal: 0, vertical: 30),
+        padding: EdgeInsets.all(10),
+        width: double.infinity,
+        height: 300,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            ChangeButton(icon: Icons.image_rounded, text: "코스로 보기"),
+            SizedBox(height: 10),
+            Expanded(child: LineMap()),
+          ],
         ),
       ),
     );

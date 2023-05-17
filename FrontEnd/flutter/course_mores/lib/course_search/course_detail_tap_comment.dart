@@ -21,15 +21,18 @@ class CourseComments extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
-        child: Column(children: [
-          CommentsCreateSection(),
-          SortButtonBar(),
-          SizedBox(
-            // height: detailController.nowCourseCommentList.isEmpty ? null : 600,
-            child: CommentsListSection(),
-          ),
-        ]));
+      padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
+      child: Obx(() => Column(
+            children: [
+              CommentsCreateSection(),
+              SortButtonBar(),
+              SizedBox(
+                height: detailController.nowCourseCommentList.isEmpty ? null : 600,
+                child: CommentsListSection(),
+              ),
+            ],
+          )),
+    );
   }
 }
 
@@ -86,6 +89,23 @@ class CommentsListSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    try {
+      year = createTime.substring(0, 4);
+      month = createTime.substring(5, 7);
+      date = createTime.substring(8, 10);
+    } catch (e) {
+      year = "";
+      month = "";
+      date = "";
+      print(e);
+    }
+
+    commentScrollController.addListener(() {
+      if (commentScrollController.position.pixels == commentScrollController.position.maxScrollExtent) {
+        // 스크롤이 리스트의 끝까지 도달하면 다음 검색 결과 호출
+        detailController.getNextCommentResults();
+      }
+    });
     return Obx(() => detailController.nowCourseCommentList.isEmpty
         ? Container(
             margin: EdgeInsets.only(top: 50),
@@ -100,115 +120,103 @@ class CommentsListSection extends StatelessWidget {
             ),
           )
         : Column(
-            children: List.generate(
-              detailController.nowCourseCommentList.length,
-              (index) {
-                return Card(
-                  elevation: 6,
-                  margin: EdgeInsets.fromLTRB(4, 10, 4, 10),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                  child: Padding(
-                    padding: EdgeInsets.all(15),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: ListView.builder(
+                  controller: commentScrollController, // ScrollController 설정
+                  padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
+                  itemCount: detailController.nowCourseCommentList.length,
+                  itemBuilder: (context, index) {
+                    return Card(
+                      elevation: 6,
+                      margin: EdgeInsets.fromLTRB(4, 10, 4, 0),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      child: Padding(
+                        padding: EdgeInsets.all(15),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Row(children: [
-                              ProfileImage(index: index),
-                              SizedBox(width: 8),
-                              Text(detailController.nowCourseCommentList[index]['writeUser']['nickname']),
-                            ]),
-                            Obx(
-                              () => LikeButton(
-                                isLiked: detailController.nowCourseCommentList[index]['like'],
-                                onTap: (isLiked) => detailController.onCommentLikeButtonTapped(index),
-                                size: 26,
-                                likeCountPadding: EdgeInsets.symmetric(horizontal: 6),
-                                likeCount: detailController.nowCourseCommentList[index]['likeCount'],
-                              ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(children: [
+                                  ProfileImage(index: index),
+                                  SizedBox(width: 5),
+                                  Text(detailController.nowCourseCommentList[index]['writeUser']['nickname']),
+                                ]),
+                                // TODO: 좋아요 눌렀을 때 화면에는 실시간으로 바로 반영되지는 않음, Rx가 아니어서
+                                Obx(() => InkWell(
+                                    onTap: () {
+                                      if (!detailController.nowCourseCommentList[index]['like']) {
+                                        detailController.addIsLikeComment(index);
+                                      } else {
+                                        detailController.deleteIsLikeComment(index);
+                                      }
+                                      detailController.update();
+                                    },
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        if (detailController.nowCourseCommentList[index]['like']) Icon(Icons.favorite),
+                                        if (!detailController.nowCourseCommentList[index]['like'])
+                                          Icon(Icons.favorite_outline),
+                                        SizedBox(width: 5),
+                                        Text("${detailController.nowCourseCommentList[index]['likeCount']}",
+                                            style: TextStyle(fontSize: 16)),
+                                      ],
+                                    ))),
+                              ],
                             ),
-                          ],
-                        ),
-                        SizedBox(height: 8),
-                        Row(
-                          children: [
-                            Icon(Icons.calendar_month, size: 16, color: Colors.black38),
-                            SizedBox(width: 5),
-                            Text(
-                                DateFormat('yyyy. MM.dd')
-                                    .format(DateTime.parse(detailController.nowCourseCommentList[index]['createTime'])),
-                                style: TextStyle(fontSize: 12, color: Colors.black38)),
-                            SizedBox(width: 10),
-                            Icon(Icons.people, size: 16, color: Colors.black38),
-                            SizedBox(width: 5),
-                            Text(
-                                detailController.nowCourseCommentList[index]['people'] >= 5
-                                    ? "5명 이상"
-                                    : "${detailController.nowCourseCommentList[index]['people']}명",
-                                style: TextStyle(fontSize: 12, color: Colors.black38)),
-                          ],
-                        ),
-                        if (detailController.nowCourseCommentList[index]['imageList'].length != 0)
-                          ImageGridView(index: index),
-                        SizedBox(height: 10),
-                        Text('${detailController.nowCourseCommentList[index]['content']}',
-                            style: TextStyle(height: 1.6)),
-                        SizedBox(height: 10),
-                        if (detailController.nowCourseCommentList[index]['write'])
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Expanded(child: Container()),
-                              IconButton(
-                                  icon: Icon(Icons.edit),
-                                  onPressed: () async {
-                                    await detailController.setComment(index);
-                                    Get.to(ChangeComment(index));
-                                  },
-                                  tooltip: "수정"),
-                              IconButton(
-                                  icon: Icon(Icons.delete_forever_rounded),
-                                  onPressed: () async {
-                                    print(detailController.nowIndex);
-                                    bool confirmed = await showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return AlertDialog(
-                                          title: Text("코멘트 삭제", style: TextStyle(fontSize: 16)),
-                                          content: Text("정말로 삭제하시겠습니까?", style: TextStyle(fontSize: 14)),
-                                          actions: [
-                                            TextButton(
-                                              onPressed: () {
-                                                Navigator.of(context).pop(false); // 취소 버튼을 누를 때 false 반환
-                                              },
-                                              child: Text("취소"),
-                                            ),
-                                            TextButton(
-                                              onPressed: () {
-                                                Navigator.of(context).pop(true); // 확인 버튼을 누를 때 true 반환
-                                              },
-                                              child: Text("확인"),
-                                            ),
-                                          ],
-                                        );
+                            SizedBox(height: 5),
+                            Row(
+                              children: [
+                                Icon(Icons.calendar_month, size: 16),
+                                SizedBox(width: 5),
+                                Text("$year. $month. $date", style: TextStyle(fontSize: 12)),
+                                SizedBox(width: 10),
+                                Icon(Icons.people, size: 16),
+                                SizedBox(width: 5),
+                                if (detailController.nowCourseCommentList[index]['people'] != 0)
+                                  if (detailController.nowCourseCommentList[index]['people'] != 5)
+                                    Text('${detailController.nowCourseCommentList[index]['people']}명',
+                                        style: TextStyle(fontSize: 12)),
+                                if (detailController.nowCourseCommentList[index]['people'] >= 5)
+                                  Text('5명 이상', style: TextStyle(fontSize: 12)),
+                              ],
+                            ),
+                            SizedBox(height: 10),
+                            if (detailController.nowCourseCommentList[index]['imageList'].length != 0)
+                              ImageGridView(index: index),
+                            SizedBox(height: 10),
+                            Text('${detailController.nowCourseCommentList[index]['content']}'),
+                            SizedBox(height: 10),
+                            if (detailController.nowCourseCommentList[index]['write'])
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Expanded(child: Container()),
+                                  TextButton(
+                                      onPressed: () async {
+                                        await detailController.setComment(index);
+                                        Get.to(ChangeComment(index));
                                       },
-                                    );
-
-                                    if (confirmed == true) {
-                                      detailController.deleteComment(index);
-                                    }
-                                  },
-                                  tooltip: "삭제"),
-                            ],
-                          ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
+                                      child: Text("수정")),
+                                  TextButton(
+                                      onPressed: () {
+                                        detailController.deleteComment(index);
+                                      },
+                                      child: Text("삭제")),
+                                ],
+                              ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              if (detailController.isCommentLoading.value) CircularProgressIndicator(), // 로딩 중인 경우 표시할 위젯
+            ],
           ));
   }
 }

@@ -1,19 +1,22 @@
-import 'dart:convert';
-
-import 'package:coursemores/getx_controller.dart';
+// import 'dart:convert';
+import '../controller/getx_controller.dart';
 import 'package:coursemores/auth/login_page.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
-import 'package:dio/dio.dart';
+// import 'package:dio/dio.dart';
 import 'package:get/get.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import '../main.dart' as main;
-import 'package:fluttertoast/fluttertoast.dart';
+// import 'package:flutter_dotenv/flutter_dotenv.dart';
+// import '../main.dart' as main;
+// import 'package:fluttertoast/fluttertoast.dart';
 import 'post_profile_edit.dart' as post_profile_edit;
 import '../auth/auth_dio.dart';
+import 'package:dio/dio.dart' as dio;
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 final userInfoController = Get.put(UserInfo());
 
@@ -26,101 +29,54 @@ class ProfileEdit extends StatefulWidget {
 
 class _ProfileEditState extends State<ProfileEdit> {
   @override
-  Widget build(BuildContext context) {
-    return DraggableHome(
-      leading: IconButton(
-        icon: Icon(Icons.arrow_back_ios),
-        onPressed: () {
-          Get.back();
-        },
-      ),
-      title: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text('COURSE', style: TextStyle(color: Colors.white)),
-          SizedBox(width: 10),
-          Image.asset("assets/flower.png", height: 35),
-          SizedBox(width: 10),
-          Text('MORES   ', style: TextStyle(color: Colors.white)),
-        ],
-      ),
-      actions: [
-        IconButton(onPressed: () {}, icon: Icon(Icons.settings, color: Colors.transparent)),
-      ],
-      headerWidget: headerWidget(context),
-      headerExpandedHeight: 0.3,
-      body: [
-        SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.all(28),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                ProfileImage(),
-                RegisterNickname(),
-                GenderChoice(),
-                AgeRange(),
-                SizedBox(height: 30),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    CancleConfirmButton(),
-                    SizedBox(width: 20),
-                    confirmButton(),
-                  ],
-                )
-              ],
-            ),
-          ),
-        ),
-      ],
-      fullyStretchable: false,
-      backgroundColor: Colors.white,
-      appBarColor: Color.fromARGB(255, 80, 170, 208),
-    );
+  void initState() {
+    super.initState();
+    print('수정페이지에서 불러온 이미지 : ${userInfoController.profileImage}');
+    // downloadImage();
   }
-}
 
-class CancleConfirmButton extends StatelessWidget {
-  const CancleConfirmButton({super.key});
+  // Future<void> downloadImage() async {
+  //   if (userInfoController.imageUrl.value != 'default') {
+  //     dio.Response response = await dio.Dio().get(
+  //         '${userInfoController.imageUrl}',
+  //         options: dio.Options(responseType: dio.ResponseType.bytes));
+  //     String tempDir = (await getTemporaryDirectory()).path;
+  //     String filePath = join(tempDir, 'image.jpg');
+  //     await File(filePath).writeAsBytes(response.data);
+  //     XFile xFile = XFile(filePath);
+  //     userInfoController.saveImage(xFile);
+  //     print('서버에서 받은 이미지 다운로드! : ${userInfoController.profileImage}');
+  //   } else {
+  //     print('프로필이미지 등록되어있지 않음!');
+  //     userInfoController.profileImage = null;
+  //     print(userInfoController.profileImage);
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: FilledButton(
-        style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.black12)),
-        child: Text("취소하기", style: TextStyle(color: Colors.black)),
-        onPressed: () async {
-          bool confirmed = await showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: Text("프로필 수정 나가기", style: TextStyle(fontSize: 16)),
-                content: Text("지금 나가면 저장이 되지 않아요! 정말로 취소하시겠어요?", style: TextStyle(fontSize: 14)),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop(false); // 취소 버튼을 누를 때 false 반환
-                    },
-                    child: Text("취소"),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop(true); // 확인 버튼을 누를 때 true 반환
-                    },
-                    child: Text("확인"),
-                  ),
-                ],
-              );
-            },
-          );
-
-          if (confirmed == true) {
-            Get.back();
-          }
-        },
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      appBar: const ProfileEditAppBar(),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+              decoration: boxDeco(),
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    ProfileImage(),
+                    RegisterNickname(),
+                    GenderChoice(),
+                    AgeRange(),
+                    confirmButton(),
+                  ],
+                ),
+              )),
+        ),
       ),
     );
   }
@@ -156,10 +112,10 @@ class _ProfileImageState extends State<ProfileImage> {
               decoration: BoxDecoration(
                 border: Border.all(),
                 borderRadius: BorderRadius.circular(10),
-              ),
-              child: Icon(
-                Icons.camera_alt_outlined,
-                size: imageSize,
+                image: DecorationImage(
+                    image: NetworkImage(
+                        'https://coursemores.s3.amazonaws.com/default_profile.png'),
+                    fit: BoxFit.cover),
               ),
             ),
           )
@@ -168,15 +124,14 @@ class _ProfileImageState extends State<ProfileImage> {
             onTap: () {
               _showBottomSheet2(context);
             },
-            child: Container(
-              width: 70,
-              height: 70,
-              decoration: BoxDecoration(
-                border: Border.all(),
-                borderRadius: BorderRadius.circular(10),
-                image: DecorationImage(
-                    image: FileImage(File(_pickedFile!.path)),
-                    fit: BoxFit.cover),
+            child: Center(
+              child: Container(
+                width: 150,
+                height: 150,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(80),
+                  image: DecorationImage(image: FileImage(File(_pickedFile!.path)), fit: BoxFit.cover),
+                ),
               ),
             ),
           )
@@ -184,7 +139,7 @@ class _ProfileImageState extends State<ProfileImage> {
     );
   }
 
-  _getCameraImage() async {
+  _getCameraImage1() async {
     final pickedFile =
         await ImagePicker().pickImage(source: ImageSource.camera);
     if (pickedFile != null) {
@@ -201,7 +156,24 @@ class _ProfileImageState extends State<ProfileImage> {
     }
   }
 
-  _getPhotoLibraryImage() async {
+  _getCameraImage2() async {
+    final pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.camera);
+    if (pickedFile != null) {
+      setState(() {
+        _pickedFile = pickedFile;
+        userInfoController.saveImage(pickedFile);
+        userInfoController.imageIsDelete(true);
+        print(pickedFile);
+      });
+    } else {
+      if (kDebugMode) {
+        print('이미지 선택안함');
+      }
+    }
+  }
+
+  _getPhotoLibraryImage1() async {
     final pickedFile =
         await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
@@ -261,12 +233,8 @@ class _ProfileImageState extends State<ProfileImage> {
                               Navigator.pop(context);
                             },
                             child: Container(
-                              decoration: const BoxDecoration(
-                                  border: Border(
-                                      top: BorderSide(
-                                          color: Colors.grey, width: 1))),
-                              child: const Center(
-                                  // color: Colors.yellow,
+                              decoration: BoxDecoration(border: Border(top: BorderSide(color: Colors.grey, width: 1))),
+                              child: Center(
                                   child: Text(
                                 '앨범에서 가져오기',
                                 style: TextStyle(fontSize: 16),
@@ -310,7 +278,9 @@ class _ProfileImageState extends State<ProfileImage> {
                             child: Center(
                                 child: Text(
                               '기본 이미지로 변경',
-                              style: TextStyle(fontSize: 16),
+                              style: TextStyle(
+                                fontSize: 20,
+                              ),
                               textAlign: TextAlign.center,
                             ))),
                       ),
@@ -321,14 +291,13 @@ class _ProfileImageState extends State<ProfileImage> {
                               Navigator.pop(context);
                             },
                             child: Container(
-                              decoration: const BoxDecoration(
-                                  border: Border(
-                                      top: BorderSide(
-                                          color: Colors.grey, width: 1))),
-                              child: const Center(
+                              decoration: BoxDecoration(border: Border(top: BorderSide(color: Colors.grey, width: 1))),
+                              child: Center(
                                   child: Text(
                                 '사진 촬영하기',
-                                style: TextStyle(fontSize: 16),
+                                style: TextStyle(
+                                  fontSize: 20,
+                                ),
                                 textAlign: TextAlign.center,
                               )),
                             )),
@@ -339,15 +308,13 @@ class _ProfileImageState extends State<ProfileImage> {
                               _getPhotoLibraryImage2();
                             },
                             child: Container(
-                              decoration: const BoxDecoration(
-                                  border: Border(
-                                      top: BorderSide(
-                                          color: Colors.grey, width: 1))),
-                              child: const Center(
-                                  // color: Colors.yellow,
+                              decoration: BoxDecoration(border: Border(top: BorderSide(color: Colors.grey, width: 1))),
+                              child: Center(
                                   child: Text(
                                 '앨범에서 가져오기',
-                                style: TextStyle(fontSize: 16),
+                                style: TextStyle(
+                                  fontSize: 20,
+                                ),
                                 textAlign: TextAlign.center,
                               )),
                             )),
@@ -527,13 +494,10 @@ class _GenderChoiceState extends State<GenderChoice> {
                   });
                 },
                 style: TextButton.styleFrom(
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                     backgroundColor: womanColor,
-                    fixedSize:
-                        Size(MediaQuery.of(context).size.width / 2 - 40, 40)),
-                child: Text(
-                  '여성',
-                  style: TextStyle(color: womanTextColor),
-                ),
+                    fixedSize: Size(MediaQuery.of(context).size.width / 2 - 40, 40)),
+                child: Text('여성', style: TextStyle(color: womanTextColor)),
               )
             ],
           )
@@ -595,22 +559,42 @@ class _AgeRangeState extends State<AgeRange> {
 }
 
 confirmButton() {
-  return Expanded(
-    child: FilledButton(
+  return Padding(
+    padding: const EdgeInsets.only(top: 60.0),
+    child: ElevatedButton(
       onPressed: () {
-        print(userInfoController.nickname);
-        print(userInfoController.age);
-        print(userInfoController.gender);
-        print(userInfoController.profileImage);
-        post_profile_edit.postProfileEdit(
-          userInfoController.nickname.value,
-          userInfoController.age.value,
-          userInfoController.gender.value,
-          userInfoController.profileImage,
-          tokenController.accessToken.value,
-          userInfoController.isDeleteImage.value,
-        );
+        if (userInfoController.editCheck.value == true ||
+            userInfoController.currentNickname.value ==
+                userInfoController.nickname.value) {
+          print(userInfoController.nickname);
+          print(userInfoController.age);
+          print(userInfoController.gender);
+          print(userInfoController.profileImage);
+          print(userInfoController.isDeleteImage.value);
+          post_profile_edit.postProfileEdit(
+            userInfoController.nickname.value,
+            userInfoController.age.value,
+            userInfoController.gender.value,
+            userInfoController.profileImage,
+            tokenController.accessToken.value,
+            userInfoController.isDeleteImage.value,
+          );
+          userInfoController.changeEditCheck(false);
+        } else {
+          print('빼애애애액!');
+          Fluttertoast.showToast(
+            msg: '닉네임 중복확인을 해 주세요',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: Colors.grey[400],
+            textColor: Colors.red,
+          );
+        }
       },
+      style: ElevatedButton.styleFrom(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        fixedSize: Size.fromHeight(40),
+      ),
       child: Text('수정하기'),
     ),
   );
@@ -628,28 +612,16 @@ Widget headerWidget(BuildContext context) {
         ],
         stops: const [0.0, 0.9],
       ),
-      title: const Text('CourseMores', style: TextStyle(color: Colors.black)),
-      centerTitle: true,
-      leading: IconButton(
-        icon: const Icon(Icons.navigate_before),
-        onPressed: () {
-          Navigator.pop(context);
-        },
-      ),
-      actions: [
-        IconButton(
-          icon: const Icon(
-            Icons.notifications,
-            color: Colors.black,
-          ),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const noti.Notification()),
-            );
-          },
-        )
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: const [
+        Text("프로필 수정", style: TextStyle(fontSize: 25, color: Colors.white)),
+        SizedBox(height: 30),
+        Text("프로필 사진, 닉네임, 성별, 연령대 등의", style: TextStyle(fontSize: 16, color: Colors.white)),
+        SizedBox(height: 10),
+        Text("프로필을 수정하실 수 있어요", style: TextStyle(fontSize: 16, color: Colors.white)),
       ],
     ),
   );
@@ -658,3 +630,21 @@ Widget headerWidget(BuildContext context) {
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }
+
+// Future<void> downloadImage() async {
+//   if (userInfoController.imageUrl.value != 'default') {
+//     dio.Response response = await dio.Dio().get(
+//         '${userInfoController.imageUrl}',
+//         options: dio.Options(responseType: dio.ResponseType.bytes));
+//     String tempDir = (await getTemporaryDirectory()).path;
+//     String filePath = join(tempDir, 'image.jpg');
+//     await File(filePath).writeAsBytes(response.data);
+//     XFile xFile = XFile(filePath);
+//     userInfoController.saveImage(xFile);
+//     print('서버에서 받은 이미지 다운로드! : ${userInfoController.profileImage}');
+//   } else {
+//     print('프로필이미지 등록되어있지 않음!');
+//     userInfoController.profileImage = null;
+//     print(userInfoController.profileImage);
+//   }
+// }
