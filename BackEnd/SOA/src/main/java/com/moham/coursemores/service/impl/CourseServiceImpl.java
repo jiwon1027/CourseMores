@@ -445,19 +445,21 @@ public class CourseServiceImpl implements CourseService {
             // 코스 장소 수정하기
             courseLocation.update(updateCourseLocation);
             // 이미지 삭제
-            courseLocationImageRepository.deleteByCourseLocationId(courseLocation.getId());
-            // 코스의 장소 이미지 추가 생성
-            for (int end = imageIdx + updateCourseLocation.getNumberOfImage(); imageIdx < end; imageIdx++) {
-                String imagePath = fileUploadService.uploadImage(imageList.get(imageIdx));
-                // 코스의 대표 이미지 설정
-                if (isFirstImage) {
-                    course.setMainImage(imagePath);
-                    isFirstImage = false;
+            if(updateCourseLocation.getIsUpdate()){
+                courseLocationImageRepository.deleteByCourseLocationId(courseLocation.getId());
+                // 코스의 장소 이미지 추가 생성
+                for (int end = imageIdx + updateCourseLocation.getNumberOfImage(); imageIdx < end; imageIdx++) {
+                    String imagePath = fileUploadService.uploadImage(imageList.get(imageIdx));
+                    // 코스의 대표 이미지 설정
+                    if (isFirstImage) {
+                        course.setMainImage(imagePath);
+                        isFirstImage = false;
+                    }
+                    courseLocationImageRepository.save(CourseLocationImage.builder()
+                            .image(imagePath)
+                            .courseLocation(courseLocation)
+                            .build());
                 }
-                courseLocationImageRepository.save(CourseLocationImage.builder()
-                        .image(imagePath)
-                        .courseLocation(courseLocation)
-                        .build());
             }
         }
     }
