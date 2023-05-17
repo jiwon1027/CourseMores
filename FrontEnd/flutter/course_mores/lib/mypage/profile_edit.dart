@@ -17,6 +17,7 @@ import '../auth/auth_dio.dart';
 import 'package:dio/dio.dart' as dio;
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 final userInfoController = Get.put(UserInfo());
 
@@ -391,11 +392,16 @@ class _RegisterNicknameState extends State<RegisterNickname> {
                         '이미 존재하는 닉네임입니다.',
                         _helperText)),
               ),
-              IconButton(
+              OutlinedButton(
                   onPressed: () {
                     _submit();
                   },
-                  icon: const Icon(Icons.check))
+                  child: Text('중복체크'))
+              // IconButton(
+              //     onPressed: () {
+              //       _submit();
+              //     },
+              //     icon: const Icon(Icons.check))
             ],
           ),
         ],
@@ -405,9 +411,11 @@ class _RegisterNicknameState extends State<RegisterNickname> {
 
   Future<void> _submit() async {
     if (formKey.currentState!.validate() == false) {
+      userInfoController.changeEditCheck(false);
       return;
     } else {
       formKey.currentState!.save();
+      // userInfoController.changeEditCheck(true);
 
       setState(() {
         _helperText = '사용 가능한 닉네임입니다!';
@@ -442,6 +450,7 @@ Widget textFormFieldComponent(
       userInfoController.saveNickname(nicknameValue);
       print('닉네임inputvalue!');
     },
+    onChanged: (value) => userInfoController.saveNickname(value),
     validator: (value) {
       duplicateCheck(value);
       if (value!.length < minSize) {
@@ -452,6 +461,7 @@ Widget textFormFieldComponent(
       } else if (isDuplicate == true) {
         return duplicateError;
       } else {
+        userInfoController.changeEditCheck(true);
         return null;
       }
     },
@@ -618,19 +628,33 @@ confirmButton() {
     padding: const EdgeInsets.only(top: 60.0),
     child: ElevatedButton(
       onPressed: () {
-        print(userInfoController.nickname);
-        print(userInfoController.age);
-        print(userInfoController.gender);
-        print(userInfoController.profileImage);
-        print(userInfoController.isDeleteImage.value);
-        post_profile_edit.postProfileEdit(
-          userInfoController.nickname.value,
-          userInfoController.age.value,
-          userInfoController.gender.value,
-          userInfoController.profileImage,
-          tokenController.accessToken.value,
-          userInfoController.isDeleteImage.value,
-        );
+        if (userInfoController.editCheck.value == true ||
+            userInfoController.currentNickname.value ==
+                userInfoController.nickname.value) {
+          print(userInfoController.nickname);
+          print(userInfoController.age);
+          print(userInfoController.gender);
+          print(userInfoController.profileImage);
+          print(userInfoController.isDeleteImage.value);
+          post_profile_edit.postProfileEdit(
+            userInfoController.nickname.value,
+            userInfoController.age.value,
+            userInfoController.gender.value,
+            userInfoController.profileImage,
+            tokenController.accessToken.value,
+            userInfoController.isDeleteImage.value,
+          );
+          userInfoController.changeEditCheck(false);
+        } else {
+          print('빼애애애액!');
+          Fluttertoast.showToast(
+            msg: '닉네임 중복확인을 해 주세요',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: Colors.grey[400],
+            textColor: Colors.red,
+          );
+        }
       },
       child: Text('수정하기'),
     ),

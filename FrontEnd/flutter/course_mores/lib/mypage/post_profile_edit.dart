@@ -84,7 +84,8 @@ void postProfileEdit(nickname, age, gender, image, aToken, isDelete) async {
       print('수정!!!');
       print(response);
       g.Get.back();
-      updateUserInfo(); // g.Get.replace(main.MyApp());
+      updateUserInfo();
+      // g.Get.replace(main.MyApp());
     }
   } catch (e) {
     // DioError 처리
@@ -105,5 +106,7 @@ Future<void> updateUserInfo() async {
   print('userinfo update ! : $response');
 
   userInfoController.saveImageUrl(response.data['userInfo']['profileImage']);
+  userInfoController
+      .saveCurrentNickname('${response.data['userInfo']['nickname']}');
   print(userInfoController.imageUrl);
 }
