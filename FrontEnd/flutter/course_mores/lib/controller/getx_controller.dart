@@ -91,6 +91,8 @@ class UserInfo extends GetxController {
   XFile? profileImage;
   final imageUrl = 'default'.obs;
   final isDeleteImage = false.obs;
+  final editCheck = false.obs;
+  final currentNickname = 'default'.obs;
 
   @override
   void onInit() async {
@@ -106,7 +108,15 @@ class UserInfo extends GetxController {
     }
   }
 
-  void imageIsDelete(isDelete) async {
+  void saveCurrentNickname(value) async {
+    currentNickname.value = value;
+  }
+
+  void changeEditCheck(bool checked) async {
+    editCheck.value = checked;
+  }
+
+  void imageIsDelete(bool isDelete) async {
     isDeleteImage.value = isDelete;
   }
 

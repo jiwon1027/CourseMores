@@ -14,6 +14,10 @@ import 'package:get/get.dart';
 // import 'package:fluttertoast/fluttertoast.dart';
 import 'post_profile_edit.dart' as post_profile_edit;
 import '../auth/auth_dio.dart';
+import 'package:dio/dio.dart' as dio;
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 final userInfoController = Get.put(UserInfo());
 
@@ -25,6 +29,31 @@ class ProfileEdit extends StatefulWidget {
 }
 
 class _ProfileEditState extends State<ProfileEdit> {
+  @override
+  void initState() {
+    super.initState();
+    print('수정페이지에서 불러온 이미지 : ${userInfoController.profileImage}');
+    // downloadImage();
+  }
+
+  // Future<void> downloadImage() async {
+  //   if (userInfoController.imageUrl.value != 'default') {
+  //     dio.Response response = await dio.Dio().get(
+  //         '${userInfoController.imageUrl}',
+  //         options: dio.Options(responseType: dio.ResponseType.bytes));
+  //     String tempDir = (await getTemporaryDirectory()).path;
+  //     String filePath = join(tempDir, 'image.jpg');
+  //     await File(filePath).writeAsBytes(response.data);
+  //     XFile xFile = XFile(filePath);
+  //     userInfoController.saveImage(xFile);
+  //     print('서버에서 받은 이미지 다운로드! : ${userInfoController.profileImage}');
+  //   } else {
+  //     print('프로필이미지 등록되어있지 않음!');
+  //     userInfoController.profileImage = null;
+  //     print(userInfoController.profileImage);
+  //   }
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -79,29 +108,10 @@ class _ProfileImageState extends State<ProfileImage> {
             child: Text('프로필 사진'),
           ),
         ),
-        if (userInfoController.imageUrl.value == 'default' &&
-            userInfoController.profileImage == null)
+        if (_pickedFile == null)
           InkWell(
             onTap: () {
-              _showBottomSheet();
-            },
-            child: Container(
-              width: 70,
-              height: 70,
-              decoration: BoxDecoration(
-                border: Border.all(),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Icon(
-                Icons.camera_alt_outlined,
-                size: imageSize,
-              ),
-            ),
-          )
-        else
-          InkWell(
-            onTap: () {
-              _showBottomSheet2();
+              _showBottomSheet(context);
             },
             child: Container(
               width: 70,
@@ -110,7 +120,25 @@ class _ProfileImageState extends State<ProfileImage> {
                 border: Border.all(),
                 borderRadius: BorderRadius.circular(10),
                 image: DecorationImage(
-                    image: NetworkImage(userInfoController.imageUrl.value),
+                    image: NetworkImage(
+                        'https://coursemores.s3.amazonaws.com/default_profile.png'),
+                    fit: BoxFit.cover),
+              ),
+            ),
+          )
+        else
+          InkWell(
+            onTap: () {
+              _showBottomSheet2(context);
+            },
+            child: Container(
+              width: 70,
+              height: 70,
+              decoration: BoxDecoration(
+                border: Border.all(),
+                borderRadius: BorderRadius.circular(10),
+                image: DecorationImage(
+                    image: FileImage(File(_pickedFile!.path)),
                     fit: BoxFit.cover),
               ),
             ),
@@ -184,7 +212,7 @@ class _ProfileImageState extends State<ProfileImage> {
     }
   }
 
-  _showBottomSheet() {
+  _showBottomSheet(BuildContext context) {
     // 기본 이미지가 없을 때
     return showModalBottomSheet<void>(
         context: context,
@@ -240,7 +268,7 @@ class _ProfileImageState extends State<ProfileImage> {
         });
   }
 
-  _showBottomSheet2() {
+  _showBottomSheet2(BuildContext context) {
     // 기존 이미지가 있을 떄
     return showModalBottomSheet<void>(
         context: context,
@@ -263,6 +291,7 @@ class _ProfileImageState extends State<ProfileImage> {
 
                               setState(() {
                                 _pickedFile = null;
+                                userInfoController.profileImage = null;
                                 Navigator.pop(context);
                               });
                               print(userInfoController.profileImage);
@@ -363,11 +392,16 @@ class _RegisterNicknameState extends State<RegisterNickname> {
                         '이미 존재하는 닉네임입니다.',
                         _helperText)),
               ),
-              IconButton(
+              OutlinedButton(
                   onPressed: () {
                     _submit();
                   },
-                  icon: const Icon(Icons.check))
+                  child: Text('중복체크'))
+              // IconButton(
+              //     onPressed: () {
+              //       _submit();
+              //     },
+              //     icon: const Icon(Icons.check))
             ],
           ),
         ],
@@ -377,9 +411,11 @@ class _RegisterNicknameState extends State<RegisterNickname> {
 
   Future<void> _submit() async {
     if (formKey.currentState!.validate() == false) {
+      userInfoController.changeEditCheck(false);
       return;
     } else {
       formKey.currentState!.save();
+      // userInfoController.changeEditCheck(true);
 
       setState(() {
         _helperText = '사용 가능한 닉네임입니다!';
@@ -414,6 +450,7 @@ Widget textFormFieldComponent(
       userInfoController.saveNickname(nicknameValue);
       print('닉네임inputvalue!');
     },
+    onChanged: (value) => userInfoController.saveNickname(value),
     validator: (value) {
       duplicateCheck(value);
       if (value!.length < minSize) {
@@ -424,6 +461,7 @@ Widget textFormFieldComponent(
       } else if (isDuplicate == true) {
         return duplicateError;
       } else {
+        userInfoController.changeEditCheck(true);
         return null;
       }
     },
@@ -590,18 +628,33 @@ confirmButton() {
     padding: const EdgeInsets.only(top: 60.0),
     child: ElevatedButton(
       onPressed: () {
-        print(userInfoController.nickname);
-        print(userInfoController.age);
-        print(userInfoController.gender);
-        print(userInfoController.profileImage);
-        post_profile_edit.postProfileEdit(
-          userInfoController.nickname.value,
-          userInfoController.age.value,
-          userInfoController.gender.value,
-          userInfoController.profileImage,
-          tokenController.accessToken.value,
-          userInfoController.isDeleteImage.value,
-        );
+        if (userInfoController.editCheck.value == true ||
+            userInfoController.currentNickname.value ==
+                userInfoController.nickname.value) {
+          print(userInfoController.nickname);
+          print(userInfoController.age);
+          print(userInfoController.gender);
+          print(userInfoController.profileImage);
+          print(userInfoController.isDeleteImage.value);
+          post_profile_edit.postProfileEdit(
+            userInfoController.nickname.value,
+            userInfoController.age.value,
+            userInfoController.gender.value,
+            userInfoController.profileImage,
+            tokenController.accessToken.value,
+            userInfoController.isDeleteImage.value,
+          );
+          userInfoController.changeEditCheck(false);
+        } else {
+          print('빼애애애액!');
+          Fluttertoast.showToast(
+            msg: '닉네임 중복확인을 해 주세요',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: Colors.grey[400],
+            textColor: Colors.red,
+          );
+        }
       },
       child: Text('수정하기'),
     ),
@@ -701,3 +754,21 @@ class ProfileEditAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }
+
+// Future<void> downloadImage() async {
+//   if (userInfoController.imageUrl.value != 'default') {
+//     dio.Response response = await dio.Dio().get(
+//         '${userInfoController.imageUrl}',
+//         options: dio.Options(responseType: dio.ResponseType.bytes));
+//     String tempDir = (await getTemporaryDirectory()).path;
+//     String filePath = join(tempDir, 'image.jpg');
+//     await File(filePath).writeAsBytes(response.data);
+//     XFile xFile = XFile(filePath);
+//     userInfoController.saveImage(xFile);
+//     print('서버에서 받은 이미지 다운로드! : ${userInfoController.profileImage}');
+//   } else {
+//     print('프로필이미지 등록되어있지 않음!');
+//     userInfoController.profileImage = null;
+//     print(userInfoController.profileImage);
+//   }
+// }
