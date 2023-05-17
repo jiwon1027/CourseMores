@@ -248,11 +248,20 @@ class _ProfileImageState extends State<ProfileImage> {
                               Navigator.pop(context);
                             },
                             child: Container(
+<<<<<<< HEAD
                               decoration: BoxDecoration(
                                   border: Border(
                                       top: BorderSide(
                                           color: Colors.grey, width: 1))),
                               child: Center(
+=======
+                              decoration: const BoxDecoration(
+                                  border: Border(
+                                      top: BorderSide(
+                                          color: Colors.grey, width: 1))),
+                              child: const Center(
+                                  // color: Colors.yellow,
+>>>>>>> 2d4ef37 (⛏ fix : 회원가입 안넘어가지는 버그 수정)
                                   child: Text(
                                 '앨범에서 가져오기',
                                 style: TextStyle(fontSize: 20),
@@ -300,11 +309,19 @@ class _ProfileImageState extends State<ProfileImage> {
                               Navigator.pop(context);
                             },
                             child: Container(
+<<<<<<< HEAD
                               decoration: BoxDecoration(
                                   border: Border(
                                       top: BorderSide(
                                           color: Colors.grey, width: 1))),
                               child: Center(
+=======
+                              decoration: const BoxDecoration(
+                                  border: Border(
+                                      top: BorderSide(
+                                          color: Colors.grey, width: 1))),
+                              child: const Center(
+>>>>>>> 2d4ef37 (⛏ fix : 회원가입 안넘어가지는 버그 수정)
                                   child: Text(
                                 '사진 촬영하기',
                                 style: TextStyle(fontSize: 20),
@@ -318,11 +335,20 @@ class _ProfileImageState extends State<ProfileImage> {
                               _getPhotoLibraryImage();
                             },
                             child: Container(
+<<<<<<< HEAD
                               decoration: BoxDecoration(
                                   border: Border(
                                       top: BorderSide(
                                           color: Colors.grey, width: 1))),
                               child: Center(
+=======
+                              decoration: const BoxDecoration(
+                                  border: Border(
+                                      top: BorderSide(
+                                          color: Colors.grey, width: 1))),
+                              child: const Center(
+                                  // color: Colors.yellow,
+>>>>>>> 2d4ef37 (⛏ fix : 회원가입 안넘어가지는 버그 수정)
                                   child: Text(
                                 '앨범에서 가져오기',
                                 style: TextStyle(fontSize: 20),
@@ -444,8 +470,8 @@ final options = BaseOptions(baseUrl: baseURL);
 final dio = Dio(options);
 bool? isDuplicate;
 void duplicateCheck(nickname) async {
-  dynamic nicknameData = json.encode({'nickname': nickname});
-  final response = await dio.post('user/validation', data: nicknameData);
+  // dynamic nicknameData = json.encode({'nickname': nickname});
+  final response = await dio.get('user/validation/nickname/$nickname');
 
   if (response.statusCode == 200) {
     print('닉네임 중복 검사!');
@@ -494,6 +520,7 @@ class _GenderChoiceState extends State<GenderChoice> {
             padding: EdgeInsets.only(bottom: 15),
             child: Text('성별', textAlign: TextAlign.start),
           ),
+<<<<<<< HEAD
           SizedBox(
             width: double.infinity,
             child: ButtonBar(
@@ -531,6 +558,44 @@ class _GenderChoiceState extends State<GenderChoice> {
                     child: Text('여성', style: TextStyle(color: womanTextColor))),
               ],
             ),
+=======
+          ButtonBar(
+            children: [
+              OutlinedButton(
+                onPressed: () {
+                  setState(() {
+                    _gender = 'M';
+                    userInfoController.saveGender('M');
+                  });
+                },
+                style: TextButton.styleFrom(
+                  backgroundColor: manColor,
+                  fixedSize:
+                      Size(MediaQuery.of(context).size.width / 2 - 40, 40),
+                ),
+                child: Text(
+                  '남성',
+                  style: TextStyle(color: manTextColor),
+                ),
+              ),
+              OutlinedButton(
+                onPressed: () {
+                  setState(() {
+                    _gender = 'W';
+                    userInfoController.saveGender('W');
+                  });
+                },
+                style: TextButton.styleFrom(
+                    backgroundColor: womanColor,
+                    fixedSize:
+                        Size(MediaQuery.of(context).size.width / 2 - 40, 40)),
+                child: Text(
+                  '여성',
+                  style: TextStyle(color: womanTextColor),
+                ),
+              )
+            ],
+>>>>>>> 2d4ef37 (⛏ fix : 회원가입 안넘어가지는 버그 수정)
           )
         ],
       ),
@@ -666,7 +731,12 @@ class SignUpAppBar extends StatelessWidget implements PreferredSizeWidget {
           onPressed: () {
             Navigator.push(
               context,
+<<<<<<< HEAD
               MaterialPageRoute(builder: (context) => noti.Notification()),
+=======
+              MaterialPageRoute(
+                  builder: (context) => const noti.Notification()),
+>>>>>>> 2d4ef37 (⛏ fix : 회원가입 안넘어가지는 버그 수정)
             );
           },
         )

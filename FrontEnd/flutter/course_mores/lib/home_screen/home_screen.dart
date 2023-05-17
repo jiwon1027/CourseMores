@@ -497,7 +497,7 @@ themeList() {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(bottom: 16.0),
+                padding: const EdgeInsets.only(bottom: 25.0),
                 child: Wrap(
                   spacing: 8.0,
                   runSpacing: 8.0,
