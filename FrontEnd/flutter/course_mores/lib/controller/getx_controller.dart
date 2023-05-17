@@ -90,6 +90,7 @@ class UserInfo extends GetxController {
   final age = 0.obs;
   XFile? profileImage;
   final imageUrl = 'default'.obs;
+  final isDeleteImage = false.obs;
 
   @override
   void onInit() async {
@@ -103,6 +104,10 @@ class UserInfo extends GetxController {
     if (imagePath != null) {
       profileImage = XFile(imagePath);
     }
+  }
+
+  void imageIsDelete(isDelete) async {
+    isDeleteImage.value = isDelete;
   }
 
   void saveNickname(newNickname) async {
