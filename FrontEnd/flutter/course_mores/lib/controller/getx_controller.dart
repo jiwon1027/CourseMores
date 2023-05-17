@@ -109,19 +109,7 @@ class UserInfo extends GetxController {
     }
   }
 
-  void saveCurrentNickname(value) async {
-    currentNickname.value = value;
-  }
-
-  void changeSignupCheck(bool checked) async {
-    signupCheck.value = checked;
-  }
-
-  void changeEditCheck(bool checked) async {
-    editCheck.value = checked;
-  }
-
-  void imageIsDelete(bool isDelete) async {
+  void imageIsDelete(isDelete) async {
     isDeleteImage.value = isDelete;
   }
 

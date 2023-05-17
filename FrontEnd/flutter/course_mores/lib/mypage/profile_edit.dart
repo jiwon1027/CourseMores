@@ -14,7 +14,6 @@ import '../main.dart' as main;
 import 'package:fluttertoast/fluttertoast.dart';
 import 'post_profile_edit.dart' as post_profile_edit;
 import '../auth/auth_dio.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 final userInfoController = Get.put(UserInfo());
 
@@ -26,12 +25,6 @@ class ProfileEdit extends StatefulWidget {
 }
 
 class _ProfileEditState extends State<ProfileEdit> {
-  @override
-  void initState() {
-    super.initState();
-    print('수정페이지에서 불러온 이미지 : ${userInfoController.profileImage}');
-  }
-
   @override
   Widget build(BuildContext context) {
     return DraggableHome(
@@ -157,16 +150,16 @@ class _ProfileImageState extends State<ProfileImage> {
             onTap: () {
               _showBottomSheet(context);
             },
-            child: Center(
-              child: Container(
-                width: 150,
-                height: 150,
-                decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(80),
-                    image: DecorationImage(image: AssetImage("assets/default_profile.png"), fit: BoxFit.cover)
-                    // NetworkImage('https://coursemores.s3.amazonaws.com/default_profile.png'), fit: BoxFit.cover),
-                    ),
+            child: Container(
+              width: 70,
+              height: 70,
+              decoration: BoxDecoration(
+                border: Border.all(),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(
+                Icons.camera_alt_outlined,
+                size: imageSize,
               ),
             ),
           )
@@ -605,30 +598,18 @@ confirmButton() {
   return Expanded(
     child: FilledButton(
       onPressed: () {
-        if (userInfoController.editCheck.value == true ||
-            userInfoController.currentNickname.value == userInfoController.nickname.value) {
-          print(userInfoController.nickname);
-          print(userInfoController.age);
-          print(userInfoController.gender);
-          print(userInfoController.profileImage);
-          print(userInfoController.isDeleteImage.value);
-          post_profile_edit.postProfileEdit(
-            userInfoController.nickname.value,
-            userInfoController.age.value,
-            userInfoController.gender.value,
-            userInfoController.profileImage,
-            tokenController.accessToken.value,
-            userInfoController.isDeleteImage.value,
-          );
-          userInfoController.changeEditCheck(false);
-        } else {
-          print('빼애애애액!');
-          Fluttertoast.showToast(
-            msg: '닉네임 중복확인을 해 주세요',
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-          );
-        }
+        print(userInfoController.nickname);
+        print(userInfoController.age);
+        print(userInfoController.gender);
+        print(userInfoController.profileImage);
+        post_profile_edit.postProfileEdit(
+          userInfoController.nickname.value,
+          userInfoController.age.value,
+          userInfoController.gender.value,
+          userInfoController.profileImage,
+          tokenController.accessToken.value,
+          userInfoController.isDeleteImage.value,
+        );
       },
       child: Text('수정하기'),
     ),
@@ -672,4 +653,8 @@ Widget headerWidget(BuildContext context) {
       ],
     ),
   );
+}
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }

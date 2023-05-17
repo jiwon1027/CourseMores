@@ -7,7 +7,6 @@ import 'package:get/get.dart' as g;
 import 'dart:convert';
 import 'package:http_parser/http_parser.dart';
 import '../auth/auth_dio.dart';
-// import 'mypage.dart' as mypage;
 // import '../home_screen/home_screen.dart' as home;
 
 // void postSignUp(nickname, age, gender, image, aToken) async {
@@ -71,10 +70,8 @@ void postProfileEdit(nickname, age, gender, image, aToken, isDelete) async {
     if (response.statusCode == 200) {
       // g.Get.to(main.MyApp());
       print('수정!!!');
-      print(response);
-      await updateUserInfo();
       g.Get.back();
-      // g.Get.replace(main.MyApp());
+      g.Get.to(main.MyApp());
     }
   } catch (e) {
     // DioError 처리
@@ -87,25 +84,4 @@ void postProfileEdit(nickname, age, gender, image, aToken, isDelete) async {
       // DioError가 아닌 다른 예외 처리
     }
   }
-}
-
-// Future<void> updateUserInfo() async {
-//   final dio = await authDio();
-//   final response = await dio.get('profile/');
-//   print('userinfo update ! : $response');
-
-//   userInfoController.saveImageUrl(response.data['userInfo']['profileImage']);
-//   userInfoController
-//       .saveCurrentNickname('${response.data['userInfo']['nickname']}');
-//   print(userInfoController.imageUrl);
-// }
-
-Future<void> updateUserInfo() async {
-  final dio = await authDio();
-  final response = await dio.get('profile/');
-  print('userinfo update ! : $response');
-  print('editcheck?? ${userInfoController.editCheck.value}');
-  userInfoController.saveCurrentNickname('${response.data['userInfo']['nickname']}');
-  userInfoController.saveImageUrl(response.data['userInfo']['profileImage']);
-  print(userInfoController.imageUrl);
 }
