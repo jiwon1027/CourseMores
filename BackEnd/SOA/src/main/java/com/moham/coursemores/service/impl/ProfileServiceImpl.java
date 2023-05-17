@@ -53,7 +53,7 @@ public class ProfileServiceImpl implements ProfileService {
             imageUrl = fileUploadService.uploadImage(profileImage);
         }
         else if(userInfoUpdateReqDto.getIsDelete()){
-            imageUrl = "default";
+            imageUrl = "https://coursemores.s3.amazonaws.com/default_profile.png";
         }
 
         user.update(userInfoUpdateReqDto, imageUrl);

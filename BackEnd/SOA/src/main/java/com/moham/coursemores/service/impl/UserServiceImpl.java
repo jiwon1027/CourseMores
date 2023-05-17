@@ -62,7 +62,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(userId, CustomErrorCode.USER_NOT_FOUND));
 
-        String imageUrl = "default";
+        String imageUrl = "https://coursemores.s3.amazonaws.com/default_profile.png";
         // 선택한 이미지가 있다면 업로드
         if (profileImage != null)
             imageUrl = fileUploadService.uploadImage(profileImage);
