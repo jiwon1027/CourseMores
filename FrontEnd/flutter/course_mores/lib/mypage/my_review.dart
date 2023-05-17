@@ -21,48 +21,54 @@ class DetailTapCourseCommentsListSection extends StatelessWidget {
     return commentsList.isEmpty
         ? Center(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 60),
-              child: Column(
-                children: const [
-                  Text("☺", style: TextStyle(fontSize: 70)),
-                  SizedBox(height: 20),
-                  Text("아직 코멘트가 없어요."),
-                  SizedBox(height: 10),
-                  Text("첫 작성자가 되어보시는 건 어떨까요?"),
-                ],
-              ),
-            ),
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 60),
+                child: Column(
+                  children: const [
+                    Text("☺", style: TextStyle(fontSize: 70)),
+                    SizedBox(height: 20),
+                    Text("아직 코멘트가 없어요."),
+                    SizedBox(height: 10),
+                    Text("다른 사람의 코스에 댓글을 남겨보세요.")
+                  ],
+                )),
           )
-        : ListView.builder(
-            padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
-            itemCount: commentsList.length,
-            itemBuilder: (context, index) {
-              return Card(
-                elevation: 6,
-                margin: EdgeInsets.fromLTRB(4, 10, 4, 0),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
-                child: Padding(
-                  padding: const EdgeInsets.all(15),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              // Icon(Icons.account_circle),
-                              SizedBox(width: 5),
-                              InkWell(
+        : SingleChildScrollView(
+            child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+                children: List.generate(
+              commentsList.length,
+              (index) {
+                // ListView.builder(
+                //     // padding: EdgeInsets.fromLTRB(10, 10, 10, 20),
+                //     padding: EdgeInsets.all(8),
+                //     itemCount: commentsList.length,
+                //     itemBuilder: (context, index) {
+                return Card(
+                  // elevation: 6,
+                  margin: EdgeInsets.fromLTRB(10, 10, 10, 5),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  child: Container(
+                    decoration: const BoxDecoration(boxShadow: [
+                      BoxShadow(
+                          color: Color.fromARGB(255, 211, 211, 211),
+                          blurRadius: 10.0,
+                          spreadRadius: 1.0,
+                          offset: Offset(3, 3)),
+                    ], color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(10))),
+                    padding: EdgeInsets.all(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: InkWell(
                                 onTap: () async {
-                                  print(
-                                      'mypage 코스리스트 == ${myPageController.myReview}');
-                                  int courseId = (myPageController
-                                      .myReview[index]['courseId'] as int);
+                                  print('mypage 코스리스트 == ${myPageController.myReview}');
+                                  int courseId = (myPageController.myReview[index]['courseId'] as int);
 
-                                  await searchController.changeNowCourseId(
-                                      courseId: courseId);
+                                  await searchController.changeNowCourseId(courseId: courseId);
 
                                   await detailController.getCourseInfo('코스 소개');
                                   await detailController.getIsLikeCourse();
@@ -73,60 +79,101 @@ class DetailTapCourseCommentsListSection extends StatelessWidget {
 
                                   // Get.to(() => detail.CourseDetail(index: index));
                                 },
-                                child: Text(
-                                  commentsList[index]['courseTitle'].length >=
-                                          13
-                                      ? '${commentsList[index]['courseTitle'].substring(0, 13)}...'
-                                      : commentsList[index]['courseTitle'],
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    decoration: TextDecoration.underline,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Expanded(
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              commentsList[index]['courseTitle'],
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                decoration: TextDecoration.underline,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 1,
+                                            ),
+                                          ),
+                                          Text(' 코스에 작성한 리뷰  ',
+                                              textAlign: TextAlign.left, style: TextStyle(fontSize: 12)),
+                                        ],
+                                      ),
+                                    ),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Icon(Icons.favorite, size: 24, color: Colors.pink[300]),
+                                        SizedBox(width: 5),
+                                        Text('${commentsList[index]['likeCount']}', style: TextStyle(fontSize: 12)),
+                                      ],
+                                    ),
+                                  ],
                                 ),
                               ),
-                              Text(' 코스에 작성한 리뷰')
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              // Text('받은 좋아요 '),
-                              Icon(Icons.favorite_outline),
-                              SizedBox(width: 5),
-                              Text('${commentsList[index]['likeCount']}'),
-                            ],
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 5),
-                      Row(
-                        children: [
-                          Icon(Icons.calendar_month, size: 16),
-                          SizedBox(width: 5),
-                          // Text(
-                          //     '${DateFormat('MM-dd').format(DateTime.parse(commentsList[index]['date']))}'),
-                          Text(DateFormat('MM-dd').format(DateTime.parse(
-                              commentsList[index]['createTime']))),
-                          SizedBox(width: 10),
-                          Icon(Icons.people, size: 16),
-                          SizedBox(width: 5),
-                          Text('${commentsList[index]['people']}'),
-                        ],
-                      ),
-                      SizedBox(height: 10),
-                      SizedBox(height: 10),
-                      Text('${commentsList[index]['content']}'),
-                      SizedBox(height: 10),
-                      if (commentsList[index]['imageList'].length > 0)
-                        ImageGridView(
-                            commentImageList: commentsList[index]['imageList']),
-                    ],
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 5),
+                        Row(
+                          children: [
+                            Icon(Icons.calendar_month, size: 16),
+                            SizedBox(width: 5),
+                            // Text(
+                            //     '${DateFormat('MM-dd').format(DateTime.parse(commentsList[index]['date']))}'),
+                            Text(DateFormat('MM.dd').format(DateTime.parse(commentsList[index]['createTime'])),
+                                style: TextStyle(fontSize: 12)),
+                            SizedBox(width: 10),
+                            Icon(Icons.people, size: 16),
+                            SizedBox(width: 5),
+                            Text('${commentsList[index]['people']}', style: TextStyle(fontSize: 12)),
+                          ],
+                        ),
+                        // SizedBox(height: 10),
+                        // SizedBox(height: 10),
+                        if (commentsList[index]['imageList'].length > 0)
+                          ImageGridView(commentImageList: commentsList[index]['imageList']),
+                        SizedBox(height: 10),
+                        Text('${commentsList[index]['content']}', style: TextStyle(fontSize: 12, height: 1.5)),
+                        // Row(
+                        //   children: [
+                        //     // Text('받은 좋아요 '),
+                        //     Icon(Icons.favorite_outline),
+                        //     SizedBox(width: 5),
+                        //     Text('${commentsList[index]['likeCount']}'),
+                        //   ],
+                        // ),
+                        // // ],
+                        // // ),
+                        // SizedBox(height: 5),
+                        // Row(
+                        //   children: [
+                        //     Icon(Icons.calendar_month, size: 16),
+                        //     SizedBox(width: 5),
+                        //     // Text(
+                        //     //     '${DateFormat('MM-dd').format(DateTime.parse(commentsList[index]['date']))}'),
+                        //     Text(DateFormat('MM-dd').format(DateTime.parse(commentsList[index]['createTime']))),
+                        //     SizedBox(width: 10),
+                        //     Icon(Icons.people, size: 16),
+                        //     SizedBox(width: 5),
+                        //     Text('${commentsList[index]['people']}'),
+                        //   ],
+                        // ),
+                        // SizedBox(height: 10),
+                        SizedBox(height: 10),
+                        // Text(
+                        //   '${commentsList[index]['content']}',
+                        //   softWrap: true,
+                        // ),
+                      ],
+                    ),
                   ),
-                ),
-              );
-            },
-          );
+                );
+              },
+            )),
+          ));
   }
 }
 
@@ -151,8 +198,7 @@ class ImageGridView extends StatelessWidget {
         if (imageIndex == 2 && commentImageList.length > 3) {
           return Stack(
             children: [
-              ImageInkWell(
-                  commentImageList: commentImageList, imageIndex: imageIndex),
+              ImageInkWell(commentImageList: commentImageList, imageIndex: imageIndex),
               Positioned(
                 right: 9,
                 bottom: 9,
@@ -181,8 +227,7 @@ class ImageGridView extends StatelessWidget {
             ],
           );
         } else {
-          return ImageInkWell(
-              commentImageList: commentImageList, imageIndex: imageIndex);
+          return ImageInkWell(commentImageList: commentImageList, imageIndex: imageIndex);
         }
       },
     );
@@ -310,9 +355,7 @@ class _CommentGalleryState extends State<CommentGallery> {
                   margin: EdgeInsets.symmetric(horizontal: 2.0),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: _currentIndex == index
-                        ? Colors.grey.shade800
-                        : Colors.grey.shade600,
+                    color: _currentIndex == index ? Colors.grey.shade800 : Colors.grey.shade600,
                   ),
                 );
               }).toList(),

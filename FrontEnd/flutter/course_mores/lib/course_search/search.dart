@@ -37,9 +37,7 @@ class Search extends StatelessWidget {
         child: Scaffold(
           backgroundColor: Colors.transparent,
           appBar: searchPageHeader(),
-          body: searchController.courseList.isEmpty
-              ? displayNoSearchResultScreen()
-              : SearchResult(),
+          body: searchController.courseList.isEmpty ? displayNoSearchResultScreen() : SearchResult(),
         ),
       ),
     );
@@ -62,17 +60,14 @@ searchPageHeader() {
               controller: searchTextEditingController,
               onTap: () => Get.to(SearchScreen()),
               onChanged: (value) {
-                searchController.changeWord(
-                    word: searchTextEditingController.text);
+                searchController.changeWord(word: searchTextEditingController.text);
               },
               decoration: InputDecoration(
                 fillColor: Colors.white,
                 hintText: "코스를 검색해보세요",
                 hintStyle: TextStyle(color: Colors.grey),
-                enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey)),
-                focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.black)),
+                enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+                focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
                 filled: true,
                 prefixIcon: IconButton(
                     icon: Icon(Icons.tune),
@@ -143,9 +138,7 @@ isVisitedCheckBox() {
                       },
                       child: Padding(
                         padding: EdgeInsets.fromLTRB(0, 8, 8, 8),
-                        child: Text('방문여부',
-                            style:
-                                TextStyle(color: Colors.black, fontSize: 14)),
+                        child: Text('방문여부', style: TextStyle(color: Colors.black, fontSize: 14)),
                       ),
                     ),
                   ]),
@@ -169,18 +162,13 @@ sortButtonBar() {
           },
           style: ButtonStyle(
             minimumSize: MaterialStateProperty.all<Size>(Size(30, 35)),
-            padding: MaterialStateProperty.all(
-                EdgeInsetsDirectional.symmetric(horizontal: 0)),
+            padding: MaterialStateProperty.all(EdgeInsetsDirectional.symmetric(horizontal: 0)),
             elevation: MaterialStateProperty.all<double>(0),
-            backgroundColor:
-                MaterialStateProperty.all<Color>(Colors.transparent),
-            foregroundColor: MaterialStateProperty.all<Color>(
-                searchController.isLatestSelected.value
-                    ? Colors.blue
-                    : Colors.grey),
+            backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
+            foregroundColor:
+                MaterialStateProperty.all<Color>(searchController.isLatestSelected.value ? Colors.blue : Colors.grey),
           ),
-          child: Text('최신순',
-              style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14)),
+          child: Text('최신순', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14)),
         ),
         ElevatedButton(
           onPressed: () {
@@ -191,18 +179,13 @@ sortButtonBar() {
           },
           style: ButtonStyle(
             minimumSize: MaterialStateProperty.all<Size>(Size(30, 35)),
-            padding: MaterialStateProperty.all(
-                EdgeInsetsDirectional.symmetric(horizontal: 0)),
+            padding: MaterialStateProperty.all(EdgeInsetsDirectional.symmetric(horizontal: 0)),
             elevation: MaterialStateProperty.all<double>(0),
-            backgroundColor:
-                MaterialStateProperty.all<Color>(Colors.transparent),
-            foregroundColor: MaterialStateProperty.all<Color>(
-                searchController.isPopularSelected.value
-                    ? Colors.blue
-                    : Colors.grey),
+            backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
+            foregroundColor:
+                MaterialStateProperty.all<Color>(searchController.isPopularSelected.value ? Colors.blue : Colors.grey),
           ),
-          child: Text('인기순',
-              style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14)),
+          child: Text('인기순', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14)),
         ),
       ],
     ),
@@ -230,8 +213,7 @@ class SearchResult extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     scrollController.addListener(() {
-      if (scrollController.position.pixels ==
-          scrollController.position.maxScrollExtent) {
+      if (scrollController.position.pixels == scrollController.position.maxScrollExtent) {
         // 스크롤이 리스트의 끝까지 도달하면 다음 검색 결과 호출
         searchController.getNextSearchResults();
       }
@@ -251,28 +233,19 @@ class SearchResult extends StatelessWidget {
                     return InkWell(
                       onTap: () async {
                         await searchController.changeNowCourseId(
-                            courseId: searchController.courseList[index]
-                                ['courseId']);
+                            courseId: searchController.courseList[index]['courseId']);
 
                         await detailController.getCourseInfo('코스 소개');
 
                         Get.to(() => detail.Detail());
                       },
                       child: Container(
-                        margin: EdgeInsets.only(
-                            left: 10, right: 10, top: 10, bottom: 5),
+                        margin: EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 5),
                         padding: EdgeInsets.all(10),
-                        decoration: const BoxDecoration(
-                            boxShadow: [
-                              BoxShadow(
-                                  color: Color.fromARGB(33, 0, 0, 0),
-                                  blurRadius: 4,
-                                  spreadRadius: 3,
-                                  offset: Offset(0, 3)),
-                            ],
-                            color: Colors.white,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(10))),
+                        decoration: const BoxDecoration(boxShadow: [
+                          BoxShadow(
+                              color: Color.fromARGB(33, 0, 0, 0), blurRadius: 4, spreadRadius: 3, offset: Offset(0, 3)),
+                        ], color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(10))),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -282,9 +255,7 @@ class SearchResult extends StatelessWidget {
                                     child: Row(children: [
                                       ThumbnailImage(index: index),
                                       SizedBox(width: 10),
-                                      Expanded(
-                                          child:
-                                              CourseSearchList(index: index)),
+                                      Expanded(child: CourseSearchList(index: index)),
                                     ]))),
                           ],
                         ),
@@ -293,8 +264,7 @@ class SearchResult extends StatelessWidget {
                   },
                 ),
               ),
-              if (searchController.isCourseLoading.value)
-                CircularProgressIndicator(), // 로딩 중인 경우 표시할 위젯
+              if (searchController.isCourseLoading.value) CircularProgressIndicator(), // 로딩 중인 경우 표시할 위젯
             ],
           ),
         ));
@@ -350,8 +320,7 @@ class CourseSearchList extends StatelessWidget {
                       Expanded(
                         child: Text(
                           searchController.courseList[index]['title'],
-                          style: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.bold),
+                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
                           softWrap: true,
@@ -368,12 +337,9 @@ class CourseSearchList extends StatelessWidget {
                             children: const [
                               Padding(
                                 padding: EdgeInsets.all(4.0),
-                                child: Icon(Icons.check,
-                                    size: 12, color: Colors.white),
+                                child: Icon(Icons.check, size: 12, color: Colors.white),
                               ),
-                              Text("방문",
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 10)),
+                              Text("방문", style: TextStyle(color: Colors.white, fontSize: 10)),
                               SizedBox(width: 7),
                             ],
                           ),
@@ -382,10 +348,9 @@ class CourseSearchList extends StatelessWidget {
                   ),
                 ),
                 if (searchController.courseList[index]["interest"])
-                  Icon(Icons.bookmark, size: 24, color: Colors.purple),
+                  Icon(Icons.bookmark, size: 24, color: Colors.green[800]),
                 if (!searchController.courseList[index]["interest"])
-                  Icon(Icons.bookmark_outline_rounded,
-                      size: 24, color: Colors.purple),
+                  Icon(Icons.bookmark_outline_rounded, size: 24, color: Colors.green[800]),
               ],
             ),
             SizedBox(height: 2),
@@ -440,13 +405,11 @@ class CourseSearchList extends StatelessWidget {
                     Row(
                       children: [
                         if (searchController.courseList[index]["like"])
-                          Icon(Icons.favorite, size: 14),
+                          Icon(Icons.favorite, size: 14, color: Colors.pink[300]),
                         if (!searchController.courseList[index]["like"])
-                          Icon(Icons.favorite_border_outlined, size: 14),
+                          Icon(Icons.favorite_border_outlined, size: 14, color: Colors.pink[300]),
                         SizedBox(width: 3),
-                        Text(
-                            searchController.courseList[index]["likeCount"]
-                                .toString(),
+                        Text(searchController.courseList[index]["likeCount"].toString(),
                             style: TextStyle(fontSize: 12)),
                       ],
                     ),
@@ -455,9 +418,7 @@ class CourseSearchList extends StatelessWidget {
                       children: [
                         Icon(Icons.comment, size: 14),
                         SizedBox(width: 3),
-                        Text(
-                            searchController.courseList[index]["commentCount"]
-                                .toString(),
+                        Text(searchController.courseList[index]["commentCount"].toString(),
                             style: TextStyle(fontSize: 12)),
                       ],
                     ),
