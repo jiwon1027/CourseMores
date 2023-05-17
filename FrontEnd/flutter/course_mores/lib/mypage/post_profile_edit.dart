@@ -83,8 +83,8 @@ void postProfileEdit(nickname, age, gender, image, aToken, isDelete) async {
       // g.Get.to(main.MyApp());
       print('수정!!!');
       print(response);
+      await updateUserInfo();
       g.Get.back();
-      updateUserInfo();
       // g.Get.replace(main.MyApp());
     }
   } catch (e) {
@@ -100,13 +100,24 @@ void postProfileEdit(nickname, age, gender, image, aToken, isDelete) async {
   }
 }
 
+// Future<void> updateUserInfo() async {
+//   final dio = await authDio();
+//   final response = await dio.get('profile/');
+//   print('userinfo update ! : $response');
+
+//   userInfoController.saveImageUrl(response.data['userInfo']['profileImage']);
+//   userInfoController
+//       .saveCurrentNickname('${response.data['userInfo']['nickname']}');
+//   print(userInfoController.imageUrl);
+// }
+
 Future<void> updateUserInfo() async {
   final dio = await authDio();
   final response = await dio.get('profile/');
   print('userinfo update ! : $response');
-
-  userInfoController.saveImageUrl(response.data['userInfo']['profileImage']);
+  print('editcheck?? ${userInfoController.editCheck.value}');
   userInfoController
       .saveCurrentNickname('${response.data['userInfo']['nickname']}');
+  userInfoController.saveImageUrl(response.data['userInfo']['profileImage']);
   print(userInfoController.imageUrl);
 }

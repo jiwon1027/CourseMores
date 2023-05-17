@@ -72,11 +72,16 @@ class DetailTapCourseCommentsListSection extends StatelessWidget {
                                   // Get.to(() => detail.CourseDetail(index: index));
                                 },
                                 child: Text(
-                                  commentsList[index]['courseTitle'],
+                                  commentsList[index]['courseTitle'].length >=
+                                          13
+                                      ? '${commentsList[index]['courseTitle'].substring(0, 13)}...'
+                                      : commentsList[index]['courseTitle'],
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     decoration: TextDecoration.underline,
                                   ),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
                                 ),
                               ),
                               Text(' 코스에 작성한 리뷰')
@@ -111,7 +116,7 @@ class DetailTapCourseCommentsListSection extends StatelessWidget {
                       SizedBox(height: 10),
                       Text('${commentsList[index]['content']}'),
                       SizedBox(height: 10),
-                      if (commentsList[index]['imageList'] != null)
+                      if (commentsList[index]['imageList'].length > 0)
                         ImageGridView(
                             commentImageList: commentsList[index]['imageList']),
                     ],
