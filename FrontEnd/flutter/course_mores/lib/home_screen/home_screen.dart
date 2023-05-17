@@ -193,102 +193,151 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
         body: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: const [
-                  Color.fromARGB(255, 0, 90, 129),
-                  Color.fromARGB(232, 255, 218, 218),
-                ],
-                stops: const [0.0, 0.3],
-              ),
-              // image: DecorationImage(
-              // image: AssetImage('assets/background-pink.jpg'),
-              // image: AssetImage('assets/background.gif'),
-              // image: AssetImage('assets/blue_background.gif'),
-              // opacity: 1,
-              // fit: BoxFit.cover),
-            ),
-            child: Obx(
-              () => SingleChildScrollView(
-                child: Padding(
-                  padding: EdgeInsets.fromLTRB(20, 40, 20, 20),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      SizedBox(
-                        child: FutureBuilder<Map<String, dynamic>>(
-                          future: _getWeather(),
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              final weatherData = snapshot.data!;
-                              final temp =
-                                  weatherData['main']['temp'].toString();
-                              final weather = weatherData['weather'][0]
-                                      ['description']
-                                  .toString();
-                              return Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    '위치: ${_currentPosition?.latitude}, ${_currentPosition?.longitude}',
-                                    style: TextStyle(fontSize: 24),
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('assets/background-pink.jpg'),
+          opacity: 0.5,
+          fit: BoxFit.cover,
+        ),
+      ),
+      // decoration: BoxDecoration(
+      //   gradient: LinearGradient(
+      //     begin: Alignment.topCenter,
+      //     end: Alignment.bottomCenter,
+      //     colors: const [
+      //       Color.fromARGB(100, 95, 207, 255), // 보라색
+      //       Color.fromARGB(150, 255, 216, 216), // 분홍색
+      //     ],
+      //     stops: const [0.0, 0.4],
+      //   ),
+      //   // 이외의 다른 설정
+      // ),
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(20, 60, 20, 20),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              SizedBox(
+                width: double.infinity,
+                height: 200.0,
+                // color: Colors.white,
+                // decoration: BoxDecoration(
+                //   image: DecorationImage(
+                //     image: AssetImage('assets/blue_background.gif'),
+                //     fit: BoxFit.cover,
+                //   ),
+                // ),
+
+                child: Center(
+                  child: Column(children: [
+                    // Text('날씨~~'),
+                    SizedBox(
+                      child: FutureBuilder<Map<String, dynamic>>(
+                        future: _getWeather(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            final weatherData = snapshot.data!;
+                            final temp = weatherData['main']['temp'].toString();
+                            final weather = weatherData['weather'][0]
+                                    ['description']
+                                .toString();
+                            final iconCode =
+                                weatherData['weather'][0]['icon'].toString();
+                            return Row(
+                              children: [
+                                // SizedBox(width: 10),
+                                Expanded(
+                                  flex: 5,
+                                  child: Container(
+                                    padding: EdgeInsets.all(15),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      color: Colors.white.withOpacity(0.5),
+                                    ),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          '${temp.split('.')[0]} °C',
+                                          style: TextStyle(
+                                              fontSize: 35,
+                                              color: Colors.black),
+                                        ),
+                                        SizedBox(height: 10),
+                                        Text(
+                                          weather,
+                                          style: TextStyle(
+                                              fontSize: 18,
+                                              color: Colors.black),
+                                        ),
+                                        SizedBox(height: 16),
+                                        FutureBuilder<String>(
+                                          future: _getAddress(
+                                              _currentPosition?.latitude ?? 0,
+                                              _currentPosition?.longitude ?? 0),
+                                          builder: (context, snapshot) {
+                                            if (snapshot.connectionState ==
+                                                ConnectionState.waiting) {
+                                              return Text('검색중...');
+                                            } else if (snapshot.hasData) {
+                                              final address = snapshot.data!;
+                                              return Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Icon(Icons.location_on,
+                                                      color: Colors.black),
+                                                  SizedBox(width: 4),
+                                                  Text(
+                                                    address.length > 10
+                                                        ? '${address.substring(0, 10)}...'
+                                                        : address,
+                                                    style: TextStyle(
+                                                        fontSize: 18,
+                                                        color: Colors.black),
+                                                  ),
+                                                ],
+                                              );
+                                            } else if (snapshot.hasError) {
+                                              return Text(
+                                                  'Error: ${snapshot.error}');
+                                            } else {
+                                              return Text('');
+                                            }
+                                          },
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                  SizedBox(height: 16),
-                                  Text(
-                                    '기온: $temp °C',
-                                    style: TextStyle(fontSize: 24),
-                                  ),
-                                  SizedBox(height: 16),
-                                  Text(
-                                    '날씨: $weather',
-                                    style: TextStyle(fontSize: 24),
-                                  ),
-                                  FutureBuilder<String>(
-                                    future: _getAddress(
-                                        _currentPosition?.latitude ?? 0,
-                                        _currentPosition?.longitude ?? 0),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.connectionState ==
-                                          ConnectionState.waiting) {
-                                        return Text('검색중...');
-                                      } else if (snapshot.hasData) {
-                                        final address = snapshot.data!;
-                                        return Text(
-                                          '장소: $address',
-                                          style: TextStyle(fontSize: 24),
-                                        );
-                                      } else if (snapshot.hasError) {
-                                        return Text('Error: ${snapshot.error}');
-                                      } else {
-                                        return Text('');
-                                      }
-                                    },
-                                  ),
-                                ],
-                              );
-                            } else if (snapshot.hasError) {
-                              return Text('Error: ${snapshot.error}');
-                            } else {
-                              return CircularProgressIndicator();
-                            }
-                          },
-                        ),
-                      )
-                    ]),
-                  ),
+                                ),
+                                Expanded(
+                                    flex: 5, child: _getWeatherIcon(iconCode)),
+                              ],
+                            );
+                          } else if (snapshot.hasError) {
+                            return Text('Error: ${snapshot.error}');
+                          } else {
+                            return CircularProgressIndicator();
+                          }
+                        },
+                      ),
+                    )
+                  ]),
                 ),
-                buttonBar1(),
-                ButtonBar2(),
-                popularCourse(),
-                themeList(),
-                reviews(),
-              ],
-            ),
+              ),
+              buttonBar1(),
+              ButtonBar2(),
+              popularCourse(),
+              themeList(),
+              myNearCourse(),
+            ],
           ),
-        ));
+        ),
+      ),
+    ));
   }
 }
 
@@ -422,7 +471,7 @@ boxDeco() {
         color: Colors.grey.withOpacity(0.4),
         spreadRadius: 2,
         blurRadius: 3,
-        offset: Offset(0, 2),
+        offset: const Offset(0, 2), // changes position of shadow
       ),
     ],
   );
@@ -467,33 +516,62 @@ myNearCourse() {
 }
 
 themeList() {
-  late var themeList = searchController.homeThemeList;
+  // if (searchController.courseList.isEmpty) {
+  //   searchController.getMainThemeList();
+  //   print('요청!!');
+  // }
+  // var themes = [];
+  var themeList = searchController.themeList;
+  // for (var theme in searchController.themeList) {
+  //   themes.add(theme["name"]);
+  // }
 
   return Padding(
     padding: EdgeInsets.fromLTRB(0, 15.0, 0, 15.0),
     child: Container(
-      clipBehavior: Clip.hardEdge,
-      width: double.maxFinite,
       decoration: boxDeco(),
       child: Padding(
-          padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0),
+          padding: EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0),
           child: Column(
             children: [
-              const Text(
-                '이런 테마는 어때요? 😊',
-                style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.bold),
+              Padding(
+                padding: const EdgeInsets.only(top: 15.0, bottom: 15.0),
+                child: Text(
+                  '이런 테마는 어때요? 😊',
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold),
+                ),
               ),
-              SizedBox(
-                height: 200.0,
-                child: ListView.builder(
-                    padding: const EdgeInsets.all(8),
-                    itemCount: themes.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return Container(
-                        height: 30.0,
+              Padding(
+                padding: const EdgeInsets.only(bottom: 16.0),
+                child: Wrap(
+                  spacing: 8.0,
+                  runSpacing: 8.0,
+                  alignment: WrapAlignment.center,
+                  crossAxisAlignment: WrapCrossAlignment.start,
+                  textDirection: TextDirection.ltr,
+                  runAlignment: WrapAlignment.start,
+                  verticalDirection: VerticalDirection.down,
+                  clipBehavior: Clip.none,
+                  children: themeList.map((theme) {
+                    return InkWell(
+                      onTap: () {
+                        pageController.changePageNum(2);
+                        // searchController.savedSelectedThemeList =
+                        //     RxList<dynamic>([theme['themeId'] as int]);
+                        search.Search();
+                        searchController.queryParameters['themeIds'] = [
+                          theme['themeId']
+                        ];
+                        searchController.isSearchResults.value = true;
+                        searchController.changePage(page: 0);
+                        searchController.searchCourse();
+                        search.Search();
+                      },
+                      child: Container(
+                        margin: EdgeInsets.all(2.0),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(20),
@@ -502,18 +580,54 @@ themeList() {
                               color: Colors.grey.withOpacity(0.5),
                               spreadRadius: 2,
                               blurRadius: 3,
-                              offset: const Offset(
-                                  0, 2), // changes position of shadow
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12.0, vertical: 8.0),
+                          child: Text(
+                            theme['name'],
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 12.0,
                             ),
                           ),
                         ),
-                      );
-                    }).toList(),
-                  ),
-                )
-              ],
-            )),
-      ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              )
+              // SearchFilterTheme(),
+              // SizedBox(
+              //   height: 200.0,
+              //   child: ListView.builder(
+              //       padding: const EdgeInsets.all(8),
+              //       itemCount: themes.length,
+              //       itemBuilder: (BuildContext context, int index) {
+              //         return Container(
+              //           height: 30.0,
+              //           decoration: BoxDecoration(
+              //             color: Colors.white,
+              //             borderRadius: BorderRadius.circular(20),
+              //             boxShadow: [
+              //               BoxShadow(
+              //                 color: Colors.grey.withOpacity(0.5),
+              //                 spreadRadius: 2,
+              //                 blurRadius: 3,
+              //                 offset: const Offset(
+              //                     0, 2), // changes position of shadow
+              //               ),
+              //             ],
+              //           ),
+              //           child: Center(child: Text('${themes[index]}')),
+              //         );
+              //       }),
+              // )
+            ],
+          )),
     ),
   );
 }
@@ -536,25 +650,20 @@ searchButtonBar() {
       },
       decoration: InputDecoration(
         hintText: "코스, 장소, 해시태그 등을 검색해보세요",
-        hintStyle: TextStyle(
-            color: Color.fromARGB(152, 144, 59, 159), fontSize: 12, height: 2),
+        hintStyle: TextStyle(color: Colors.grey, fontSize: 14),
         enabledBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: Colors.transparent)),
         focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: Colors.transparent)),
-        prefixIcon: IconButton(
-            icon: Icon(Icons.tune),
-            color: Colors.purple,
-            iconSize: 25,
-            onPressed: () {
-              Get.to(() => SearchFilter());
-            }),
+        // filled: true,
+        // prefixIcon: FilterButton(context: context),
+        prefixIcon: filterButton(),
         suffixIcon: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             IconButton(
               icon: Icon(Icons.clear),
-              color: Colors.purple,
+              color: Colors.grey,
               visualDensity: VisualDensity.comfortable,
               onPressed: () {
                 searchTextEditingController.clear();
@@ -564,7 +673,7 @@ searchButtonBar() {
             ),
             IconButton(
               icon: Icon(Icons.search),
-              color: Colors.purple,
+              color: Colors.grey,
               iconSize: 25,
               padding: EdgeInsets.symmetric(horizontal: 0),
               onPressed: () {
@@ -582,4 +691,14 @@ searchButtonBar() {
       onFieldSubmitted: controlSearching,
     ),
   );
+}
+
+filterButton() {
+  return IconButton(
+      icon: Icon(Icons.tune),
+      color: Colors.black,
+      iconSize: 25,
+      onPressed: () {
+        Get.to(() => SearchFilter());
+      });
 }

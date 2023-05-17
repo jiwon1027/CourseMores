@@ -15,8 +15,150 @@ final List<String> imgList = [
   'https://images.unsplash.com/photo-1519985176271-adb1088fa94c?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=a0c8d632e977f94e5d312d9893258f59&auto=format&fit=crop&w=1355&q=80'
 ];
 
-class CourseCarousel extends StatefulWidget {
-  const CourseCarousel({Key? key}) : super(key: key);
+// final hotCourse = homeController.hotCourse;
+
+// final List<Widget> imageSliders = hotCourse
+//     .map((item) => Container(
+//           margin: const EdgeInsets.all(5.0),
+//           child: ClipRRect(
+//               borderRadius: const BorderRadius.all(Radius.circular(5.0)),
+//               child: Stack(
+//                 children: <Widget>[
+//                   Image.network(item['image'].toString(),
+//                       // Image.network(
+//                       //     'https://images.unsplash.com/photo-1520342868574-5fa3804e551c?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=6ff92caffcdd63681a35134a6770ed3b&auto=format&fit=crop&w=1951&q=80',
+//                       fit: BoxFit.cover,
+//                       width: 1000.0),
+//                   Positioned(
+//                     bottom: 0.0,
+//                     left: 0.0,
+//                     right: 0.0,
+//                     height: null,
+//                     child: Container(
+//                       decoration: BoxDecoration(
+//                         color: Colors.black,
+//                         gradient: LinearGradient(
+//                           colors: const [
+//                             Color.fromARGB(200, 0, 0, 0),
+//                             Color.fromARGB(0, 0, 0, 0)
+//                           ],
+//                           begin: Alignment.bottomCenter,
+//                           end: Alignment.topCenter,
+//                         ),
+//                       ),
+//                       padding: const EdgeInsets.symmetric(
+//                           vertical: 10.0, horizontal: 10.0),
+//                       child: Column(
+//                         crossAxisAlignment: CrossAxisAlignment.start,
+//                         children: [
+//                           Text(
+//                             '${item['title']}',
+//                             style: const TextStyle(
+//                               color: Colors.white,
+//                               fontSize: 20.0,
+//                               fontWeight: FontWeight.bold,
+//                             ),
+//                           ),
+//                           Text('${item['sido']} ${item['gugun']}',
+//                               style: TextStyle(
+//                                 color: Colors.white,
+//                                 fontSize: 10.0,
+//                               )),
+//                           Row(
+//                             mainAxisAlignment: MainAxisAlignment.start,
+//                             children: [
+//                               Text('content',
+//                                   style: TextStyle(
+//                                     color: Colors.white,
+//                                     fontSize: 14.0,
+//                                   ))
+//                             ],
+//                           )
+//                         ],
+//                       ),
+//                     ),
+//                   ),
+//                 ],
+//               )),
+//         ))
+//     .toList();
+
+// class CoourseCarousel extends StatelessWidget {
+//   // const CoourseCarousel({super.key});
+//   const CoourseCarousel({Key? key}) : super(key: key);
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       backgroundColor: Colors.white,
+//       body: Padding(
+//         padding: const EdgeInsets.fromLTRB(0, 15.0, 0, 0),
+//         child: Column(
+//           children: [
+//             const Padding(
+//               padding: EdgeInsets.fromLTRB(0, 0, 0, 15.0),
+//               child: Text(
+//                 '최근 인기 코스 🔥',
+//                 style: TextStyle(
+//                     color: Colors.black,
+//                     fontSize: 20.0,
+//                     fontWeight: FontWeight.bold),
+//               ),
+//             ),
+//             // Text('${homeController.hotCourse[0]['title']}'),
+//             CarouselSlider(
+//               options: CarouselOptions(
+//                 autoPlay: true,
+//                 // aspectRatio: 2.0,
+//                 enlargeCenterPage: false,
+//               ),
+//               items: imageSliders,
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+// class ReviewCarousel extends StatelessWidget {
+//   const ReviewCarousel({super.key});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       backgroundColor: Colors.white,
+//       body: Padding(
+//         padding: const EdgeInsets.fromLTRB(0, 15.0, 0, 0),
+//         child: Column(
+//           children: [
+//             const Padding(
+//               padding: EdgeInsets.fromLTRB(0, 0, 0, 15.0),
+//               child: Text(
+//                 '지금 내 근처의 코스 👀',
+//                 style: TextStyle(
+//                     color: Colors.black,
+//                     fontSize: 20.0,
+//                     fontWeight: FontWeight.bold),
+//               ),
+//             ),
+//             CarouselSlider(
+//               options: CarouselOptions(
+//                 autoPlay: true,
+//                 // aspectRatio: 2.0,
+//                 enlargeCenterPage: false,
+//               ),
+//               items: imageSliders,
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+class CoourseCarousel extends StatefulWidget {
+  const CoourseCarousel({Key? key}) : super(key: key);
 
   @override
   State<CourseCarousel> createState() => _CourseCarouselState();
@@ -36,13 +178,13 @@ class _CourseCarouselState extends State<CourseCarousel> {
     });
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: Colors.white,
       body: Padding(
-        padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
+        padding: const EdgeInsets.fromLTRB(0, 15.0, 0, 0),
         child: Column(
           children: [
-            Padding(
-              padding: EdgeInsets.fromLTRB(0, 0, 0, 15),
+            const Padding(
+              padding: EdgeInsets.fromLTRB(0, 0, 0, 15.0),
               child: Text(
                 '최근 인기 코스 🔥',
                 style: TextStyle(
@@ -107,10 +249,8 @@ class _CourseCarouselState extends State<CourseCarousel> {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                item['title'],
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: TextStyle(
+                                                '${item['title'].length > 15 ? item['title'].substring(0, 15) + '...' : item['title']}',
+                                                style: const TextStyle(
                                                   color: Colors.white,
                                                   fontSize: 16,
                                                   fontWeight: FontWeight.bold,
@@ -124,16 +264,18 @@ class _CourseCarouselState extends State<CourseCarousel> {
                                                         196, 255, 255, 255),
                                                     fontSize: 10,
                                                   )),
-                                              SizedBox(height: 10),
-                                              if (item['content'] != "")
-                                                Text(item['content'],
-                                                    maxLines: 1,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 12,
-                                                    )),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                      '${item['content'].length > 15 ? item['content'].substring(0, 15) + '...' : item['content']}',
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 14.0,
+                                                      ))
+                                                ],
+                                              )
                                             ],
                                           ),
                                         ),
@@ -257,10 +399,8 @@ class _NearCarouselState extends State<NearCarousel> {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                item['title'],
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: TextStyle(
+                                                '${item['title'].length > 15 ? item['title'].substring(0, 15) + '...' : item['title']}',
+                                                style: const TextStyle(
                                                   color: Colors.white,
                                                   fontSize: 16,
                                                   fontWeight: FontWeight.bold,

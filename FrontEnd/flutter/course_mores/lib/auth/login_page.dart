@@ -13,13 +13,92 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 final tokenController = Get.put(TokenStorage());
 final userInfoController = Get.put(UserInfo());
-// final firstLoginController = Get.put(LoginCheck());
+final firstLoginController = Get.put(LoginCheck());
+
+void postLogin(accessToken) async {
+  dynamic bodyData = json.encode({'accessToken': accessToken});
+
+  final response = await dio.post('auth/kakao/login', data: bodyData);
+
+  if (response.statusCode == 200) {
+    if (response.data['agree'] == false) {
+      Get.dialog(
+        AlertDialog(
+          title: Text('Error'),
+          content: Text('이메일 수집동의항목에 체크해주세요'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Get.back(); // close the dialog
+              },
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    } else {
+      await tokenController.saveToken(
+        response.data['accessToken'],
+      );
+      if (response.data['userInfo'] == null) {
+        Get.to(signup.SignUp());
+      } else {
+        loginController.changeLoginStatus(true);
+        userInfoController.saveNickname(response.data['userInfo']['nickname']);
+        userInfoController.saveAge(response.data['userInfo']['age']);
+        userInfoController.saveGender(response.data['userInfo']['gender']);
+        userInfoController
+            .saveImageUrl(response.data['userInfo']['profileImage']);
+        firstLoginController.changeFirstLogin(false);
+        print(loginController.isLoggedIn);
+        print(pageController.pageNum());
+      }
+      Get.back();
+    }
+  }
+}
+
+void signInWithGoogle() async {
+  final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+  final dio = await authDio();
+  if (googleUser != null) {
+    // print('name = ${googleUser.displayName}');
+    // print('id = ${googleUser.id}');
+
+    // dynamic bodyData = {'email': googleUser.email};
+    dynamic bodyData = json.encode({'email': googleUser.email});
+
+    final response = await dio.post('auth/google/login', data: bodyData);
+
+    print(response);
+
+    if (response.statusCode == 200) {
+      // 추후에 issignup으로 교체
+      tokenController.saveToken(
+        response.data['token']['accessToken'],
+      );
+      if (response.data['userInfo'] == null) {
+        Get.to(signup.SignUp());
+      } else {
+        loginController.changeLoginStatus(true);
+        firstLoginController.changeFirstLogin(false);
+        userInfoController.saveNickname(response.data['userInfo']['nickname']);
+        userInfoController.saveAge(response.data['userInfo']['age']);
+        userInfoController.saveGender(response.data['userInfo']['gender']);
+        // 이미지는 받을때 type이 경로인가..? null보내면 default string으로?
+
+        Get.back();
+      }
+    }
+  }
+}
 
 class LoginPage extends StatefulWidget {
-  LoginPage({Key? key}) : super(key: key);
+  const LoginPage({Key? key}) : super(key: key);
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  _LoginPageState createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage>
@@ -45,9 +124,11 @@ class _LoginPageState extends State<LoginPage>
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          image: DecorationImage(
-              image: AssetImage('assets/background-pink.jpg'),
-              fit: BoxFit.cover)),
+        image: DecorationImage(
+          image: AssetImage('assets/background-pink.jpg'),
+          fit: BoxFit.cover,
+        ),
+      ),
       child: Scaffold(
           backgroundColor: Colors.transparent,
           body: Center(
@@ -58,237 +139,155 @@ class _LoginPageState extends State<LoginPage>
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    LogoAnimation(animationController: _animationController),
+                    // Image(image: AssetImage('assets/flower.png'), height: 200),
+                    AnimatedBuilder(
+                      animation: _animationController,
+                      builder: (context, child) {
+                        return Transform.rotate(
+                          angle: _animationController.value * 2 * pi,
+                          child: child,
+                        );
+                      },
+                      child: Image(
+                        image: AssetImage('assets/flower.png'),
+                        height: 200,
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    Text("COURSE MORES",
+                        style: TextStyle(fontSize: 30, color: Colors.white)),
+                    SizedBox(height: 10),
+                    Text("코스모스",
+                        style: TextStyle(
+                            fontSize: 40,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white)),
                     SizedBox(height: 100),
                     Column(
-                      children: const [
-                        KakaoLoginButton(),
+                      children: [
+                        InkWell(
+                          onTap: () async {
+                            bool isKakaoInstalled =
+                                await isKakaoTalkInstalled();
+                            OAuthToken? token;
+                            // UserService userService = UserService();
+
+                            if (isKakaoInstalled) {
+                              try {
+                                token =
+                                    await UserApi.instance.loginWithKakaoTalk();
+                                debugPrint('카카오톡으로 로그인 성공');
+                              } catch (error) {
+                                debugPrint('카톡로그인 실패 $error');
+                                if (error is PlatformException &&
+                                    error.code == 'CANCELED') {
+                                  return;
+                                }
+                                try {
+                                  token = await UserApi.instance
+                                      .loginWithKakaoAccount();
+                                  debugPrint('카카오계정로그인 성공');
+                                } catch (error) {
+                                  debugPrint('카카오계정로그인 실패 $error');
+                                }
+                              }
+                            } else {
+                              try {
+                                token = await UserApi.instance
+                                    .loginWithKakaoAccount();
+                                debugPrint('카카오계정 로그인 성공');
+                              } catch (error) {
+                                debugPrint('카카오계정 로그인 실패 $error');
+                              }
+                            }
+
+                            if (token != null) {
+                              postLogin(token.accessToken);
+                              // Map<String, dynamic>? response =
+                              //     await userService.signInByKakaoToken(token.accessToken);
+                            }
+                          },
+                          child: Image(
+                            image: AssetImage(
+                                'assets/kakao_login_medium_wide.png'),
+                            fit: BoxFit.fill,
+                          ),
+                        ),
+
                         SizedBox(height: 15),
-                        GoogleLoginButton(),
-                        SizedBox(height: 10),
+                        // Padding(
+                        //     padding: const EdgeInsets.only(top: 20.0),
+                        //     child: InkWell(
+                        //       onTap: () {
+                        //         signInWithGoogle();
+                        //       },
+                        //       child: SizedBox(
+                        //         height: 50,
+                        //         width: 190,
+                        //         child: Image(
+                        //           image: AssetImage('assets/google.png'),
+                        //           fit: BoxFit.fill,
+                        //         ),
+                        //       ),
+                        //     )),
+                        Container(
+                          width: 300,
+                          height: 40,
+                          padding: EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: SizedBox(
+                            child: InkWell(
+                              onTap: () {
+                                signInWithGoogle();
+                              },
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  SizedBox(width: 4),
+                                  Image.asset('assets/glogo.png', height: 20),
+                                  SizedBox(width: 15),
+                                  Expanded(
+                                    child: Center(
+                                      child: Text(
+                                        // '구글 로그인',
+                                        'Google로 시작하기',
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 14,
+                                            fontFamily: "Roboto",
+                                            fontWeight: FontWeight.w700),
+                                      ),
+                                    ),
+                                  ),
+                                  Opacity(
+                                      opacity: 0.0,
+                                      child: Image.asset('assets/glogo.png')),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10.0,
+                        ),
                       ],
                     ),
+                    // InkWell(
+                    //   onTap: () {},
+                    //   child: Image(
+                    //     image: AssetImage('assets/google.png'),
+                    //     fit: BoxFit.fill,
+                    //   ),
+                    // ),
                   ],
                 ),
               ],
             ),
           )),
     );
-  }
-}
-
-class LogoAnimation extends StatelessWidget {
-  const LogoAnimation({
-    super.key,
-    required AnimationController animationController,
-  }) : _animationController = animationController;
-
-  final AnimationController _animationController;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        AnimatedBuilder(
-          animation: _animationController,
-          builder: (context, child) {
-            return Transform.rotate(
-              angle: _animationController.value * 2 * pi,
-              child: child,
-            );
-          },
-          child: Image(image: AssetImage('assets/flower.png'), height: 200),
-        ),
-        SizedBox(height: 10),
-        Text("COURSE MORES",
-            style: TextStyle(fontSize: 30, color: Colors.white)),
-        SizedBox(height: 10),
-        Text("코스모스",
-            style: TextStyle(
-                fontSize: 40,
-                fontWeight: FontWeight.w600,
-                color: Colors.white)),
-      ],
-    );
-  }
-}
-
-class GoogleLoginButton extends StatelessWidget {
-  const GoogleLoginButton({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 300,
-      height: 45,
-      padding: EdgeInsets.all(12),
-      decoration: BoxDecoration(
-          color: Colors.white, borderRadius: BorderRadius.circular(5)),
-      child: SizedBox(
-        child: InkWell(
-          onTap: () {
-            signInWithGoogle();
-          },
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              SizedBox(width: 4),
-              Image.asset('assets/glogo.png', height: 20),
-              Expanded(
-                child: Center(
-                  child: Text(
-                    '구글로 시작하기',
-                    style: TextStyle(
-                      color: Color.fromRGBO(0, 0, 0, 0.85),
-                      fontSize: 16,
-                      fontFamily: "Roboto",
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class KakaoLoginButton extends StatelessWidget {
-  const KakaoLoginButton({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 300,
-      height: 45,
-      padding: EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Color.fromARGB(255, 254, 229, 0),
-        borderRadius: BorderRadius.circular(5),
-      ),
-      child: SizedBox(
-        child: InkWell(
-          onTap: () async {
-            bool isKakaoInstalled = await isKakaoTalkInstalled();
-            OAuthToken? token;
-
-            if (isKakaoInstalled) {
-              try {
-                token = await UserApi.instance.loginWithKakaoTalk();
-                debugPrint('카카오톡으로 로그인 성공');
-              } catch (error) {
-                debugPrint('카톡로그인 실패 $error');
-                if (error is PlatformException && error.code == 'CANCELED') {
-                  return;
-                }
-                try {
-                  token = await UserApi.instance.loginWithKakaoAccount();
-                  debugPrint('카카오계정로그인 성공');
-                } catch (error) {
-                  debugPrint('카카오계정로그인 실패 $error');
-                }
-              }
-            } else {
-              try {
-                token = await UserApi.instance.loginWithKakaoAccount();
-                debugPrint('카카오계정 로그인 성공');
-              } catch (error) {
-                debugPrint('카카오계정 로그인 실패 $error');
-              }
-            }
-
-            if (token != null) {
-              postLogin(token.accessToken);
-            }
-          },
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              SizedBox(width: 4),
-              Image.asset('assets/kakao_logo.png', height: 20),
-              Expanded(
-                child: Center(
-                  child: Text(
-                    '카카오로 시작하기',
-                    style: TextStyle(
-                      color: Color.fromRGBO(0, 0, 0, 0.85),
-                      fontSize: 16,
-                      fontFamily: "Roboto",
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-void postLogin(accessToken) async {
-  dynamic bodyData = json.encode({'accessToken': accessToken});
-
-  final response = await dio.post('auth/kakao/login', data: bodyData);
-  print(response);
-  if (response.statusCode == 200) {
-    if (response.data['agree'] == false) {
-      Fluttertoast.showToast(
-        msg: '이메일 수집동의에 체크해 주세요',
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.grey[400],
-        textColor: Colors.red,
-      );
-      Get.back();
-    } else {
-      await tokenController.saveToken(
-        response.data['accessToken'],
-      );
-      if (response.data['userInfo'] == null) {
-        print('여기');
-
-        Get.to(signup.SignUp());
-      } else {
-        loginController.changeLoginStatus(true);
-        userInfoController.saveNickname(response.data['userInfo']['nickname']);
-        userInfoController.saveAge(response.data['userInfo']['age']);
-        userInfoController.saveGender(response.data['userInfo']['gender']);
-        userInfoController
-            .saveImageUrl(response.data['userInfo']['profileImage']);
-        firstLoginController.changeFirstLogin(false);
-        print(loginController.isLoggedIn);
-        print(pageController.pageNum());
-        Get.back();
-      }
-    }
-  }
-}
-
-void signInWithGoogle() async {
-  final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-  final dio = await authDio();
-  if (googleUser != null) {
-    dynamic bodyData = json.encode({'email': googleUser.email});
-    final response = await dio.post('auth/google/login', data: bodyData);
-    print("response = $response");
-
-    if (response.statusCode == 200) {
-      // 추후에 issignup으로 교체
-      tokenController.saveToken(response.data['accessToken']);
-      if (response.data['userInfo'] == null) {
-        Get.to(signup.SignUp());
-      } else {
-        loginController.changeLoginStatus(true);
-        firstLoginController.changeFirstLogin(false);
-        userInfoController.saveNickname(response.data['userInfo']['nickname']);
-        userInfoController.saveAge(response.data['userInfo']['age']);
-        userInfoController.saveGender(response.data['userInfo']['gender']);
-        // 이미지는 받을때 type이 경로인가..? null보내면 default string으로?
-
-        Get.back();
-      }
-    }
   }
 }

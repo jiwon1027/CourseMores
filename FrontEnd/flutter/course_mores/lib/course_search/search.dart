@@ -26,25 +26,13 @@ class _SearchState extends State<Search> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: searchPageHeader(),
-      body: isSearchResults == false
-          ? displayNoSearchResultScreen()
-          : SearchResult(courseList: courseList),
-      // body: SearchResult(courseList: courseList),
-    );
-  }
-
-  saveFilter(newSelectedThemeList) {
-    setState(() {
-      allSelectedThemeList = newSelectedThemeList;
-    });
-  }
-
-  saveAddress(newSelectedAddress) {
-    setState(() {
-      selectedAddress = newSelectedAddress;
-    });
+    searchController.getThemeList();
+    searchController.getSidoList();
+    Get.put(SearchController());
+    return Obx(() => Scaffold(
+          appBar: searchPageHeader(),
+          body: searchController.courseList.isEmpty ? displayNoSearchResultScreen() : SearchResult(),
+        ));
   }
 
   emptyTheTextFormField() {
@@ -53,93 +41,54 @@ class _SearchState extends State<Search> {
 
 controlSearching(str) {}
 
-  isVisitedCheckBoxClick() {
-    setState(() {
-      isVisited = !isVisited;
-      Fluttertoast.showToast(
-        msg:
-            "방문여부 : $isVisited, 최신순 : $isLatestSelected, 인기순 : $isPopularSelected, 필터 테마 : $allSelectedThemeList, 필터 지역 : $selectedAddress",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-      );
-    });
-  }
-
-  isLatestSelectedClick() {
-    setState(() {
-      isLatestSelected = true;
-      isPopularSelected = false;
-      Fluttertoast.showToast(
-        msg:
-            "방문여부 : $isVisited, 최신순 : $isLatestSelected, 인기순 : $isPopularSelected, 필터 테마 : $allSelectedThemeList, 필터 지역 : $selectedAddress",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-      );
-    });
-  }
-
-  isPopularSelectedClick() {
-    setState(() {
-      isLatestSelected = false;
-      isPopularSelected = true;
-      Fluttertoast.showToast(
-        msg:
-            "방문여부 : $isVisited, 최신순 : $isLatestSelected, 인기순 : $isPopularSelected, 필터 테마 : $allSelectedThemeList, 필터 지역 : $selectedAddress",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-      );
-    });
-  }
-
-  searchPageHeader() {
-    return AppBar(
-        automaticallyImplyLeading: false,
-        toolbarHeight: 110,
-        title: Column(
-          children: [
-            SizedBox(
-              height: 45,
-              child: TextFormField(
-                textAlignVertical: TextAlignVertical.center,
-                controller: searchTextEditingController,
-                decoration: InputDecoration(
-                  hintText: "코스를 검색해보세요",
-                  hintStyle: const TextStyle(color: Colors.grey),
-                  enabledBorder: const UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey),
-                  ),
-                  focusedBorder: const UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.black),
-                  ),
-                  filled: true,
-                  prefixIcon: FilterButton(
-                      context: context,
-                      allSelectedThemeList: allSelectedThemeList,
-                      selectedAddress: selectedAddress,
-                      saveFilter: saveFilter,
-                      saveAddress: saveAddress),
-                  suffixIcon: IconButton(
-                    icon: const Icon(Icons.search),
-                    color: Colors.grey,
-                    iconSize: 25,
-                    onPressed: () {
-                      // print("${searchTextEditingController.text} 검색하기");
-                      setState(() {
-                        isSearchResults = true;
-                        Fluttertoast.showToast(
-                          msg:
-                              "방문여부 : $isVisited, 최신순 : $isLatestSelected, 인기순 : $isPopularSelected, 필터 테마 : $allSelectedThemeList, 필터 지역 : $selectedAddress",
-                          toastLength: Toast.LENGTH_SHORT,
-                          gravity: ToastGravity.CENTER,
-                        );
-                        // isVisited
-                      });
-                    },
-                  ),
-                ),
-                style: const TextStyle(
-                  fontSize: 18,
-                  color: Colors.black,
+searchPageHeader() {
+  return AppBar(
+      automaticallyImplyLeading: false,
+      toolbarHeight: 110,
+      title: Column(
+        children: [
+          SizedBox(
+            height: 45,
+            child: TextFormField(
+              textAlignVertical: TextAlignVertical.center,
+              controller: searchTextEditingController,
+              onTap: () => Get.to(SearchScreen()),
+              onChanged: (value) {
+                searchController.changeWord(word: searchTextEditingController.text);
+              },
+              decoration: InputDecoration(
+                hintText: "코스를 검색해보세요",
+                hintStyle: TextStyle(color: Colors.grey),
+                enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+                focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+                filled: true,
+                // prefixIcon: FilterButton(context: context),
+                prefixIcon: filterButton(),
+                suffixIcon: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.clear),
+                      color: Colors.grey,
+                      onPressed: () {
+                        searchTextEditingController.clear();
+                        searchController.changeWord(word: '');
+                        searchController.getElasticList();
+                      },
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.search),
+                      color: Colors.grey,
+                      iconSize: 25,
+                      onPressed: () {
+                        Get.back();
+                        pageController.changePageNum(2);
+                        searchController.isSearchResults.value = true;
+                        searchController.changePage(page: 0);
+                        searchController.searchCourse();
+                      },
+                    ),
+                  ],
                 ),
                 onFieldSubmitted: controlSearching,
               ),
@@ -166,121 +115,72 @@ controlSearching(str) {}
         ));
   }
 
-  displayNoSearchResultScreen() {}
-
-  // displayUsersFoundScreen() {}
-}
-
-class SortButtonBar extends StatefulWidget {
-  const SortButtonBar({
-    Key? key,
-    required this.isLatestSelected,
-    required this.isPopularSelected,
-    required this.isLatestSelectedClick,
-    required this.isPopularSelectedClick,
-  }) : super(key: key);
-
-  final isLatestSelected;
-  final isPopularSelected;
-  final isLatestSelectedClick;
-  final isPopularSelectedClick;
-
-  @override
-  State<SortButtonBar> createState() => _SortButtonBarState();
-}
-
-class _SortButtonBarState extends State<SortButtonBar> {
-  late var isLatestSelected = widget.isLatestSelected;
-  late var isPopularSelected = widget.isPopularSelected;
-  late var isLatestSelectedClick = widget.isLatestSelectedClick;
-  late var isPopularSelectedClick = widget.isPopularSelectedClick;
-
-  @override
-  void initState() {
-    super.initState();
-    isLatestSelected = widget.isLatestSelected;
-    isPopularSelected = widget.isPopularSelected;
-    isLatestSelectedClick = widget.isLatestSelectedClick;
-    isPopularSelectedClick = widget.isPopularSelectedClick;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      // color: Colors.amber,
-      height: 45,
-      width: 250,
-      child: ButtonBar(
-        buttonPadding: EdgeInsets.symmetric(horizontal: 10),
-        alignment: MainAxisAlignment.end,
-        children: [
-          ElevatedButton(
-            onPressed: () {
-              isLatestSelectedClick();
-              isLatestSelected = true;
-              isPopularSelected = false;
+isVisitedCheckBox() {
+  return Container(
+    // color: Colors.amber,
+    alignment: Alignment.center,
+    child: SizedBox(
+        width: 160,
+        height: 45,
+        child: Obx(
+          () => CheckboxListTile(
+            dense: true,
+            contentPadding: EdgeInsets.all(0),
+            controlAffinity: ListTileControlAffinity.leading,
+            title: Text('방문여부', style: TextStyle(color: Colors.black, fontSize: 16)),
+            value: searchController.isVisited.value,
+            onChanged: (value) {
+              searchController.changePage(page: 0);
+              searchController.changeIsVisited();
             },
-            style: ButtonStyle(
-              minimumSize: MaterialStateProperty.all<Size>(Size(90, 35)),
-              padding: MaterialStateProperty.all(
-                  EdgeInsetsDirectional.symmetric(horizontal: 10)),
-              elevation: MaterialStateProperty.all<double>(0),
-              backgroundColor:
-                  MaterialStateProperty.all<Color>(Colors.transparent),
-              foregroundColor: MaterialStateProperty.all<Color>(
-                  isLatestSelected ? Colors.blue : Colors.grey),
-            ),
-            child: const Text(
-              '최신순',
-              style: TextStyle(
-                fontWeight: FontWeight.w800,
-                fontSize: 16,
-              ),
-            ),
           ),
-          ElevatedButton(
-            onPressed: () {
-              isPopularSelectedClick();
-              isLatestSelected = false;
-              isPopularSelected = true;
-            },
-            style: ButtonStyle(
-              minimumSize: MaterialStateProperty.all<Size>(Size(90, 35)),
-              elevation: MaterialStateProperty.all<double>(0),
-              backgroundColor:
-                  MaterialStateProperty.all<Color>(Colors.transparent),
-              foregroundColor: MaterialStateProperty.all<Color>(
-                  isPopularSelected ? Colors.blue : Colors.grey),
-            ),
-            child: const Text(
-              '인기순',
-              style: TextStyle(
-                fontWeight: FontWeight.w800,
-                fontSize: 16,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+        )),
+  );
 }
 
-class FilterButton extends StatelessWidget {
-  const FilterButton({
-    super.key,
-    required this.context,
-    required this.allSelectedThemeList,
-    required this.selectedAddress,
-    required this.saveFilter,
-    required this.saveAddress,
-  });
-
-  final BuildContext context;
-  final allSelectedThemeList;
-  final selectedAddress;
-  final saveFilter;
-  final saveAddress;
+sortButtonBar() {
+  return SizedBox(
+    child: ButtonBar(
+      alignment: MainAxisAlignment.end,
+      children: [
+        ElevatedButton(
+          onPressed: () {
+            searchController.changePage(page: 0);
+            searchController.changeSortby(sortby: 'latest');
+            searchController.isLatestSelected.value = true;
+            searchController.isPopularSelected.value = false;
+          },
+          style: ButtonStyle(
+            minimumSize: MaterialStateProperty.all<Size>(Size(30, 35)),
+            padding: MaterialStateProperty.all(EdgeInsetsDirectional.symmetric(horizontal: 0)),
+            elevation: MaterialStateProperty.all<double>(0),
+            backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
+            foregroundColor:
+                MaterialStateProperty.all<Color>(searchController.isLatestSelected.value ? Colors.blue : Colors.grey),
+          ),
+          child: Text('최신순', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            searchController.changePage(page: 0);
+            searchController.changeSortby(sortby: 'popular');
+            searchController.isLatestSelected.value = false;
+            searchController.isPopularSelected.value = true;
+          },
+          style: ButtonStyle(
+            minimumSize: MaterialStateProperty.all<Size>(Size(30, 35)),
+            padding: MaterialStateProperty.all(EdgeInsetsDirectional.symmetric(horizontal: 0)),
+            elevation: MaterialStateProperty.all<double>(0),
+            backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
+            foregroundColor:
+                MaterialStateProperty.all<Color>(searchController.isPopularSelected.value ? Colors.blue : Colors.grey),
+          ),
+          child: Text('인기순', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
+        ),
+      ],
+    ),
+  );
+}
 
   @override
   Widget build(BuildContext context) {
@@ -358,65 +258,65 @@ class SearchResult extends StatefulWidget {
 class _SearchResultState extends State<SearchResult> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: const Color.fromARGB(221, 244, 244, 244),
-      child: ListView.builder(
-        shrinkWrap: true,
-        scrollDirection: Axis.vertical,
-        padding: const EdgeInsets.all(8),
-        itemCount: widget.courseList.length,
-        itemBuilder: (BuildContext context, int index) {
-          return InkWell(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => detail.CourseDetail(index: index)),
-              );
-            },
-            child: Container(
-              margin: const EdgeInsets.only(
-                  left: 10, right: 10, top: 10, bottom: 5),
-              padding: const EdgeInsets.all(10),
-              decoration: const BoxDecoration(
-                  boxShadow: [
-                    BoxShadow(
-                        // color: Colors.white24,
-                        color: Color.fromARGB(255, 211, 211, 211),
-                        blurRadius: 10.0,
-                        spreadRadius: 1.0,
-                        offset: Offset(3, 3)),
-                  ],
-                  color: Color.fromARGB(255, 255, 255, 255),
-                  borderRadius: BorderRadius.all(Radius.circular(10))),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                      // 알림 유형별로 다른 문구 출력을 위해 따로 빼둠
-                      // 더 효율적인 방식 있으면 바꿔도 됨
-                      child: SizedBox(
-                          width: 300,
-                          child: Row(
-                            children: [
-                              const ThumbnailImage(),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Expanded(
-                                child: CourseSearchList(
-                                    // courseList: courseList,
-                                    index: index),
-                              ),
-                            ],
-                          ))),
-                ],
+    scrollController.addListener(() {
+      if (scrollController.position.pixels == scrollController.position.maxScrollExtent) {
+        // 스크롤이 리스트의 끝까지 도달하면 다음 검색 결과 호출
+        searchController.getNextSearchResults();
+      }
+    });
+    return Obx(() => Container(
+          color: Color.fromARGB(221, 244, 244, 244),
+          child: Column(
+            children: [
+              Expanded(
+                child: ListView.builder(
+                  controller: scrollController, // ScrollController 설정
+                  shrinkWrap: true,
+                  scrollDirection: Axis.vertical,
+                  padding: EdgeInsets.all(8),
+                  itemCount: searchController.courseList.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return InkWell(
+                      onTap: () async {
+                        await searchController.changeNowCourseId(
+                            courseId: searchController.courseList[index]['courseId']);
+
+                        await detailController.getCourseInfo('코스 소개');
+
+                        Get.to(() => detail.Detail());
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 5),
+                        padding: EdgeInsets.all(10),
+                        decoration: const BoxDecoration(boxShadow: [
+                          BoxShadow(
+                              color: Color.fromARGB(255, 211, 211, 211),
+                              blurRadius: 10.0,
+                              spreadRadius: 1.0,
+                              offset: Offset(3, 3)),
+                        ], color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(10))),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                                child: SizedBox(
+                                    width: 300,
+                                    child: Row(children: [
+                                      ThumbnailImage(index: index),
+                                      SizedBox(width: 10),
+                                      Expanded(child: CourseSearchList(index: index)),
+                                    ]))),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
               ),
-            ),
-          );
-        },
-      ),
-    );
+              if (searchController.isCourseLoading.value) CircularProgressIndicator(), // 로딩 중인 경우 표시할 위젯
+            ],
+          ),
+        ));
   }
 }
 
@@ -468,21 +368,40 @@ class _CourseSearchListState extends State<CourseSearchList> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(
-              child: Text(
-                "${courseList[widget.index]['course']}",
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
-                softWrap: true,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      "${searchController.courseList[index]['title']}",
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      softWrap: true,
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  if (searchController.courseList[index]["visited"] == true)
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Color.fromARGB(255, 107, 211, 66),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Row(
+                        children: const [
+                          Padding(
+                            padding: EdgeInsets.all(4.0),
+                            child: Icon(Icons.check, size: 14, color: Colors.white),
+                          ),
+                          Text("방문", style: TextStyle(color: Colors.white, fontSize: 12)),
+                          SizedBox(width: 7),
+                        ],
+                      ),
+                    )
+                ],
               ),
             ),
-            if (courseList[widget.index]["bookmark"] == true)
-              const Icon(Icons.bookmark, size: 24),
-            if (courseList[widget.index]["bookmark"] == false)
-              const Icon(Icons.bookmark_outline_rounded, size: 24),
+            if (searchController.courseList[index]["interest"]) Icon(Icons.bookmark, size: 24),
+            if (!searchController.courseList[index]["interest"]) Icon(Icons.bookmark_outline_rounded, size: 24),
           ],
         ),
         const SizedBox(height: 2),
@@ -555,17 +474,18 @@ class _CourseSearchListState extends State<CourseSearchList> {
                 SizedBox(width: 5),
                 Row(
                   children: [
-                    const Icon(Icons.favorite, size: 14),
-                    const SizedBox(width: 3),
-                    Text(courseList[widget.index]["likes_cnt"].toString()),
+                    if (searchController.courseList[index]["like"]) Icon(Icons.favorite, size: 14),
+                    if (!searchController.courseList[index]["like"]) Icon(Icons.favorite_border_outlined, size: 14),
+                    SizedBox(width: 3),
+                    Text(searchController.courseList[index]["likeCount"].toString()),
                   ],
                 ),
                 const SizedBox(width: 8),
                 Row(
                   children: [
-                    const Icon(Icons.comment, size: 14),
-                    const SizedBox(width: 3),
-                    Text(courseList[widget.index]["comments"].toString()),
+                    Icon(Icons.comment, size: 14),
+                    SizedBox(width: 3),
+                    Text(searchController.courseList[index]["commentCount"].toString()),
                   ],
                 ),
               ],
@@ -656,6 +576,8 @@ class _SearchFilterState extends State<SearchFilter> {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.navigate_before, color: Colors.black),
           onPressed: () {
@@ -712,53 +634,49 @@ class _SearchFilterState extends State<SearchFilter> {
           MyDropdown(
               selectAddress: selectAddress, selectedAddress: selectedAddress),
           SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20)),
-                  backgroundColor: Colors.white,
-                ),
-                onPressed: () {
-                  setState(() {
-                    multiSelectController.deselectAll(); // 선택 취소
-                    newAllSelectedThemeList = [];
-                    selectedAddress = ["전체", "전체"];
-                    Fluttertoast.showToast(
-                      msg:
-                          "allSelectedTheme : $newAllSelectedThemeList, selectedAddress : $selectedAddress",
-                      toastLength: Toast.LENGTH_LONG,
-                      gravity: ToastGravity.CENTER,
-                    );
-                  });
-                },
-                child: Text("초기화", style: TextStyle(color: Colors.black)),
-              ),
-              SizedBox(width: 30),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20)),
-                  backgroundColor: Colors.white,
-                ),
-                onPressed: () {
-                  saveFilter(newAllSelectedThemeList);
-                  saveAddress(selectedAddress);
-                  Fluttertoast.showToast(
-                    msg:
-                        "allSelectedTheme : $newAllSelectedThemeList, selectedAddress : $selectedAddress",
-                    toastLength: Toast.LENGTH_LONG,
-                    gravity: ToastGravity.CENTER,
-                  );
-                },
-                child: Text("저장", style: TextStyle(color: Colors.black)),
-              ),
-            ],
-          ),
+          SearchFilterButtons(),
         ]),
       ),
+    );
+  }
+}
+
+class SearchFilterButtons extends StatelessWidget {
+  const SearchFilterButtons({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            backgroundColor: Colors.white,
+          ),
+          onPressed: () {
+            multiSelectController.deselectAll(); // 보여지는 테마 리스트 선택 취소
+            searchController.changeSelectedThemeList(list: [].obs);
+            searchController.changeSido(sido: "전체");
+            searchController.changeGugun(gugun: "전체");
+          },
+          child: Text("초기화", style: TextStyle(color: Colors.black)),
+        ),
+        SizedBox(width: 30),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            backgroundColor: Colors.white,
+          ),
+          onPressed: () {
+            searchController.saveFilter();
+            Get.back();
+          },
+          child: Text("저장", style: TextStyle(color: Colors.black)),
+        ),
+      ],
     );
   }
 }

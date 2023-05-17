@@ -6,98 +6,37 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 import 'package:get/get.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+// import '../main.dart' as main;
+// import 'package:fluttertoast/fluttertoast.dart';
 import 'post_signup.dart' as post_signup;
-import 'package:draggable_home/draggable_home.dart';
-import 'auth_dio.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 class SignUp extends StatelessWidget {
   const SignUp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return DraggableHome(
-      leading: IconButton(
-        icon: Icon(Icons.arrow_back_ios),
-        onPressed: () {
-          Get.back();
-        },
-      ),
-      title: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text('COURSE', style: TextStyle(color: Colors.white)),
-          SizedBox(width: 10),
-          Image.asset("assets/flower.png", height: 35),
-          SizedBox(width: 10),
-          Text('MORES   ', style: TextStyle(color: Colors.white)),
-        ],
-      ),
-      actions: [
-        IconButton(onPressed: () {}, icon: Icon(Icons.settings, color: Colors.transparent)),
-      ],
-      headerWidget: headerWidget(context),
-      headerExpandedHeight: 0.3,
-      body: [
-        SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.all(28),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                ProfileImage(),
-                RegisterNickname(),
-                GenderChoice(),
-                AgeRange(),
-                confirmButton(),
-              ],
-            ),
-          ),
-        ),
-      ],
-      fullyStretchable: false,
-      expandedBody: headerWidget(context),
-      backgroundColor: Colors.white,
-      appBarColor: Color.fromARGB(255, 80, 170, 208),
-    );
-    // return Scaffold(
-    //   resizeToAvoidBottomInset: false,
-    //   appBar: SignUpAppBar(),
-    //   body: SingleChildScrollView(
-    //     child: Padding(
-    //       padding: EdgeInsets.all(8.0),
-    //       child: Container(
-    //           decoration: boxDeco(),
-    //           child: Padding(
-    //             padding: EdgeInsets.all(20.0),
-    //             child: Column(
-    //               crossAxisAlignment: CrossAxisAlignment.stretch,
-    //               children: [
-    //                 ProfileImage(),
-    //                 RegisterNickname(),
-    //                 GenderChoice(),
-    //                 AgeRange(),
-    //                 confirmButton(),
-    //               ],
-    //             ),
-    //           )),
-    //     ),
-    //   ),
-    // );
-  }
-
-  Widget headerWidget(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: const [
-            Color.fromARGB(255, 0, 90, 129),
-            Color.fromARGB(232, 255, 218, 218),
-          ],
-          stops: const [0.0, 0.9],
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      appBar: const SignUpAppBar(),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+              decoration: boxDeco(),
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    ProfileImage(),
+                    RegisterNickname(),
+                    GenderChoice(),
+                    AgeRange(),
+                    confirmButton(),
+                  ],
+                ),
+              )),
         ),
       ),
       child: Column(
@@ -129,23 +68,30 @@ class _ProfileImageState extends State<ProfileImage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: EdgeInsets.only(bottom: 15),
-          child: Padding(padding: EdgeInsets.only(bottom: 15), child: Text('프로필 사진')),
+        const Padding(
+          padding: EdgeInsets.only(
+            bottom: 15,
+          ),
+          child: Padding(
+            padding: EdgeInsets.only(bottom: 15.0),
+            child: Text('프로필 사진'),
+          ),
         ),
         if (_pickedFile == null)
           InkWell(
             onTap: () {
               _showBottomSheet();
             },
-            child: Center(
-              child: Container(
-                width: 150,
-                height: 150,
-                decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(80),
-                    image: DecorationImage(image: AssetImage("assets/default_profile.png"), fit: BoxFit.cover)),
+            child: Container(
+              width: 70,
+              height: 70,
+              decoration: BoxDecoration(
+                border: Border.all(),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(
+                Icons.camera_alt_outlined,
+                size: imageSize,
               ),
             ),
           )
@@ -154,14 +100,13 @@ class _ProfileImageState extends State<ProfileImage> {
             onTap: () {
               _showBottomSheet2();
             },
-            child: Center(
-              child: Container(
-                width: 150,
-                height: 150,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(80),
-                  image: DecorationImage(image: FileImage(File(_pickedFile!.path)), fit: BoxFit.cover),
-                ),
+            child: Container(
+              width: 70,
+              height: 70,
+              decoration: BoxDecoration(
+                border: Border.all(),
+                borderRadius: BorderRadius.circular(10),
+                image: DecorationImage(image: FileImage(File(_pickedFile!.path)), fit: BoxFit.cover),
               ),
             ),
           )
@@ -170,7 +115,8 @@ class _ProfileImageState extends State<ProfileImage> {
   }
 
   _getCameraImage() async {
-    final pickedFile = await ImagePicker().pickImage(source: ImageSource.camera);
+    final pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.camera);
     if (pickedFile != null) {
       setState(() {
         _pickedFile = pickedFile;
@@ -186,7 +132,8 @@ class _ProfileImageState extends State<ProfileImage> {
   }
 
   _getPhotoLibraryImage() async {
-    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+    final pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       setState(() {
         _pickedFile = pickedFile;
@@ -233,8 +180,10 @@ class _ProfileImageState extends State<ProfileImage> {
                               Navigator.pop(context);
                             },
                             child: Container(
-                              decoration: BoxDecoration(border: Border(top: BorderSide(color: Colors.grey, width: 1))),
-                              child: Center(
+                              decoration:
+                                  const BoxDecoration(border: Border(top: BorderSide(color: Colors.grey, width: 1))),
+                              child: const Center(
+                                  // color: Colors.yellow,
                                   child: Text(
                                 '앨범에서 가져오기',
                                 style: TextStyle(fontSize: 20),
@@ -286,8 +235,9 @@ class _ProfileImageState extends State<ProfileImage> {
                               Navigator.pop(context);
                             },
                             child: Container(
-                              decoration: BoxDecoration(border: Border(top: BorderSide(color: Colors.grey, width: 1))),
-                              child: Center(
+                              decoration:
+                                  const BoxDecoration(border: Border(top: BorderSide(color: Colors.grey, width: 1))),
+                              child: const Center(
                                   child: Text(
                                 '사진 촬영하기',
                                 style: TextStyle(fontSize: 20),
@@ -301,8 +251,10 @@ class _ProfileImageState extends State<ProfileImage> {
                               _getPhotoLibraryImage();
                             },
                             child: Container(
-                              decoration: BoxDecoration(border: Border(top: BorderSide(color: Colors.grey, width: 1))),
-                              child: Center(
+                              decoration:
+                                  const BoxDecoration(border: Border(top: BorderSide(color: Colors.grey, width: 1))),
+                              child: const Center(
+                                  // color: Colors.yellow,
                                   child: Text(
                                 '앨범에서 가져오기',
                                 style: TextStyle(fontSize: 20),
@@ -342,15 +294,22 @@ class _RegisterNicknameState extends State<RegisterNickname> {
               Expanded(
                 child: Form(
                     key: formKey,
-                    child: textFormFieldComponent(false, '사용할 닉네임을 입력하세요.', 10, 2, '최소 2자 이상이어야 합니다.',
-                        '최대 10자 이하여야 합니다.', '이미 존재하는 닉네임입니다.', _helperText)),
+                    child: textFormFieldComponent(
+                        false,
+                        '사용할 닉네임을 입력하세요.',
+                        10,
+                        2,
+                        '최소 2자 이상이어야 합니다.',
+                        '최대 10자 이하여야 합니다.',
+                        '이미 존재하는 닉네임입니다.',
+                        _helperText)),
               ),
               SizedBox(width: 5),
               FilledButton(
                   onPressed: () {
                     _submit();
                   },
-                  child: Text('중복 확인', style: TextStyle(fontSize: 14))),
+                  icon: const Icon(Icons.check))
             ],
           ),
         ],
@@ -377,11 +336,21 @@ class _RegisterNicknameState extends State<RegisterNickname> {
   }
 }
 
-Widget textFormFieldComponent(bool obscureText, String hintText, int maxSize, int minSize, String underError,
-    String overError, String duplicateError, String? helperText) {
+Widget textFormFieldComponent(
+    bool obscureText,
+    String hintText,
+    int maxSize,
+    int minSize,
+    String underError,
+    String overError,
+    String duplicateError,
+    String? helperText) {
   return TextFormField(
     obscureText: obscureText,
-    decoration: InputDecoration(hintText: hintText, helperText: helperText, helperStyle: TextStyle(color: Colors.blue)),
+    decoration: InputDecoration(
+        hintText: hintText,
+        helperText: helperText,
+        helperStyle: TextStyle(color: Colors.blue)),
     onSaved: (String? inputValue) {
       String nicknameValue = inputValue!;
       userInfoController.saveNickname(nicknameValue);
@@ -457,40 +426,39 @@ class _GenderChoiceState extends State<GenderChoice> {
             padding: EdgeInsets.only(bottom: 15),
             child: Text('성별', textAlign: TextAlign.start),
           ),
-          SizedBox(
-            width: double.infinity,
-            child: ButtonBar(
-              alignment: MainAxisAlignment.spaceBetween,
-              children: [
-                // OutlinedButton(
-                FilledButton(
-                    onPressed: () {
-                      setState(() {
-                        _gender = 'M';
-                        userInfoController.saveGender('M');
-                      });
-                    },
-                    style: TextButton.styleFrom(
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                      backgroundColor: manColor,
-                      fixedSize: Size(MediaQuery.of(context).size.width / 2 - 40, 40),
-                    ),
-                    child: Text('남성', style: TextStyle(color: manTextColor))),
-                FilledButton(
-                    onPressed: () {
-                      setState(() {
-                        _gender = 'W';
-                        userInfoController.saveGender('W');
-                      });
-                    },
-                    style: TextButton.styleFrom(
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                      backgroundColor: womanColor,
-                      fixedSize: Size(MediaQuery.of(context).size.width / 2 - 40, 40),
-                    ),
-                    child: Text('여성', style: TextStyle(color: womanTextColor))),
-              ],
-            ),
+          ButtonBar(
+            children: [
+              OutlinedButton(
+                onPressed: () {
+                  setState(() {
+                    _gender = 'M';
+                    userInfoController.saveGender('M');
+                  });
+                },
+                style: TextButton.styleFrom(
+                  backgroundColor: manColor,
+                  fixedSize: Size(MediaQuery.of(context).size.width / 2 - 40, 40),
+                ),
+                child: Text(
+                  '남성',
+                  style: TextStyle(color: manTextColor),
+                ),
+              ),
+              OutlinedButton(
+                onPressed: () {
+                  setState(() {
+                    _gender = 'W';
+                    userInfoController.saveGender('W');
+                  });
+                },
+                style: TextButton.styleFrom(
+                    backgroundColor: womanColor, fixedSize: Size(MediaQuery.of(context).size.width / 2 - 40, 40)),
+                child: Text(
+                  '여성',
+                  style: TextStyle(color: womanTextColor),
+                ),
+              )
+            ],
           )
         ],
       ),
@@ -533,7 +501,8 @@ class _AgeRangeState extends State<AgeRange> {
             showLabels: true,
             // showTicks: true,
             stepSize: 10,
-            labelFormatterCallback: (dynamic actualValue, String formattedText) {
+            labelFormatterCallback:
+                (dynamic actualValue, String formattedText) {
               if (actualValue == 0) {
                 return '0~9세';
               } else if (actualValue == 70) {
@@ -551,8 +520,8 @@ class _AgeRangeState extends State<AgeRange> {
 
 confirmButton() {
   return Padding(
-    padding: EdgeInsets.only(top: 60),
-    child: FilledButton(
+    padding: const EdgeInsets.only(top: 60.0),
+    child: ElevatedButton(
       onPressed: () {
         if (userInfoController.signupCheck.value == true) {
           // print(userInfoController.nickname);
@@ -606,19 +575,8 @@ class SignUpAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: Color.fromARGB(0, 255, 220, 220),
-      elevation: 0,
-      iconTheme: IconThemeData(color: Colors.black54),
-      title: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text('COURSE', style: TextStyle(color: Colors.black)),
-          SizedBox(width: 10),
-          Image.asset("assets/flower.png", height: 35),
-          SizedBox(width: 10),
-          Text('MORES   ', style: TextStyle(color: Colors.black)),
-        ],
+      iconTheme: const IconThemeData(
+        color: Colors.black54, // 아이콘 색깔
       ),
       centerTitle: true,
       leading: IconButton(

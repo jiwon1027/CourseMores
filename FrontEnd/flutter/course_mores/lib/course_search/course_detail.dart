@@ -30,40 +30,14 @@ class _CourseDetailState extends State<CourseDetail> {
 
   @override
   Widget build(BuildContext context) {
-    var index = widget.index;
-    return Scaffold(
-      appBar: const DetailAppBar(),
-      body: ListView(
-        children: [
-          // 코스 정보 (바뀌지 않을 정보들)
-          DetailCourseInfo(
-              courseInfo: courseInfo,
-              index: index,
-              themeList: themeList,
-              tagList: tagList),
-
-    return DraggableHome(
-      actions: [
-        IconButton(onPressed: () {}, icon: Icon(Icons.settings, color: Colors.transparent)),
-      ],
-      title: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: const [Text('코스 상세보기', style: TextStyle(color: Colors.white))],
-      ),
-      headerWidget: headerWidget(context),
-      headerExpandedHeight: 0.3,
-      body: [
-        SingleChildScrollView(
-          // controller: commentScrollController,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // ListView(
-              //   children: [
-
-              // 코스 정보
-              DetailCourseInfo(),
+    detailController.getCourseInfo('코스 소개');
+    try {
+      return Scaffold(
+        appBar: DetailAppBar(),
+        body: ListView(
+          children: [
+            // 코스 정보
+            DetailCourseInfo(),
 
               // 좋아요, 즐겨찾기, 공유하기, 가져오기
               DetailLikeBookmarkShareScrap(),
