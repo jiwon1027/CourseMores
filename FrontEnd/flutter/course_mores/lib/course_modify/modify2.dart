@@ -92,35 +92,20 @@ class _CourseModifyState extends State<CourseModify> {
       // If the server returns a 200 OK response, parse the JSON.
       print('수정용 코스 정보 가져오기 성공');
       final courseInfo = response1.data['courseInfo'];
-      // print('987654321');
-      // print(courseInfo);
-      // print('1111111');
-      // print(courseInfo['locationList']);
-      // print('1111111');
-      // print(courseInfo['themeList']);
-      // print('234512525');
       List<int> themeIdList = courseInfo['themeList']
           .map<int>((map) => map['themeId'] as int)
           .toList();
-      // print(themeIdList);
 
       courseController.title.value = courseInfo['title'];
       courseController.content.value = courseInfo['content'];
       courseController.people.value = courseInfo['people'];
       courseController.time.value = courseInfo['time'];
       courseController.visited.value = courseInfo['visited'];
-      // courseController.hashtagList = courseInfo['hashtagList'];
       courseController.hashtagList.value =
           RxList<String>.from(courseInfo['hashtagList']);
-      // courseController.themeIdList = RxList<int>.from(themeIdList);
       courseController.themeIdList.value =
           RxList<int>.from(themeIdList.map((dynamic item) => item as int));
-
-      // print('324t65 result');
-      // print(courseController.title.value);
     } else {
-      // If the server did not return a 200 OK response,
-      // throw an exception.
       throw Exception('Failed to load course');
     }
 
@@ -172,8 +157,9 @@ class _CourseModifyState extends State<CourseModify> {
 // 기존의 locationList를 제거하고 새로운 locationList로 설정
       courseController.locationList.assignAll(locationList);
 
-      print('2398525');
-      print(courseController.locationList);
+      setState(() {
+        _items = List<LocationData>.from(courseController.locationList);
+      });
       final courseModifyList = courseController.locationList;
       print(courseModifyList[0].title);
     } else {

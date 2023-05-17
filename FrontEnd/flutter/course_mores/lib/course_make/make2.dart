@@ -122,6 +122,9 @@ class _CourseMakeState extends State<CourseMake> {
         );
       }
     }
+
+    // 모든 이미지가 로드된 후에 상태 변경을 알림
+    setState(() {});
   }
 
   _CourseMakeState() {
@@ -178,8 +181,15 @@ class _CourseMakeState extends State<CourseMake> {
     courseController.locationList.add(locationData);
 
     // 이미지 로드를 수행할 때만 loadImages 함수 호출
+    // if (shouldLoadImage) {
+    //   loadImages(locationData);
+    // }
+    // 이미지 로드를 수행할 때만 loadImages 함수 호출
     if (shouldLoadImage) {
-      loadImages(locationData);
+      loadImages(locationData).then((_) {
+        // 이미지 로드가 완료되면 Flutter에게 상태 변경을 알림
+        setState(() {});
+      });
     }
   }
 
@@ -549,88 +559,88 @@ class _CourseMakeState extends State<CourseMake> {
                       backgroundColor: Colors.green,
                     ),
                     onPressed: () {
-                      // 코스 저장여부 확인 코드 시작 check //
-                      // GetX에서 CourseController 가져오기
-                      final CourseController courseController =
-                          Get.find<CourseController>();
-
-                      // courseController 내부의 값들 출력하기
-                      // print(courseController.title);
-                      // print(courseController.locationList);
-                      // print(courseController.locationList[0].name);
-                      // print(courseController.locationList[1].name);
-                      // print(courseController.locationList[2].name);
-                      // // print(courseController.locationList[3].name);
-                      // // print(courseController.locationList[4].name);
-                      // print(courseController.locationList[0].title);
-                      // print(courseController.locationList[0].sido);
-                      // print(courseController.locationList[1].sido);
-                      // print(courseController.locationList[2].sido);
-                      // // print(courseController.locationList[3].sido);
-                      // // print(courseController.locationList[4].sido);
-                      // print(courseController.locationList[0].gugun);
-                      // print(courseController.locationList[1].gugun);
-                      // print(courseController.locationList[2].gugun);
-                      // // print(courseController.locationList[3].gugun);
-                      // // print(courseController.locationList[4].gugun);
-                      // print(courseController.locationList[1].content);
-                      // print(courseController.locationList[0].name);
-                      // print(courseController.locationList[1].name);
-                      // print(courseController.locationList[2].name);
-                      // print(courseController.locationList[3].name);
-                      // print(courseController.locationList[0].numberOfImage);
-                      // print(courseController.locationList[1].numberOfImage);
-                      // print(courseController.locationList[2].numberOfImage);
-                      // 코스 저장여부 확인 코드 끝 check //
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text('작성한 내용을 저장하겠습니까?'),
-                            content: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text('작성한 장소 ${_items.length}곳:',
+                      if (_items.length >= 2) {
+                        // _items 리스트에 2개 이상의 항목이 있는 경우
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text('작성한 내용을 저장하겠습니까?'),
+                              content: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    '작성한 장소 ${_items.length}곳:',
                                     style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.red)),
-                                const SizedBox(height: 8),
-                                Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: _items
-                                      .map((item) => Text(
-                                            '- ${item.name}',
-                                            style: const TextStyle(
-                                                color: Colors.red),
-                                          ))
-                                      .toList(),
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.red,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: _items
+                                        .map((item) => Text(
+                                              '- ${item.name}',
+                                              style: const TextStyle(
+                                                color: Colors.red,
+                                              ),
+                                            ))
+                                        .toList(),
+                                  ),
+                                ],
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => MakeStepper()),
+                                    );
+                                  },
+                                  child: const Text('저장'),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text('취소'),
                                 ),
                               ],
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => MakeStepper()),
-                                  );
-                                },
-                                child: const Text('저장'),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text('취소'),
-                              ),
-                            ],
-                          );
-                        },
-                      );
+                            );
+                          },
+                        );
+                      } else {
+                        // _items 리스트에 2개 미만의 항목이 있는 경우
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Center(
+                                  child: Row(
+                                children: const [
+                                  Icon(Icons.do_not_disturb),
+                                  Text('코스 등록 불가'),
+                                ],
+                              )),
+                              content: const Text('코스는 2개 이상의 장소여야 등록이 가능합니다.'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text('확인'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      }
                     },
                     label: const Text('코스 지정 완료'),
                   ),

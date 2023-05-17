@@ -5,6 +5,9 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:get/get.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+// import 'package:flutter_dotenv/flutter_dotenv.dart';
+// import 'package:dio/dio.dart';
 
 CarouselController _controller = CarouselController();
 
@@ -20,9 +23,16 @@ class CourseDetail extends StatelessWidget {
               CarouselSliderText(),
               CarouselIndicator(),
               SizedBox(height: 10),
-              if (detailController.nowCourseDetail[detailController.placeIndex.value]['title'] != "" &&
-                  detailController.nowCourseDetail[detailController.placeIndex.value]['content'] != "" &&
-                  detailController.nowCourseDetail[detailController.placeIndex.value]['locationImageList'].isNotEmpty)
+              if (detailController.nowCourseDetail[
+                          detailController.placeIndex.value]['title'] !=
+                      "" ||
+                  detailController.nowCourseDetail[
+                          detailController.placeIndex.value]['content'] !=
+                      "" ||
+                  detailController
+                      .nowCourseDetail[detailController.placeIndex.value]
+                          ['locationImageList']
+                      .isNotEmpty)
                 Card(
                   elevation: 6,
                   child: Padding(
@@ -34,22 +44,40 @@ class CourseDetail extends StatelessWidget {
                           child: Column(
                             children: [
                               if (detailController
-                                  .nowCourseDetail[detailController.placeIndex.value]['locationImageList'].isNotEmpty)
+                                  .nowCourseDetail[detailController
+                                      .placeIndex.value]['locationImageList']
+                                  .isNotEmpty)
                                 ImageGridView(),
-                              if (detailController.nowCourseDetail[detailController.placeIndex.value]['title'] != "" &&
-                                  detailController.nowCourseDetail[detailController.placeIndex.value]['content'] != "")
+                              if (detailController.nowCourseDetail[
+                                              detailController.placeIndex.value]
+                                          ['title'] !=
+                                      "" ||
+                                  detailController.nowCourseDetail[
+                                              detailController.placeIndex.value]
+                                          ['content'] !=
+                                      "")
                                 Column(
                                   children: [
                                     SizedBox(height: 15),
                                     Text(
-                                      "${detailController.nowCourseDetail[detailController.placeIndex.value]['title']}",
-                                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.black),
+                                      "${detailController.nowCourseDetail[detailController.placeIndex.value]['title'] ?? ' '}",
+                                      style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.black),
                                     ),
                                     SizedBox(height: 10),
                                     Text(
-                                      "${detailController.nowCourseDetail[detailController.placeIndex.value]['content']}",
-                                      style: TextStyle(fontSize: 16, color: Colors.black, height: 1.7),
+                                      "${detailController.nowCourseDetail[detailController.placeIndex.value]['content'] ?? ' '}",
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          color: Colors.black,
+                                          height: 1.7),
                                     ),
+                                    SizedBox(height: 10),
+                                    PlaceMap(),
+                                    // SizedBox(height: 10),
+                                    // GetDistanceTime()
                                   ],
                                 ),
                             ],
@@ -65,6 +93,141 @@ class CourseDetail extends StatelessWidget {
   }
 }
 
+// class GetDistanceTime extends StatefulWidget {
+//   const GetDistanceTime({
+//     super.key,
+//   });
+
+//   @override
+//   State<GetDistanceTime> createState() => _GetDistanceTime();
+// }
+
+// class _GetDistanceTime extends State<GetDistanceTime> {
+//   final String apiKey = dotenv.get('GOOGLE_MAP_API_KEY');
+//   String _distance = '';
+//   String _duration = '';
+
+//   Future<void> getDistanceAndTime() async {
+//     Dio dio = Dio();
+
+//     String origin =
+//         "${detailController.nowCourseDetail[detailController.placeIndex.value]['latitude']},"
+//         "${detailController.nowCourseDetail[detailController.placeIndex.value]['longitude']}";
+//     String destination =
+//         "${detailController.nowCourseDetail[detailController.placeIndex.value + 1]['latitude']},"
+//         "${detailController.nowCourseDetail[detailController.placeIndex.value + 1]['longitude']}";
+
+//     final response = await dio.get(
+//       'https://maps.googleapis.com/maps/api/directions/json',
+//       queryParameters: {
+//         'origin': origin,
+//         'destination': destination,
+//         'key': apiKey,
+//       },
+//     );
+
+//     if (response.statusCode == 200) {
+//       print(response.data);
+//       setState(() {
+//         _distance = response.data['routes'][0]['legs'][0]['distance']['text'];
+//         _duration = response.data['routes'][0]['legs'][0]['duration']['text'];
+//       });
+//     } else {
+//       print('Error: ${response.statusCode}');
+//     }
+//   }
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     if (detailController.placeIndex.value <
+//         detailController.nowCourseDetail.length - 1) {
+//       getDistanceAndTime();
+//     }
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return SizedBox(
+//       height: 100,
+//       width: 100,
+//       child: Column(children: [
+//         Row(
+//           children: [Icon(Icons.straighten), Text('Distance: $_distance')],
+//         ),
+//         Row(
+//           children: [Icon(Icons.drive_eta), Text('Duration: $_duration')],
+//         )
+//       ]),
+//     );
+//   }
+// }
+
+class PlaceMap extends StatefulWidget {
+  const PlaceMap({
+    super.key,
+  });
+
+  @override
+  State<PlaceMap> createState() => _PlaceMapState();
+}
+
+class _PlaceMapState extends State<PlaceMap> {
+  late Future<BitmapDescriptor> customIcon;
+
+  @override
+  void initState() {
+    super.initState();
+    customIcon = BitmapDescriptor.fromAssetImage(
+        ImageConfiguration(size: Size(30, 40)), 'assets/flower_marker.png');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<BitmapDescriptor>(
+      future: customIcon,
+      builder:
+          (BuildContext context, AsyncSnapshot<BitmapDescriptor> snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          return SizedBox(
+            height: 300, // Adjust as needed
+            child: GoogleMap(
+              initialCameraPosition: CameraPosition(
+                target: LatLng(
+                  detailController
+                          .nowCourseDetail[detailController.placeIndex.value]
+                      ['latitude'],
+                  detailController
+                          .nowCourseDetail[detailController.placeIndex.value]
+                      ['longitude'],
+                ),
+                zoom: 14,
+              ),
+              markers: {
+                Marker(
+                  markerId: MarkerId('locationMarker'),
+                  position: LatLng(
+                    detailController
+                            .nowCourseDetail[detailController.placeIndex.value]
+                        ['latitude'],
+                    detailController
+                            .nowCourseDetail[detailController.placeIndex.value]
+                        ['longitude'],
+                  ),
+                  icon: snapshot.data!,
+                ),
+              },
+            ),
+          );
+        } else {
+          // While waiting for the icon to load, display a loading spinner.
+          return CircularProgressIndicator();
+        }
+      },
+    );
+  }
+}
+
 class CarouselIndicator extends StatelessWidget {
   const CarouselIndicator({
     super.key,
@@ -74,7 +237,8 @@ class CarouselIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: (detailController.nowCourseDetail.asMap().entries.map((entry) {
+        children:
+            (detailController.nowCourseDetail.asMap().entries.map((entry) {
           return GestureDetector(
             onTap: () => _controller.animateToPage(entry.key),
             child: Container(
@@ -83,8 +247,13 @@ class CarouselIndicator extends StatelessWidget {
               margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
               decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: (Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black)
-                      .withOpacity(detailController.placeIndex.value == entry.key ? 0.9 : 0.2)),
+                  color: (Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white
+                          : Colors.black)
+                      .withOpacity(
+                          detailController.placeIndex.value == entry.key
+                              ? 0.9
+                              : 0.2)),
             ),
           );
         }).toList()));
@@ -115,7 +284,8 @@ class CarouselSliderText extends StatelessWidget {
         margin: EdgeInsets.fromLTRB(10, 20, 10, 30),
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: CachedNetworkImageProvider(detailController.nowCourseDetail[index]['roadViewImage']),
+            image: CachedNetworkImageProvider(
+                detailController.nowCourseDetail[index]['roadViewImage']),
             fit: BoxFit.cover,
           ),
           color: Color.fromARGB(255, 241, 241, 241),
@@ -137,10 +307,15 @@ class CarouselSliderText extends StatelessWidget {
               children: [
                 Container(
                   padding: EdgeInsets.all(10),
-                  decoration: BoxDecoration(gradient: LinearGradient(colors: const [Colors.black, Colors.transparent])),
+                  decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          colors: const [Colors.black, Colors.transparent])),
                   child: Text(
                     "${index + 1}. ${detailController.nowCourseDetail[index]['name']}",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.white),
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white),
                   ),
                 ),
               ],
@@ -159,7 +334,8 @@ class ThumbnailImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     try {
-      late final image = detailController.nowCourseDetail[index]['roadViewImage'];
+      late final image =
+          detailController.nowCourseDetail[index]['roadViewImage'];
       return ClipRRect(
           borderRadius: BorderRadius.circular(0),
           child: CachedNetworkImage(
@@ -173,20 +349,22 @@ class ThumbnailImage extends StatelessWidget {
     } catch (e) {
       print(e);
       const image = 'assets/img1.jpg';
-      return Image(image: AssetImage(image), height: 150, width: 130, fit: BoxFit.cover);
+      return Image(
+          image: AssetImage(image), height: 150, width: 130, fit: BoxFit.cover);
     }
   }
 }
 
 class ImageGridView extends StatelessWidget {
   ImageGridView({Key? key}) : super(key: key);
-  final List<dynamic> imageList =
-      detailController.nowCourseDetail[detailController.placeIndex.value]['locationImageList'];
+  final List<dynamic> imageList = detailController
+      .nowCourseDetail[detailController.placeIndex.value]['locationImageList'];
 
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
+      gridDelegate:
+          SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
       physics: NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       itemCount: imageList.length > 3 ? 3 : imageList.length,
@@ -201,12 +379,16 @@ class ImageGridView extends StatelessWidget {
                 child: ClipRRect(
                   child: Container(
                     decoration: BoxDecoration(
-                        shape: BoxShape.rectangle, color: Colors.black38, borderRadius: BorderRadius.circular(10)),
+                        shape: BoxShape.rectangle,
+                        color: Colors.black38,
+                        borderRadius: BorderRadius.circular(10)),
                     margin: EdgeInsets.all(2),
                     width: 94,
                     height: 94,
                     child: Center(
-                        child: Text('+${imageList.length - 3}', style: TextStyle(color: Colors.white, fontSize: 20))),
+                        child: Text('+${imageList.length - 3}',
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 20))),
                   ),
                 ),
               ),
@@ -227,7 +409,9 @@ class ImageInkWell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    late final image = detailController.nowCourseDetail[detailController.placeIndex.value]['locationImageList'];
+    late final image =
+        detailController.nowCourseDetail[detailController.placeIndex.value]
+            ['locationImageList'];
     return Obx(() => InkWell(
           onTap: () {
             Get.to(() => Gallery(initialIndex: imageIndex));
@@ -290,14 +474,19 @@ class _GalleryState extends State<Gallery> {
             builder: (BuildContext context, int index) {
               return PhotoViewGalleryPageOptions(
                 imageProvider: CachedNetworkImageProvider(detailController
-                    .nowCourseDetail[detailController.placeIndex.value]['locationImageList'][_currentIndex]),
+                        .nowCourseDetail[detailController.placeIndex.value]
+                    ['locationImageList'][_currentIndex]),
                 initialScale: PhotoViewComputedScale.contained,
-                heroAttributes: PhotoViewHeroAttributes(tag: 'image${widget.initialIndex}_$index'),
+                heroAttributes: PhotoViewHeroAttributes(
+                    tag: 'image${widget.initialIndex}_$index'),
                 minScale: PhotoViewComputedScale.contained,
                 maxScale: PhotoViewComputedScale.covered * 2.0,
               );
             },
-            itemCount: detailController.nowCourseDetail[detailController.placeIndex.value]['locationImageList'].length,
+            itemCount: detailController
+                .nowCourseDetail[detailController.placeIndex.value]
+                    ['locationImageList']
+                .length,
             pageController: PageController(initialPage: widget.initialIndex),
             onPageChanged: (int index) {
               setState(() {
@@ -310,7 +499,9 @@ class _GalleryState extends State<Gallery> {
           Positioned(
             top: 50,
             left: 30,
-            child: GestureDetector(onTap: () => Get.back(), child: Icon(Icons.arrow_back_ios, color: Colors.white)),
+            child: GestureDetector(
+                onTap: () => Get.back(),
+                child: Icon(Icons.arrow_back_ios, color: Colors.white)),
           ),
           // 사진 상세보기 갤러리 뷰에서 밑의 인디케이터
           Positioned(
@@ -320,7 +511,10 @@ class _GalleryState extends State<Gallery> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(
-                detailController.nowCourseDetail[detailController.placeIndex.value]['locationImageList'].length,
+                detailController
+                    .nowCourseDetail[detailController.placeIndex.value]
+                        ['locationImageList']
+                    .length,
                 (index) {
                   return Container(
                     width: 10.0,
@@ -328,7 +522,9 @@ class _GalleryState extends State<Gallery> {
                     margin: EdgeInsets.symmetric(horizontal: 2.0),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: _currentIndex == index ? Colors.grey.shade800 : Colors.grey.shade600,
+                      color: _currentIndex == index
+                          ? Colors.grey.shade800
+                          : Colors.grey.shade600,
                     ),
                   );
                 },
