@@ -52,7 +52,7 @@ public class ProfileServiceImpl implements ProfileService {
         if(profileImage != null){
             imageUrl = fileUploadService.uploadImage(profileImage);
         }
-        else if(userInfoUpdateReqDto.isDelete()){
+        else if(userInfoUpdateReqDto.getIsDelete()){
             imageUrl = "default";
         }
 
