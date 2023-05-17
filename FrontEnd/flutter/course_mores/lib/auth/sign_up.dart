@@ -1,5 +1,4 @@
-import 'dart:convert';
-
+// import 'dart:convert';
 import '../controller/getx_controller.dart';
 import 'package:coursemores/auth/login_page.dart';
 import 'package:flutter/foundation.dart';
@@ -105,20 +104,18 @@ class SignUp extends StatelessWidget {
           stops: const [0.0, 0.9],
         ),
       ),
-      child: Expanded(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            Text("회원 가입", style: TextStyle(fontSize: 30, color: Colors.white)),
-            SizedBox(height: 30),
-            Text("간단히 프로필을 작성하면",
-                style: TextStyle(fontSize: 16, color: Colors.white)),
-            SizedBox(height: 10),
-            Text("코스모스의 기능을 이용하실 수 있어요",
-                style: TextStyle(fontSize: 16, color: Colors.white)),
-          ],
-        ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: const [
+          Text("회원 가입", style: TextStyle(fontSize: 30, color: Colors.white)),
+          SizedBox(height: 30),
+          Text("간단히 프로필을 작성하면",
+              style: TextStyle(fontSize: 16, color: Colors.white)),
+          SizedBox(height: 10),
+          Text("코스모스의 기능을 이용하실 수 있어요",
+              style: TextStyle(fontSize: 16, color: Colors.white)),
+        ],
       ),
     );
   }
@@ -151,15 +148,17 @@ class _ProfileImageState extends State<ProfileImage> {
             onTap: () {
               _showBottomSheet();
             },
-            child: Container(
-              width: 70,
-              height: 70,
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey),
-                borderRadius: BorderRadius.circular(10),
+            child: Center(
+              child: Container(
+                width: 150,
+                height: 150,
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.circular(80),
+                ),
+                child: Icon(Icons.camera_alt_outlined,
+                    size: imageSize, color: Colors.grey[400]),
               ),
-              child: Icon(Icons.camera_alt_outlined,
-                  size: imageSize, color: Colors.grey[300]),
             ),
           )
         else
@@ -167,14 +166,16 @@ class _ProfileImageState extends State<ProfileImage> {
             onTap: () {
               _showBottomSheet2();
             },
-            child: Container(
-              width: 70,
-              height: 70,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                image: DecorationImage(
-                    image: FileImage(File(_pickedFile!.path)),
-                    fit: BoxFit.cover),
+            child: Center(
+              child: Container(
+                width: 150,
+                height: 150,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(80),
+                  image: DecorationImage(
+                      image: FileImage(File(_pickedFile!.path)),
+                      fit: BoxFit.cover),
+                ),
               ),
             ),
           )
@@ -475,14 +476,14 @@ class _GenderChoiceState extends State<GenderChoice> {
       manTextColor = Colors.white;
       womanTextColor = Colors.blue;
     } else {
-      manColor = Colors.white;
+      manColor = Colors.grey[200];
     }
     if (_gender == 'W') {
       womanColor = Colors.blue;
       womanTextColor = Colors.white;
       manTextColor = Colors.blue;
     } else {
-      womanColor = Colors.white;
+      womanColor = Colors.grey[200];
     }
 
     return Padding(
@@ -499,7 +500,8 @@ class _GenderChoiceState extends State<GenderChoice> {
             child: ButtonBar(
               alignment: MainAxisAlignment.spaceBetween,
               children: [
-                OutlinedButton(
+                // OutlinedButton(
+                FilledButton(
                     onPressed: () {
                       setState(() {
                         _gender = 'M';
@@ -514,7 +516,8 @@ class _GenderChoiceState extends State<GenderChoice> {
                           Size(MediaQuery.of(context).size.width / 2 - 40, 40),
                     ),
                     child: Text('남성', style: TextStyle(color: manTextColor))),
-                OutlinedButton(
+                // OutlinedButton(
+                FilledButton(
                     onPressed: () {
                       setState(() {
                         _gender = 'W';
@@ -565,7 +568,7 @@ class _AgeRangeState extends State<AgeRange> {
                 _value = newValue;
                 userInfoController.saveAge(_value.toInt());
               });
-              print(_value);
+              // print(_value);
             },
             min: 0.0,
             max: 70.0,
@@ -595,10 +598,10 @@ confirmButton() {
     padding: EdgeInsets.only(top: 60),
     child: ElevatedButton(
       onPressed: () {
-        print(userInfoController.nickname);
-        print(userInfoController.age);
-        print(userInfoController.gender);
-        print(userInfoController.profileImage);
+        // print(userInfoController.nickname);
+        // print(userInfoController.age);
+        // print(userInfoController.gender);
+        // print(userInfoController.profileImage);
         post_signup.postSignUp(
           userInfoController.nickname.value,
           userInfoController.age.value,
@@ -640,18 +643,16 @@ class SignUpAppBar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: Color.fromARGB(0, 255, 220, 220),
       elevation: 0,
       iconTheme: IconThemeData(color: Colors.black54),
-      title: Expanded(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('COURSE', style: TextStyle(color: Colors.black)),
-            SizedBox(width: 10),
-            Image.asset("assets/flower.png", height: 35),
-            SizedBox(width: 10),
-            Text('MORES', style: TextStyle(color: Colors.black)),
-          ],
-        ),
+      title: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text('COURSE', style: TextStyle(color: Colors.black)),
+          SizedBox(width: 10),
+          Image.asset("assets/flower.png", height: 35),
+          SizedBox(width: 10),
+          Text('MORES', style: TextStyle(color: Colors.black)),
+        ],
       ),
       centerTitle: true,
       leading: IconButton(
