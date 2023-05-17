@@ -7,7 +7,7 @@ void withdrawal() async {
   try {
     final dio = await authDio();
     dio.delete(
-      'profile/6',
+      'profile/',
     );
   } catch (e) {
     // DioError 처리
