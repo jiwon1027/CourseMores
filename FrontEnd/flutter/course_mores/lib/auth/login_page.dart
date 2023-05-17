@@ -9,6 +9,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'dart:convert';
 import 'auth_dio.dart';
 import 'dart:math';
+import 'package:fluttertoast/fluttertoast.dart';
 
 final tokenController = Get.put(TokenStorage());
 final userInfoController = Get.put(UserInfo());
@@ -233,19 +234,12 @@ void postLogin(accessToken) async {
   print(response);
   if (response.statusCode == 200) {
     if (response.data['agree'] == false) {
-      Get.dialog(
-        AlertDialog(
-          title: Text('Error'),
-          content: Text('이메일 수집동의항목에 체크해주세요'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Get.back();
-              },
-              child: Text('OK'),
-            ),
-          ],
-        ),
+      Fluttertoast.showToast(
+        msg: '닉네임 중복확인을 해 주세요',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.grey[400],
+        textColor: Colors.red,
       );
       return;
     } else {
