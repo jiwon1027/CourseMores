@@ -12,7 +12,6 @@ import 'package:get/get.dart';
 import 'package:dio/dio.dart';
 import 'package:lottie/lottie.dart';
 import '../auth/auth_dio.dart';
-// import 'package:coursemores/controller/search_controller.dart';
 
 final homeController = Get.put(HomeScreenInfo());
 final pageController = Get.put(PageNum());
@@ -177,6 +176,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    searchController.getThemeList();
+    searchController.getSidoList();
     return Scaffold(
         body: Container(
             decoration: BoxDecoration(
@@ -232,14 +233,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                               Text(
                                                 '${temp.split('.')[0]} °C',
                                                 style: TextStyle(
-                                                    fontSize: 35,
+                                                    fontSize: 26,
                                                     color: Colors.black),
                                               ),
                                               SizedBox(height: 10),
                                               Text(
                                                 weather,
                                                 style: TextStyle(
-                                                    fontSize: 18,
+                                                    fontSize: 14,
                                                     color: Colors.black),
                                               ),
                                               SizedBox(height: 16),
@@ -266,16 +267,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       children: [
                                                         Icon(Icons.location_on,
                                                             color:
-                                                                Colors.black),
+                                                                Colors.purple),
                                                         SizedBox(width: 4),
                                                         Text(
                                                           address.length > 10
                                                               ? '${address.substring(0, 10)}...'
                                                               : address,
                                                           style: TextStyle(
-                                                              fontSize: 18,
-                                                              color:
-                                                                  Colors.black),
+                                                              fontSize: 16,
+                                                              color: Colors
+                                                                  .purple),
                                                         ),
                                                       ],
                                                     );
@@ -377,11 +378,12 @@ class _ButtonBar2State extends State<ButtonBar2> {
               child: SizedBox(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: const <Widget>[
-                    Icon(Icons.route),
+                  children: const [
+                    Icon(Icons.route, color: Colors.purple, size: 30),
                     Text(
                       '코스 작성',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
                     )
                   ],
                 ),
@@ -399,9 +401,11 @@ class _ButtonBar2State extends State<ButtonBar2> {
               child: SizedBox(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: const <Widget>[
-                    Icon(Icons.star_outline),
-                    Text('관심 목록', style: TextStyle(fontWeight: FontWeight.bold))
+                  children: const [
+                    Icon(Icons.star_outline, color: Colors.purple, size: 30),
+                    Text('관심 목록',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 12))
                   ],
                 ),
               ),
@@ -418,9 +422,11 @@ class _ButtonBar2State extends State<ButtonBar2> {
               child: SizedBox(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: const <Widget>[
-                    Icon(Icons.account_circle),
-                    Text('마이페이지', style: TextStyle(fontWeight: FontWeight.bold))
+                  children: const [
+                    Icon(Icons.account_circle, color: Colors.purple, size: 30),
+                    Text('마이페이지',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 12))
                   ],
                 ),
               ),
@@ -447,7 +453,7 @@ boxDeco() {
         color: Colors.grey.withOpacity(0.4),
         spreadRadius: 2,
         blurRadius: 3,
-        offset: Offset(0, 2), // changes position of shadow
+        offset: Offset(0, 2),
       ),
     ],
   );
@@ -499,79 +505,77 @@ themeList() {
     child: Container(
       clipBehavior: Clip.hardEdge,
       width: double.maxFinite,
-      height: 160,
-      // height: 200,
       decoration: boxDeco(),
-      child: Padding(
-          padding: EdgeInsets.all(8),
-          child: Column(
-            children: [
-              Padding(
-                padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-                child: Text(
-                  '이런 테마는 어때요? 😊',
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.bold),
+      child: Center(
+        child: Padding(
+            padding: EdgeInsets.all(8),
+            child: Column(
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(top: 15, bottom: 25),
+                  child: Text(
+                    '이런 테마는 어때요? 😊',
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold),
+                  ),
                 ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(bottom: 25.0),
-                child: Wrap(
-                  spacing: 8.0,
-                  runSpacing: 8.0,
-                  alignment: WrapAlignment.center,
-                  crossAxisAlignment: WrapCrossAlignment.start,
-                  textDirection: TextDirection.ltr,
-                  runAlignment: WrapAlignment.start,
-                  verticalDirection: VerticalDirection.down,
-                  clipBehavior: Clip.none,
-                  children: themeList.map((theme) {
-                    return InkWell(
-                      onTap: () {
-                        pageController.changePageNum(2);
-                        search.Search();
-                        searchController.queryParameters['themeIds'] = [
-                          theme['themeId']
-                        ];
-                        searchController.isSearchResults.value = true;
-                        searchController.changePage(page: 0);
-                        searchController.searchCourse();
-                        search.Search();
-                      },
-                      child: Container(
-                        margin: EdgeInsets.all(2.0),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 2,
-                              blurRadius: 3,
-                              offset: Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 12.0, vertical: 8.0),
-                          child: Text(
-                            theme['name'],
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 12.0,
+                Padding(
+                  padding: EdgeInsets.only(bottom: 25),
+                  child: Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    alignment: WrapAlignment.center,
+                    crossAxisAlignment: WrapCrossAlignment.start,
+                    textDirection: TextDirection.ltr,
+                    runAlignment: WrapAlignment.start,
+                    verticalDirection: VerticalDirection.down,
+                    clipBehavior: Clip.none,
+                    children: themeList.map((theme) {
+                      return InkWell(
+                        onTap: () {
+                          pageController.changePageNum(2);
+                          search.Search();
+                          searchController.queryParameters['themeIds'] = [
+                            theme['themeId']
+                          ];
+                          searchController.isSearchResults.value = true;
+                          searchController.changePage(page: 0);
+                          searchController.searchCourse();
+                          search.Search();
+                        },
+                        child: Container(
+                          margin: EdgeInsets.all(2.0),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.5),
+                                spreadRadius: 2,
+                                blurRadius: 3,
+                                offset: Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 12.0, vertical: 8.0),
+                            child: Text(
+                              theme['name'],
+                              style: TextStyle(
+                                  color: Colors.black, fontSize: 12.0),
                             ),
                           ),
                         ),
-                      ),
-                    );
-                  }).toList(),
-                ),
-              )
-            ],
-          )),
+                      );
+                    }).toList(),
+                  ),
+                )
+              ],
+            )),
+      ),
     ),
   );
 }
@@ -594,14 +598,15 @@ searchButtonBar() {
       },
       decoration: InputDecoration(
         hintText: "코스, 장소, 해시태그 등을 검색해보세요",
-        hintStyle: TextStyle(color: Colors.black, fontSize: 14),
+        hintStyle: TextStyle(
+            color: Color.fromARGB(152, 144, 59, 159), fontSize: 12, height: 2),
         enabledBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: Colors.transparent)),
         focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: Colors.transparent)),
         prefixIcon: IconButton(
             icon: Icon(Icons.tune),
-            color: Colors.black,
+            color: Colors.purple,
             iconSize: 25,
             onPressed: () {
               Get.to(() => SearchFilter());
@@ -611,7 +616,7 @@ searchButtonBar() {
           children: [
             IconButton(
               icon: Icon(Icons.clear),
-              color: Colors.black,
+              color: Colors.purple,
               visualDensity: VisualDensity.comfortable,
               onPressed: () {
                 searchTextEditingController.clear();
@@ -621,7 +626,7 @@ searchButtonBar() {
             ),
             IconButton(
               icon: Icon(Icons.search),
-              color: Colors.black,
+              color: Colors.purple,
               iconSize: 25,
               padding: EdgeInsets.symmetric(horizontal: 0),
               onPressed: () {

@@ -59,12 +59,12 @@ class SearchFilter extends StatelessWidget {
                     Column(
                       children: [
                         // SizedBox(height: 80),
-                        Text("지역을 선택해보세요 🗺", style: TextStyle(fontSize: 24)),
-                        SizedBox(height: 20),
+                        Text("지역을 선택해보세요 🗺", style: TextStyle(fontSize: 18)),
+                        SizedBox(height: 10),
                         SearchFilterRegion(),
-                        SizedBox(height: 50),
-                        Text("이런 테마는 어때요? 😊", style: TextStyle(fontSize: 24)),
-                        SizedBox(height: 20),
+                        SizedBox(height: 30),
+                        Text("이런 테마는 어때요? 😊", style: TextStyle(fontSize: 18)),
+                        // SizedBox(height: 10),
                         SearchFilterTheme(),
                         SizedBox(height: 20),
                         SearchFilterButtons(),
@@ -157,7 +157,9 @@ class SearchFilterRegion extends StatelessWidget {
             DropdownButton(
               value: searchController.selectedAddress['sido'],
               items: searchController.sidoList.map((String value) {
-                return DropdownMenuItem(value: value, child: Text(value));
+                return DropdownMenuItem(
+                    value: value,
+                    child: Text(value, style: TextStyle(fontSize: 14)));
               }).toList(),
               onChanged: (value) async {
                 searchController.changeSido(sido: value);
@@ -169,7 +171,8 @@ class SearchFilterRegion extends StatelessWidget {
               items: searchController.gugunList.map((value) {
                 return DropdownMenuItem(
                   value: value['gugun'],
-                  child: Text(value['gugun'] as String),
+                  child: Text(value['gugun'] as String,
+                      style: TextStyle(fontSize: 14)),
                 );
               }).toList(),
               onChanged: (newValue) {
@@ -179,4 +182,33 @@ class SearchFilterRegion extends StatelessWidget {
           ],
         ));
   }
+}
+
+Widget headerWidget(BuildContext context) {
+  return Container(
+    decoration: BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: const [
+          Color.fromARGB(255, 0, 90, 129),
+          Color.fromARGB(232, 255, 218, 218),
+        ],
+        stops: const [0.0, 0.9],
+      ),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: const [
+        Text("검색 필터 설정", style: TextStyle(fontSize: 25, color: Colors.white)),
+        SizedBox(height: 30),
+        Text("지역과 테마 선택을 통해",
+            style: TextStyle(fontSize: 14, color: Colors.white)),
+        SizedBox(height: 10),
+        Text("원하는 코스를 편리하게 검색할 수 있어요",
+            style: TextStyle(fontSize: 14, color: Colors.white)),
+      ],
+    ),
+  );
 }
