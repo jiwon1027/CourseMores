@@ -3,11 +3,11 @@ import 'package:coursemores/auth/login_page.dart';
 import 'package:dio/dio.dart';
 // import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart' as g;
-import '../main.dart' as main;
+// import '../main.dart' as main;
 import 'dart:convert';
 import 'package:http_parser/http_parser.dart';
 import '../auth/auth_dio.dart';
-import 'mypage.dart' as mypage;
+// import 'mypage.dart' as mypage;
 // import '../home_screen/home_screen.dart' as home;
 
 // void postSignUp(nickname, age, gender, image, aToken) async {
@@ -49,25 +49,14 @@ void postProfileEdit(nickname, age, gender, image, aToken, isDelete) async {
   if (image != null) {
     formData = FormData.fromMap({
       'userInfoUpdateReqDto': MultipartFile.fromString(
-          jsonEncode({
-            'nickname': nickname,
-            'age': age,
-            'gender': gender,
-            'isDelete': isDelete
-          }),
+          jsonEncode({'nickname': nickname, 'age': age, 'gender': gender, 'isDelete': isDelete}),
           contentType: MediaType.parse('application/json')),
-      'profileImage': await MultipartFile.fromFile(image.path,
-          contentType: MediaType("image", "jpg")),
+      'profileImage': await MultipartFile.fromFile(image.path, contentType: MediaType("image", "jpg")),
     });
   } else {
     formData = FormData.fromMap({
       'userInfoUpdateReqDto': MultipartFile.fromString(
-          jsonEncode({
-            'nickname': nickname,
-            'age': age,
-            'gender': gender,
-            'isDelete': isDelete
-          }),
+          jsonEncode({'nickname': nickname, 'age': age, 'gender': gender, 'isDelete': isDelete}),
           contentType: MediaType.parse('application/json')),
       'profileImage': null,
     });
@@ -116,8 +105,7 @@ Future<void> updateUserInfo() async {
   final response = await dio.get('profile/');
   print('userinfo update ! : $response');
   print('editcheck?? ${userInfoController.editCheck.value}');
-  userInfoController
-      .saveCurrentNickname('${response.data['userInfo']['nickname']}');
+  userInfoController.saveCurrentNickname('${response.data['userInfo']['nickname']}');
   userInfoController.saveImageUrl(response.data['userInfo']['profileImage']);
   print(userInfoController.imageUrl);
 }

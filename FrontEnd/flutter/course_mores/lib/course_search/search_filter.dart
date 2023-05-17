@@ -33,19 +33,10 @@ class SearchFilter extends StatelessWidget {
           title: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
-              // Text('COURSE', style: TextStyle(color: Colors.white)),
-              // SizedBox(width: 10),
-              // Image.asset("assets/flower.png", height: 35),
-              // SizedBox(width: 10),
-              // Text('MORES', style: TextStyle(color: Colors.white)),
-              Text('검색 필터 설정', style: TextStyle(color: Colors.white)),
-            ],
+            children: const [Text('검색 필터 설정', style: TextStyle(color: Colors.white))],
           ),
           actions: [
-            IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.settings, color: Colors.transparent)),
+            IconButton(onPressed: () {}, icon: Icon(Icons.settings, color: Colors.transparent)),
           ],
           headerWidget: headerWidget(context),
           headerExpandedHeight: 0.3,
@@ -93,8 +84,7 @@ class SearchFilterButtons extends StatelessWidget {
       children: [
         ElevatedButton(
           style: ElevatedButton.styleFrom(
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             backgroundColor: Colors.white,
           ),
           onPressed: () {
@@ -108,8 +98,7 @@ class SearchFilterButtons extends StatelessWidget {
         SizedBox(width: 30),
         ElevatedButton(
           style: ElevatedButton.styleFrom(
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             backgroundColor: Color.fromARGB(255, 169, 147, 255),
           ),
           onPressed: () {
@@ -131,11 +120,9 @@ class SearchFilterTheme extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.all(20),
       child: MultiSelectContainer(
-        wrapSettings: WrapSettings(
-            alignment: WrapAlignment.center, spacing: 10, runSpacing: 15),
+        wrapSettings: WrapSettings(alignment: WrapAlignment.center, spacing: 10, runSpacing: 15),
         alignments: MultiSelectAlignments(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center),
+            crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.center),
         items: searchController.cards,
         controller: multiSelectController,
         onChange: (allSelectedItems, selectedItem) {
@@ -157,9 +144,7 @@ class SearchFilterRegion extends StatelessWidget {
             DropdownButton(
               value: searchController.selectedAddress['sido'],
               items: searchController.sidoList.map((String value) {
-                return DropdownMenuItem(
-                    value: value,
-                    child: Text(value, style: TextStyle(fontSize: 14)));
+                return DropdownMenuItem(value: value, child: Text(value, style: TextStyle(fontSize: 14)));
               }).toList(),
               onChanged: (value) async {
                 searchController.changeSido(sido: value);
@@ -171,8 +156,7 @@ class SearchFilterRegion extends StatelessWidget {
               items: searchController.gugunList.map((value) {
                 return DropdownMenuItem(
                   value: value['gugun'],
-                  child: Text(value['gugun'] as String,
-                      style: TextStyle(fontSize: 14)),
+                  child: Text(value['gugun'] as String, style: TextStyle(fontSize: 14)),
                 );
               }).toList(),
               onChanged: (newValue) {
@@ -203,11 +187,9 @@ Widget headerWidget(BuildContext context) {
       children: const [
         Text("검색 필터 설정", style: TextStyle(fontSize: 25, color: Colors.white)),
         SizedBox(height: 30),
-        Text("지역과 테마 선택을 통해",
-            style: TextStyle(fontSize: 14, color: Colors.white)),
+        Text("지역과 테마 선택을 통해", style: TextStyle(fontSize: 14, color: Colors.white)),
         SizedBox(height: 10),
-        Text("원하는 코스를 편리하게 검색할 수 있어요",
-            style: TextStyle(fontSize: 14, color: Colors.white)),
+        Text("원하는 코스를 편리하게 검색할 수 있어요", style: TextStyle(fontSize: 14, color: Colors.white)),
       ],
     ),
   );

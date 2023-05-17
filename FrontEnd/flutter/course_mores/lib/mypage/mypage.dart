@@ -110,6 +110,7 @@ class _MyPageState extends State<MyPage> {
       child: AnimatedButtonBar(
           radius: 8.0,
           padding: EdgeInsets.all(8),
+          // backgroundColor: Colors.blueGrey.shade50,
           backgroundColor: Colors.blueGrey.shade50,
           foregroundColor: Colors.lightBlue,
           invertedSelection: true,
@@ -128,7 +129,7 @@ class _MyPageState extends State<MyPage> {
                 }),
             ButtonBarEntry(
                 child: Text(
-                  '내 리뷰',
+                  '내 코멘트',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
                 ),
                 onTap: () {
@@ -164,14 +165,18 @@ class _MyPageState extends State<MyPage> {
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
                 profileBox(),
                 buttonBar(),
-                if (status == 'course') Flexible(child: MyCourse()),
+                if (status == 'course')
+                  // Flexible(child:
+                  MyCourse(),
+                // ),
                 if (status == 'review')
-                  Flexible(
-                    child: SizedBox(
-                      height: reviewList.isEmpty ? null : 600,
-                      child: my_review.DetailTapCourseCommentsListSection(commentsList: reviewList),
-                    ),
-                  )
+                  // Flexible(
+                  //   child: SizedBox(
+                  //     height: reviewList.isEmpty ? null : 600,
+                  //     child:
+                  //   ),
+                  // )
+                  my_review.DetailTapCourseCommentsListSection(commentsList: reviewList),
               ])),
         )
       ],
@@ -187,54 +192,65 @@ class MyCourse extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      shrinkWrap: true,
-      scrollDirection: Axis.vertical,
-      padding: EdgeInsets.all(8),
-      itemCount: myPageController.myCourse.length,
+    return SingleChildScrollView(
+        child: Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+          children: List.generate(
+        myPageController.myCourse.length,
+        (index) {
+          //   ListView.builder(
+          // shrinkWrap: true,
+          // scrollDirection: Axis.vertical,
+          // padding: EdgeInsets.all(8),
+          // itemCount: myPageController.myCourse.length,
 
-      // index 말고 코스id로??
-      itemBuilder: (BuildContext context, int index) {
-        return InkWell(
-          onTap: () async {
-            print('mypage 코스리스트 == ${myPageController.myCourse}');
-            int courseId = (myPageController.myCourse[index]['courseId'] as int);
+          // index 말고 코스id로??
+          // itemBuilder: (BuildContext context, int index) {
+          return InkWell(
+            onTap: () async {
+              print('mypage 코스리스트 == ${myPageController.myCourse}');
+              int courseId = (myPageController.myCourse[index]['courseId'] as int);
 
-            await searchController.changeNowCourseId(courseId: courseId);
+              await searchController.changeNowCourseId(courseId: courseId);
 
-            await detailController.getCourseInfo('코스 소개');
-            await detailController.getIsLikeCourse();
-            await detailController.getIsInterestCourse();
-            await detailController.getCourseDetailList();
+              await detailController.getCourseInfo('코스 소개');
+              await detailController.getIsLikeCourse();
+              await detailController.getIsInterestCourse();
+              await detailController.getCourseDetailList();
 
-            Get.to(() => detail.Detail());
+              Get.to(() => detail.Detail());
 
-            // Get.to(() => detail.CourseDetail(index: index));
-          },
-          child: Container(
-            margin: EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 5),
-            padding: EdgeInsets.all(10),
-            decoration: const BoxDecoration(boxShadow: [
-              BoxShadow(
-                  color: Color.fromARGB(255, 211, 211, 211), blurRadius: 10.0, spreadRadius: 1.0, offset: Offset(3, 3)),
-            ], color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(10))),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                    child: SizedBox(
-                        width: 300,
-                        child: Row(children: [
-                          ThumbnailImage(index: index),
-                          SizedBox(width: 10),
-                          Expanded(child: MyCourseList(index: index)),
-                        ]))),
-              ],
+              // Get.to(() => detail.CourseDetail(index: index));
+            },
+            child: Container(
+              margin: EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 5),
+              padding: EdgeInsets.all(10),
+              decoration: const BoxDecoration(boxShadow: [
+                BoxShadow(
+                    color: Color.fromARGB(255, 211, 211, 211),
+                    blurRadius: 10.0,
+                    spreadRadius: 1.0,
+                    offset: Offset(3, 3)),
+              ], color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(10))),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                      child: SizedBox(
+                          width: 300,
+                          child: Row(children: [
+                            ThumbnailImage(index: index),
+                            SizedBox(width: 10),
+                            Expanded(child: MyCourseList(index: index)),
+                          ]))),
+                ],
+              ),
             ),
-          ),
-        );
-      },
-    );
+          );
+        },
+      )),
+    ));
   }
 }
 
@@ -283,8 +299,10 @@ class MyCourseList extends StatelessWidget {
                 ],
               ),
             ),
-            if (myPageController.myCourse[index]["interest"] == true) Icon(Icons.bookmark, size: 24),
-            if (myPageController.myCourse[index]["interest"] == false) Icon(Icons.bookmark_outline_rounded, size: 24),
+            if (myPageController.myCourse[index]["interest"] == true)
+              Icon(Icons.bookmark, size: 24, color: Colors.green[800]),
+            if (myPageController.myCourse[index]["interest"] == false)
+              Icon(Icons.bookmark_outline_rounded, size: 24, color: Colors.green[800]),
           ],
         ),
         SizedBox(height: 5),
@@ -337,17 +355,20 @@ class MyCourseList extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.favorite, size: 12),
+                    Icon(Icons.favorite, size: 14, color: Colors.pink[300]),
                     SizedBox(width: 3),
-                    Text(myPageController.myCourse[index]["likeCount"].toString()),
+                    Text(
+                      myPageController.myCourse[index]["likeCount"].toString(),
+                      style: TextStyle(fontSize: 12),
+                    ),
                   ],
                 ),
                 SizedBox(width: 8),
                 Row(
                   children: [
-                    Icon(Icons.comment, size: 12),
+                    Icon(Icons.comment, size: 14),
                     SizedBox(width: 3),
-                    Text(myPageController.myCourse[index]["commentCount"].toString()),
+                    Text(myPageController.myCourse[index]["commentCount"].toString(), style: TextStyle(fontSize: 12)),
                   ],
                 ),
               ],
@@ -542,7 +563,7 @@ class ModalBottom extends StatelessWidget {
                 context: context,
                 builder: (BuildContext context) {
                   return Container(
-                      height: 150,
+                      height: 180,
                       color: Colors.transparent,
                       child: Center(
                         child: Column(
@@ -555,15 +576,15 @@ class ModalBottom extends StatelessWidget {
                                     onTap: () {
                                       Navigator.pop(context);
                                       print(userInfoController.profileImage);
-                                      Navigator.push(context,
-                                          MaterialPageRoute(builder: (context) => const profie_edit.ProfileEdit()));
+                                      Get.to(profie_edit.ProfileEdit());
+                                      // Navigator.push(context,
+                                      //     MaterialPageRoute(builder: (context) => const profie_edit.ProfileEdit()));
+                                      // Get.to(SignUp());
                                     },
-                                    child: const Center(
+                                    child: Center(
                                         child: Text(
                                       '내 정보 수정',
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                      ),
+                                      style: TextStyle(fontSize: 16),
                                       textAlign: TextAlign.center,
                                     ))),
                               ),
@@ -571,20 +592,21 @@ class ModalBottom extends StatelessWidget {
                                 child: InkWell(
                                     onTap: () {
                                       Navigator.pop(context);
-                                      loginController.changeLoginStatus();
+                                      authController.logout();
+                                      print(loginController.isLoggedIn.value);
+                                      print(pageController.pageNum.value);
                                       // 로그아웃 메서드 쓰기..
                                       // logout();
                                       print('logout');
-                                      Get.to(main.MyApp());
+                                      // Get.to(main.MyApp());
                                     },
                                     child: Container(
-                                      decoration: const BoxDecoration(
-                                          border: Border(top: BorderSide(color: Colors.grey, width: 1))),
-                                      child: const Center(
-                                          // color: Colors.yellow,
+                                      decoration:
+                                          BoxDecoration(border: Border(top: BorderSide(color: Colors.grey, width: 1))),
+                                      child: Center(
                                           child: Text(
                                         '로그아웃',
-                                        style: TextStyle(fontSize: 20, color: Colors.red),
+                                        style: TextStyle(fontSize: 16, color: Colors.red),
                                         textAlign: TextAlign.center,
                                       )),
                                     )),
@@ -599,13 +621,12 @@ class ModalBottom extends StatelessWidget {
                                       Get.to(main.MyApp());
                                     },
                                     child: Container(
-                                      decoration: const BoxDecoration(
-                                          border: Border(top: BorderSide(color: Colors.grey, width: 1))),
-                                      child: const Center(
-                                          // color: Colors.yellow,
+                                      decoration:
+                                          BoxDecoration(border: Border(top: BorderSide(color: Colors.grey, width: 1))),
+                                      child: Center(
                                           child: Text(
                                         '회원탈퇴',
-                                        style: TextStyle(fontSize: 20, color: Colors.red),
+                                        style: TextStyle(fontSize: 16, color: Colors.red),
                                         textAlign: TextAlign.center,
                                       )),
                                     )),

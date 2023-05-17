@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:draggable_home/draggable_home.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../notification/notification.dart' as noti;
@@ -11,36 +12,58 @@ import 'course_detail_tap_comment.dart';
 import 'package:coursemores/course_make/make2.dart';
 import 'package:coursemores/course_modify/modify2.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
+import 'package:like_button/like_button.dart';
+
+// ignore: depend_on_referenced_packages
+import 'package:intl/intl.dart' show DateFormat;
 
 class Detail extends StatelessWidget {
   Detail({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    detailController.initialPage.value = 0;
+    detailController.changePlaceIndex(0);
     // detailController.getCourseInfo('코스 소개');
-    try {
-      return Scaffold(
-        appBar: DetailAppBar(),
-        body: ListView(
-          children: [
-            // 코스 정보
-            DetailCourseInfo(),
 
-            // 좋아요, 즐겨찾기, 공유하기, 가져오기
-            DetailLikeBookmarkShareScrap(),
+    return DraggableHome(
+      actions: [
+        IconButton(onPressed: () {}, icon: Icon(Icons.settings, color: Colors.transparent)),
+      ],
+      title: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: const [Text('코스 상세보기', style: TextStyle(color: Colors.white))],
+      ),
+      headerWidget: headerWidget(context),
+      headerExpandedHeight: 0.3,
+      body: [
+        SingleChildScrollView(
+          // controller: commentScrollController,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // ListView(
+              //   children: [
 
-            // 코스 탭 (코스 소개, 코스 상세, 코멘트)
-            DetailTaps(),
-          ],
+              // 코스 정보
+              DetailCourseInfo(),
+
+              // 좋아요, 즐겨찾기, 공유하기, 가져오기
+              DetailLikeBookmarkShareScrap(),
+
+              // 코스 탭 (코스 소개, 코스 상세, 코멘트)
+              DetailTaps(),
+              // ],
+              // ),
+            ],
+          ),
         ),
-      );
-    } catch (e) {
-      print(e);
-      return Scaffold(
-        appBar: DetailAppBar(),
-        body: ListView(children: [Container()]),
-      );
-    }
+      ],
+      fullyStretchable: false,
+      backgroundColor: Colors.white,
+      appBarColor: Color.fromARGB(255, 95, 207, 255),
+    );
   }
 }
 
@@ -49,6 +72,25 @@ class DetailTapSwitcher extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // return SingleChildScrollView(
+    //   padding: EdgeInsets.symmetric(vertical: 50),
+    //   child: Center(
+    //     child: Column(
+    //       children: [
+    //         AdvancedSegment(
+    //           controller: detailController.selectedSegment,
+    //           segments: detailController.segments,
+    //           backgroundColor: Color.fromARGB(255, 228, 220, 255),
+    //           activeStyle: TextStyle(
+    //             color: Color.fromARGB(255, 93, 0, 255),
+    //             fontWeight: FontWeight.w700,
+    //             fontFamily: 'KyoboHandwriting2020pdy',
+    //           ),
+    //         ),
+    //       ],
+    //     ),
+    //   ),
+    // );
     return SingleChildScrollView(
       padding: EdgeInsets.symmetric(vertical: 50),
       child: Center(
@@ -76,42 +118,47 @@ class DetailTaps extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // commentScrollController.addListener(() {
+    //   if (commentScrollController.position.pixels == commentScrollController.position.maxScrollExtent) {
+    //     print("불러오기");
+    //     // 스크롤이 리스트의 끝까지 도달하면 다음 검색 결과 호출
+    //     detailController.getNextCommentResults();
+    //   }
+    // });
     return Container(
       margin: EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
-      padding: EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        boxShadow: const [
-          BoxShadow(
-              color: Color.fromARGB(255, 211, 211, 211),
-              blurRadius: 10.0,
-              spreadRadius: 1.0,
-              offset: Offset(3, 3))
-        ],
-        color: Color.fromARGB(255, 255, 255, 255),
-        borderRadius: BorderRadius.all(Radius.circular(10)),
-      ),
+      padding: EdgeInsets.all(10),
+      // decoration: BoxDecoration(
+      //   boxShadow: const [
+      //     BoxShadow(
+      //         color: Color.fromARGB(255, 211, 211, 211), blurRadius: 10.0, spreadRadius: 1.0, offset: Offset(3, 3))
+      //   ],
+      //   color: Color.fromARGB(255, 255, 255, 255),
+      //   borderRadius: BorderRadius.all(Radius.circular(10)),
+      // ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SingleChildScrollView(
+            // controller: commentScrollController, // ScrollController 설정
             padding: EdgeInsets.symmetric(vertical: 10),
             child: Center(
               child: Column(
                 children: [
                   AdvancedSegment(
-                    inactiveStyle: TextStyle(fontFamily: 'SCDream5'),
+                    inactiveStyle: TextStyle(fontFamily: 'SCDream5', fontSize: 12),
                     controller: detailController.selectedSegment,
                     segments: detailController.segments,
                     backgroundColor: Color.fromARGB(255, 228, 220, 255),
                     activeStyle: TextStyle(
                         color: Color.fromARGB(255, 93, 0, 255),
                         fontWeight: FontWeight.w700,
-                        fontFamily: 'SCDream5'),
+                        fontFamily: 'SCDream5',
+                        fontSize: 12),
                   ),
                   ValueListenableBuilder(
                     valueListenable: detailController.selectedSegment,
-                    builder:
-                        (BuildContext context, dynamic value, Widget? child) {
+                    builder: (BuildContext context, dynamic value, Widget? child) {
                       switch (value) {
                         case '코스 소개':
                           return CourseIntroduction();
@@ -141,18 +188,12 @@ class DetailCourseInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() => Container(
-          margin: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 10),
-          padding: EdgeInsets.all(20),
-          decoration: BoxDecoration(
-              boxShadow: const [
-                BoxShadow(
-                    color: Color.fromARGB(255, 211, 211, 211),
-                    blurRadius: 10.0,
-                    spreadRadius: 1.0,
-                    offset: Offset(3, 3)),
-              ],
-              color: Colors.white,
-              borderRadius: BorderRadius.all(Radius.circular(10))),
+          margin: EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
+          padding: EdgeInsets.all(10),
+          // decoration: BoxDecoration(boxShadow: const [
+          //   BoxShadow(
+          //       color: Color.fromARGB(255, 211, 211, 211), blurRadius: 10.0, spreadRadius: 1.0, offset: Offset(3, 3)),
+          // ], color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(10))),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
@@ -167,10 +208,7 @@ class DetailCourseInfo extends StatelessWidget {
                           // 제목 라인
                           Text(
                             "${detailController.nowCourseInfo['title']}",
-                            style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                height: 1.3),
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, height: 1.3),
                             softWrap: true,
                           ),
                           SizedBox(height: 10),
@@ -178,8 +216,7 @@ class DetailCourseInfo extends StatelessWidget {
                           DetailAddressPeopleTime(),
                           SizedBox(height: 10),
                           // 본문 텍스트 라인
-                          Text("${detailController.nowCourseInfo['content']}",
-                              style: TextStyle(height: 1.7)),
+                          Text("${detailController.nowCourseInfo['content']}", style: TextStyle(height: 1.7)),
                           SizedBox(height: 10),
                           // 테마 라인
                           DetailTheme(),
@@ -194,61 +231,102 @@ class DetailCourseInfo extends StatelessWidget {
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
-                                SizedBox(height: 15),
                                 Expanded(child: Container()),
-                                TextButton(
+                                IconButton(
+                                    icon: Icon(Icons.edit),
                                     onPressed: () async {
-                                      // TODO: 이곳에 코스 수정하기 API 연결
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => CourseModify(
-                                                  courseId: detailController
-                                                      .nowIndex
-                                                      .toString(),
-                                                )),
-                                      );
+                                      Get.to(CourseModify(courseId: detailController.nowIndex.toString()));
                                     },
-                                    child: Text("수정")),
-                                TextButton(
-                                  onPressed: () async {
-                                    print(detailController.nowIndex);
-                                    bool confirmed = await showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return AlertDialog(
-                                          title: Text("코스 삭제"),
-                                          content: Text("정말로 삭제하시겠습니까?"),
-                                          actions: [
-                                            TextButton(
-                                              onPressed: () {
-                                                Navigator.of(context).pop(
-                                                    true); // 확인 버튼을 누를 때 true 반환
-                                              },
-                                              child: Text("확인"),
-                                            ),
-                                            TextButton(
-                                              onPressed: () {
-                                                Navigator.of(context).pop(
-                                                    false); // 취소 버튼을 누를 때 false 반환
-                                              },
-                                              child: Text("취소"),
-                                            ),
-                                          ],
-                                        );
-                                      },
-                                    );
+                                    tooltip: "수정"),
+                                IconButton(
+                                    onPressed: () async {
+                                      print(detailController.nowIndex);
+                                      bool confirmed = await showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: Text("코스 삭제"),
+                                            content: Text("정말로 삭제하시겠습니까?"),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.of(context).pop(false); // 취소 버튼을 누를 때 false 반환
+                                                },
+                                                child: Text("취소"),
+                                              ),
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.of(context).pop(true); // 확인 버튼을 누를 때 true 반환
+                                                },
+                                                child: Text("확인"),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
 
-                                    if (confirmed == true) {
-                                      // TODO: 삭제하기 API 연결
-                                      detailController.deleteCourse();
-                                      Navigator.of(context).pop();
-                                    }
-                                  },
-                                  child: Text("삭제"),
-                                ),
+                                      if (confirmed == true) {
+                                        detailController.deleteCourse();
+                                        Get.back();
+                                      }
+                                    },
+                                    icon: Icon(Icons.delete_forever_rounded),
+                                    tooltip: "삭제"),
                               ],
                             ),
+
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              SizedBox(height: 15),
+                              Expanded(child: Container()),
+                              // TextButton(
+                              //     onPressed: () async {
+                              //       Navigator.push(
+                              //         context,
+                              //         MaterialPageRoute(
+                              //             builder: (context) => CourseModify(
+                              //                   courseId: detailController.nowIndex.toString(),
+                              //                 )),
+                              //       );
+                              //     },
+                              //     child: Text("수정")),
+                              // TextButton(
+                              //   onPressed: () async {
+                              //     print(detailController.nowIndex);
+                              //     bool confirmed = await showDialog(
+                              //       context: context,
+                              //       builder: (BuildContext context) {
+                              //         return AlertDialog(
+                              //           title: Text("코스 삭제"),
+                              //           content: Text("정말로 삭제하시겠습니까?"),
+                              //           actions: [
+                              //             TextButton(
+                              //               onPressed: () {
+                              //                 Navigator.of(context).pop(false); // 취소 버튼을 누를 때 false 반환
+                              //               },
+                              //               child: Text("취소"),
+                              //             ),
+                              //             TextButton(
+                              //               onPressed: () {
+                              //                 Navigator.of(context).pop(true); // 확인 버튼을 누를 때 true 반환
+                              //               },
+                              //               child: Text("확인"),
+                              //             ),
+                              //           ],
+                              //         );
+                              //       },
+                              //     );
+
+                              //     if (confirmed == true) {
+                              //       detailController.deleteCourse();
+                              //       Get.back();
+                              //     }
+                              //   },
+                              //   child: Text("삭제"),
+                              // ),
+                            ],
+                          ),
                         ],
                       ))),
             ],
@@ -268,11 +346,7 @@ class DetailLikeBookmarkShareScrap extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20.0),
         boxShadow: [
-          BoxShadow(
-              color: Colors.grey.withOpacity(0.5),
-              spreadRadius: 1,
-              blurRadius: 7,
-              offset: Offset(0, 3)),
+          BoxShadow(color: Colors.grey.withOpacity(0.5), spreadRadius: 1, blurRadius: 7, offset: Offset(0, 3)),
         ],
         color: Colors.white,
       ),
@@ -295,26 +369,16 @@ class DetailInterest extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() => Expanded(
-          child: InkWell(
-            onTap: () {
-              if (!detailController.isInterestCourse.value) {
-                detailController.addIsInterestCourse();
-              } else {
-                detailController.deleteIsInterestCourse();
-              }
+          child: LikeButton(
+            likeBuilder: (isLiked) {
+              return Icon(Icons.bookmark, color: isLiked ? Colors.green[800] : Colors.black, size: 26);
             },
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if (detailController.isInterestCourse.value)
-                  Icon(Icons.bookmark),
-                if (!detailController.isInterestCourse.value)
-                  Icon(Icons.bookmark_outline),
-                SizedBox(height: 5),
-                Text(detailController.nowCourseInfo['interestCount'].toString(),
-                    style: TextStyle(fontSize: 16)),
-              ],
-            ),
+            isLiked: detailController.isInterestCourse.value,
+            onTap: (isLiked) => detailController.onInterestButtonTapped(),
+            size: 26,
+            countPostion: CountPostion.bottom,
+            likeCountPadding: EdgeInsets.only(top: 6),
+            likeCount: detailController.nowCourseInfo['interestCount'],
           ),
         ));
   }
@@ -326,48 +390,28 @@ class DetailLike extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: Obx(() => InkWell(
-          onTap: () {
-            if (!detailController.isLikeCourse.value) {
-              detailController.addIsLikeCourse();
-            } else {
-              detailController.deleteIsLikeCourse();
-            }
+      child: Obx(
+        () => LikeButton(
+          likeBuilder: (isLiked) {
+            return Icon(Icons.favorite, color: isLiked ? Colors.pink : Colors.black, size: 26);
           },
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              if (detailController.isLikeCourse.value) Icon(Icons.favorite),
-              if (!detailController.isLikeCourse.value)
-                Icon(Icons.favorite_outline),
-              SizedBox(height: 5),
-              Text(detailController.nowCourseInfo['likeCount'].toString(),
-                  style: TextStyle(fontSize: 16)),
-            ],
-          ))),
+          isLiked: detailController.isLikeCourse.value,
+          onTap: (isLiked) => detailController.onLikeButtonTapped(),
+          size: 26,
+          countPostion: CountPostion.bottom,
+          likeCountPadding: EdgeInsets.only(top: 6),
+          likeCount: detailController.nowCourseInfo['likeCount'],
+        ),
+      ),
     );
   }
 }
 
 class DetailDateViews extends StatelessWidget {
   DetailDateViews({super.key});
-  final createTime = detailController.nowCourseInfo['createTime'] ?? "";
-  late final year;
-  late final month;
-  late final date;
 
   @override
   Widget build(BuildContext context) {
-    try {
-      year = createTime.substring(0, 4);
-      month = createTime.substring(5, 7);
-      date = createTime.substring(8, 10);
-    } catch (e) {
-      year = "";
-      month = "";
-      date = "";
-      print(e);
-    }
     return Row(
       children: [
         // 작성일자
@@ -376,9 +420,10 @@ class DetailDateViews extends StatelessWidget {
             alignment: Alignment.centerRight,
             child: Row(
               children: [
-                Icon(Icons.calendar_month, size: 12),
+                Icon(Icons.calendar_month, size: 18),
                 SizedBox(width: 3),
-                Text("$year. $month. $date", style: TextStyle(fontSize: 12)),
+                Text(DateFormat('yyyy. MM.dd').format(DateTime.parse(detailController.nowCourseInfo['createTime'])),
+                    style: TextStyle(fontSize: 12)),
               ],
             ),
           ),
@@ -389,8 +434,7 @@ class DetailDateViews extends StatelessWidget {
           children: [
             Icon(Icons.remove_red_eye, size: 16),
             SizedBox(width: 3),
-            Text(detailController.nowCourseInfo['viewCount'].toString(),
-                style: TextStyle(fontSize: 14)),
+            Text(detailController.nowCourseInfo['viewCount'].toString(), style: TextStyle(fontSize: 12)),
           ],
         ),
       ],
@@ -427,15 +471,12 @@ class DetailTag extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Iterable<dynamic> hashtagList =
-        detailController.nowCourseInfo['hashtagList'] as Iterable<dynamic>;
+    Iterable<dynamic> hashtagList = detailController.nowCourseInfo['hashtagList'] as Iterable<dynamic>;
 
     return Wrap(
       spacing: 6,
       children: hashtagList.map((hashtag) {
-        return Text("#$hashtag",
-            style: TextStyle(fontSize: 12, color: Colors.blue[600]),
-            softWrap: true);
+        return Text("#$hashtag", style: TextStyle(fontSize: 12, color: Colors.blue[600]), softWrap: true);
       }).toList(),
     );
   }
@@ -510,18 +551,13 @@ class DetailScrap extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) =>
-                  CourseMake(courseId: detailController.nowIndex.toString()),
+              builder: (context) => CourseMake(courseId: detailController.nowIndex.toString()),
             ),
           );
         },
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            Icon(Icons.ios_share),
-            SizedBox(height: 8),
-            Text("코스 가져오기")
-          ],
+          children: const [Icon(Icons.ios_share), SizedBox(height: 8), Text("코스 가져오기", style: TextStyle(fontSize: 12))],
         ),
       ),
     );
@@ -535,8 +571,7 @@ class DetailShare extends StatelessWidget {
     // 사용자 정의 템플릿 ID
     int templateId = 93826;
     // 카카오톡 실행 가능 여부 확인
-    bool isKakaoTalkSharingAvailable =
-        await ShareClient.instance.isKakaoTalkSharingAvailable();
+    bool isKakaoTalkSharingAvailable = await ShareClient.instance.isKakaoTalkSharingAvailable();
 
     // 이후에 nowCourseDetail을 사용하여 locationDataList 구성
     List<Map<String, String>> locationDataList = [];
@@ -549,8 +584,7 @@ class DetailShare extends StatelessWidget {
       String address = '$sido $gugun';
       String picture = '';
 
-      if (detail['locationImageList'] != null &&
-          detail['locationImageList'].isNotEmpty) {
+      if (detail['locationImageList'] != null && detail['locationImageList'].isNotEmpty) {
         picture = detail['locationImageList'][0] ?? '';
       } else {
         picture = detail['roadViewImage'] ?? '';
@@ -574,12 +608,9 @@ class DetailShare extends StatelessWidget {
 
     // Add location data to templateArgs
     for (int i = 0; i < locationDataList.length; i++) {
-      templateArgs['locationTitle${i + 1}'] =
-          locationDataList[i]['locationTitle']!;
-      templateArgs['locationAddress${i + 1}'] =
-          locationDataList[i]['locationAddress']!;
-      templateArgs['locationPicture${i + 1}'] =
-          locationDataList[i]['locationPicture']!;
+      templateArgs['locationTitle${i + 1}'] = locationDataList[i]['locationTitle']!;
+      templateArgs['locationAddress${i + 1}'] = locationDataList[i]['locationAddress']!;
+      templateArgs['locationPicture${i + 1}'] = locationDataList[i]['locationPicture']!;
     }
 
     if (isKakaoTalkSharingAvailable) {
@@ -618,11 +649,7 @@ class DetailShare extends StatelessWidget {
         },
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            Icon(Icons.share),
-            SizedBox(height: 8),
-            Text("공유하기")
-          ],
+          children: const [Icon(Icons.share), SizedBox(height: 8), Text("공유하기", style: TextStyle(fontSize: 12))],
         ),
       ),
     );
@@ -636,20 +663,20 @@ class DetailTheme extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     try {
-      themeList =
-          detailController.nowCourseInfo['themeList'] as Iterable<dynamic>;
+      themeList = detailController.nowCourseInfo['themeList'] as Iterable<dynamic>;
     } catch (e) {
       themeList = [];
       print(e);
     }
 
     return Wrap(
+      runSpacing: -8,
       spacing: 6,
       children: themeList.map((theme) {
         return Chip(
           label: Text(theme['name'].toString()),
           backgroundColor: Color.fromARGB(255, 115, 81, 255),
-          labelStyle: TextStyle(color: Colors.white, fontSize: 12),
+          labelStyle: TextStyle(color: Colors.white, fontSize: 10),
         );
       }).toList(),
     );
@@ -664,8 +691,7 @@ class DetailUserVisited extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     try {
-      nickname =
-          detailController.nowCourseInfo['simpleInfoOfWriter']['nickname'];
+      nickname = detailController.nowCourseInfo['simpleInfoOfWriter']['nickname'];
     } catch (e) {
       nickname = "";
       print(e);
@@ -682,7 +708,7 @@ class DetailUserVisited extends StatelessWidget {
             ProfileImage(),
             SizedBox(width: 5),
             // 작성자명
-            Text("$nickname", style: TextStyle(fontWeight: FontWeight.bold)),
+            Text("$nickname", style: TextStyle(fontSize: 13)),
             SizedBox(width: 5),
           ],
         ),
@@ -702,8 +728,7 @@ class DetailUserVisited extends StatelessWidget {
                       padding: EdgeInsets.all(4.0),
                       child: Icon(Icons.check, size: 14, color: Colors.white),
                     ),
-                    Text("방문",
-                        style: TextStyle(color: Colors.white, fontSize: 12)),
+                    Text("방문", style: TextStyle(color: Colors.white, fontSize: 12)),
                     SizedBox(width: 7),
                   ],
                 ),
@@ -751,14 +776,11 @@ class ProfileImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     try {
-      if (detailController.nowCourseInfo['simpleInfoOfWriter']
-              ['profileImage'] !=
-          "default") {
+      if (detailController.nowCourseInfo['simpleInfoOfWriter']['profileImage'] != "default") {
         return ClipRRect(
             borderRadius: BorderRadius.circular(30),
             child: CachedNetworkImage(
-              imageUrl: detailController.nowCourseInfo['simpleInfoOfWriter']
-                  ['profileImage'],
+              imageUrl: detailController.nowCourseInfo['simpleInfoOfWriter']['profileImage'],
               placeholder: (context, url) => CircularProgressIndicator(),
               errorWidget: (context, url, error) => Icon(Icons.error),
               height: 25,
@@ -770,17 +792,12 @@ class ProfileImage extends StatelessWidget {
         return Container(
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(30)),
             clipBehavior: Clip.hardEdge,
-            child: Image(
-                image: AssetImage(image),
-                height: 25,
-                width: 25,
-                fit: BoxFit.cover));
+            child: Image(image: AssetImage(image), height: 25, width: 25, fit: BoxFit.cover));
       }
     } catch (e) {
       print(e);
       const image = 'assets/default_profile.png';
-      return Image(
-          image: AssetImage(image), height: 25, width: 25, fit: BoxFit.cover);
+      return Image(image: AssetImage(image), height: 25, width: 25, fit: BoxFit.cover);
     }
   }
 }
@@ -792,11 +809,34 @@ class ThumbnailImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(5),
-      child: Image(
-          image: AssetImage('assets/img1.jpg'),
-          height: 150,
-          width: 130,
-          fit: BoxFit.cover),
+      child: Image(image: AssetImage('assets/img1.jpg'), height: 150, width: 130, fit: BoxFit.cover),
     );
   }
+}
+
+Widget headerWidget(BuildContext context) {
+  return Container(
+    decoration: BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: const [
+          Color.fromARGB(255, 0, 90, 129),
+          Color.fromARGB(232, 255, 218, 218),
+        ],
+        stops: const [0.0, 0.9],
+      ),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: const [
+        Text("코스 상세보기", style: TextStyle(fontSize: 25, color: Colors.white)),
+        SizedBox(height: 30),
+        Text("다른 사람의 코스를 구경하고", style: TextStyle(fontSize: 16, color: Colors.white)),
+        SizedBox(height: 10),
+        Text("마음에 들면 공유할 수 있어요", style: TextStyle(fontSize: 16, color: Colors.white)),
+      ],
+    ),
+  );
 }

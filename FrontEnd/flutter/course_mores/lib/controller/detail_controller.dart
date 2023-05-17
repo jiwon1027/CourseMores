@@ -49,8 +49,7 @@ class DetailController extends GetxController {
       "locationImageList": [{}]
     }
   ].obs;
-  RxList<Map<String, dynamic>> nowCourseCommentList =
-      <Map<String, dynamic>>[].obs;
+  RxList<Map<String, dynamic>> nowCourseCommentList = <Map<String, dynamic>>[].obs;
   RxBool isLikeCourse = false.obs;
   RxBool isInterestCourse = false.obs;
 
@@ -70,19 +69,13 @@ class DetailController extends GetxController {
   RxList<File> addImageList = <File>[].obs;
   RxInt commentPeople = 0.obs;
   RxDouble sliderValue = 1.0.obs;
-  final Map<double, String> peopleMapping = {
-    0: '상관없음',
-    1.0: '혼자',
-    2.0: '2인',
-    3.0: '3인',
-    4.0: '4인',
-    5.0: '5인 이상'
-  };
+  final Map<double, String> peopleMapping = {0: '상관없음', 1.0: '혼자', 2.0: '2인', 3.0: '3인', 4.0: '4인', 5.0: '5인 이상'};
 
   RxList<int> deleteImageList = <int>[].obs;
 
   final selectedSegment = ValueNotifier('코스 소개');
   final segments = {'코스 소개': '코스 소개', '코스 상세': '코스 상세', '코멘트': '코멘트'};
+  final initialPage = 0.obs;
 
   final GlobalKey<FlipCardState> cardKey = GlobalKey<FlipCardState>();
   RxList<LatLng> markerPositions = [
@@ -265,15 +258,13 @@ class DetailController extends GetxController {
   Future getCommentList() async {
     try {
       final dio = await authDio();
-      final response = await dio.get(
-          "comment/course/${nowIndex.value}?page=$commentPage&sortby=$commentSortBy");
+      final response = await dio.get("comment/course/${nowIndex.value}?page=$commentPage&sortby=$commentSortBy");
 
       // 응답 처리
       if (response.statusCode == 200) {
         dynamic data = response.data;
 
-        nowCourseCommentList.value =
-            RxList<Map<String, dynamic>>.from(data['commentList']);
+        nowCourseCommentList.value = RxList<Map<String, dynamic>>.from(data['commentList']);
 
         detailController.commentPage++;
       } else {
@@ -374,8 +365,7 @@ class DetailController extends GetxController {
   }
 
   Future removeImage(index) async {
-    int deleteIndex =
-        addImageList.indexWhere((item) => item.path == imageList[index].path);
+    int deleteIndex = addImageList.indexWhere((item) => item.path == imageList[index].path);
 
     try {
       if (deleteIndex == -1) {
@@ -483,8 +473,7 @@ class DetailController extends GetxController {
       // 이미지가 없는 경우
       formData = FormData.fromMap({
         'commentCreateReqDTO': MultipartFile.fromString(
-          jsonEncode(
-              {'content': textController.text, 'people': commentPeople.value}),
+          jsonEncode({'content': textController.text, 'people': commentPeople.value}),
           contentType: MediaType.parse('application/json'),
         ),
         'imageList': null,
@@ -493,14 +482,12 @@ class DetailController extends GetxController {
       // 이미지가 있는 경우
       formData = FormData.fromMap({
         'commentCreateReqDTO': MultipartFile.fromString(
-          jsonEncode(
-              {'content': textController.text, 'people': commentPeople.value}),
+          jsonEncode({'content': textController.text, 'people': commentPeople.value}),
           contentType: MediaType.parse('application/json'),
         ),
         'imageList': [
           for (final image in addImageList)
-            await MultipartFile.fromFile(image.path,
-                contentType: MediaType("image", "jpg")),
+            await MultipartFile.fromFile(image.path, contentType: MediaType("image", "jpg")),
         ],
       });
     }
@@ -510,8 +497,7 @@ class DetailController extends GetxController {
     try {
       final dio = await authDio();
       final response = await dio.post('comment/course/$nowIndex',
-          data: formData,
-          options: Options(headers: {'Content-Type': 'multipart/form-data'}));
+          data: formData, options: Options(headers: {'Content-Type': 'multipart/form-data'}));
       if (response.statusCode == 200) {
         print('POST 요청 성공');
       }
@@ -527,6 +513,8 @@ class DetailController extends GetxController {
     }
     await getCourseInfo("코멘트");
 
+    await detailController.changeCommentPage(0);
+
     await getCommentList();
     selectedSegment.value = "코멘트";
   }
@@ -539,11 +527,8 @@ class DetailController extends GetxController {
       // 이미지가 없는 경우
       formData = FormData.fromMap({
         'commentUpdateReqDTO': MultipartFile.fromString(
-          jsonEncode({
-            'content': textController.text,
-            'people': commentPeople.value,
-            'deleteImageList': deleteImageList
-          }),
+          jsonEncode(
+              {'content': textController.text, 'people': commentPeople.value, 'deleteImageList': deleteImageList}),
           contentType: MediaType.parse('application/json'),
         ),
         'imageList': null,
@@ -552,17 +537,13 @@ class DetailController extends GetxController {
       // 이미지가 있는 경우
       formData = FormData.fromMap({
         'commentUpdateReqDTO': MultipartFile.fromString(
-          jsonEncode({
-            'content': textController.text,
-            'people': commentPeople.value,
-            'deleteImageList': deleteImageList
-          }),
+          jsonEncode(
+              {'content': textController.text, 'people': commentPeople.value, 'deleteImageList': deleteImageList}),
           contentType: MediaType.parse('application/json'),
         ),
         'imageList': [
           for (final image in addImageList)
-            await MultipartFile.fromFile(image.path,
-                contentType: MediaType("image", "jpg")),
+            await MultipartFile.fromFile(image.path, contentType: MediaType("image", "jpg")),
         ],
       });
     }
@@ -570,8 +551,7 @@ class DetailController extends GetxController {
     try {
       final dio = await authDio();
       final response = await dio.put('comment/$commentId',
-          data: formData,
-          options: Options(headers: {'Content-Type': 'multipart/form-data'}));
+          data: formData, options: Options(headers: {'Content-Type': 'multipart/form-data'}));
       if (response.statusCode == 200) {
         print('POST 요청 성공');
       }
@@ -596,8 +576,7 @@ class DetailController extends GetxController {
       } else {
         // 다운 안 된 사진만 다운로드
         final dio = Dio();
-        final response = await dio.get(image['image'],
-            options: Options(responseType: ResponseType.bytes));
+        final response = await dio.get(image['image'], options: Options(responseType: ResponseType.bytes));
         await file.writeAsBytes(response.data);
 
         return file;
@@ -644,8 +623,7 @@ class DetailController extends GetxController {
   void getNextCommentResults() async {
     if (isCommentLoading.value) return; // 이미 로딩 중이면 중복 호출 방지
 
-    final RxList<Map<String, dynamic>> newCourseCommentList =
-        RxList.from(nowCourseCommentList);
+    final RxList<Map<String, dynamic>> newCourseCommentList = RxList.from(nowCourseCommentList);
 
     // 로딩 상태 설정
     isCommentLoading.value = true;
@@ -654,8 +632,39 @@ class DetailController extends GetxController {
       isCommentLoading.value = false;
     });
 
-    newCourseCommentList
-        .addAll([...nowCourseCommentList]); // 기존 검색 결과와 새로운 결과를 병합
+    newCourseCommentList.addAll([...nowCourseCommentList]); // 기존 검색 결과와 새로운 결과를 병합
     nowCourseCommentList.value = newCourseCommentList;
+  }
+
+  Future<bool> onLikeButtonTapped() async {
+    if (!detailController.isLikeCourse.value) {
+      detailController.addIsLikeCourse();
+      return true;
+    } else {
+      detailController.deleteIsLikeCourse();
+      return false;
+    }
+  }
+
+  Future<bool> onCommentLikeButtonTapped(int index) async {
+    if (!detailController.nowCourseCommentList[index]['like']) {
+      await detailController.addIsLikeComment(index);
+      print("${detailController.nowCourseCommentList[index]}");
+      return true;
+    } else {
+      await detailController.deleteIsLikeComment(index);
+      print("${detailController.nowCourseCommentList[index]}");
+      return false;
+    }
+  }
+
+  Future<bool> onInterestButtonTapped() async {
+    if (!detailController.isInterestCourse.value) {
+      detailController.addIsInterestCourse();
+      return true;
+    } else {
+      detailController.deleteIsInterestCourse();
+      return false;
+    }
   }
 }
