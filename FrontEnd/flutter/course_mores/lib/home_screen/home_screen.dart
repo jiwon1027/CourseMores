@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../course_search/elastic_search.dart';
 import '../course_search/search.dart' as search;
 import '../course_search/search.dart';
+import '../course_search/search_filter.dart';
 import './carousel.dart' as carousel;
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart' as geocoding;
@@ -178,125 +179,144 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: Container(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-            image: AssetImage('assets/background-pink.jpg'),
-            // image: AssetImage('assets/background.gif'),
-            // image: AssetImage('assets/blue_background.gif'),
-            opacity: 1,
-            fit: BoxFit.cover),
-      ),
-      child: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(20, 40, 20, 20),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              SizedBox(
-                width: double.infinity,
-                height: 200,
-                child: Center(
-                  child: Column(children: [
-                    FutureBuilder<Map<String, dynamic>>(
-                      future: _getWeather(),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          final weatherData = snapshot.data!;
-                          final temp = weatherData['main']['temp'].toString();
-                          final weather = weatherData['weather'][0]
-                                  ['description']
-                              .toString();
-                          final iconCode =
-                              weatherData['weather'][0]['icon'].toString();
-                          return Row(
-                            children: [
-                              Expanded(
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                      color: Color.fromARGB(168, 255, 255, 255),
-                                      borderRadius: BorderRadius.circular(20)),
-                                  padding: EdgeInsets.symmetric(vertical: 20),
-                                  alignment: Alignment.bottomCenter,
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage('assets/background-pink.jpg'),
+                  // image: AssetImage('assets/background.gif'),
+                  // image: AssetImage('assets/blue_background.gif'),
+                  opacity: 1,
+                  fit: BoxFit.cover),
+            ),
+            child: Obx(
+              () => SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(20, 40, 20, 20),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      SizedBox(
+                        width: double.infinity,
+                        height: 200,
+                        child: Center(
+                          child: Column(children: [
+                            FutureBuilder<Map<String, dynamic>>(
+                              future: _getWeather(),
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData) {
+                                  final weatherData = snapshot.data!;
+                                  final temp =
+                                      weatherData['main']['temp'].toString();
+                                  final weather = weatherData['weather'][0]
+                                          ['description']
+                                      .toString();
+                                  final iconCode = weatherData['weather'][0]
+                                          ['icon']
+                                      .toString();
+                                  return Row(
                                     children: [
-                                      Text(
-                                        '${temp.split('.')[0]} °C',
-                                        style: TextStyle(
-                                            fontSize: 35, color: Colors.black),
-                                      ),
-                                      SizedBox(height: 10),
-                                      Text(
-                                        weather,
-                                        style: TextStyle(
-                                            fontSize: 18, color: Colors.black),
-                                      ),
-                                      SizedBox(height: 16),
-                                      FutureBuilder<String>(
-                                        future: _getAddress(
-                                            _currentPosition?.latitude ?? 0,
-                                            _currentPosition?.longitude ?? 0),
-                                        builder: (context, snapshot) {
-                                          if (snapshot.connectionState ==
-                                              ConnectionState.waiting) {
-                                            return Text('검색중...');
-                                          } else if (snapshot.hasData) {
-                                            final address = snapshot.data!;
-                                            return Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Icon(Icons.location_on,
+                                      Expanded(
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                              color: Color.fromARGB(
+                                                  168, 255, 255, 255),
+                                              borderRadius:
+                                                  BorderRadius.circular(20)),
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 20),
+                                          alignment: Alignment.bottomCenter,
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                '${temp.split('.')[0]} °C',
+                                                style: TextStyle(
+                                                    fontSize: 35,
                                                     color: Colors.black),
-                                                SizedBox(width: 4),
-                                                Text(
-                                                  address.length > 10
-                                                      ? '${address.substring(0, 10)}...'
-                                                      : address,
-                                                  style: TextStyle(
-                                                      fontSize: 18,
-                                                      color: Colors.black),
-                                                ),
-                                              ],
-                                            );
-                                          } else if (snapshot.hasError) {
-                                            return Text(
-                                                'Error: ${snapshot.error}');
-                                          } else {
-                                            return Text('');
-                                          }
-                                        },
+                                              ),
+                                              SizedBox(height: 10),
+                                              Text(
+                                                weather,
+                                                style: TextStyle(
+                                                    fontSize: 18,
+                                                    color: Colors.black),
+                                              ),
+                                              SizedBox(height: 16),
+                                              FutureBuilder<String>(
+                                                future: _getAddress(
+                                                    _currentPosition
+                                                            ?.latitude ??
+                                                        0,
+                                                    _currentPosition
+                                                            ?.longitude ??
+                                                        0),
+                                                builder: (context, snapshot) {
+                                                  if (snapshot
+                                                          .connectionState ==
+                                                      ConnectionState.waiting) {
+                                                    return Text('검색중...');
+                                                  } else if (snapshot.hasData) {
+                                                    final address =
+                                                        snapshot.data!;
+                                                    return Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        Icon(Icons.location_on,
+                                                            color:
+                                                                Colors.black),
+                                                        SizedBox(width: 4),
+                                                        Text(
+                                                          address.length > 10
+                                                              ? '${address.substring(0, 10)}...'
+                                                              : address,
+                                                          style: TextStyle(
+                                                              fontSize: 18,
+                                                              color:
+                                                                  Colors.black),
+                                                        ),
+                                                      ],
+                                                    );
+                                                  } else if (snapshot
+                                                      .hasError) {
+                                                    return Text(
+                                                        'Error: ${snapshot.error}');
+                                                  } else {
+                                                    return Text('');
+                                                  }
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                        ),
                                       ),
+                                      _getWeatherIcon(iconCode),
+                                      // Expanded(
+                                      //     flex: 5, child: _getWeatherIcon(iconCode)),
                                     ],
-                                  ),
-                                ),
-                              ),
-                              _getWeatherIcon(iconCode),
-                              // Expanded(
-                              //     flex: 5, child: _getWeatherIcon(iconCode)),
-                            ],
-                          );
-                        } else if (snapshot.hasError) {
-                          return Text('Error: ${snapshot.error}');
-                        } else {
-                          return CircularProgressIndicator();
-                        }
-                      },
-                    ),
-                  ]),
+                                  );
+                                } else if (snapshot.hasError) {
+                                  return Text('Error: ${snapshot.error}');
+                                } else {
+                                  return CircularProgressIndicator();
+                                }
+                              },
+                            ),
+                          ]),
+                        ),
+                      ),
+                      buttonBar1(),
+                      ButtonBar2(),
+                      popularCourse(),
+                      themeList(),
+                      myNearCourse(),
+                    ],
+                  ),
                 ),
               ),
-              buttonBar1(),
-              ButtonBar2(),
-              popularCourse(),
-              themeList(),
-              myNearCourse(),
-            ],
-          ),
-        ),
-      ),
-    ));
+            )));
   }
 }
 
@@ -472,18 +492,18 @@ myNearCourse() {
 }
 
 themeList() {
-  var themeList = searchController.themeList;
+  late var themeList = searchController.homeThemeList;
 
   return Padding(
     padding: EdgeInsets.fromLTRB(0, 15.0, 0, 15.0),
     child: Container(
       clipBehavior: Clip.hardEdge,
       width: double.maxFinite,
-      height: 150,
+      height: 160,
       // height: 200,
       decoration: boxDeco(),
       child: Padding(
-          padding: EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0),
+          padding: EdgeInsets.all(8),
           child: Column(
             children: [
               Padding(
@@ -497,7 +517,7 @@ themeList() {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(bottom: 25.0),
+                padding: EdgeInsets.only(bottom: 25.0),
                 child: Wrap(
                   spacing: 8.0,
                   runSpacing: 8.0,
@@ -579,7 +599,13 @@ searchButtonBar() {
             borderSide: BorderSide(color: Colors.transparent)),
         focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: Colors.transparent)),
-        prefixIcon: filterButton(),
+        prefixIcon: IconButton(
+            icon: Icon(Icons.tune),
+            color: Colors.black,
+            iconSize: 25,
+            onPressed: () {
+              Get.to(() => SearchFilter());
+            }),
         suffixIcon: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -613,14 +639,4 @@ searchButtonBar() {
       onFieldSubmitted: controlSearching,
     ),
   );
-}
-
-filterButton() {
-  return IconButton(
-      icon: Icon(Icons.tune),
-      color: Colors.black,
-      iconSize: 25,
-      onPressed: () {
-        Get.to(() => SearchFilter());
-      });
 }
