@@ -145,7 +145,7 @@ class MyInterestedCourseList extends StatelessWidget {
                     child: Text(
                       "${interestController.interestedCourse[index]['title']}",
                       style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
                       softWrap: true,
@@ -164,11 +164,11 @@ class MyInterestedCourseList extends StatelessWidget {
                           Padding(
                             padding: EdgeInsets.all(4.0),
                             child: Icon(Icons.check,
-                                size: 14, color: Colors.white),
+                                size: 12, color: Colors.white),
                           ),
                           Text("방문",
                               style:
-                                  TextStyle(color: Colors.white, fontSize: 12)),
+                                  TextStyle(color: Colors.white, fontSize: 10)),
                           SizedBox(width: 7),
                         ],
                       ),
@@ -177,9 +177,10 @@ class MyInterestedCourseList extends StatelessWidget {
               ),
             ),
             if (interestController.interestedCourse[index]["interest"] == true)
-              Icon(Icons.bookmark, size: 24),
+              Icon(Icons.bookmark, size: 24, color: Colors.purple),
             if (interestController.interestedCourse[index]["interest"] == false)
-              Icon(Icons.bookmark_outline_rounded, size: 24),
+              Icon(Icons.bookmark_outline_rounded,
+                  size: 24, color: Colors.purple),
           ],
         ),
         SizedBox(height: 2),
@@ -189,7 +190,7 @@ class MyInterestedCourseList extends StatelessWidget {
             SizedBox(width: 3),
             Text(
               "${interestController.interestedCourse[index]["sido"].toString()} ${interestController.interestedCourse[index]["gugun"].toString()}",
-              style: TextStyle(fontSize: 12, color: Colors.black54),
+              style: TextStyle(fontSize: 10, color: Colors.black54),
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
               softWrap: true,
@@ -199,7 +200,7 @@ class MyInterestedCourseList extends StatelessWidget {
             SizedBox(width: 3),
             Text(
               "${interestController.interestedCourse[index]['people'].toString()}명",
-              style: TextStyle(fontSize: 12, color: Colors.black54),
+              style: TextStyle(fontSize: 10, color: Colors.black54),
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
               softWrap: true,
@@ -209,7 +210,7 @@ class MyInterestedCourseList extends StatelessWidget {
         SizedBox(height: 6),
         Text(
           "${interestController.interestedCourse[index]['content']}",
-          style: TextStyle(fontSize: 14),
+          style: TextStyle(fontSize: 12),
           overflow: TextOverflow.ellipsis,
           maxLines: 1,
           softWrap: true,
@@ -220,7 +221,7 @@ class MyInterestedCourseList extends StatelessWidget {
           children: [
             Text(
               "${interestController.interestedCourse[index]['locationName']}",
-              style: TextStyle(fontSize: 12, color: Colors.black45),
+              style: TextStyle(fontSize: 10, color: Colors.black45),
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
               softWrap: true,
@@ -232,8 +233,10 @@ class MyInterestedCourseList extends StatelessWidget {
                   children: [
                     Icon(Icons.favorite, size: 14),
                     SizedBox(width: 3),
-                    Text(interestController.interestedCourse[index]["likeCount"]
-                        .toString()),
+                    Text(
+                        interestController.interestedCourse[index]["likeCount"]
+                            .toString(),
+                        style: TextStyle(fontSize: 12)),
                   ],
                 ),
                 SizedBox(width: 8),
@@ -241,9 +244,11 @@ class MyInterestedCourseList extends StatelessWidget {
                   children: [
                     Icon(Icons.comment, size: 14),
                     SizedBox(width: 3),
-                    Text(interestController.interestedCourse[index]
-                            ["commentCount"]
-                        .toString()),
+                    Text(
+                        interestController.interestedCourse[index]
+                                ["commentCount"]
+                            .toString(),
+                        style: TextStyle(fontSize: 12)),
                   ],
                 ),
               ],
@@ -294,13 +299,13 @@ Widget headerWidget(BuildContext context) {
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
       children: const [
-        Text("관심 등록한 코스", style: TextStyle(fontSize: 30, color: Colors.white)),
+        Text("관심 등록한 코스", style: TextStyle(fontSize: 25, color: Colors.white)),
         SizedBox(height: 30),
         Text("나중에 가고 싶은 코스가 있다면",
-            style: TextStyle(fontSize: 16, color: Colors.white)),
+            style: TextStyle(fontSize: 14, color: Colors.white)),
         SizedBox(height: 10),
-        Text("관심 등록으로 저장할 수 있어요",
-            style: TextStyle(fontSize: 16, color: Colors.white)),
+        Text("관심 등록으로 저장해두고 볼 수 있어요",
+            style: TextStyle(fontSize: 14, color: Colors.white)),
       ],
     ),
   );

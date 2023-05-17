@@ -316,12 +316,14 @@ class SearchController extends GetxController {
   // settingCard : 테마 리스트를 카드로 만들어 칩처럼 만듦
   Future settingCard() async {
     try {
-      cards = <MultiSelectCard>[].obs;
+      cards.value = <MultiSelectCard>[].obs;
       for (var theme in themeList) {
         var card = MultiSelectCard(
           value: theme['themeId'],
           label: theme['name'],
           selected: savedSelectedThemeList.contains(theme['themeId']),
+          textStyles: MultiSelectItemTextStyles(
+              textStyle: TextStyle(fontSize: 14, color: Colors.black)),
           decorations: MultiSelectItemDecorations(
             // 선택 전 테마 스타일
             decoration: BoxDecoration(
@@ -332,7 +334,7 @@ class SearchController extends GetxController {
                     color: Colors.grey.withOpacity(0.5),
                     spreadRadius: 2,
                     blurRadius: 3,
-                    offset: const Offset(0, 2))
+                    offset: Offset(0, 2))
               ],
             ),
             // 선택된 테마 스타일
@@ -344,7 +346,7 @@ class SearchController extends GetxController {
                     color: Colors.grey.withOpacity(0.5),
                     spreadRadius: 2,
                     blurRadius: 3,
-                    offset: const Offset(0, 2))
+                    offset: Offset(0, 2))
               ],
             ),
           ),
@@ -354,6 +356,8 @@ class SearchController extends GetxController {
     } catch (e) {
       print(e);
     }
+
+    print("테마 카드 추가 완료");
   }
 
   // getElasticList : 자동완성할 때마다 불러옴
