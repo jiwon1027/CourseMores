@@ -57,7 +57,7 @@ public class AuthController {
         resultMap.put(ACCESS_TOKEN, accessToken);
 
         logger.debug("[5/5][POST][/auth/kakao/login] >> response : agree, userInfo, token\n agree = {}\n userInfo = {}\n accessToken = {}\n",
-                false, userInfo, accessToken);
+                true, userInfo, accessToken);
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
 
