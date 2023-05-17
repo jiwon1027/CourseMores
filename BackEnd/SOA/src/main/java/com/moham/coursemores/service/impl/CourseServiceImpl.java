@@ -202,8 +202,8 @@ public class CourseServiceImpl implements CourseService {
                                 .build())
                         .collect(Collectors.toList()))
                 .simpleInfoOfWriter(UserSimpleInfoResDto.builder()
-                        .nickname(course.getUser().getDeleteTime() == null ? DEFAULT_NICKNAME : course.getUser().getNickname())
-                        .profileImage(course.getUser().getDeleteTime() == null ? DEFAULT_IMAGE_URL : course.getUser().getProfileImage())
+                        .nickname(course.getUser().getDeleteTime() != null ? DEFAULT_NICKNAME : course.getUser().getNickname())
+                        .profileImage(course.getUser().getDeleteTime() != null ? DEFAULT_IMAGE_URL : course.getUser().getProfileImage())
                         .build())
                 .isWrite(Objects.equals(course.getUser().getId(), user.getId()))
                 .build();
