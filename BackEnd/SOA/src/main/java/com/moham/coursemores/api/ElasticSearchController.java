@@ -4,7 +4,6 @@ import com.moham.coursemores.domain.document.CourseDocument;
 import com.moham.coursemores.domain.document.CourseLocationDocument;
 import com.moham.coursemores.domain.document.HashtagDocument;
 import com.moham.coursemores.dto.elasticsearch.IndexDataReqDTO;
-import com.moham.coursemores.dto.elasticsearch.IndexDataResDTO;
 import com.moham.coursemores.service.ElasticSearchService;
 import java.io.IOException;
 import java.util.List;
