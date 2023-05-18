@@ -11,6 +11,7 @@ import 'package:get/get.dart';
 import '../controller/make_controller.dart';
 import 'package:geocoding/geocoding.dart' as geocoding;
 import '../auth/auth_dio.dart';
+import 'package:lottie/lottie.dart' as lottie;
 
 class CourseMake extends StatefulWidget {
   final String? courseId;
@@ -155,7 +156,8 @@ class _CourseMakeState extends State<CourseMake> {
 
     LocationData locationData = LocationData(
       // key: UniqueKey(),
-      key: key ?? UniqueKey(), // Use the provided key or create a new one if none is provided
+      key: key ??
+          UniqueKey(), // Use the provided key or create a new one if none is provided
       name: name,
       latitude: latitude,
       longitude: longitude,
@@ -193,8 +195,8 @@ class _CourseMakeState extends State<CourseMake> {
   //   return '';
   // }
   Future<String> _getSido(double lat, double lon) async {
-    final List<geocoding.Placemark> placemarks =
-        await geocoding.placemarkFromCoordinates(lat, lon, localeIdentifier: 'ko');
+    final List<geocoding.Placemark> placemarks = await geocoding
+        .placemarkFromCoordinates(lat, lon, localeIdentifier: 'ko');
     // if (placemarks != null && placemarks.isNotEmpty) {
     if (placemarks.isNotEmpty) {
       final geocoding.Placemark place = placemarks.first;
@@ -208,8 +210,8 @@ class _CourseMakeState extends State<CourseMake> {
   }
 
   Future<String> _getGugun(double lat, double lon) async {
-    final List<geocoding.Placemark> placemarks =
-        await geocoding.placemarkFromCoordinates(lat, lon, localeIdentifier: 'ko');
+    final List<geocoding.Placemark> placemarks = await geocoding
+        .placemarkFromCoordinates(lat, lon, localeIdentifier: 'ko');
     // if (placemarks != null && placemarks.isNotEmpty) {
     if (placemarks.isNotEmpty) {
       final geocoding.Placemark place = placemarks.first;
@@ -279,12 +281,16 @@ class _CourseMakeState extends State<CourseMake> {
   Widget build(BuildContext context) {
     return DraggableHome(
       actions: [
-        IconButton(onPressed: () {}, icon: Icon(Icons.settings, color: Colors.transparent)),
+        IconButton(
+            onPressed: () {},
+            icon: Icon(Icons.settings, color: Colors.transparent)),
       ],
       title: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
-        children: const [Text('장소 추가하기 🏙', style: TextStyle(color: Colors.white))],
+        children: const [
+          Text('장소 추가하기 🏙', style: TextStyle(color: Colors.white))
+        ],
       ),
       headerWidget: headerWidget(context),
       headerExpandedHeight: 0.3,
@@ -313,21 +319,27 @@ class _CourseMakeState extends State<CourseMake> {
                                       onPressed: () {
                                         Navigator.of(context).pop();
                                       },
-                                      child: Text('확인', style: TextStyle(color: Colors.blue)),
+                                      child: Text('확인',
+                                          style: TextStyle(color: Colors.blue)),
                                     ),
                                   ],
                                 ),
                               );
                               return;
                             }
-                            Navigator.push(context, MaterialPageRoute(builder: (context) {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
                               return CMSearch();
                             })).then((selectedPlace) async {
                               if (selectedPlace != null) {
-                                double latitude = selectedPlace.geometry!.location.lat;
-                                double longitude = selectedPlace.geometry!.location.lng;
-                                String sido = await _getSido(latitude, longitude);
-                                String gugun = await _getGugun(latitude, longitude);
+                                double latitude =
+                                    selectedPlace.geometry!.location.lat;
+                                double longitude =
+                                    selectedPlace.geometry!.location.lng;
+                                String sido =
+                                    await _getSido(latitude, longitude);
+                                String gugun =
+                                    await _getGugun(latitude, longitude);
                                 _addItem(
                                   selectedPlace.name,
                                   latitude,
@@ -343,7 +355,8 @@ class _CourseMakeState extends State<CourseMake> {
                           icon: Icon(Icons.search),
                           label: Text(
                             '검색 추가',
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 12),
                           )),
                       SizedBox(width: 16),
                       FilledButton.icon(
@@ -359,14 +372,16 @@ class _CourseMakeState extends State<CourseMake> {
                                       onPressed: () {
                                         Navigator.of(context).pop();
                                       },
-                                      child: Text('확인', style: TextStyle(color: Colors.blue)),
+                                      child: Text('확인',
+                                          style: TextStyle(color: Colors.blue)),
                                     ),
                                   ],
                                 ),
                               );
                               return;
                             }
-                            Navigator.push(context, MaterialPageRoute(builder: (context) {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
                               return CMMap();
                             })).then((data) {
                               if (data != null) {
@@ -383,44 +398,72 @@ class _CourseMakeState extends State<CourseMake> {
                             });
                           },
                           icon: Icon(Icons.location_on, color: Colors.red),
-                          label: Text('마커 추가', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12))),
+                          label: Text('마커 추가',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 12))),
                     ],
                   ),
                   SizedBox(height: 10),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 600,
-                    child: frl.ReorderableList(
-                      onReorder: _reorderCallback,
-                      onReorderDone: _reorderDone,
-                      child: CustomScrollView(
-                        // cacheExtent: 3000,
-                        slivers: <Widget>[
-                          SliverPadding(
-                              padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
-                              sliver: SliverList(
-                                delegate: SliverChildBuilderDelegate(
-                                  (BuildContext context, int index) {
-                                    return Padding(
-                                      padding: EdgeInsets.symmetric(vertical: 10),
-                                      child: Item(
-                                        data: _items[index],
-                                        // first and last attributes affect border drawn during dragging
-                                        isFirst: index == 0,
-                                        isLast: index == _items.length - 1,
-                                        draggingMode: _draggingMode,
-                                        onEdit: () => onEdit(_items[index]),
-                                        onDelete: () => onDelete(_items[index]),
-                                      ),
-                                    );
-                                  },
-                                  childCount: _items.length,
-                                ),
-                              )),
-                        ],
+                  if (_items.isEmpty)
+                    Column(
+                      children: [
+                        SizedBox(
+                          height: 40,
+                        ),
+                        lottie.Lottie.asset('assets/location.json',
+                            fit: BoxFit.fitWidth, width: 300), // 이미지 경로를 적절히 수정
+                        SizedBox(
+                          height: 30,
+                        ),
+                        Text(
+                          '아직 추가된 장소가 없어요!',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                        SizedBox(
+                          height: 40,
+                        ),
+                      ],
+                    ),
+                  if (_items.isNotEmpty)
+                    SizedBox(
+                      width: double.infinity,
+                      height: 600,
+                      child: frl.ReorderableList(
+                        onReorder: _reorderCallback,
+                        onReorderDone: _reorderDone,
+                        child: CustomScrollView(
+                          // cacheExtent: 3000,
+                          slivers: <Widget>[
+                            SliverPadding(
+                                padding: EdgeInsets.only(
+                                    bottom:
+                                        MediaQuery.of(context).padding.bottom),
+                                sliver: SliverList(
+                                  delegate: SliverChildBuilderDelegate(
+                                    (BuildContext context, int index) {
+                                      return Padding(
+                                        padding:
+                                            EdgeInsets.symmetric(vertical: 10),
+                                        child: Item(
+                                          data: _items[index],
+                                          // first and last attributes affect border drawn during dragging
+                                          isFirst: index == 0,
+                                          isLast: index == _items.length - 1,
+                                          draggingMode: _draggingMode,
+                                          onEdit: () => onEdit(_items[index]),
+                                          onDelete: () =>
+                                              onDelete(_items[index]),
+                                        ),
+                                      );
+                                    },
+                                    childCount: _items.length,
+                                  ),
+                                )),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
+
                   SizedBox(height: 20),
                   // const MyStatefulWidget(),
 
@@ -472,7 +515,8 @@ class _CourseMakeState extends State<CourseMake> {
                                   title: Text('작성한 내용을 저장하겠습니까?'),
                                   content: Column(
                                     mainAxisSize: MainAxisSize.min,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         '작성한 장소 ${_items.length}곳:',
@@ -484,7 +528,8 @@ class _CourseMakeState extends State<CourseMake> {
                                       SizedBox(height: 8),
                                       Column(
                                         mainAxisSize: MainAxisSize.min,
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: _items
                                             .map((item) => Text(
                                                   '- ${item.name}',
@@ -508,7 +553,9 @@ class _CourseMakeState extends State<CourseMake> {
                                         Navigator.of(context).pop();
                                         Navigator.push(
                                           context,
-                                          MaterialPageRoute(builder: (context) => MakeStepper()),
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  MakeStepper()),
                                         );
                                       },
                                       child: Text('저장'),
@@ -592,7 +639,8 @@ class Item extends StatelessWidget {
     final String imgUrl =
         "https://maps.googleapis.com/maps/api/streetview?size=400x400&location=${data.latitude},${data.longitude}&fov=90&heading=235&pitch=10&key=$apiKey";
 
-    if (state == frl.ReorderableItemState.dragProxy || state == frl.ReorderableItemState.dragProxyFinished) {
+    if (state == frl.ReorderableItemState.dragProxy ||
+        state == frl.ReorderableItemState.dragProxyFinished) {
       // slightly transparent background white dragging (just like on iOS)
       decoration = const BoxDecoration(color: Color(0xD0FFFFFF));
     } else {
@@ -638,7 +686,8 @@ class Item extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(data.name, style: Theme.of(context).textTheme.titleMedium),
+                      Text(data.name,
+                          style: Theme.of(context).textTheme.titleMedium),
                       SizedBox(height: 10),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
@@ -660,16 +709,20 @@ class Item extends StatelessWidget {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => EditItemPage(locationData: data),
+                                  builder: (context) =>
+                                      EditItemPage(locationData: data),
                                 ),
                               );
                               // },
                             },
                             icon: Icon(Icons.edit),
-                            label: Text('추가 정보 작성', style: TextStyle(fontSize: 12)),
+                            label: Text('추가 정보 작성',
+                                style: TextStyle(fontSize: 12)),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Color.fromARGB(255, 119, 181, 212),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                              backgroundColor:
+                                  Color.fromARGB(255, 119, 181, 212),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20)),
                             ),
                           ),
                           SizedBox(width: 10),
@@ -678,9 +731,11 @@ class Item extends StatelessWidget {
                               onDelete();
                             },
                             icon: Icon(Icons.delete),
-                            label: Text('장소 삭제', style: TextStyle(fontSize: 12)),
+                            label:
+                                Text('장소 삭제', style: TextStyle(fontSize: 12)),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Color.fromARGB(255, 243, 115, 115),
+                              backgroundColor:
+                                  Color.fromARGB(255, 243, 115, 115),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20),
                               ),
@@ -734,8 +789,13 @@ class Item extends StatelessWidget {
 
     return Container(
       clipBehavior: Clip.hardEdge,
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(25), boxShadow: [
-        BoxShadow(color: Colors.grey.withOpacity(0.5), spreadRadius: 2, blurRadius: 3, offset: Offset(0, 2)),
+      decoration:
+          BoxDecoration(borderRadius: BorderRadius.circular(25), boxShadow: [
+        BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 2,
+            blurRadius: 3,
+            offset: Offset(0, 2)),
       ]),
       child: Column(children: [image, content]),
     );
@@ -759,18 +819,25 @@ class PreviewRoute extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<LatLng> positions = items.map((item) => LatLng(item.latitude, item.longitude)).toList();
+    final List<LatLng> positions =
+        items.map((item) => LatLng(item.latitude, item.longitude)).toList();
     final List<Future<BitmapDescriptor>> futures = [
-      BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(24, 24)), 'assets/marker1.png'),
-      BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(24, 24)), 'assets/marker2.png'),
-      BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(24, 24)), 'assets/marker3.png'),
-      BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(24, 24)), 'assets/marker4.png'),
-      BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(24, 24)), 'assets/marker5.png'),
+      BitmapDescriptor.fromAssetImage(
+          ImageConfiguration(size: Size(24, 24)), 'assets/marker1.png'),
+      BitmapDescriptor.fromAssetImage(
+          ImageConfiguration(size: Size(24, 24)), 'assets/marker2.png'),
+      BitmapDescriptor.fromAssetImage(
+          ImageConfiguration(size: Size(24, 24)), 'assets/marker3.png'),
+      BitmapDescriptor.fromAssetImage(
+          ImageConfiguration(size: Size(24, 24)), 'assets/marker4.png'),
+      BitmapDescriptor.fromAssetImage(
+          ImageConfiguration(size: Size(24, 24)), 'assets/marker5.png'),
     ];
     final Future<List<BitmapDescriptor>> markersFuture = Future.wait(futures);
     return FutureBuilder<List<BitmapDescriptor>>(
         future: markersFuture,
-        builder: (BuildContext context, AsyncSnapshot<List<BitmapDescriptor>> snapshot) {
+        builder: (BuildContext context,
+            AsyncSnapshot<List<BitmapDescriptor>> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Container(
               color: Colors.grey,
@@ -830,9 +897,11 @@ Widget headerWidget(BuildContext context) {
       children: const [
         Text("장소 추가하기", style: TextStyle(fontSize: 25, color: Colors.white)),
         SizedBox(height: 30),
-        Text("코스에 넣을 장소들을 골라보세요", style: TextStyle(fontSize: 16, color: Colors.white)),
+        Text("코스에 넣을 장소들을 골라보세요",
+            style: TextStyle(fontSize: 16, color: Colors.white)),
         SizedBox(height: 10),
-        Text("장소는 최대 5개까지 추가할 수 있어요", style: TextStyle(fontSize: 16, color: Colors.white)),
+        Text("장소는 최대 5개까지 추가할 수 있어요",
+            style: TextStyle(fontSize: 16, color: Colors.white)),
       ],
     ),
   );

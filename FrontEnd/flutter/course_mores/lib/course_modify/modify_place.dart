@@ -45,7 +45,8 @@ class _EditItemPage2State extends State<EditItemPage2> {
     List<XFile> savedImages = _itemData.getSavedImageList();
     if (_addImageKey.currentState != null) {
       // Make sure currentState is not null before calling getTemporaryImageList
-      locationData.saveImageList(_addImageKey.currentState!.getTemporaryImageList()); // Save images in initState
+      locationData.saveImageList(_addImageKey.currentState!
+          .getTemporaryImageList()); // Save images in initState
     }
   }
 
@@ -61,40 +62,28 @@ class _EditItemPage2State extends State<EditItemPage2> {
     final LocationController locationController = Get.find();
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Color.fromARGB(255, 80, 170, 208),
         // 없어도 <- 모양의 뒤로가기가 기본으로 있으나 < 모양으로 바꾸려고 추가함
         leading: IconButton(
-          icon: const Icon(
-            Icons.navigate_before,
-            color: Colors.black,
-          ),
+          icon: Icon(Icons.navigate_before, color: Colors.white),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
         // 알림 아이콘과 텍스트 같이 넣으려고 RichText 사용
-        title: RichText(
-            text: const TextSpan(
-          children: [
-            WidgetSpan(
-              child: Icon(
-                Icons.edit_note,
-                color: Colors.black,
+        title: Center(
+          child: RichText(
+              text: const TextSpan(
+            children: [
+              // WidgetSpan(child: Icon(Icons.edit_note, color: Colors.black)),
+              WidgetSpan(child: SizedBox(width: 5)),
+              TextSpan(
+                text: '장소 추가 정보 작성',
+                style: TextStyle(fontSize: 22, color: Colors.white),
               ),
-            ),
-            WidgetSpan(
-              child: SizedBox(
-                width: 5,
-              ),
-            ),
-            TextSpan(
-              text: '장소 추가 정보 작성',
-              style: TextStyle(
-                fontSize: 22,
-                color: Colors.black,
-              ),
-            ),
-          ],
-        )),
+            ],
+          )),
+        ),
         // 피그마와 모양 맞추려고 close 아이콘 하나 넣어둠
         // <와 X 중 하나만 있어도 될 것 같아서 상의 후 삭제 필요
         actions: [
@@ -102,10 +91,7 @@ class _EditItemPage2State extends State<EditItemPage2> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              icon: const Icon(
-                Icons.close,
-                color: Colors.black,
-              )),
+              icon: Icon(Icons.close, color: Colors.white)),
         ],
       ),
       body: SingleChildScrollView(
@@ -130,11 +116,25 @@ class _EditItemPage2State extends State<EditItemPage2> {
                     ElevatedButton(
                       onPressed: () {
                         setState(() {
-                          isImageUploadEnabled = !isImageUploadEnabled; // 토글 버튼의 상태 변경
+                          isImageUploadEnabled =
+                              !isImageUploadEnabled; // 토글 버튼의 상태 변경
                         });
                         print(isImageUploadEnabled);
                       },
-                      child: Text(isImageUploadEnabled ? '기존 사진 유지' : '사진 수정하기'),
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            Color.fromARGB(255, 119, 181, 212)), // 버튼의 배경색을 설정
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                          // 버튼의 모양을 둥글게 만듭니다
+                          RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.circular(30.0), // 둥근 모서리의 반경을 설정
+                          ),
+                        ),
+                      ),
+                      child:
+                          Text(isImageUploadEnabled ? '기존 사진 유지' : '사진 수정하기'),
                     ),
                     SizedBox(
                       height: 10,
@@ -165,8 +165,10 @@ class _EditItemPage2State extends State<EditItemPage2> {
               ElevatedButton(
                 onPressed: () {
                   List<XFile> imageList = [];
-                  if (isImageUploadEnabled && _addImageKey.currentState != null) {
-                    imageList = _addImageKey.currentState!.getTemporaryImageList();
+                  if (isImageUploadEnabled &&
+                      _addImageKey.currentState != null) {
+                    imageList =
+                        _addImageKey.currentState!.getTemporaryImageList();
                   } else {
                     // 이미지를 수정하지 않는 경우 이전의 이미지 리스트를 사용
                     imageList = _itemData.getSavedImageList();
@@ -179,10 +181,15 @@ class _EditItemPage2State extends State<EditItemPage2> {
                     latitude: widget.locationData.latitude,
                     longitude: widget.locationData.longitude,
                     roadViewImage: widget.locationData.roadViewImage,
-                    isUpdate: isImageUploadEnabled, // isUpdate 값을 isImageUploadEnabled 값으로 변경
+                    isUpdate:
+                        isImageUploadEnabled, // isUpdate 값을 isImageUploadEnabled 값으로 변경
                     numberOfImage: imageList.length,
-                    title: _titleController.text.isNotEmpty ? _titleController.text : '',
-                    content: _contentController.text.isNotEmpty ? _contentController.text : '',
+                    title: _titleController.text.isNotEmpty
+                        ? _titleController.text
+                        : '',
+                    content: _contentController.text.isNotEmpty
+                        ? _contentController.text
+                        : '',
                     sido: widget.locationData.sido,
                     gugun: widget.locationData.gugun,
                     temporaryImageList: imageList,
@@ -206,6 +213,17 @@ class _EditItemPage2State extends State<EditItemPage2> {
                   //
                   Navigator.pop(context, updatedLocationData);
                 },
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(
+                      Color.fromARGB(255, 119, 181, 212)), // 버튼의 배경색을 설정
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    // 버튼의 모양을 둥글게 만듭니다
+                    RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.circular(30.0), // 둥근 모서리의 반경을 설정
+                    ),
+                  ),
+                ),
                 child: Text("저장하기"),
               ),
             ],
@@ -246,8 +264,9 @@ class _PlaceNameState extends State<PlaceName> {
   }
 
   Future<void> _getAddress() async {
-    final List<geocoding.Placemark> placemarks =
-        await geocoding.placemarkFromCoordinates(widget.latitude, widget.longitude, localeIdentifier: 'ko');
+    final List<geocoding.Placemark> placemarks = await geocoding
+        .placemarkFromCoordinates(widget.latitude, widget.longitude,
+            localeIdentifier: 'ko');
 
     if (placemarks.isNotEmpty) {
       final geocoding.Placemark place = placemarks.first;
@@ -258,7 +277,8 @@ class _PlaceNameState extends State<PlaceName> {
       final String administrativeArea = place.administrativeArea ?? '';
 
       setState(() {
-        _address = '$administrativeArea $locality $subLocality $thoroughfare $subThoroughfare';
+        _address =
+            '$administrativeArea $locality $subLocality $thoroughfare $subThoroughfare';
       });
     } else {
       setState(() {
@@ -490,11 +510,14 @@ class _AddImageState extends State<AddImage> {
                   fontWeight: FontWeight.w800,
                 )),
             SizedBox(height: 10),
-            Text("이미지는 최대 5장까지 첨부할 수 있어요", style: TextStyle(color: Colors.black45)),
+            Text("이미지는 최대 5장까지 첨부할 수 있어요",
+                style: TextStyle(color: Colors.black45)),
             SizedBox(height: 10),
             // 활성화/비활성화 상태에 따라
             SizedBox(
-              child: widget.isUpdate ? ImageUploader(key: _imageUploaderKey) : _buildDisabledButton(),
+              child: widget.isUpdate
+                  ? ImageUploader(key: _imageUploaderKey)
+                  : _buildDisabledButton(),
             ),
             // SizedBox(
             //   // height: 250,
@@ -674,6 +697,16 @@ class _ImageUploaderState extends State<ImageUploader> {
                 // );
               }
             },
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color>(
+                  Color.fromARGB(255, 119, 181, 212)), // 버튼의 배경색을 설정
+              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                // 버튼의 모양을 둥글게 만듭니다
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30.0), // 둥근 모서리의 반경을 설정
+                ),
+              ),
+            ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: const [
@@ -686,7 +719,9 @@ class _ImageUploaderState extends State<ImageUploader> {
           SizedBox(height: 20),
           SizedBox(
             height: 80,
-            child: _temporaryImageList.isEmpty ? Center(child: Text("이미지를 선택해주세요.")) : buildGridView(),
+            child: _temporaryImageList.isEmpty
+                ? Center(child: Text("이미지를 선택해주세요."))
+                : buildGridView(),
           ),
         ],
       ),
