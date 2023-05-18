@@ -2,7 +2,7 @@ const PrivacyPolicy = () => {
   const iframePart = () => {
     return {
       __html:
-        '<iframe src="./privacy.html" width="100%" height="1000px"></iframe>',
+        '<iframe src="/privacy.html" width="100%" height="1000px"></iframe>',
     };
   };
 

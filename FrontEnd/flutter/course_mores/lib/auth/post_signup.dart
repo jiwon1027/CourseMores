@@ -7,6 +7,7 @@ import 'dart:convert';
 import 'package:http_parser/http_parser.dart';
 import '../controller/getx_controller.dart';
 import 'auth_dio.dart';
+
 // void postSignUp(nickname, age, gender, image, aToken) async {
 //   dynamic userInfoCreateReqDto = {
 //     'nickname': nickname,
@@ -26,7 +27,7 @@ import 'auth_dio.dart';
 //     print('가입성공!!!');
 //   }
 // }
-
+final firstLoginController = g.Get.put(LoginCheck());
 final loginController = g.Get.put(LoginStatus());
 final userInfoController = g.Get.put(UserInfo());
 // class UserInfoCreateReqDto {
@@ -74,6 +75,7 @@ void postSignUp(nickname, int age, gender, image, aToken) async {
     if (response.statusCode == 200) {
       print('가입성공!!!');
       loginController.changeLoginStatus(true);
+      firstLoginController.changeFirstLogin(false);
       userInfoController.saveNickname(response.data['userInfo']['nickname']);
       userInfoController.saveAge(response.data['userInfo']['age']);
       userInfoController.saveGender(response.data['userInfo']['gender']);
