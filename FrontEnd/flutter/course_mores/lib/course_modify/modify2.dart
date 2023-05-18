@@ -493,6 +493,12 @@ class _CourseModifyState extends State<CourseModify> {
                               TextButton(
                                 onPressed: () {
                                   Navigator.of(context).pop();
+                                },
+                                child: const Text('취소'),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -502,12 +508,6 @@ class _CourseModifyState extends State<CourseModify> {
                                   );
                                 },
                                 child: const Text('저장'),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text('취소'),
                               ),
                             ],
                           );
