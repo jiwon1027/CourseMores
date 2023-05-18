@@ -43,10 +43,22 @@ class CourseController extends g.GetxController {
   //   }
   //   return combinedImages;
   // }
+  // 작성용 이미지 합치기
   List<XFile> getCombinedImages() {
     List<XFile> combinedImages = [];
     for (var location in locationList) {
       combinedImages.addAll(location.temporaryImageList);
+    }
+    return combinedImages;
+  }
+
+  // 수정용 이미지 합치기
+  List<XFile> getCombinedImages2() {
+    List<XFile> combinedImages = [];
+    for (var location in locationList) {
+      if (location.isUpdate) {
+        combinedImages.addAll(location.temporaryImageList);
+      }
     }
     return combinedImages;
   }
@@ -164,28 +176,47 @@ class CourseController extends g.GetxController {
     final List<Map<String, dynamic>> locationDataList = [];
     FormData formData;
 
-    final List<XFile> combinedImages = getCombinedImages();
+    final List<XFile> combinedImages = getCombinedImages2();
 
-    // locationList의 데이터를 LocationCreateReqDto로 변환
+    // locationList의 데이터를 LocationUpdateReqDto로 변환
     for (final locationData in locationList) {
+      // bool isUpdate = locationData.temporaryImageList.isNotEmpty;
+      int numberOfImage = locationData.temporaryImageList.length;
+
       locationDataList.add({
         'courseLocationId': locationData.courseLocationId,
         'name': locationData.name,
         'title': locationData.title,
         'content': locationData.content,
-        'numberOfImage': locationData.numberOfImage,
+        'isUpdate': locationData.isUpdate,
+        // 'numberOfImage': locationData.numberOfImage,
+        'numberOfImage': numberOfImage,
       });
     }
 
     // FormData에서 imageList를 생성
+    // List<MultipartFile> imageFileList = [];
+    // int imageIndex = 0;
+    // for (var locationData in locationList) {
+    //   for (var i = 0; i < locationData.numberOfImage; i++) {
+    //     imageFileList.add(await MultipartFile.fromFile(
+    //       combinedImages[imageIndex++].path,
+    //       contentType: MediaType("image", "jpg"),
+    //     ));
+    //   }
+    // }
+    // FormData에서 imageList를 생성
     List<MultipartFile> imageFileList = [];
     int imageIndex = 0;
     for (var locationData in locationList) {
-      for (var i = 0; i < locationData.numberOfImage; i++) {
-        imageFileList.add(await MultipartFile.fromFile(
-          combinedImages[imageIndex++].path,
-          contentType: MediaType("image", "jpg"),
-        ));
+      if (locationData.isUpdate) {
+        // isUpdate가 true인 경우에만 이미지 추가
+        for (var i = 0; i < locationData.numberOfImage; i++) {
+          imageFileList.add(await MultipartFile.fromFile(
+            combinedImages[imageIndex++].path,
+            contentType: MediaType("image", "jpg"),
+          ));
+        }
       }
     }
 
@@ -333,6 +364,7 @@ class LocationData {
   late int numberOfImage;
   String? title;
   String? content;
+  bool isUpdate;
   // final List<XFile> _temporaryImageList; // 추가된 부분
   final List<XFile> temporaryImageList;
   final List<XFile> savedImageList = [];
@@ -351,6 +383,7 @@ class LocationData {
     this.gugun = '',
     required this.temporaryImageList,
     this.courseLocationId, // nullable로 변경
+    this.isUpdate = false, // isUpdate 필드 추가
   });
 
   // List<XFile> get temporaryImageList => _temporaryImageList; // 추가된 부분

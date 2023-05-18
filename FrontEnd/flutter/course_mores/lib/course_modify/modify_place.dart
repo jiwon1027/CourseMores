@@ -1,12 +1,10 @@
 import 'package:coursemores/controller/make_controller.dart';
 import 'package:flutter/material.dart';
-// import './make2.dart';
 import 'dart:io';
 import 'package:get/get.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:geocoding/geocoding.dart' as geocoding;
-// import '../make_controller.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class EditItemPage2 extends StatefulWidget {
@@ -20,12 +18,12 @@ class EditItemPage2 extends StatefulWidget {
 }
 
 class _EditItemPage2State extends State<EditItemPage2> {
-  // final TextEditingController _textController = TextEditingController();
   final GlobalKey<_AddImageState> _addImageKey = GlobalKey();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
   final TextEditingController _sidoController = TextEditingController();
   final TextEditingController _gugunController = TextEditingController();
+  bool isImageUploadEnabled = false; // AddImage 위젯의 활성화/비활성화 상태를 관리하기 위한 변수
 
   late LocationData _itemData;
   final LocationData locationData;
@@ -34,6 +32,7 @@ class _EditItemPage2State extends State<EditItemPage2> {
   void initState() {
     super.initState();
     final LocationController locationController = Get.find();
+    _itemData = locationData;
     _titleController.text = _itemData.title ?? '';
     _contentController.text = _itemData.content ?? '';
     _sidoController.text = _itemData.sido ?? '';
@@ -50,6 +49,7 @@ class _EditItemPage2State extends State<EditItemPage2> {
 
   _EditItemPage2State({required this.locationData}) {
     _itemData = locationData;
+    isImageUploadEnabled = false; // isImageUploadEnabled를 false로 초기화
   }
 
   @override
@@ -112,20 +112,50 @@ class _EditItemPage2State extends State<EditItemPage2> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              // PlaceName(
-              //   locationName: '이도곰탕 본점',
-              //   latitude: 37.5033214,
-              //   longitude: 127.0384099,
-              // ),
               PlaceName(
                 locationName: widget.locationData.name,
                 latitude: widget.locationData.latitude,
                 longitude: widget.locationData.longitude,
               ),
               // Text('수정할 Item: ${widget.item.title}'),
-              SizedBox(height: 40),
+              SizedBox(height: 10),
               // AddImage(),
-              AddImage(key: _addImageKey),
+              // Toggle 버튼 추가
+              Center(
+                child: Column(
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          isImageUploadEnabled =
+                              !isImageUploadEnabled; // 토글 버튼의 상태 변경
+                        });
+                        print(isImageUploadEnabled);
+                      },
+                      child:
+                          Text(isImageUploadEnabled ? '기존 사진 유지' : '사진 수정하기'),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    )
+                    // Text(
+                    //   '기존에 ${locationController.numberOfImage.value}장의 사진이 있습니다.',
+                    //   style: TextStyle(
+                    //     fontSize: 16,
+                    //     color: Colors.black,
+                    //   ),
+                    // ),
+                  ],
+                ),
+              ),
+              // AddImage 위젯에 isUpdate 값을 전달하여 상태를 제어
+              if (isImageUploadEnabled)
+                AddImage(
+                  key: _addImageKey,
+                  locationData: widget.locationData,
+                  isUpdate: isImageUploadEnabled, // 동적으로 isUpdate 값을 변경
+                ),
+              SizedBox(height: 20),
               AddTitle(titleController: _titleController),
               SizedBox(height: 20),
               // AddText(textController: _textController),
@@ -133,6 +163,16 @@ class _EditItemPage2State extends State<EditItemPage2> {
               SizedBox(height: 10),
               ElevatedButton(
                 onPressed: () {
+                  List<XFile> imageList = [];
+                  if (isImageUploadEnabled &&
+                      _addImageKey.currentState != null) {
+                    imageList =
+                        _addImageKey.currentState!.getTemporaryImageList();
+                  } else {
+                    // 이미지를 수정하지 않는 경우 이전의 이미지 리스트를 사용
+                    imageList = _itemData.getSavedImageList();
+                  }
+
                   final updatedLocationData = LocationData(
                     key: widget.locationData.key,
                     courseLocationId: widget.locationData.courseLocationId,
@@ -140,12 +180,9 @@ class _EditItemPage2State extends State<EditItemPage2> {
                     latitude: widget.locationData.latitude,
                     longitude: widget.locationData.longitude,
                     roadViewImage: widget.locationData.roadViewImage,
-                    // numberOfImage: widget.locationData.numberOfImage,
-                    numberOfImage: _addImageKey.currentState!
-                        .getTemporaryImageList()
-                        .length,
-                    // numberOfImage: _imageList.length,
-                    // numberOfImage: _imageUploaderState.getNumberOfImage(),
+                    isUpdate:
+                        isImageUploadEnabled, // isUpdate 값을 isImageUploadEnabled 값으로 변경
+                    numberOfImage: imageList.length,
                     title: _titleController.text.isNotEmpty
                         ? _titleController.text
                         : '',
@@ -154,17 +191,15 @@ class _EditItemPage2State extends State<EditItemPage2> {
                         : '',
                     sido: widget.locationData.sido,
                     gugun: widget.locationData.gugun,
-                    // temporaryImageList: _imageUploaderState._temporaryImageList,
-                    temporaryImageList:
-                        _addImageKey.currentState!.getTemporaryImageList(),
+                    temporaryImageList: imageList,
                   );
                   _itemData.title = updatedLocationData.title;
                   _itemData.content = updatedLocationData.content;
                   _itemData.sido = updatedLocationData.sido;
                   _itemData.gugun = updatedLocationData.gugun;
                   _itemData.numberOfImage = updatedLocationData.numberOfImage;
-                  _itemData.saveImageList(
-                      _addImageKey.currentState!.getTemporaryImageList());
+
+                  _itemData.saveImageList(imageList);
 
                   _itemData = updatedLocationData;
 
@@ -173,6 +208,7 @@ class _EditItemPage2State extends State<EditItemPage2> {
                   print('33333333333333');
                   print(_itemData.numberOfImage);
                   print(_itemData.temporaryImageList);
+                  print(_itemData.isUpdate);
                   //
                   Navigator.pop(context, updatedLocationData);
                 },
@@ -414,20 +450,16 @@ class AddText extends StatelessWidget {
   }
 }
 
-// class AddImage extends StatelessWidget {
-//   const AddImage({
-//     super.key,
-//   });
 class AddImage extends StatefulWidget {
-  // const AddImage({
-  //   Key? key,
-  // }) : super(key: key);
-  const AddImage({
-    Key? key,
-    this.locationData, // Assuming locationData is optional. If it's required, change this to 'required this.locationData'.
-  }) : super(key: key);
+  const AddImage(
+      {Key? key,
+      this.locationData,
+      required this.isUpdate // Assuming locationData is optional. If it's required, change this to 'required this.locationData'.
+      })
+      : super(key: key);
 
   final LocationData? locationData;
+  final bool isUpdate;
   // final LocationData locationData; // Added locationData
 
   @override
@@ -449,21 +481,46 @@ class _AddImageState extends State<AddImage> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text("이미지를 첨부해보세요 📷",
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w800,
-            )),
-        SizedBox(height: 10),
-        Text("이미지는 최대 5장까지 첨부할 수 있어요", style: TextStyle(color: Colors.black45)),
-        SizedBox(height: 10),
-        SizedBox(
-          // height: 250,
-          child: ImageUploader(key: _imageUploaderKey),
+    return FractionallySizedBox(
+      widthFactor: 0.95,
+      child: Card(
+        elevation: 4, // 그림자 높이
+        shape: RoundedRectangleBorder(
+          // 모서리 둥글기 설정
+          borderRadius: BorderRadius.circular(16),
         ),
-      ],
+        child: Column(
+          children: [
+            SizedBox(height: 10),
+            Text("이미지를 첨부해보세요 📷",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w800,
+                )),
+            SizedBox(height: 10),
+            Text("이미지는 최대 5장까지 첨부할 수 있어요",
+                style: TextStyle(color: Colors.black45)),
+            SizedBox(height: 10),
+            // 활성화/비활성화 상태에 따라
+            SizedBox(
+              child: widget.isUpdate
+                  ? ImageUploader(key: _imageUploaderKey)
+                  : _buildDisabledButton(),
+            ),
+            // SizedBox(
+            //   // height: 250,
+            //   child: ImageUploader(key: _imageUploaderKey),
+            // ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDisabledButton() {
+    return ElevatedButton(
+      onPressed: null, // 버튼을 비활성화합니다.
+      child: Text("이미지 업로드 비활성화"),
     );
   }
 
