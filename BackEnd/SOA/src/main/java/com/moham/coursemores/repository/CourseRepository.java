@@ -3,17 +3,20 @@ package com.moham.coursemores.repository;
 import com.moham.coursemores.domain.Course;
 import com.moham.coursemores.dto.course.NearPreviewResDto;
 import com.moham.coursemores.repository.querydsl.CourseCustomRepository;
-import java.util.List;
-import java.util.Optional;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+import java.util.Optional;
+
 
 public interface CourseRepository extends JpaRepository<Course, Long>, CourseCustomRepository {
 
     Optional<Course> findByIdAndUserId(Long courseId, Long userId);
+
+    List<Course> findByUserIdAndDeleteTimeIsNull(Long userId);
 
     Optional<Course> findByIdAndDeleteTimeIsNull(Long courseId);
 

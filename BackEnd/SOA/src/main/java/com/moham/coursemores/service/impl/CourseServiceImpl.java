@@ -257,27 +257,21 @@ public class CourseServiceImpl implements CourseService {
                 .orElseThrow(() -> new CustomException(userId,CustomErrorCode.USER_NOT_FOUND));
 
         // 유저의 코스들을 Dto로 가공하여 list에 담기
-        return user.getCourseList()
+        return courseRepository.findByUserIdAndDeleteTimeIsNull(user.getId())
                 .stream()
-                .map(course -> {
-                    // 삭제한 코스인지 확인
-                    if (course.getDeleteTime() != null)
-                        return null;
-                    // 코스를 Dto로 가공하기
-                    return MyCourseResDto.builder()
-                            .courseId(course.getId())
-                            .title(course.getTitle())
-                            .content(course.getContent())
-                            .people(course.getPeople())
-                            .visited(course.isVisited())
-                            .likeCount(course.getLikeCount())
-                            .image(course.getImage())
-                            .sido(ALL.equals(course.getSido()) ? "대한민국" : course.getSido())
-                            .gugun(ALL.equals(course.getGugun()) ? "" : course.getGugun())
-                            .locationName(course.getLocationName() + " 외 " + (course.getLocationSize() - 1) + "곳")
-                            .commentCount(course.getCommentCount())
-                            .build();
-                })
+                .map(course -> MyCourseResDto.builder()
+                        .courseId(course.getId())
+                        .title(course.getTitle())
+                        .content(course.getContent())
+                        .people(course.getPeople())
+                        .visited(course.isVisited())
+                        .likeCount(course.getLikeCount())
+                        .image(course.getImage())
+                        .sido(ALL.equals(course.getSido()) ? "대한민국" : course.getSido())
+                        .gugun(ALL.equals(course.getGugun()) ? "" : course.getGugun())
+                        .locationName(course.getLocationName() + " 외 " + (course.getLocationSize() - 1) + "곳")
+                        .commentCount(course.getCommentCount())
+                        .build())
                 .sorted((o1, o2) -> Long.compare(o2.getCourseId(), Objects.requireNonNull(o1).getCourseId()))
                 .collect(Collectors.toList());
     }

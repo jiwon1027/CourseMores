@@ -87,8 +87,12 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public List<MyCommentResDto> getMyCommentList(Long userId) {
+        // 유저 정보 가져오기
+        User user = userRepository.findByIdAndDeleteTimeIsNull(userId)
+                .orElseThrow(() -> new CustomException(userId,CustomErrorCode.USER_NOT_FOUND));
+
         // userId가 작성한 댓글 중 deletetime이 null이 아닌 댓글(삭제되지 않은 댓글)
-        return commentRepository.findByUserIdAndDeleteTimeIsNull(userId)
+        return commentRepository.findByUserIdAndDeleteTimeIsNull(user.getId())
                 .stream()
                 .map(comment -> MyCommentResDto.builder()
                         .commentId(comment.getId())
