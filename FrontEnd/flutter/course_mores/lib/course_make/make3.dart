@@ -52,25 +52,19 @@ class _MakeStepperState extends State<MakeStepper> {
                 widthFactor: 0.95,
                 child: Card(
                   elevation: 4,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16)),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                   child: Container(
                     padding: EdgeInsets.all(16), // 박스 내부 패딩
                     child: Column(
-                      crossAxisAlignment:
-                          CrossAxisAlignment.start, // 자식 위젯을 왼쪽 정렬
+                      crossAxisAlignment: CrossAxisAlignment.start, // 자식 위젯을 왼쪽 정렬
                       children: [
                         Row(
                           children: const [
                             Text(
                               '코스 이름',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16),
+                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                             ),
-                            Text(' *',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.red)),
+                            Text(' *', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red)),
                             SizedBox(width: 10),
                           ],
                         ),
@@ -81,9 +75,7 @@ class _MakeStepperState extends State<MakeStepper> {
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(10),
-                              border: Border.all(
-                                  color: Colors.grey.withOpacity(0.5),
-                                  width: 1),
+                              border: Border.all(color: Colors.grey.withOpacity(0.5), width: 1),
                             ),
                             padding: EdgeInsets.all(10),
                             child: TextField(
@@ -92,6 +84,7 @@ class _MakeStepperState extends State<MakeStepper> {
                                 print('User typed: $text');
                                 // CourseController의 title 변수 업데이트
                                 Get.find<CourseController>().title.value = text;
+                                print('courseController.title.value: ${courseController.title.value}');
                               },
                               maxLength: 50,
                               maxLines: null,
@@ -101,8 +94,7 @@ class _MakeStepperState extends State<MakeStepper> {
                                 border: InputBorder.none,
                                 hintText: '최대 50자까지 작성할 수 있어요',
                                 prefixText: ' ',
-                                prefixStyle:
-                                    TextStyle(color: Colors.transparent),
+                                prefixStyle: TextStyle(color: Colors.transparent),
                                 hintStyle: TextStyle(color: Colors.grey),
                               ),
                             ),
@@ -118,8 +110,7 @@ class _MakeStepperState extends State<MakeStepper> {
                 widthFactor: 0.95,
                 child: Card(
                   elevation: 4,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16)),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                   child: Container(
                     padding: EdgeInsets.all(16),
                     child: Column(
@@ -127,13 +118,8 @@ class _MakeStepperState extends State<MakeStepper> {
                       children: [
                         Row(
                           children: const [
-                            Text('방문 여부',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 16)),
-                            Text(' *',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.red)),
+                            Text('방문 여부', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                            Text(' *', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red)),
                           ],
                         ),
                         SizedBox(height: 15),
@@ -166,24 +152,17 @@ class _MakeStepperState extends State<MakeStepper> {
                   FractionallySizedBox(
                     widthFactor: 0.95,
                     child: Card(
-                      elevation: 4, // 그림자 높이
-                      shape: RoundedRectangleBorder(
-                        // 모서리 둥글기 설정
-                        borderRadius: BorderRadius.circular(16),
-                      ),
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                       child: Container(
-                        padding: EdgeInsets.all(16), // 박스 내부 패딩
+                        padding: EdgeInsets.all(16),
                         child: Column(
-                          crossAxisAlignment:
-                              CrossAxisAlignment.start, // 자식 위젯을 왼쪽 정렬
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: const [
-                            Text('인원수',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 16)),
+                            Text('인원수', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                             SizedBox(height: 8), // 간격 추가
                             Slider1(),
                             SizedBox(height: 5),
-                            // Text('Slider Value: $_sliderValue'),
                           ],
                         ),
                       ),
@@ -201,12 +180,9 @@ class _MakeStepperState extends State<MakeStepper> {
                       child: Container(
                         padding: EdgeInsets.all(16), // 박스 내부 패딩
                         child: Column(
-                          crossAxisAlignment:
-                              CrossAxisAlignment.start, // 자식 위젯을 왼쪽 정렬
+                          crossAxisAlignment: CrossAxisAlignment.start, // 자식 위젯을 왼쪽 정렬
                           children: const [
-                            Text('소요 시간',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 16)),
+                            Text('소요 시간', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                             SizedBox(height: 8), // 간격 추가
                             Slider2(),
                             SizedBox(height: 5),
@@ -227,35 +203,23 @@ class _MakeStepperState extends State<MakeStepper> {
                       child: Container(
                         padding: EdgeInsets.all(16), // 박스 내부 패딩
                         child: Column(
-                          crossAxisAlignment:
-                              CrossAxisAlignment.start, // 자식 위젯을 왼쪽 정렬
+                          crossAxisAlignment: CrossAxisAlignment.start, // 자식 위젯을 왼쪽 정렬
                           children: [
-                            Text(
-                              '코스 내용',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16),
-                            ),
-                            SizedBox(height: 15), // 간격 추가
+                            Text('코스 내용', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                            SizedBox(height: 15),
                             SingleChildScrollView(
                               child: Container(
-                                constraints: BoxConstraints(
-                                  maxHeight: 200,
-                                ),
+                                constraints: BoxConstraints(maxHeight: 200),
                                 decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(
-                                    color: Colors.grey.withOpacity(0.5),
-                                    width: 1,
-                                  ),
+                                  border: Border.all(color: Colors.grey.withOpacity(0.5), width: 1),
                                 ),
                                 padding: EdgeInsets.all(10),
                                 child: TextField(
                                   onChanged: (value) {
-                                    //     // 사용자가 입력한 텍스트가 변경될 때마다 호출됩니다.
-                                    print(value);
-                                    Get.find<CourseController>().content.value =
-                                        value;
+                                    // print(value);
+                                    Get.find<CourseController>().content.value = value;
                                   },
                                   maxLength: 5000,
                                   maxLines: null,
@@ -265,10 +229,8 @@ class _MakeStepperState extends State<MakeStepper> {
                                     border: InputBorder.none,
                                     hintText: '내용은 5000자까지 입력 가능합니다',
                                     prefixText: ' ',
-                                    prefixStyle:
-                                        TextStyle(color: Colors.transparent),
-                                    hintStyle: TextStyle(
-                                        color: Colors.grey, fontSize: 14),
+                                    prefixStyle: TextStyle(color: Colors.transparent),
+                                    hintStyle: TextStyle(color: Colors.grey, fontSize: 14),
                                   ),
                                 ),
                               ),
@@ -290,16 +252,11 @@ class _MakeStepperState extends State<MakeStepper> {
                       child: Container(
                         padding: EdgeInsets.all(16), // 박스 내부 패딩
                         child: Column(
-                          crossAxisAlignment:
-                              CrossAxisAlignment.start, // 자식 위젯을 왼쪽 정렬
+                          crossAxisAlignment: CrossAxisAlignment.start, // 자식 위젯을 왼쪽 정렬
                           children: const [
-                            Text('해시태그',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 16)),
+                            Text('해시태그', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                             SizedBox(height: 4), // 간격 추가
-                            Text('원하는 해시태그를 작성하고 띄어쓰기를 누르세요',
-                                style: TextStyle(
-                                    fontSize: 12, color: Colors.grey)),
+                            Text('원하는 해시태그를 작성하고 띄어쓰기를 누르세요', style: TextStyle(fontSize: 12, color: Colors.grey)),
                             SizedBox(height: 8), // 간격 추가
                             // MakeHashtag(whatcontroller: hashtagcontroller),
                             MakeHashtag(),
@@ -329,7 +286,7 @@ class _MakeStepperState extends State<MakeStepper> {
                   ),
                   SizedBox(height: 20),
                   Text(
-                    '이 코스에는 어울리는 테마는 무엇인가요?',
+                    '이 코스에 어울리는 테마는 무엇인가요?',
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                   ),
                   ThemeSelect(),
@@ -377,11 +334,7 @@ class _MakeStepperState extends State<MakeStepper> {
           child: RichText(
               text: const TextSpan(
             children: [
-              // WidgetSpan(child: Icon(Icons.edit_note, color: Colors.white)),
-              // WidgetSpan(child: SizedBox(width: 5)),
-              TextSpan(
-                  text: '코스 작성하기',
-                  style: TextStyle(fontSize: 22, color: Colors.white)),
+              TextSpan(text: '코스 작성하기', style: TextStyle(fontSize: 22, color: Colors.white)),
             ],
           )),
         ),
@@ -412,14 +365,13 @@ class _MakeStepperState extends State<MakeStepper> {
                   return AlertDialog(
                     title: Column(
                       children: [
-                        Lottie.asset('assets/success.json',
-                            fit: BoxFit.fitWidth, width: 300),
+                        Lottie.asset('assets/success.json', fit: BoxFit.fitWidth, width: 300),
                         Text("코스 작성을 완료했어요!"),
                       ],
                     ),
                     actions: <Widget>[
                       Center(
-                        child: ElevatedButton(
+                        child: FilledButton(
                           child: Text("확인"),
                           onPressed: () {
                             // courseController의 모든 값 출력
@@ -505,73 +457,74 @@ class _MakeStepperState extends State<MakeStepper> {
                 Expanded(
                     child: FilledButton(
                   onPressed: details.onStepCancel,
-                  style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all(Colors.grey[400])),
+                  style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.grey[400])),
                   child: Text('이전으로'),
                 )),
                 SizedBox(width: 16),
                 Expanded(
                   child: FilledButton(
                     onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Column(
-                              children: [
-                                Lottie.asset(
-                                  'assets/success.json',
-                                  fit: BoxFit.fitWidth,
-                                  width: 300,
-                                ),
-                                Text("코스 작성을 완료했어요!"),
-                              ],
-                            ),
-                            actions: <Widget>[
-                              Center(
-                                child: ElevatedButton(
+                      print("now courseController.title.value = ${courseController.title.value}");
+                      if (courseController.title.value == "") {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text("코스 이름을 작성하지 않았어요!"),
+                              content: Text("코스 이름은 필수 입력사항이므로 입력해주세요."),
+                              actions: <Widget>[
+                                TextButton(
                                   child: Text("확인"),
                                   onPressed: () {
-                                    // courseController의 모든 값 출력
-                                    courseController.postCourse();
-                                    print(courseController.title.value);
-                                    print(courseController.content.value);
-                                    print(courseController.people.value);
-                                    print(courseController.time.value);
-                                    print(courseController.visited.value);
-                                    print(courseController.locationList);
-                                    print(courseController.hashtagList);
-                                    print(courseController.themeIdList);
-                                    // // 컨트롤러 인스턴스 초기화
-                                    // courseController.title.value = '';
-                                    // courseController.content.value = '';
-                                    // courseController.people.value = 0;
-                                    // courseController.time.value = 0;
-                                    // courseController.visited.value = false;
-                                    // courseController.locationList.clear();
-                                    // courseController.hashtagList.clear();
-                                    // courseController.themeIdList.clear();
-                                    // // courseController의 모든 값 출력
-                                    // print(courseController.title.value);
-                                    // print(courseController.content.value);
-                                    // print(courseController.people.value);
-                                    // print(courseController.time.value);
-                                    // print(courseController.visited.value);
-                                    // print(courseController.locationList);
-                                    // print(courseController.hashtagList);
-                                    // print(courseController.themeIdList);
-                                    // Navigator를 이용해 적절한 이동 수행
-                                    Navigator.of(context).pop();
-                                    Navigator.pop(context);
-                                    Navigator.pop(context);
+                                    Navigator.of(context).pop(); // Alert Dialog를 닫습니다.
                                   },
                                 ),
+                              ],
+                            );
+                          },
+                        );
+                      } else {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Column(
+                                children: [
+                                  Lottie.asset(
+                                    'assets/success.json',
+                                    fit: BoxFit.fitWidth,
+                                    width: 300,
+                                  ),
+                                  Text("코스 작성을 완료했어요!"),
+                                ],
                               ),
-                            ],
-                          );
-                        },
-                      );
+                              actions: <Widget>[
+                                Center(
+                                  child: FilledButton(
+                                    child: Text("확인"),
+                                    onPressed: () {
+                                      // courseController의 모든 값 출력
+                                      courseController.postCourse();
+                                      print(courseController.title.value);
+                                      print(courseController.content.value);
+                                      print(courseController.people.value);
+                                      print(courseController.time.value);
+                                      print(courseController.visited.value);
+                                      print(courseController.locationList);
+                                      print(courseController.hashtagList);
+                                      print(courseController.themeIdList);
+                                      // Navigator를 이용해 적절한 이동 수행
+                                      Navigator.of(context).pop();
+                                      Navigator.pop(context);
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      }
                     },
                     child: Text('작성 완료'),
                   ),
@@ -582,33 +535,17 @@ class _MakeStepperState extends State<MakeStepper> {
             return Row(
               children: <Widget>[
                 Expanded(
-                  child: ElevatedButton(
+                  child: FilledButton(
                     onPressed: details.onStepCancel,
+                    style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.grey[400])),
                     child: const Text('이전으로'),
                   ),
                 ),
                 SizedBox(width: 16),
                 Expanded(
-                  child: ElevatedButton(
+                  child: FilledButton(
                     onPressed: details.onStepContinue,
-                    // onPressed: () {
-                    //   details.onStepContinue;
-                    //   // 코스 저장여부 확인 코드 시작 check //
-                    //   // GetX에서 CourseController 가져오기
-                    //   CourseController courseController =
-                    //       Get.find<CourseController>();
-
-                    //   // courseController 내부의 값들 출력하기
-                    //   print(courseController.title);
-                    //   print(courseController.locationList);
-                    //   print(courseController.locationList[0].name);
-                    //   print(courseController.locationList[0].title);
-                    //   print(courseController.locationList[0].sido);
-                    //   print(courseController.locationList[0].gugun);
-                    //   print(courseController.locationList[1].content);
-                    //   // 코스 저장여부 확인 코드 끝 check //
-                    // },
-                    child: const Text('다음으로'),
+                    child: Text('다음으로'),
                   ),
                 )
               ],
@@ -656,9 +593,7 @@ class _PlaceListBoxState extends State<PlaceListBox> {
 
     return Card(
       elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Row(
         children: [
           Expanded(
@@ -775,6 +710,7 @@ class _Slider2State extends State<Slider2> {
 
   @override
   Widget build(BuildContext context) {
+    courseController.time.value = _sliderValue2.toInt();
     return SfSlider(
       value: _sliderValue2,
       min: 1,
@@ -826,8 +762,6 @@ class _MakeHashtagState extends State<MakeHashtag> {
 
   @override
   Widget build(BuildContext context) {
-    List<String> tags = [];
-
     return Column(
       children: [
         TextFieldTags(
@@ -836,10 +770,6 @@ class _MakeHashtagState extends State<MakeHashtag> {
           textSeparators: const [' ', ','],
           letterCase: LetterCase.normal,
           validator: (String tag) {
-            // if (tag == 'php') {
-            //   return 'No, please just no';
-            //   // } else if (_controller.getTags?.contains(tag)) {
-            // } else
             if (_controller.getTags?.contains(tag) == true) {
               return '이미 입력한 해시태그예요.';
             }
@@ -857,59 +787,18 @@ class _MakeHashtagState extends State<MakeHashtag> {
                       decoration: InputDecoration(
                         isDense: true,
                         border: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: Color.fromARGB(255, 74, 137, 92),
-                              width: 3.0),
+                          borderSide: BorderSide(color: Color.fromARGB(255, 74, 137, 92), width: 3.0),
                         ),
-                        focusedBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: Color.fromARGB(255, 74, 137, 92),
-                              width: 3.0),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Color.fromARGB(255, 74, 137, 92), width: 3.0),
                         ),
                         hintText: _controller.hasTags ? '' : "태그를 입력하세요",
                         errorText: error,
-                        // prefixIcon: tags.isNotEmpty
-                        //     ? SingleChildScrollView(
-                        //         controller: sc,
-                        //         scrollDirection: Axis.horizontal,
-                        //         child: Row(
-                        //             children: tags.map((String tag) {
-                        //           return Container(
-                        //             decoration: const BoxDecoration(
-                        //               borderRadius: BorderRadius.all(
-                        //                 Radius.circular(20.0),
-                        //               ),
-                        //               color: Color(0xFFEEEEEE),
-                        //             ),
-                        //             margin: const EdgeInsets.symmetric(horizontal: 5.0),
-                        //             padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
-                        //             child: Row(
-                        //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        //               children: [
-                        //                 InkWell(
-                        //                   child: Text('#$tag', style: const TextStyle(color: Color(0xFF6D6AFF))),
-                        //                   onTap: () {
-                        //                     print("$tag selected");
-                        //                   },
-                        //                 ),
-                        //                 SizedBox(width: 4.0),
-                        //                 InkWell(
-                        //                   child: Icon(Icons.cancel, size: 14.0, color: Color(0xFFAEAEAE)),
-                        //                   onTap: () {
-                        //                     onTagDelete(tag);
-                        //                   },
-                        //                 )
-                        //               ],
-                        //             ),
-                        //           );
-                        //         }).toList()),
-                        //       )
-                        //     : null,
                       ),
                       onChanged: onChanged,
                       onSubmitted: (value) {
                         tags.add(value);
-                        print(tags);
+                        // print(tags);
                       },
                     ),
                     SizedBox(height: 10),
@@ -920,26 +809,21 @@ class _MakeHashtagState extends State<MakeHashtag> {
                           children: tags.map((String tag) {
                         return Container(
                           decoration: BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(20.0)),
-                              color: Color(0xFFEEEEEE)),
+                              borderRadius: BorderRadius.all(Radius.circular(20.0)), color: Color(0xFFEEEEEE)),
                           margin: EdgeInsets.symmetric(horizontal: 5.0),
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 10.0, vertical: 5.0),
+                          padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               InkWell(
-                                child: Text('#$tag',
-                                    style: TextStyle(color: Color(0xFF6D6AFF))),
+                                child: Text('#$tag', style: TextStyle(color: Color(0xFF6D6AFF))),
                                 onTap: () {
                                   print("$tag selected");
                                 },
                               ),
                               SizedBox(width: 4.0),
                               InkWell(
-                                child: Icon(Icons.cancel,
-                                    size: 14.0, color: Color(0xFFAEAEAE)),
+                                child: Icon(Icons.cancel, size: 14.0, color: Color(0xFFAEAEAE)),
                                 onTap: () {
                                   onTagDelete(tag);
                                 },
@@ -988,9 +872,7 @@ class _MakeHashtagState extends State<MakeHashtag> {
 }
 
 class ThemeSelect extends StatefulWidget {
-  const ThemeSelect({
-    Key? key,
-  }) : super(key: key);
+  const ThemeSelect({Key? key}) : super(key: key);
 
   @override
   State<ThemeSelect> createState() => _ThemeSelectState();
@@ -1036,11 +918,7 @@ class _ThemeSelectState extends State<ThemeSelect> {
             color: Colors.white,
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
-              BoxShadow(
-                  color: Colors.grey.withOpacity(0.5),
-                  spreadRadius: 2,
-                  blurRadius: 3,
-                  offset: Offset(0, 2)),
+              BoxShadow(color: Colors.grey.withOpacity(0.5), spreadRadius: 2, blurRadius: 3, offset: Offset(0, 2)),
             ],
           ),
           selectedDecoration: BoxDecoration(
@@ -1060,16 +938,12 @@ class _ThemeSelectState extends State<ThemeSelect> {
     }).toList();
 
     return Padding(
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(20),
       child: MultiSelectContainer(
-        wrapSettings: WrapSettings(
-            alignment: WrapAlignment.center, runSpacing: 12, spacing: 12),
+        wrapSettings: WrapSettings(alignment: WrapAlignment.center, runSpacing: 12, spacing: 12),
         items: cards,
         onChange: (List<dynamic> allSelectedItems, dynamic selectedItem) {
-          final List<int> selectedIds = allSelectedItems
-              .whereType<int>()
-              .where(themeMapping.containsKey)
-              .toList();
+          final List<int> selectedIds = allSelectedItems.whereType<int>().where(themeMapping.containsKey).toList();
           selectedIds.sort();
           courseController.themeIdList.value = selectedIds;
           print('선택된 아이템의 id 리스트: $selectedIds');
@@ -1106,10 +980,8 @@ class _CheckVisitedState extends State<CheckVisited> {
                   },
             label: Text('다녀왔어요!'),
             style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(
-                  _isVisited ? Colors.green[400] : Colors.grey[300]),
-              foregroundColor: MaterialStateProperty.all(
-                  _isVisited ? Colors.white : Colors.grey[700]),
+              backgroundColor: MaterialStateProperty.all(_isVisited ? Colors.green[400] : Colors.grey[300]),
+              foregroundColor: MaterialStateProperty.all(_isVisited ? Colors.white : Colors.grey[700]),
             ),
             icon: Icon(Icons.verified),
           ),
@@ -1124,10 +996,8 @@ class _CheckVisitedState extends State<CheckVisited> {
                   },
             label: Text('계획중이에요!'),
             style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(
-                  !_isVisited ? Colors.green[400] : Colors.grey[300]),
-              foregroundColor: MaterialStateProperty.all(
-                  !_isVisited ? Colors.white : Colors.grey[700]),
+              backgroundColor: MaterialStateProperty.all(!_isVisited ? Colors.green[400] : Colors.grey[300]),
+              foregroundColor: MaterialStateProperty.all(!_isVisited ? Colors.white : Colors.grey[700]),
             ),
             icon: Icon(Icons.tour),
           ),

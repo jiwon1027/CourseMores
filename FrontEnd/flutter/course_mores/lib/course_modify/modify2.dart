@@ -1,11 +1,13 @@
 import 'package:coursemores/course_modify/modify3.dart';
 import 'package:coursemores/course_modify/modify_place.dart';
+import 'package:draggable_home/draggable_home.dart';
 import 'package:flutter_reorderable_list/flutter_reorderable_list.dart' as frl;
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import '../controller/make_controller.dart';
+// ignore: unused_import
 import 'package:geocoding/geocoding.dart' as geocoding;
 import '../auth/auth_dio.dart';
 import 'package:image_picker/image_picker.dart';
@@ -93,19 +95,15 @@ class _CourseModifyState extends State<CourseModify> {
       // If the server returns a 200 OK response, parse the JSON.
       print('수정용 코스 정보 가져오기 성공');
       final courseInfo = response1.data['courseInfo'];
-      List<int> themeIdList = courseInfo['themeList']
-          .map<int>((map) => map['themeId'] as int)
-          .toList();
+      List<int> themeIdList = courseInfo['themeList'].map<int>((map) => map['themeId'] as int).toList();
 
       courseController.title.value = courseInfo['title'];
       courseController.content.value = courseInfo['content'];
       courseController.people.value = courseInfo['people'];
       courseController.time.value = courseInfo['time'];
       courseController.visited.value = courseInfo['visited'];
-      courseController.hashtagList.value =
-          RxList<String>.from(courseInfo['hashtagList']);
-      courseController.themeIdList.value =
-          RxList<int>.from(themeIdList.map((dynamic item) => item as int));
+      courseController.hashtagList.value = RxList<String>.from(courseInfo['hashtagList']);
+      courseController.themeIdList.value = RxList<int>.from(themeIdList.map((dynamic item) => item as int));
     } else {
       throw Exception('Failed to load course');
     }
@@ -120,8 +118,7 @@ class _CourseModifyState extends State<CourseModify> {
       print(locationDetailInfo);
 
       // courseController.locationList.clear();
-      List<LocationData> locationList =
-          (locationDetailInfo as List<dynamic>).map((detail) {
+      List<LocationData> locationList = (locationDetailInfo as List<dynamic>).map((detail) {
         // 장소 정보 추출
         int? courseLocationId = detail['courseLocationId'];
         String name = detail['name'];
@@ -131,16 +128,12 @@ class _CourseModifyState extends State<CourseModify> {
         double longitude = detail['longitude'] ?? 0.0; // Null일 경우 0.0으로 대체
         String sido = detail['sido'] ?? ''; // Null일 경우 빈 문자열로 대체
         String gugun = detail['gugun'] ?? ''; // Null일 경우 빈 문자열로 대체
-        String roadViewImage =
-            detail['roadViewImage'] ?? ''; // Null일 경우 빈 문자열로 대체
+        String roadViewImage = detail['roadViewImage'] ?? ''; // Null일 경우 빈 문자열로 대체
         // List<String> locationImageList =
         //     (detail['locationImageList'] as List<dynamic>)
         //         .cast<String>(); // locationImageList 추출
         List<XFile> locationImageList =
-            (detail['locationImageList'] as List<dynamic>)
-                .cast<String>()
-                .map((imagePath) => XFile(imagePath))
-                .toList();
+            (detail['locationImageList'] as List<dynamic>).cast<String>().map((imagePath) => XFile(imagePath)).toList();
 
         // LocationData 객체 생성
         LocationData locationData = LocationData(
@@ -184,6 +177,7 @@ class _CourseModifyState extends State<CourseModify> {
     _items = courseController.locationList;
   }
 
+  // ignore: unused_element
   void _addItem(
     String name,
     double latitude,
@@ -219,8 +213,7 @@ class _CourseModifyState extends State<CourseModify> {
 
     LocationData locationData = LocationData(
       // key: UniqueKey(),
-      key: key ??
-          UniqueKey(), // Use the provided key or create a new one if none is provided
+      key: key ?? UniqueKey(), // Use the provided key or create a new one if none is provided
       name: name,
       latitude: latitude,
       longitude: longitude,
@@ -290,238 +283,196 @@ class _CourseModifyState extends State<CourseModify> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        // 없어도 <- 모양의 뒤로가기가 기본으로 있으나 < 모양으로 바꾸려고 추가함
-        leading: IconButton(
-          icon: const Icon(
-            Icons.navigate_before,
-            color: Colors.black,
-          ),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        // 알림 아이콘과 텍스트 같이 넣으려고 RichText 사용
-        title: RichText(
-            text: const TextSpan(
-          children: [
-            WidgetSpan(
-              child: Icon(
-                Icons.edit_note,
-                color: Colors.black,
-              ),
-            ),
-            WidgetSpan(
-              child: SizedBox(
-                width: 5,
-              ),
-            ),
-            TextSpan(
-              text: '코스 수정하기',
-              style: TextStyle(
-                fontSize: 22,
-                color: Colors.black,
-              ),
-            ),
-          ],
-        )),
-        // 피그마와 모양 맞추려고 close 아이콘 하나 넣어둠
-        // <와 X 중 하나만 있어도 될 것 같아서 상의 후 삭제 필요
-        actions: [
-          IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: const Icon(
-                Icons.close,
-                color: Colors.black,
-              )),
-        ],
+    return DraggableHome(
+      actions: [
+        IconButton(onPressed: () {}, icon: Icon(Icons.settings, color: Colors.transparent)),
+      ],
+      title: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: const [Text('코스 수정하기', style: TextStyle(color: Colors.white))],
       ),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                height: 10,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    '장소는 최대 5개까지 추가할 수 있어요',
-                    style: TextStyle(
-                        color: Color.fromARGB(255, 92, 67, 67), fontSize: 18),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.refresh),
-                    onPressed: isRefreshing ? null : refreshImages,
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 5,
-              ),
-              SizedBox(
-                width: 380,
-                height: 570,
-                child: frl.ReorderableList(
-                  onReorder: _reorderCallback,
-                  onReorderDone: _reorderDone,
-                  child: CustomScrollView(
-                    // cacheExtent: 3000,
-                    slivers: <Widget>[
-                      SliverPadding(
-                          padding: EdgeInsets.only(
-                              bottom: MediaQuery.of(context).padding.bottom),
-                          sliver: SliverList(
-                            delegate: SliverChildBuilderDelegate(
-                              (BuildContext context, int index) {
-                                return Padding(
-                                  // padding: EdgeInsets.only(bottom: 10),
-                                  padding: EdgeInsets.all(5),
-                                  child: Item(
-                                    data: _items[index],
-                                    // first and last attributes affect border drawn during dragging
-                                    isFirst: index == 0,
-                                    isLast: index == _items.length - 1,
-                                    draggingMode: _draggingMode,
-                                    onEdit: () => onEdit(_items[index]),
-                                    onDelete: () => onDelete(_items[index]),
-                                  ),
-                                );
-                              },
-                              childCount: _items.length,
-                            ),
-                          )),
-                    ],
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              // const MyStatefulWidget(),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  Icon(Icons.highlight_off),
-                  SizedBox(
-                    width: 3,
-                  ),
-                  Text('코스 수정에서는 장소 추가, 삭제 및 순서 변경이 불가능합니다'),
-                ],
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      final List<LocationData> items = _items;
-                      if (items.length <= 1) {
-                        showDialog(
-                          context: context,
-                          builder: (_) => const AlertDialog(
-                            title: Text('동선 미리보기'),
-                            content: Text('장소를 2개 이상 선택해주세요.'),
-                          ),
-                        );
-                        return;
-                      }
-
-                      showDialog(
-                        context: context,
-                        builder: (_) => Dialog(
-                          child: SizedBox(
-                            height: 400,
-                            width: 300,
-                            child: PreviewRoute(items: items),
-                          ),
-                        ),
-                      );
-                    },
-                    icon: const Icon(Icons.route),
-                    label: const Text('동선 미리보기'),
-                  ),
-                  const SizedBox(width: 16),
-                  ElevatedButton.icon(
-                    icon: const Icon(Icons.verified),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                    ),
-                    onPressed: () {
-                      // 코스 저장여부 확인 코드 시작 check //
-                      // GetX에서 CourseController 가져오기
-                      final CourseController courseController =
-                          Get.find<CourseController>();
-
-                      // 코스 저장여부 확인 코드 끝 check //
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text('작성한 내용을 저장하겠습니까?'),
-                            content: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text('작성한 장소 ${_items.length}곳:',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.red)),
-                                const SizedBox(height: 8),
-                                Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: _items
-                                      .map((item) => Text(
-                                            '- ${item.name}',
-                                            style: const TextStyle(
-                                                color: Colors.red),
-                                          ))
-                                      .toList(),
-                                ),
-                              ],
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text('취소'),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => ModifyStepper(
-                                              courseId: widget.courseId,
-                                            )),
+      headerWidget: headerWidget(context),
+      headerExpandedHeight: 0.3,
+      body: [
+        SingleChildScrollView(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // SizedBox(
+                //   height: 10,
+                // ),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.center,
+                //   children: [
+                //     const Text(
+                //       '장소는 최대 5개까지 추가할 수 있어요',
+                //       style: TextStyle(color: Color.fromARGB(255, 92, 67, 67), fontSize: 18),
+                //     ),
+                //     IconButton(
+                //       icon: Icon(Icons.refresh),
+                //       onPressed: isRefreshing ? null : refreshImages,
+                //     ),
+                //   ],
+                // ),
+                SizedBox(height: 5),
+                SizedBox(
+                  width: 380,
+                  height: 650,
+                  child: frl.ReorderableList(
+                    onReorder: _reorderCallback,
+                    onReorderDone: _reorderDone,
+                    child: CustomScrollView(
+                      // cacheExtent: 3000,
+                      slivers: <Widget>[
+                        SliverPadding(
+                            padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
+                            sliver: SliverList(
+                              delegate: SliverChildBuilderDelegate(
+                                (BuildContext context, int index) {
+                                  return Padding(
+                                    // padding: EdgeInsets.only(bottom: 10),
+                                    padding: EdgeInsets.all(5),
+                                    child: Item(
+                                      data: _items[index],
+                                      // first and last attributes affect border drawn during dragging
+                                      isFirst: index == 0,
+                                      isLast: index == _items.length - 1,
+                                      draggingMode: _draggingMode,
+                                      onEdit: () => onEdit(_items[index]),
+                                      onDelete: () => onDelete(_items[index]),
+                                    ),
                                   );
                                 },
-                                child: const Text('저장'),
+                                childCount: _items.length,
                               ),
-                            ],
-                          );
-                        },
-                      );
-                    },
-                    label: const Text('코스 지정 완료'),
+                            )),
+                      ],
+                    ),
                   ),
-                ],
-              ),
-            ],
+                ),
+                SizedBox(height: 20),
+                // const MyStatefulWidget(),
+                // Row(
+                //   mainAxisSize: MainAxisSize.min,
+                //   mainAxisAlignment: MainAxisAlignment.center,
+                //   children: const [
+                //     Icon(Icons.highlight_off),
+                //     SizedBox(
+                //       width: 3,
+                //     ),
+                //     Text('코스 수정에서는 장소 추가, 삭제 및 순서 변경이 불가능합니다'),
+                //   ],
+                // ),
+                // SizedBox(
+                //   height: 10,
+                // ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    FilledButton.icon(
+                      onPressed: () {
+                        final List<LocationData> items = _items;
+                        if (items.length <= 1) {
+                          showDialog(
+                            context: context,
+                            builder: (_) => const AlertDialog(
+                              title: Text('동선 미리보기'),
+                              content: Text('장소를 2개 이상 선택해주세요.'),
+                            ),
+                          );
+                          return;
+                        }
+
+                        showDialog(
+                          context: context,
+                          builder: (_) => Dialog(
+                            child: SizedBox(
+                              height: 400,
+                              width: 300,
+                              child: PreviewRoute(items: items),
+                            ),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.route),
+                      label: const Text('동선 미리보기'),
+                    ),
+                    const SizedBox(width: 16),
+                    FilledButton.icon(
+                      icon: const Icon(Icons.verified),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                      ),
+                      onPressed: () {
+                        // 코스 저장여부 확인 코드 시작 check //
+                        // GetX에서 CourseController 가져오기
+                        // ignore: unused_local_variable
+                        final CourseController courseController = Get.find<CourseController>();
+
+                        // 코스 저장여부 확인 코드 끝 check //
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text('작성한 내용을 저장하겠습니까?'),
+                              content: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('작성한 장소 ${_items.length}곳:',
+                                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red)),
+                                  const SizedBox(height: 8),
+                                  Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: _items
+                                        .map((item) => Text(
+                                              '- ${item.name}',
+                                              style: const TextStyle(color: Colors.red),
+                                            ))
+                                        .toList(),
+                                  ),
+                                ],
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text('취소'),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => ModifyStepper(
+                                                courseId: widget.courseId,
+                                              )),
+                                    );
+                                  },
+                                  child: const Text('저장'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                      label: const Text('코스 지정 완료'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
-      ),
+      ],
+      fullyStretchable: false,
+      backgroundColor: Colors.white,
+      appBarColor: Color.fromARGB(255, 80, 170, 208),
     );
   }
 }
@@ -557,8 +508,7 @@ class Item extends StatelessWidget {
     final String imgUrl =
         "https://maps.googleapis.com/maps/api/streetview?size=400x400&location=${data.latitude},${data.longitude}&fov=90&heading=235&pitch=10&key=$apiKey";
 
-    if (state == frl.ReorderableItemState.dragProxy ||
-        state == frl.ReorderableItemState.dragProxyFinished) {
+    if (state == frl.ReorderableItemState.dragProxy || state == frl.ReorderableItemState.dragProxyFinished) {
       // slightly transparent background white dragging (just like on iOS)
       decoration = const BoxDecoration(color: Color(0xD0FFFFFF));
     } else {
@@ -600,8 +550,7 @@ class Item extends StatelessWidget {
               Expanded(
                 flex: 5,
                 child: Container(
-                  padding:
-                      EdgeInsets.symmetric(vertical: 14.0, horizontal: 14.0),
+                  padding: EdgeInsets.fromLTRB(20, 21, 20, 7),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -609,6 +558,7 @@ class Item extends StatelessWidget {
                         data.name,
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
+                      SizedBox(height: 10),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
@@ -630,18 +580,16 @@ class Item extends StatelessWidget {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) =>
-                                      EditItemPage2(locationData: data),
+                                  builder: (context) => EditItemPage2(locationData: data),
                                 ),
                               );
                               // },
                             },
                             icon: Icon(Icons.edit),
-                            label: Text('추가 정보 작성'),
+                            label: Text('추가 정보 작성', style: TextStyle(fontSize: 12)),
                             style: ElevatedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20),
-                              ),
+                              backgroundColor: Color.fromARGB(255, 119, 181, 212),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                             ),
                           ),
                           SizedBox(width: 10),
@@ -650,7 +598,7 @@ class Item extends StatelessWidget {
                               // onDelete();
                             },
                             icon: Icon(Icons.delete),
-                            label: Text('삭제 불가'),
+                            label: Text('삭제 불가', style: TextStyle(fontSize: 12)),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.grey,
                               shape: RoundedRectangleBorder(
@@ -672,9 +620,7 @@ class Item extends StatelessWidget {
                   child: Container(
                       padding: const EdgeInsets.only(right: 18.0, left: 18.0),
                       color: const Color(0x08000000),
-                      child: Center(
-                          child: Icon(Icons.do_not_disturb,
-                              color: Color(0xFF888888)))),
+                      child: Center(child: Icon(Icons.do_not_disturb, color: Color(0xFF888888)))),
                 ),
               ),
             ],
@@ -712,26 +658,12 @@ class Item extends StatelessWidget {
     }
 
     return Container(
-      decoration: BoxDecoration(
-        // borderRadius: BorderRadius.circular(20.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 2,
-            blurRadius: 3,
-            offset: Offset(0, 2),
-          ),
-        ],
-        // border: Border.all(
-        //   color: Colors.grey,
-        //   width: 1.0,
-        // ),
-      ),
+      clipBehavior: Clip.hardEdge,
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(25), boxShadow: [
+        BoxShadow(color: Colors.grey.withOpacity(0.5), spreadRadius: 2, blurRadius: 3, offset: Offset(0, 2)),
+      ]),
       child: Column(
-        children: [
-          image,
-          content,
-        ],
+        children: [image, content],
       ),
     );
   }
@@ -754,25 +686,18 @@ class PreviewRoute extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<LatLng> positions =
-        items.map((item) => LatLng(item.latitude, item.longitude)).toList();
+    final List<LatLng> positions = items.map((item) => LatLng(item.latitude, item.longitude)).toList();
     final List<Future<BitmapDescriptor>> futures = [
-      BitmapDescriptor.fromAssetImage(
-          ImageConfiguration(size: Size(24, 24)), 'assets/marker1.png'),
-      BitmapDescriptor.fromAssetImage(
-          ImageConfiguration(size: Size(24, 24)), 'assets/marker2.png'),
-      BitmapDescriptor.fromAssetImage(
-          ImageConfiguration(size: Size(24, 24)), 'assets/marker3.png'),
-      BitmapDescriptor.fromAssetImage(
-          ImageConfiguration(size: Size(24, 24)), 'assets/marker4.png'),
-      BitmapDescriptor.fromAssetImage(
-          ImageConfiguration(size: Size(24, 24)), 'assets/marker5.png'),
+      BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(24, 24)), 'assets/marker1.png'),
+      BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(24, 24)), 'assets/marker2.png'),
+      BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(24, 24)), 'assets/marker3.png'),
+      BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(24, 24)), 'assets/marker4.png'),
+      BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(24, 24)), 'assets/marker5.png'),
     ];
     final Future<List<BitmapDescriptor>> markersFuture = Future.wait(futures);
     return FutureBuilder<List<BitmapDescriptor>>(
         future: markersFuture,
-        builder: (BuildContext context,
-            AsyncSnapshot<List<BitmapDescriptor>> snapshot) {
+        builder: (BuildContext context, AsyncSnapshot<List<BitmapDescriptor>> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Container(
               color: Colors.grey,
@@ -811,4 +736,32 @@ class PreviewRoute extends StatelessWidget {
           );
         });
   }
+}
+
+Widget headerWidget(BuildContext context) {
+  return Container(
+    decoration: BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: const [
+          Color.fromARGB(255, 0, 90, 129),
+          Color.fromARGB(232, 255, 218, 218),
+        ],
+        stops: const [0.0, 0.9],
+      ),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: const [
+        Text("코스 수정하기", style: TextStyle(fontSize: 25, color: Colors.white)),
+        SizedBox(height: 30),
+        Text("코스 수정에서는 장소 추가, 삭제 및 순서 변경이 불가능해요",
+            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14, color: Color.fromARGB(255, 179, 54, 95))),
+        SizedBox(height: 10),
+        Text("장소는 최대 5개까지 추가할 수 있어요", style: TextStyle(fontSize: 16, color: Colors.white)),
+      ],
+    ),
+  );
 }

@@ -29,289 +29,72 @@ class _ModifyStepperState extends State<ModifyStepper> {
 
   int _currentStep = 0;
 
-  final List<Step> _mySteps = [
-    Step(
-      title: Text('필수 입력'),
-      content: Center(
-          child: Column(
-        children: [
-          Text(
-            '코스 상세 필수 내용',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-          ),
-          Text(
-            '코스 이름과 방문 여부를 입력해주세요.',
-            style: TextStyle(color: Colors.grey, fontSize: 14),
-          ),
-          SizedBox(
-            height: 30,
-          ),
-          FractionallySizedBox(
-            widthFactor: 0.95,
-            child: Card(
-              elevation: 4, // 그림자 높이
-              shape: RoundedRectangleBorder(
-                // 모서리 둥글기 설정
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: PlaceListBox(),
-            ),
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          FractionallySizedBox(
-            widthFactor: 0.95,
-            child: Card(
-              elevation: 4, // 그림자 높이
-              shape: RoundedRectangleBorder(
-                // 모서리 둥글기 설정
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Container(
-                padding: EdgeInsets.all(16), // 박스 내부 패딩
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start, // 자식 위젯을 왼쪽 정렬
-                  children: [
-                    Row(
-                      children: const [
-                        Text(
-                          '코스 이름',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                          ),
-                        ),
-                        Text(
-                          '*',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.red,
-                          ),
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 8), // 간격 추가
-                    SingleChildScrollView(
-                      child: Container(
-                        constraints: BoxConstraints(
-                          maxHeight: 100,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            color: Colors.grey.withOpacity(0.5),
-                            width: 1,
-                          ),
-                        ),
-                        padding: EdgeInsets.all(10),
-                        child: TextField(
-                          controller: TextEditingController(
-                              text: courseController.title.value),
-                          onChanged: (text) {
-                            // 사용자의 입력이 변화할 때마다 실행되는 콜백 함수
-                            print('User typed: $text');
-                            // CourseController의 title 변수 업데이트
-                            Get.find<CourseController>().title.value = text;
-                          },
-                          maxLength: 50,
-                          maxLines: null,
-                          expands: true, // TextField의 높이를 가능한 한 최대로 확장
-                          minLines: null, // 최소 줄 수를 지정하지 않음
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            hintText: '최대 50자까지 작성할 수 있어요',
-                            prefixText: ' ',
-                            prefixStyle: TextStyle(color: Colors.transparent),
-                            hintStyle: TextStyle(color: Colors.grey),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          FractionallySizedBox(
-            widthFactor: 0.95,
-            child: Card(
-              elevation: 4, // 그림자 높이
-              shape: RoundedRectangleBorder(
-                // 모서리 둥글기 설정
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Container(
-                padding: EdgeInsets.all(16), // 박스 내부 패딩
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start, // 자식 위젯을 왼쪽 정렬
-                  children: [
-                    Row(
-                      children: const [
-                        Text(
-                          '방문 여부',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                          ),
-                        ),
-                        Text(
-                          '*',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.red,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 15),
-                    CheckVisited()
-                  ],
-                ),
-              ),
-            ),
-          ),
-          SizedBox(height: 20),
-        ],
-      )),
-    ),
-    Step(
-        title: Text('선택 입력'),
-        content: Center(
-          child: Column(
+  List<Step> get _mySteps => [
+        Step(
+          isActive: _currentStep >= 0,
+          title: Text('필수 입력'),
+          content: Center(
+              child: Column(
             children: [
               Text(
-                '코스 상세 선택 내용',
+                '코스 상세 필수 내용',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
               ),
+              SizedBox(height: 10),
               Text(
-                '코스 상세 내용을 선택적으로 입력해주세요.',
+                '코스 이름과 방문 여부를 입력해주세요.',
                 style: TextStyle(color: Colors.grey, fontSize: 14),
               ),
               SizedBox(height: 20),
-              FractionallySizedBox(
-                widthFactor: 0.95,
-                child: Card(
-                  elevation: 4, // 그림자 높이
-                  shape: RoundedRectangleBorder(
-                    // 모서리 둥글기 설정
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Container(
-                    padding: EdgeInsets.all(16), // 박스 내부 패딩
-                    child: Column(
-                      crossAxisAlignment:
-                          CrossAxisAlignment.start, // 자식 위젯을 왼쪽 정렬
-                      children: const [
-                        Text(
-                          '인원수',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                          ),
-                        ),
-                        SizedBox(height: 8), // 간격 추가
-                        Slider1(),
-                        SizedBox(height: 5),
-                        // Text('Slider Value: $_sliderValue'),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
+              FractionallySizedBox(widthFactor: 0.95, child: PlaceListBox()),
               SizedBox(height: 20),
               FractionallySizedBox(
                 widthFactor: 0.95,
                 child: Card(
-                  elevation: 4, // 그림자 높이
-                  shape: RoundedRectangleBorder(
-                    // 모서리 둥글기 설정
-                    borderRadius: BorderRadius.circular(16),
-                  ),
+                  elevation: 4,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                   child: Container(
                     padding: EdgeInsets.all(16), // 박스 내부 패딩
                     child: Column(
-                      crossAxisAlignment:
-                          CrossAxisAlignment.start, // 자식 위젯을 왼쪽 정렬
-                      children: const [
-                        Text(
-                          '소요 시간',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                          ),
-                        ),
-                        SizedBox(height: 8), // 간격 추가
-                        Slider2(),
-                        SizedBox(height: 5),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(height: 20),
-              FractionallySizedBox(
-                widthFactor: 0.95,
-                child: Card(
-                  elevation: 4, // 그림자 높이
-                  shape: RoundedRectangleBorder(
-                    // 모서리 둥글기 설정
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Container(
-                    padding: EdgeInsets.all(16), // 박스 내부 패딩
-                    child: Column(
-                      crossAxisAlignment:
-                          CrossAxisAlignment.start, // 자식 위젯을 왼쪽 정렬
+                      crossAxisAlignment: CrossAxisAlignment.start, // 자식 위젯을 왼쪽 정렬
                       children: [
-                        Text(
-                          '코스 내용',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                          ),
+                        Row(
+                          children: const [
+                            Text(
+                              '코스 이름',
+                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                            ),
+                            Text(' *', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red)),
+                            SizedBox(width: 10),
+                          ],
                         ),
                         SizedBox(height: 8), // 간격 추가
                         SingleChildScrollView(
                           child: Container(
-                            constraints: BoxConstraints(
-                              maxHeight: 200,
-                            ),
+                            constraints: BoxConstraints(maxHeight: 100),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(10),
-                              border: Border.all(
-                                color: Colors.grey.withOpacity(0.5),
-                                width: 1,
-                              ),
+                              border: Border.all(color: Colors.grey.withOpacity(0.5), width: 1),
                             ),
                             padding: EdgeInsets.all(10),
                             child: TextField(
-                              controller: TextEditingController(
-                                  text: courseController.content.value),
-                              onChanged: (value) {
-                                //     // 사용자가 입력한 텍스트가 변경될 때마다 호출됩니다.
-                                print(value);
-                                Get.find<CourseController>().content.value =
-                                    value;
+                              controller: TextEditingController(text: courseController.title.value),
+                              onChanged: (text) {
+                                // 사용자의 입력이 변화할 때마다 실행되는 콜백 함수
+                                print('User typed: $text');
+                                // CourseController의 title 변수 업데이트
+                                Get.find<CourseController>().title.value = text;
                               },
-                              maxLength: 5000,
+                              maxLength: 50,
                               maxLines: null,
                               expands: true, // TextField의 높이를 가능한 한 최대로 확장
                               minLines: null, // 최소 줄 수를 지정하지 않음
                               decoration: InputDecoration(
                                 border: InputBorder.none,
-                                hintText: '내용은 5000자까지 입력 가능합니다',
+                                hintText: '최대 50자까지 작성할 수 있어요',
                                 prefixText: ' ',
-                                prefixStyle:
-                                    TextStyle(color: Colors.transparent),
+                                prefixStyle: TextStyle(color: Colors.transparent),
                                 hintStyle: TextStyle(color: Colors.grey),
                               ),
                             ),
@@ -322,7 +105,9 @@ class _ModifyStepperState extends State<ModifyStepper> {
                   ),
                 ),
               ),
-              SizedBox(height: 20),
+              SizedBox(
+                height: 20,
+              ),
               FractionallySizedBox(
                 widthFactor: 0.95,
                 child: Card(
@@ -334,19 +119,16 @@ class _ModifyStepperState extends State<ModifyStepper> {
                   child: Container(
                     padding: EdgeInsets.all(16), // 박스 내부 패딩
                     child: Column(
-                      crossAxisAlignment:
-                          CrossAxisAlignment.start, // 자식 위젯을 왼쪽 정렬
-                      children: const [
-                        Text(
-                          '해시태그',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                          ),
+                      crossAxisAlignment: CrossAxisAlignment.start, // 자식 위젯을 왼쪽 정렬
+                      children: [
+                        Row(
+                          children: const [
+                            Text('방문 여부', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                            Text(' *', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red)),
+                          ],
                         ),
-                        SizedBox(height: 8), // 간격 추가
-                        // MakeHashtag(whatcontroller: hashtagcontroller),
-                        MakeHashtag(),
+                        SizedBox(height: 15),
+                        CheckVisited()
                       ],
                     ),
                   ),
@@ -354,81 +136,219 @@ class _ModifyStepperState extends State<ModifyStepper> {
               ),
               SizedBox(height: 20),
             ],
-          ),
-        )),
-    Step(
-        title: Text('테마 선택'),
-        content: Center(
-          child: Column(
-            children: const [
-              Text(
-                '코스 상세 선택 내용',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+          )),
+        ),
+        Step(
+            isActive: _currentStep >= 1,
+            title: Text('선택 입력'),
+            content: Center(
+              child: Column(
+                children: [
+                  Text(
+                    '코스 상세 선택 내용',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    '코스 상세 내용을 선택적으로 입력해주세요.',
+                    style: TextStyle(color: Colors.grey, fontSize: 14),
+                  ),
+                  SizedBox(height: 20),
+                  FractionallySizedBox(
+                    widthFactor: 0.95,
+                    child: Card(
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      child: Container(
+                        padding: EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: const [
+                            Text('인원수', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                            SizedBox(height: 8), // 간격 추가
+                            Slider1(),
+                            SizedBox(height: 5),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  FractionallySizedBox(
+                    widthFactor: 0.95,
+                    child: Card(
+                      elevation: 4, // 그림자 높이
+                      shape: RoundedRectangleBorder(
+                        // 모서리 둥글기 설정
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Container(
+                        padding: EdgeInsets.all(16), // 박스 내부 패딩
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start, // 자식 위젯을 왼쪽 정렬
+                          children: const [
+                            Text('소요 시간', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                            SizedBox(height: 8), // 간격 추가
+                            Slider2(),
+                            SizedBox(height: 5),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  FractionallySizedBox(
+                    widthFactor: 0.95,
+                    child: Card(
+                      elevation: 4, // 그림자 높이
+                      shape: RoundedRectangleBorder(
+                        // 모서리 둥글기 설정
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Container(
+                        padding: EdgeInsets.all(16), // 박스 내부 패딩
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start, // 자식 위젯을 왼쪽 정렬
+                          children: [
+                            Text('코스 내용', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                            SizedBox(height: 15),
+                            SingleChildScrollView(
+                              child: Container(
+                                constraints: BoxConstraints(maxHeight: 200),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(color: Colors.grey.withOpacity(0.5), width: 1),
+                                ),
+                                padding: EdgeInsets.all(10),
+                                child: TextField(
+                                  controller: TextEditingController(text: courseController.content.value),
+                                  onChanged: (value) {
+                                    // print(value);
+                                    Get.find<CourseController>().content.value = value;
+                                  },
+                                  maxLength: 5000,
+                                  maxLines: null,
+                                  expands: true, // TextField의 높이를 가능한 한 최대로 확장
+                                  minLines: null, // 최소 줄 수를 지정하지 않음
+                                  decoration: InputDecoration(
+                                    border: InputBorder.none,
+                                    hintText: '내용은 5000자까지 입력 가능합니다',
+                                    prefixText: ' ',
+                                    prefixStyle: TextStyle(color: Colors.transparent),
+                                    hintStyle: TextStyle(color: Colors.grey, fontSize: 14),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  FractionallySizedBox(
+                    widthFactor: 0.95,
+                    child: Card(
+                      elevation: 4, // 그림자 높이
+                      shape: RoundedRectangleBorder(
+                        // 모서리 둥글기 설정
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Container(
+                        padding: EdgeInsets.all(16), // 박스 내부 패딩
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start, // 자식 위젯을 왼쪽 정렬
+                          children: const [
+                            Text('해시태그', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                            SizedBox(height: 4), // 간격 추가
+                            Text('원하는 해시태그를 작성하고 띄어쓰기를 누르세요', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                            SizedBox(height: 8), // 간격 추가
+                            // MakeHashtag(whatcontroller: hashtagcontroller),
+                            MakeHashtag(),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                ],
               ),
-              Text(
-                '코스 상세 내용을 선택적으로 입력해주세요.',
-                style: TextStyle(color: Colors.grey, fontSize: 14),
+            )),
+        Step(
+            isActive: _currentStep >= 2,
+            title: Text('테마 선택'),
+            content: Center(
+              child: Column(
+                children: const [
+                  Text(
+                    '코스 상세 선택 내용',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    '코스 상세 내용을 선택적으로 입력해주세요.',
+                    style: TextStyle(color: Colors.grey, fontSize: 14),
+                  ),
+                  SizedBox(height: 20),
+                  Text(
+                    '이 코스에 어울리는 테마는 무엇인가요?',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                  ),
+                  ThemeSelect()
+                ],
               ),
-              SizedBox(height: 20),
-              Text(
-                '이 코스에는 어울리는 테마는 무엇인가요?',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-              ),
-              ThemeSelect()
-            ],
-          ),
-        )),
-  ];
+            )),
+      ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // 없어도 <- 모양의 뒤로가기가 기본으로 있으나 < 모양으로 바꾸려고 추가함
+        backgroundColor: Color.fromARGB(255, 80, 170, 208),
         leading: IconButton(
-          icon: const Icon(
-            Icons.navigate_before,
-            color: Colors.black,
-          ),
+          icon: Icon(Icons.navigate_before, color: Colors.white),
           onPressed: () {
-            Navigator.pop(context);
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text("경고"),
+                  content: Text("작성하시던 내용이 사라집니다."),
+                  actions: <Widget>[
+                    TextButton(
+                      child: Text("취소"),
+                      onPressed: () {
+                        Navigator.of(context).pop(); // Alert Dialog를 닫습니다.
+                      },
+                    ),
+                    TextButton(
+                      child: Text("확인"),
+                      onPressed: () {
+                        Navigator.of(context).pop(); // Alert Dialog를 닫습니다.
+                        Navigator.pop(context); // 이전 페이지로 돌아갑니다.
+                      },
+                    ),
+                  ],
+                );
+              },
+            );
           },
         ),
-        // 알림 아이콘과 텍스트 같이 넣으려고 RichText 사용
-        title: RichText(
-            text: const TextSpan(
-          children: [
-            WidgetSpan(
-              child: Icon(
-                Icons.edit_note,
-                color: Colors.black,
-              ),
-            ),
-            WidgetSpan(
-              child: SizedBox(
-                width: 5,
-              ),
-            ),
-            TextSpan(
-              text: '코스 수정하기',
-              style: TextStyle(
-                fontSize: 22,
-                color: Colors.black,
-              ),
-            ),
-          ],
-        )),
-        // 피그마와 모양 맞추려고 close 아이콘 하나 넣어둠
-        // <와 X 중 하나만 있어도 될 것 같아서 상의 후 삭제 필요
+        title: Center(
+          child: RichText(
+              text: const TextSpan(
+            children: [
+              TextSpan(text: '코스 수정하기', style: TextStyle(fontSize: 22, color: Colors.white)),
+            ],
+          )),
+        ),
         actions: [
           IconButton(
               onPressed: () {
                 Navigator.pop(context);
               },
-              icon: const Icon(
-                Icons.close,
-                color: Colors.black,
-              )),
+              icon: Icon(Icons.close, color: Colors.white)),
         ],
       ),
       body: Stepper(
@@ -450,11 +370,7 @@ class _ModifyStepperState extends State<ModifyStepper> {
                   return AlertDialog(
                     title: Column(
                       children: [
-                        Lottie.asset(
-                          'assets/success.json',
-                          fit: BoxFit.fitWidth,
-                          width: 300,
-                        ),
+                        Lottie.asset('assets/success.json', fit: BoxFit.fitWidth, width: 300),
                         Text("코스 작성을 완료했어요!"),
                       ],
                     ),
@@ -510,7 +426,32 @@ class _ModifyStepperState extends State<ModifyStepper> {
               _currentStep--;
             } else {
               _currentStep = 0;
-              Navigator.pop(context);
+
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text("경고"),
+                    content: Text("작성하시던 내용이 사라집니다."),
+                    actions: <Widget>[
+                      TextButton(
+                        child: Text("취소"),
+                        onPressed: () {
+                          Navigator.of(context).pop(); // Alert Dialog를 닫습니다.
+                        },
+                      ),
+                      TextButton(
+                        child: Text("확인"),
+                        onPressed: () {
+                          Navigator.of(context).pop(); // Alert Dialog를 닫습니다.
+                          Navigator.pop(context); // 이전 페이지로 돌아갑니다.
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+              // Navigator.pop(context);
             }
           });
         },
@@ -521,14 +462,15 @@ class _ModifyStepperState extends State<ModifyStepper> {
             return Row(
               children: <Widget>[
                 Expanded(
-                  child: ElevatedButton(
+                  child: FilledButton(
                     onPressed: details.onStepCancel,
-                    child: const Text('이전으로'),
+                    style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.grey[400])),
+                    child: Text('이전으로'),
                   ),
                 ),
                 SizedBox(width: 16),
                 Expanded(
-                  child: ElevatedButton(
+                  child: FilledButton(
                     onPressed: () {
                       showDialog(
                         context: context,
@@ -546,12 +488,11 @@ class _ModifyStepperState extends State<ModifyStepper> {
                             ),
                             actions: <Widget>[
                               Center(
-                                child: ElevatedButton(
+                                child: FilledButton(
                                   child: Text("확인"),
                                   onPressed: () {
                                     // courseController의 모든 값 출력
-                                    courseController
-                                        .modifyCourse(widget.courseId);
+                                    courseController.modifyCourse(widget.courseId);
                                     print(courseController.title.value);
                                     print(courseController.content.value);
                                     print(courseController.people.value);
@@ -590,7 +531,7 @@ class _ModifyStepperState extends State<ModifyStepper> {
                         },
                       );
                     },
-                    child: const Text('작성 완료'),
+                    child: Text('작성 완료'),
                   ),
                 ),
               ],
@@ -599,14 +540,15 @@ class _ModifyStepperState extends State<ModifyStepper> {
             return Row(
               children: <Widget>[
                 Expanded(
-                  child: ElevatedButton(
+                  child: FilledButton(
                     onPressed: details.onStepCancel,
-                    child: const Text('이전으로'),
+                    style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.grey[400])),
+                    child: Text('이전으로'),
                   ),
                 ),
                 SizedBox(width: 16),
                 Expanded(
-                  child: ElevatedButton(
+                  child: FilledButton(
                     onPressed: details.onStepContinue,
                     // onPressed: () {
                     //   details.onStepContinue;
@@ -673,9 +615,7 @@ class _PlaceListBoxState extends State<PlaceListBox> {
 
     return Card(
       elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Row(
         children: [
           Expanded(
@@ -728,9 +668,7 @@ class _PlaceListBoxState extends State<PlaceListBox> {
 }
 
 class Slider1 extends StatefulWidget {
-  const Slider1({
-    super.key,
-  });
+  const Slider1({super.key});
 
   @override
   State<Slider1> createState() => _Slider1State();
@@ -749,27 +687,23 @@ class _Slider1State extends State<Slider1> {
     4: '4인',
     5: '5인 이상',
   };
-  // _slider1State() {
-  //   _sliderValue = 0.0;
-  // }
 
   @override
   Widget build(BuildContext context) {
     return SfSlider(
       value: _sliderValue,
-      // value: 0,
       min: 0,
       max: 5,
       stepSize: 1,
-      shouldAlwaysShowTooltip: true,
-      // tooltipTextFormatterCallback: ,
       tooltipTextFormatterCallback: (value, formattedText) {
         return peopleMapping[value.toInt()]?.toString() ?? '';
       },
-      showTicks: true,
+      labelFormatterCallback: (actualValue, formattedText) {
+        return peopleMapping[actualValue.toInt()]?.toString() ?? '';
+      },
       showDividers: true,
       interval: 1,
-      // showLabels: true,
+      showLabels: true,
       onChanged: (newValue) {
         setState(() {
           _sliderValue = newValue;
@@ -781,9 +715,7 @@ class _Slider1State extends State<Slider1> {
 }
 
 class Slider2 extends StatefulWidget {
-  const Slider2({
-    super.key,
-  });
+  const Slider2({super.key});
 
   @override
   State<Slider2> createState() => _Slider2State();
@@ -801,27 +733,24 @@ class _Slider2State extends State<Slider2> {
     4: '3시간',
     5: '4시간 이상',
   };
-  // _slider1State() {
-  //   _sliderValue = 0.0;
-  // }
 
   @override
   Widget build(BuildContext context) {
+    // print(courseController.time.value.toDouble());
     return SfSlider(
       value: _sliderValue2,
-      // value: 0,
       min: 1,
       max: 5,
       interval: 1,
       stepSize: 1,
-      shouldAlwaysShowTooltip: true,
-      // tooltipTextFormatterCallback: ,
       tooltipTextFormatterCallback: (value, formattedText) {
         return timeMapping[value.toInt()]?.toString() ?? '';
       },
-      showTicks: true,
+      labelFormatterCallback: (actualValue, formattedText) {
+        return timeMapping[actualValue.toInt()]?.toString() ?? '';
+      },
       showDividers: true,
-      // showLabels: true,
+      showLabels: true,
       onChanged: (newValue) {
         setState(() {
           _sliderValue2 = newValue;
@@ -867,11 +796,8 @@ class _MakeHashtagState extends State<MakeHashtag> {
           textSeparators: const [' ', ','],
           letterCase: LetterCase.normal,
           validator: (String tag) {
-            if (tag == 'php') {
-              return 'No, please just no';
-              // } else if (_controller.getTags?.contains(tag)) {
-            } else if (_controller.getTags?.contains(tag) == true) {
-              return 'you already entered that';
+            if (_controller.getTags?.contains(tag) == true) {
+              return '이미 입력한 해시태그예요.';
             }
             return null;
           },
@@ -879,112 +805,131 @@ class _MakeHashtagState extends State<MakeHashtag> {
             return ((context, sc, tags, onTagDelete) {
               return Padding(
                 padding: const EdgeInsets.all(4.0),
-                child: TextField(
-                  controller: tec,
-                  focusNode: fn,
-                  decoration: InputDecoration(
-                    isDense: true,
-                    border: const OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Color.fromARGB(255, 74, 137, 92),
-                        width: 3.0,
+                child: Column(
+                  children: [
+                    TextField(
+                      controller: tec,
+                      focusNode: fn,
+                      decoration: InputDecoration(
+                        isDense: true,
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide(color: Color.fromARGB(255, 74, 137, 92), width: 3.0),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Color.fromARGB(255, 74, 137, 92), width: 3.0),
+                        ),
+                        hintText: _controller.hasTags ? '' : "태그를 입력하세요",
+                        errorText: error,
+                        // prefixIcon: tags.isNotEmpty
+                        //     ? SingleChildScrollView(
+                        //         controller: sc,
+                        //         scrollDirection: Axis.horizontal,
+                        //         child: Row(
+                        //             children: tags.map((String tag) {
+                        //           return Container(
+                        //             decoration: const BoxDecoration(
+                        //               borderRadius: BorderRadius.all(
+                        //                 Radius.circular(20.0),
+                        //               ),
+                        //               color: Color(0xFFEEEEEE),
+                        //             ),
+                        //             margin: const EdgeInsets.symmetric(horizontal: 5.0),
+                        //             padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+                        //             child: Row(
+                        //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        //               children: [
+                        //                 InkWell(
+                        //                   child: Text(
+                        //                     '#$tag',
+                        //                     style: const TextStyle(color: Color(0xFF6D6AFF)),
+                        //                   ),
+                        //                   onTap: () {
+                        //                     print("$tag selected");
+                        //                   },
+                        //                 ),
+                        //                 const SizedBox(width: 4.0),
+                        //                 InkWell(
+                        //                   child: const Icon(
+                        //                     Icons.cancel,
+                        //                     size: 14.0,
+                        //                     color: Color(0xFFAEAEAE),
+                        //                   ),
+                        //                   onTap: () {
+                        //                     onTagDelete(tag);
+                        //                   },
+                        //                 )
+                        //               ],
+                        //             ),
+                        //           );
+                        //         }).toList()),
+                        //       )
+                        //     : null,
                       ),
+                      onChanged: onChanged,
+                      onSubmitted: onSubmitted,
                     ),
-                    focusedBorder: const OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Color.fromARGB(255, 74, 137, 92),
-                        width: 3.0,
-                      ),
-                    ),
-                    // helperText: 'Enter language...',
-                    // helperStyle: const TextStyle(
-                    //   color: Color.fromARGB(255, 74, 137, 92),
-                    // ),
-                    hintText: _controller.hasTags ? '' : "태그를 입력하세요",
-                    errorText: error,
-                    // prefixIconConstraints:
-                    //     BoxConstraints(maxWidth: _distanceToField * 0.74),
-                    prefixIcon: tags.isNotEmpty
-                        ? SingleChildScrollView(
-                            controller: sc,
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
-                                children: tags.map((String tag) {
-                              return Container(
-                                decoration: const BoxDecoration(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(20.0),
-                                  ),
-                                  color: Color(0xFFEEEEEE),
-                                ),
-                                margin:
-                                    const EdgeInsets.symmetric(horizontal: 5.0),
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10.0, vertical: 5.0),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    InkWell(
-                                      child: Text(
-                                        '#$tag',
-                                        style: const TextStyle(
-                                            color: Color(0xFF6D6AFF)),
-                                      ),
-                                      onTap: () {
-                                        print("$tag selected");
-                                      },
-                                    ),
-                                    const SizedBox(width: 4.0),
-                                    InkWell(
-                                      child: const Icon(
-                                        Icons.cancel,
-                                        size: 14.0,
-                                        color: Color(0xFFAEAEAE),
-                                      ),
-                                      onTap: () {
-                                        onTagDelete(tag);
-                                      },
-                                    )
-                                  ],
-                                ),
-                              );
-                            }).toList()),
-                          )
-                        : null,
-                  ),
-                  onChanged: onChanged,
-                  onSubmitted: onSubmitted,
+                    SizedBox(height: 10),
+                    SingleChildScrollView(
+                      controller: sc,
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                          children: tags.map((String tag) {
+                        return Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.all(Radius.circular(20)), color: Color(0xFFEEEEEE)),
+                          margin: EdgeInsets.symmetric(horizontal: 5),
+                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              InkWell(
+                                child: Text('#$tag', style: TextStyle(color: Color(0xFF6D6AFF))),
+                                onTap: () {
+                                  print("$tag selected");
+                                },
+                              ),
+                              SizedBox(width: 4.0),
+                              InkWell(
+                                child: Icon(Icons.cancel, size: 14.0, color: Color(0xFFAEAEAE)),
+                                onTap: () {
+                                  onTagDelete(tag);
+                                },
+                              )
+                            ],
+                          ),
+                        );
+                      }).toList()),
+                    )
+                  ],
                 ),
               );
             });
           },
         ),
+        SizedBox(height: 10),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ElevatedButton(
+            FilledButton(
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all<Color>(
-                  const Color.fromARGB(255, 74, 137, 92),
+                  Color.fromARGB(255, 240, 115, 115),
                 ),
               ),
               onPressed: () {
                 _controller.clearTags();
               },
-              child: const Text('태그 초기화'),
+              child: Text('태그 초기화', style: TextStyle(fontSize: 12)),
             ),
-            SizedBox(
-              width: 15,
-            ),
-            ElevatedButton(
+            SizedBox(width: 15),
+            FilledButton(
               onPressed: () {
                 final List<String>? tags = _controller.getTags;
                 if (tags != null) {
                   Get.find<CourseController>().hashtagList.value = tags;
                 }
               },
-              child: const Text('태그 저장'),
+              child: Text('태그 저장', style: TextStyle(fontSize: 12)),
             ),
           ],
         ),
@@ -994,9 +939,7 @@ class _MakeHashtagState extends State<MakeHashtag> {
 }
 
 class ThemeSelect extends StatefulWidget {
-  const ThemeSelect({
-    Key? key,
-  }) : super(key: key);
+  const ThemeSelect({Key? key}) : super(key: key);
 
   @override
   State<ThemeSelect> createState() => _ThemeSelectState();
@@ -1004,8 +947,8 @@ class ThemeSelect extends StatefulWidget {
 
 class _ThemeSelectState extends State<ThemeSelect> {
   final Map<int, String> themeMapping = {
-    1: '✨ 빛나는 솔로',
-    2: '👨🏻‍🤝‍👨🏻 친구랑',
+    1: '👨🏻‍🤝‍👨🏻 친구랑',
+    2: '✨ 빛나는 솔로',
     3: '💑 데이트',
     4: '👪 가족과 함께',
     5: '💸 가성비',
@@ -1020,11 +963,12 @@ class _ThemeSelectState extends State<ThemeSelect> {
     14: '🎪 공연/전시',
     15: '👘 전통/레트로',
     16: '🌳 자연',
-    17: '📷 포토전',
+    17: '📷 포토존',
     18: '🏛 관광지',
     19: '🕶 이색적인',
     20: '🌆 분위기 있는',
-    21: '👏🏻 단체',
+    21: '🛍 쇼핑',
+    22: '👏🏻 단체',
   };
 
   @override
@@ -1043,12 +987,7 @@ class _ThemeSelectState extends State<ThemeSelect> {
             color: Colors.white,
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.5),
-                spreadRadius: 2,
-                blurRadius: 3,
-                offset: Offset(0, 2),
-              ),
+              BoxShadow(color: Colors.grey.withOpacity(0.5), spreadRadius: 2, blurRadius: 3, offset: Offset(0, 2)),
             ],
           ),
           selectedDecoration: BoxDecoration(
@@ -1068,14 +1007,12 @@ class _ThemeSelectState extends State<ThemeSelect> {
     }).toList();
 
     return Padding(
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(20),
       child: MultiSelectContainer(
+        wrapSettings: WrapSettings(alignment: WrapAlignment.center, runSpacing: 12, spacing: 12),
         items: cards,
         onChange: (List<dynamic> allSelectedItems, dynamic selectedItem) {
-          final List<int> selectedIds = allSelectedItems
-              .whereType<int>()
-              .where(themeMapping.containsKey)
-              .toList();
+          final List<int> selectedIds = allSelectedItems.whereType<int>().where(themeMapping.containsKey).toList();
           selectedIds.sort();
           courseController.themeIdList.value = selectedIds;
           print('선택된 아이템의 id 리스트: $selectedIds');
@@ -1086,9 +1023,7 @@ class _ThemeSelectState extends State<ThemeSelect> {
 }
 
 class CheckVisited extends StatefulWidget {
-  const CheckVisited({
-    super.key,
-  });
+  const CheckVisited({super.key});
 
   @override
   State<CheckVisited> createState() => _CheckVisitedState();
@@ -1113,8 +1048,9 @@ class _CheckVisitedState extends State<CheckVisited> {
                     });
                   },
             label: Text('다녀왔어요!'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: _isVisited ? Colors.green : null,
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all(_isVisited ? Colors.green[400] : Colors.grey[300]),
+              foregroundColor: MaterialStateProperty.all(_isVisited ? Colors.white : Colors.grey[700]),
             ),
             icon: Icon(Icons.verified),
           ),
@@ -1128,8 +1064,9 @@ class _CheckVisitedState extends State<CheckVisited> {
                     });
                   },
             label: Text('계획중이에요!'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: _isVisited ? null : Colors.green,
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all(!_isVisited ? Colors.green[400] : Colors.grey[300]),
+              foregroundColor: MaterialStateProperty.all(!_isVisited ? Colors.white : Colors.grey[700]),
             ),
             icon: Icon(Icons.tour),
           ),

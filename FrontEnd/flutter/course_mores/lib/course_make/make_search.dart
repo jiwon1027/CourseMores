@@ -11,16 +11,14 @@ class CMSearch extends StatefulWidget {
 }
 
 class _CMSearchState extends State<CMSearch> {
-  final _placesApiClient =
-      GoogleMapsPlaces(apiKey: dotenv.get('GOOGLE_MAP_API_KEY'));
+  final _placesApiClient = GoogleMapsPlaces(apiKey: dotenv.get('GOOGLE_MAP_API_KEY'));
   final _searchController = TextEditingController();
   List<PlacesSearchResult> _searchResults = [];
 
   LatLng? _selectedLocation;
 
   void _onSearchPressed() async {
-    final response = await _placesApiClient.searchByText(_searchController.text,
-        language: 'ko');
+    final response = await _placesApiClient.searchByText(_searchController.text, language: 'ko');
     if (response.isOkay) {
       setState(() {
         _searchResults = response.results;
@@ -102,18 +100,17 @@ class _CMSearchState extends State<CMSearch> {
                 SizedBox(width: 8),
                 ElevatedButton(
                   onPressed: _onSearchPressed,
-                  child: Text('검색'),
                   style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(
-                        Color.fromARGB(255, 119, 181, 212)), // 버튼의 배경색을 설정
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(Color.fromARGB(255, 119, 181, 212)), // 버튼의 배경색을 설정
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                       // 버튼의 모양을 둥글게 만듭니다
                       RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(30.0), // 둥근 모서리의 반경을 설정
+                        borderRadius: BorderRadius.circular(30.0), // 둥근 모서리의 반경을 설정
                       ),
                     ),
                   ),
+                  child: Text('검색'),
                 ),
               ],
             ),
@@ -131,9 +128,7 @@ class _CMSearchState extends State<CMSearch> {
               },
             ),
           ),
-          if (_selectedLocation != null)
-            Text(
-                '선택된 장소: ${_selectedLocation!.latitude}, ${_selectedLocation!.longitude}')
+          if (_selectedLocation != null) Text('선택된 장소: ${_selectedLocation!.latitude}, ${_selectedLocation!.longitude}')
         ],
       ),
     );

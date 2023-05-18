@@ -14,6 +14,7 @@ class EditItemPage2 extends StatefulWidget {
 
   @override
   State<EditItemPage2> createState() =>
+      // ignore: no_logic_in_create_state
       _EditItemPage2State(locationData: locationData);
 }
 
@@ -31,19 +32,20 @@ class _EditItemPage2State extends State<EditItemPage2> {
   @override
   void initState() {
     super.initState();
+    // ignore: unused_local_variable
     final LocationController locationController = Get.find();
     _itemData = locationData;
     _titleController.text = _itemData.title ?? '';
     _contentController.text = _itemData.content ?? '';
-    _sidoController.text = _itemData.sido ?? '';
-    _gugunController.text = _itemData.gugun ?? '';
+    _sidoController.text = _itemData.sido;
+    _gugunController.text = _itemData.gugun;
 
     // 이곳에서 저장된 이미지 목록을 불러옵니다.
+    // ignore: unused_local_variable
     List<XFile> savedImages = _itemData.getSavedImageList();
     if (_addImageKey.currentState != null) {
       // Make sure currentState is not null before calling getTemporaryImageList
-      locationData.saveImageList(_addImageKey.currentState!
-          .getTemporaryImageList()); // Save images in initState
+      locationData.saveImageList(_addImageKey.currentState!.getTemporaryImageList()); // Save images in initState
     }
   }
 
@@ -54,6 +56,7 @@ class _EditItemPage2State extends State<EditItemPage2> {
 
   @override
   Widget build(BuildContext context) {
+    // ignore: unused_local_variable
     final CourseController courseController = Get.find();
     final LocationController locationController = Get.find();
     return Scaffold(
@@ -127,13 +130,11 @@ class _EditItemPage2State extends State<EditItemPage2> {
                     ElevatedButton(
                       onPressed: () {
                         setState(() {
-                          isImageUploadEnabled =
-                              !isImageUploadEnabled; // 토글 버튼의 상태 변경
+                          isImageUploadEnabled = !isImageUploadEnabled; // 토글 버튼의 상태 변경
                         });
                         print(isImageUploadEnabled);
                       },
-                      child:
-                          Text(isImageUploadEnabled ? '기존 사진 유지' : '사진 수정하기'),
+                      child: Text(isImageUploadEnabled ? '기존 사진 유지' : '사진 수정하기'),
                     ),
                     SizedBox(
                       height: 10,
@@ -164,10 +165,8 @@ class _EditItemPage2State extends State<EditItemPage2> {
               ElevatedButton(
                 onPressed: () {
                   List<XFile> imageList = [];
-                  if (isImageUploadEnabled &&
-                      _addImageKey.currentState != null) {
-                    imageList =
-                        _addImageKey.currentState!.getTemporaryImageList();
+                  if (isImageUploadEnabled && _addImageKey.currentState != null) {
+                    imageList = _addImageKey.currentState!.getTemporaryImageList();
                   } else {
                     // 이미지를 수정하지 않는 경우 이전의 이미지 리스트를 사용
                     imageList = _itemData.getSavedImageList();
@@ -180,15 +179,10 @@ class _EditItemPage2State extends State<EditItemPage2> {
                     latitude: widget.locationData.latitude,
                     longitude: widget.locationData.longitude,
                     roadViewImage: widget.locationData.roadViewImage,
-                    isUpdate:
-                        isImageUploadEnabled, // isUpdate 값을 isImageUploadEnabled 값으로 변경
+                    isUpdate: isImageUploadEnabled, // isUpdate 값을 isImageUploadEnabled 값으로 변경
                     numberOfImage: imageList.length,
-                    title: _titleController.text.isNotEmpty
-                        ? _titleController.text
-                        : '',
-                    content: _contentController.text.isNotEmpty
-                        ? _contentController.text
-                        : '',
+                    title: _titleController.text.isNotEmpty ? _titleController.text : '',
+                    content: _contentController.text.isNotEmpty ? _contentController.text : '',
                     sido: widget.locationData.sido,
                     gugun: widget.locationData.gugun,
                     temporaryImageList: imageList,
@@ -252,9 +246,8 @@ class _PlaceNameState extends State<PlaceName> {
   }
 
   Future<void> _getAddress() async {
-    final List<geocoding.Placemark> placemarks = await geocoding
-        .placemarkFromCoordinates(widget.latitude, widget.longitude,
-            localeIdentifier: 'ko');
+    final List<geocoding.Placemark> placemarks =
+        await geocoding.placemarkFromCoordinates(widget.latitude, widget.longitude, localeIdentifier: 'ko');
 
     if (placemarks.isNotEmpty) {
       final geocoding.Placemark place = placemarks.first;
@@ -265,8 +258,7 @@ class _PlaceNameState extends State<PlaceName> {
       final String administrativeArea = place.administrativeArea ?? '';
 
       setState(() {
-        _address =
-            '$administrativeArea $locality $subLocality $thoroughfare $subThoroughfare';
+        _address = '$administrativeArea $locality $subLocality $thoroughfare $subThoroughfare';
       });
     } else {
       setState(() {
@@ -498,14 +490,11 @@ class _AddImageState extends State<AddImage> {
                   fontWeight: FontWeight.w800,
                 )),
             SizedBox(height: 10),
-            Text("이미지는 최대 5장까지 첨부할 수 있어요",
-                style: TextStyle(color: Colors.black45)),
+            Text("이미지는 최대 5장까지 첨부할 수 있어요", style: TextStyle(color: Colors.black45)),
             SizedBox(height: 10),
             // 활성화/비활성화 상태에 따라
             SizedBox(
-              child: widget.isUpdate
-                  ? ImageUploader(key: _imageUploaderKey)
-                  : _buildDisabledButton(),
+              child: widget.isUpdate ? ImageUploader(key: _imageUploaderKey) : _buildDisabledButton(),
             ),
             // SizedBox(
             //   // height: 250,
@@ -697,9 +686,7 @@ class _ImageUploaderState extends State<ImageUploader> {
           SizedBox(height: 20),
           SizedBox(
             height: 80,
-            child: _temporaryImageList.isEmpty
-                ? Center(child: Text("이미지를 선택해주세요."))
-                : buildGridView(),
+            child: _temporaryImageList.isEmpty ? Center(child: Text("이미지를 선택해주세요.")) : buildGridView(),
           ),
         ],
       ),
