@@ -29,8 +29,7 @@ class _CMMapState extends State<CMMap> {
   @override
   void initState() {
     super.initState();
-    BitmapDescriptor.fromAssetImage(
-            ImageConfiguration(size: Size(30, 40)), 'assets/flower_marker.png')
+    BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(30, 40)), 'assets/flower_marker.png')
         .then((icon) => customIcon = icon);
   }
 
@@ -63,8 +62,7 @@ class _CMMapState extends State<CMMap> {
 
     // 카메라 이동
     _mapController?.animateCamera(
-      CameraUpdate.newCameraPosition(
-          CameraPosition(target: currentPosition, zoom: 15.0)),
+      CameraUpdate.newCameraPosition(CameraPosition(target: currentPosition, zoom: 15.0)),
     );
   }
 
@@ -73,10 +71,7 @@ class _CMMapState extends State<CMMap> {
     setState(() {
       _markers.clear();
       _markers.add(
-        Marker(
-            markerId: MarkerId('selected-location'),
-            position: location,
-            icon: customIcon),
+        Marker(markerId: MarkerId('selected-location'), position: location, icon: customIcon),
       );
     });
     // Get address and show in bottom sheet
@@ -127,8 +122,8 @@ class _CMMapState extends State<CMMap> {
   }
 
   Future<String> _getAddress(double lat, double lon) async {
-    final List<geocoding.Placemark> placemarks = await geocoding
-        .placemarkFromCoordinates(lat, lon, localeIdentifier: 'ko');
+    final List<geocoding.Placemark> placemarks =
+        await geocoding.placemarkFromCoordinates(lat, lon, localeIdentifier: 'ko');
     // if (placemarks != null && placemarks.isNotEmpty) {
     if (placemarks.isNotEmpty) {
       final geocoding.Placemark place = placemarks.first;
@@ -154,8 +149,8 @@ class _CMMapState extends State<CMMap> {
   //   return '';
   // }
   Future<String> _getSido(double lat, double lon) async {
-    final List<geocoding.Placemark> placemarks = await geocoding
-        .placemarkFromCoordinates(lat, lon, localeIdentifier: 'ko');
+    final List<geocoding.Placemark> placemarks =
+        await geocoding.placemarkFromCoordinates(lat, lon, localeIdentifier: 'ko');
     // if (placemarks != null && placemarks.isNotEmpty) {
     if (placemarks.isNotEmpty) {
       final geocoding.Placemark place = placemarks.first;
@@ -169,8 +164,8 @@ class _CMMapState extends State<CMMap> {
   }
 
   Future<String> _getGugun(double lat, double lon) async {
-    final List<geocoding.Placemark> placemarks = await geocoding
-        .placemarkFromCoordinates(lat, lon, localeIdentifier: 'ko');
+    final List<geocoding.Placemark> placemarks =
+        await geocoding.placemarkFromCoordinates(lat, lon, localeIdentifier: 'ko');
     // if (placemarks != null && placemarks.isNotEmpty) {
     if (placemarks.isNotEmpty) {
       final geocoding.Placemark place = placemarks.first;
@@ -189,8 +184,7 @@ class _CMMapState extends State<CMMap> {
 
   void _onMyLocationButtonPressed() async {
     final position = await Geolocator.getCurrentPosition();
-    final cameraUpdate = CameraUpdate.newLatLngZoom(
-        LatLng(position.latitude, position.longitude), 17);
+    final cameraUpdate = CameraUpdate.newLatLngZoom(LatLng(position.latitude, position.longitude), 17);
     _mapController?.animateCamera(cameraUpdate);
   }
 
@@ -234,7 +228,7 @@ class _CMMapState extends State<CMMap> {
             TextButton(
               child: Text('확인'),
               onPressed: () {
-                if (locationName.trim().length == 0) {
+                if (locationName.trim().isEmpty) {
                   // If locationName is empty, show a dialog
                   showDialog(
                     context: context,
@@ -255,10 +249,8 @@ class _CMMapState extends State<CMMap> {
                   );
                 } else {
                   // Save location with the entered name
-                  String message =
-                      '위치 이름: $locationName\n위도: $latitude, 경도: $longitude';
-                  ScaffoldMessenger.of(context)
-                      .showSnackBar(SnackBar(content: Text(message)));
+                  String message = '위치 이름: $locationName\n위도: $latitude, 경도: $longitude';
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
                   Navigator.pop(context);
                   Navigator.pop(context, {
                     'locationName': locationName,
@@ -312,8 +304,7 @@ class _CMMapState extends State<CMMap> {
         padding: EdgeInsets.all(16),
         child: Column(
           children: [
-            Text('지도 화면을 누르면 마커가 생겨요',
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+            Text('지도 화면을 누르면 마커가 생겨요', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
             SizedBox(height: 12),
             Flexible(
               flex: 2,

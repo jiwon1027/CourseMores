@@ -21,46 +21,49 @@ class CourseDetail extends StatelessWidget {
               CarouselSliderText(),
               CarouselIndicator(),
               SizedBox(height: 10),
-              if (detailController.nowCourseDetail[detailController.placeIndex.value]['title'] != "" ||
-                  detailController.nowCourseDetail[detailController.placeIndex.value]['content'] != "" ||
-                  detailController.nowCourseDetail[detailController.placeIndex.value]['locationImageList'].isNotEmpty)
-                Card(
-                  elevation: 6,
-                  child: Padding(
-                    padding: EdgeInsets.all(15),
-                    child: Column(
-                      children: [
-                        Column(
-                          children: [
-                            if (detailController
-                                .nowCourseDetail[detailController.placeIndex.value]['locationImageList'].isNotEmpty)
-                              ImageGridView(),
-                            if (detailController.nowCourseDetail[detailController.placeIndex.value]['title'] != "" ||
-                                detailController.nowCourseDetail[detailController.placeIndex.value]['content'] != "")
-                              Column(
-                                children: [
-                                  SizedBox(height: 30),
-                                  Text(
-                                    "${detailController.nowCourseDetail[detailController.placeIndex.value]['title'] ?? ' '}",
-                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black),
-                                  ),
-                                  SizedBox(height: 20),
-                                  Text(
-                                    "${detailController.nowCourseDetail[detailController.placeIndex.value]['content'] ?? ' '}",
-                                    style: TextStyle(fontSize: 14, color: Colors.black, height: 1.7),
-                                  ),
-                                  SizedBox(height: 20),
-                                  PlaceMap(),
-                                  // SizedBox(height: 10),
-                                  // GetDistanceTime()
-                                ],
-                              ),
-                          ],
-                        ),
-                      ],
-                    ),
+              Card(
+                elevation: 6,
+                child: Padding(
+                  padding: EdgeInsets.all(15),
+                  child: Column(
+                    children: [
+                      Column(
+                        children: [
+                          if (detailController
+                              .nowCourseDetail[detailController.placeIndex.value]['locationImageList'].isNotEmpty)
+                            ImageGridView(),
+                          Column(
+                            children: [
+                              if (detailController.nowCourseDetail[detailController.placeIndex.value]['title'] != "")
+                                Column(
+                                  children: [
+                                    SizedBox(height: 30),
+                                    Text(
+                                      "${detailController.nowCourseDetail[detailController.placeIndex.value]['title'] ?? ' '}",
+                                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black),
+                                    ),
+                                  ],
+                                ),
+                              if (detailController.nowCourseDetail[detailController.placeIndex.value]['content'] != "")
+                                Column(
+                                  children: [
+                                    SizedBox(height: 20),
+                                    Text(
+                                      "${detailController.nowCourseDetail[detailController.placeIndex.value]['content'] ?? ' '}",
+                                      style: TextStyle(fontSize: 14, color: Colors.black, height: 1.7),
+                                    ),
+                                    SizedBox(height: 20),
+                                  ],
+                                ),
+                              PlaceMap(),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
+              ),
             ],
           ),
         ));
