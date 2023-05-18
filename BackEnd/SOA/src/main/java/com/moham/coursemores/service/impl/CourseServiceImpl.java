@@ -174,9 +174,6 @@ public class CourseServiceImpl implements CourseService {
         Course course = courseRepository.findByIdAndDeleteTimeIsNull(courseId)
                 .orElseThrow(() -> new CustomException(courseId,CustomErrorCode.COURSE_NOT_FOUND));
 
-//        if (course.getUser().getDeleteTime() != null)
-//            throw new CustomException(CustomErrorCode.ALREADY_DELETE_COURSE);
-
         return CourseInfoResDto.builder()
                 .title(course.getTitle())
                 .content(course.getContent())
