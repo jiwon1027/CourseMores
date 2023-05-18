@@ -66,5 +66,10 @@ public class SecurityConfig {
             "/auth/**",
             "/user/validation/**",
             "/user/reissue",
+            "/region/**",
+            "/theme/**",
+            "/theme/**",
+            "/course/hot",
+            "/course/around"
     };
 }
