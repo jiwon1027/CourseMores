@@ -104,6 +104,7 @@ public class CommentServiceImpl implements CommentService {
                         .courseTitle(comment.getCourse().getTitle())
                         .build()
                 )
+                .sorted((o1, o2) -> Long.compare(o2.getCommentId(), Objects.requireNonNull(o1).getCommentId()))
                 .collect(Collectors.toList());
     }
 
