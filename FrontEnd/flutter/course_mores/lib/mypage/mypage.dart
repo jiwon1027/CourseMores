@@ -47,8 +47,9 @@ class _MyPageState extends State<MyPage> {
 
   Future<void> downloadImage() async {
     if (userInfoController.imageUrl.value != 'default') {
-      dio.Response response = await dio.Dio()
-          .get('${userInfoController.imageUrl}', options: dio.Options(responseType: dio.ResponseType.bytes));
+      dio.Response response = await dio.Dio().get(
+          '${userInfoController.imageUrl}',
+          options: dio.Options(responseType: dio.ResponseType.bytes));
       String tempDir = (await getTemporaryDirectory()).path;
       String filePath = join(tempDir, 'image.jpg');
       await File(filePath).writeAsBytes(response.data);
@@ -81,21 +82,25 @@ class _MyPageState extends State<MyPage> {
     final response = await dio.get(
       'course/my',
     );
+    print('fetch course : $response');
     List<dynamic> data = response.data['myCourseList'];
     // final list = (data as List<dynamic>).cast<Map<String, Object>>().toList();
     // courseList = list;
     // setState(() {
     //   courseList = data.map((item) => Map<String, Object>.from(item)).toList();
     // });
-    myPageController.saveMyCourse(data.map((item) => Map<String, Object>.from(item)).toList());
+    myPageController.saveMyCourse(
+        data.map((item) => Map<String, Object>.from(item)).toList());
     setState(() {
       courseList = myPageController.myCourse;
     });
 
-    final response2 = await dio.get('comment/', options: Options(headers: {'Authorization': 'Bearer $aToken'}));
+    final response2 = await dio.get('comment/',
+        options: Options(headers: {'Authorization': 'Bearer $aToken'}));
     List<dynamic> data2 = response2.data['myCommentList'];
     // print(data);
-    myPageController.saveMyReview(data2.map((item) => Map<String, Object>.from(item)).toList());
+    myPageController.saveMyReview(
+        data2.map((item) => Map<String, Object>.from(item)).toList());
     setState(() {
       reviewList = myPageController.myReview;
     });
@@ -162,22 +167,26 @@ class _MyPageState extends State<MyPage> {
         SingleChildScrollView(
           child: Padding(
               padding: EdgeInsets.all(8),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-                profileBox(),
-                buttonBar(),
-                if (status == 'course')
-                  // Flexible(child:
-                  MyCourse(),
-                // ),
-                if (status == 'review')
-                  // Flexible(
-                  //   child: SizedBox(
-                  //     height: reviewList.isEmpty ? null : 600,
-                  //     child:
-                  //   ),
-                  // )
-                  my_review.DetailTapCourseCommentsListSection(commentsList: reviewList),
-              ])),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    profileBox(),
+                    buttonBar(),
+                    if (status == 'course')
+                      // Flexible(child:
+                      MyCourse(),
+                    // ),
+                    if (status == 'review')
+                      // Flexible(
+                      //   child: SizedBox(
+                      //     height: reviewList.isEmpty ? null : 600,
+                      //     child:
+                      //   ),
+                      // )
+                      my_review.DetailTapCourseCommentsListSection(
+                          commentsList: reviewList),
+                  ])),
         )
       ],
       fullyStretchable: false,
@@ -210,7 +219,8 @@ class MyCourse extends StatelessWidget {
           return InkWell(
             onTap: () async {
               print('mypage 코스리스트 == ${myPageController.myCourse}');
-              int courseId = (myPageController.myCourse[index]['courseId'] as int);
+              int courseId =
+                  (myPageController.myCourse[index]['courseId'] as int);
 
               await searchController.changeNowCourseId(courseId: courseId);
 
@@ -226,13 +236,16 @@ class MyCourse extends StatelessWidget {
             child: Container(
               margin: EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 5),
               padding: EdgeInsets.all(10),
-              decoration: const BoxDecoration(boxShadow: [
-                BoxShadow(
-                    color: Color.fromARGB(255, 211, 211, 211),
-                    blurRadius: 10.0,
-                    spreadRadius: 1.0,
-                    offset: Offset(3, 3)),
-              ], color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(10))),
+              decoration: const BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                        color: Color.fromARGB(255, 211, 211, 211),
+                        blurRadius: 10.0,
+                        spreadRadius: 1.0,
+                        offset: Offset(3, 3)),
+                  ],
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(Radius.circular(10))),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -272,7 +285,8 @@ class MyCourseList extends StatelessWidget {
                   Expanded(
                     child: Text(
                       "${myPageController.myCourse[index]['title']}",
-                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
                       softWrap: true,
@@ -289,9 +303,12 @@ class MyCourseList extends StatelessWidget {
                         children: const [
                           Padding(
                             padding: EdgeInsets.all(4.0),
-                            child: Icon(Icons.check, size: 12, color: Colors.white),
+                            child: Icon(Icons.check,
+                                size: 12, color: Colors.white),
                           ),
-                          Text("방문", style: TextStyle(color: Colors.white, fontSize: 10)),
+                          Text("방문",
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 10)),
                           SizedBox(width: 7),
                         ],
                       ),
@@ -302,7 +319,8 @@ class MyCourseList extends StatelessWidget {
             if (myPageController.myCourse[index]["interest"] == true)
               Icon(Icons.bookmark, size: 24, color: Colors.green[800]),
             if (myPageController.myCourse[index]["interest"] == false)
-              Icon(Icons.bookmark_outline_rounded, size: 24, color: Colors.green[800]),
+              Icon(Icons.bookmark_outline_rounded,
+                  size: 24, color: Colors.green[800]),
           ],
         ),
         SizedBox(height: 5),
@@ -368,7 +386,10 @@ class MyCourseList extends StatelessWidget {
                   children: [
                     Icon(Icons.comment, size: 14),
                     SizedBox(width: 3),
-                    Text(myPageController.myCourse[index]["commentCount"].toString(), style: TextStyle(fontSize: 12)),
+                    Text(
+                        myPageController.myCourse[index]["commentCount"]
+                            .toString(),
+                        style: TextStyle(fontSize: 12)),
                   ],
                 ),
               ],
@@ -419,17 +440,21 @@ profileBox() {
               padding: EdgeInsets.all(8),
               child: Container(
                   padding: EdgeInsets.all(5),
-                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(120)),
+                  decoration:
+                      BoxDecoration(borderRadius: BorderRadius.circular(120)),
                   child: Obx(
                     () => Center(
                         child: WidgetCircularAnimator(
                       innerColor: Color.fromARGB(255, 0, 90, 129),
                       outerColor: Color.fromARGB(232, 255, 131, 131),
                       child: Container(
-                        decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.grey[200]),
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle, color: Colors.grey[200]),
                         child: CircleAvatar(
                           radius: 60,
-                          backgroundImage: NetworkImage((userInfoController.imageUrl.value == 'default')
+                          backgroundImage: NetworkImage((userInfoController
+                                      .imageUrl.value ==
+                                  'default')
                               ? 'https://coursemores.s3.amazonaws.com/default_profile.png'
                               : userInfoController.imageUrl.value),
                         ),
@@ -444,7 +469,8 @@ profileBox() {
                       children: [
                         Text(
                           userInfoController.nickname.value,
-                          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              fontSize: 24, fontWeight: FontWeight.bold),
                         ),
                         SizedBox(height: 10),
                         Row(
@@ -452,12 +478,16 @@ profileBox() {
                           children: [
                             Text(
                               '${userInfoController.age.value.toString()}대',
-                              style: TextStyle(fontSize: 14, color: Colors.grey),
+                              style:
+                                  TextStyle(fontSize: 14, color: Colors.grey),
                             ),
                             Text(" · "),
                             Text(
-                              userInfoController.gender.value == 'M' ? '남성' : '여성',
-                              style: TextStyle(fontSize: 14, color: Colors.grey),
+                              userInfoController.gender.value == 'M'
+                                  ? '남성'
+                                  : '여성',
+                              style:
+                                  TextStyle(fontSize: 14, color: Colors.grey),
                             ),
                           ],
                         ),
@@ -469,7 +499,8 @@ profileBox() {
                               padding: EdgeInsets.all(8),
                               child: (Text(
                                 '코스  ${myPageController.myCourse.length}',
-                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 12),
                               )),
                             ),
                             Text(" | "),
@@ -478,7 +509,8 @@ profileBox() {
                               padding: EdgeInsets.all(8),
                               child: (Text(
                                 '코멘트  ${myPageController.myReview.length}',
-                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 12),
                               )),
                             ),
                           ],
@@ -601,12 +633,16 @@ class ModalBottom extends StatelessWidget {
                                       // Get.to(main.MyApp());
                                     },
                                     child: Container(
-                                      decoration:
-                                          BoxDecoration(border: Border(top: BorderSide(color: Colors.grey, width: 1))),
+                                      decoration: BoxDecoration(
+                                          border: Border(
+                                              top: BorderSide(
+                                                  color: Colors.grey,
+                                                  width: 1))),
                                       child: Center(
                                           child: Text(
                                         '로그아웃',
-                                        style: TextStyle(fontSize: 16, color: Colors.red),
+                                        style: TextStyle(
+                                            fontSize: 16, color: Colors.red),
                                         textAlign: TextAlign.center,
                                       )),
                                     )),
@@ -621,12 +657,16 @@ class ModalBottom extends StatelessWidget {
                                       Get.to(main.MyApp());
                                     },
                                     child: Container(
-                                      decoration:
-                                          BoxDecoration(border: Border(top: BorderSide(color: Colors.grey, width: 1))),
+                                      decoration: BoxDecoration(
+                                          border: Border(
+                                              top: BorderSide(
+                                                  color: Colors.grey,
+                                                  width: 1))),
                                       child: Center(
                                           child: Text(
                                         '회원탈퇴',
-                                        style: TextStyle(fontSize: 16, color: Colors.red),
+                                        style: TextStyle(
+                                            fontSize: 16, color: Colors.red),
                                         textAlign: TextAlign.center,
                                       )),
                                     )),
@@ -664,9 +704,11 @@ Widget headerWidget(BuildContext context) {
       children: const [
         Text("마이 페이지", style: TextStyle(fontSize: 25, color: Colors.white)),
         SizedBox(height: 30),
-        Text("내 프로필을 수정하거나", style: TextStyle(fontSize: 14, color: Colors.white)),
+        Text("내 프로필을 수정하거나",
+            style: TextStyle(fontSize: 14, color: Colors.white)),
         SizedBox(height: 10),
-        Text("내가 등록한 코스와 코멘트를 볼 수 있어요", style: TextStyle(fontSize: 14, color: Colors.white)),
+        Text("내가 등록한 코스와 코멘트를 볼 수 있어요",
+            style: TextStyle(fontSize: 14, color: Colors.white)),
       ],
     ),
   );

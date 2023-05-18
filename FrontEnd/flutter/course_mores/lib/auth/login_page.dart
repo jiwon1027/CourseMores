@@ -241,7 +241,7 @@ void postLogin(accessToken) async {
         backgroundColor: Colors.grey[400],
         textColor: Colors.red,
       );
-      return;
+      Get.back();
     } else {
       await tokenController.saveToken(
         response.data['accessToken'],
