@@ -9,10 +9,7 @@ import '../course_search/search.dart';
 import 'mypage.dart';
 
 class DetailTapCourseCommentsListSection extends StatelessWidget {
-  const DetailTapCourseCommentsListSection({
-    super.key,
-    required this.commentsList,
-  });
+  const DetailTapCourseCommentsListSection({super.key, required this.commentsList});
 
   final List commentsList;
 
@@ -39,13 +36,7 @@ class DetailTapCourseCommentsListSection extends StatelessWidget {
                 children: List.generate(
               commentsList.length,
               (index) {
-                // ListView.builder(
-                //     // padding: EdgeInsets.fromLTRB(10, 10, 10, 20),
-                //     padding: EdgeInsets.all(8),
-                //     itemCount: commentsList.length,
-                //     itemBuilder: (context, index) {
                 return Card(
-                  // elevation: 6,
                   margin: EdgeInsets.fromLTRB(10, 10, 10, 5),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                   child: Container(
@@ -76,8 +67,6 @@ class DetailTapCourseCommentsListSection extends StatelessWidget {
                                   await detailController.getCourseDetailList();
 
                                   Get.to(() => detail.Detail());
-
-                                  // Get.to(() => detail.CourseDetail(index: index));
                                 },
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -137,36 +126,7 @@ class DetailTapCourseCommentsListSection extends StatelessWidget {
                           ImageGridView(commentImageList: commentsList[index]['imageList']),
                         SizedBox(height: 10),
                         Text('${commentsList[index]['content']}', style: TextStyle(fontSize: 12, height: 1.5)),
-                        // Row(
-                        //   children: [
-                        //     // Text('받은 좋아요 '),
-                        //     Icon(Icons.favorite_outline),
-                        //     SizedBox(width: 5),
-                        //     Text('${commentsList[index]['likeCount']}'),
-                        //   ],
-                        // ),
-                        // // ],
-                        // // ),
-                        // SizedBox(height: 5),
-                        // Row(
-                        //   children: [
-                        //     Icon(Icons.calendar_month, size: 16),
-                        //     SizedBox(width: 5),
-                        //     // Text(
-                        //     //     '${DateFormat('MM-dd').format(DateTime.parse(commentsList[index]['date']))}'),
-                        //     Text(DateFormat('MM-dd').format(DateTime.parse(commentsList[index]['createTime']))),
-                        //     SizedBox(width: 10),
-                        //     Icon(Icons.people, size: 16),
-                        //     SizedBox(width: 5),
-                        //     Text('${commentsList[index]['people']}'),
-                        //   ],
-                        // ),
-                        // SizedBox(height: 10),
                         SizedBox(height: 10),
-                        // Text(
-                        //   '${commentsList[index]['content']}',
-                        //   softWrap: true,
-                        // ),
                       ],
                     ),
                   ),
