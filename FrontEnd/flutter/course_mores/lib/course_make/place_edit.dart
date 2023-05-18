@@ -15,7 +15,8 @@ class EditItemPage extends StatefulWidget {
   final LocationData locationData;
 
   @override
-  State<EditItemPage> createState() => _EditItemPageState(locationData: locationData);
+  State<EditItemPage> createState() =>
+      _EditItemPageState(locationData: locationData);
 }
 
 class _EditItemPageState extends State<EditItemPage> {
@@ -42,7 +43,8 @@ class _EditItemPageState extends State<EditItemPage> {
     List<XFile> savedImages = _itemData.getSavedImageList();
     if (_addImageKey.currentState != null) {
       // Make sure currentState is not null before calling getTemporaryImageList
-      locationData.saveImageList(_addImageKey.currentState!.getTemporaryImageList()); // Save images in initState
+      locationData.saveImageList(_addImageKey.currentState!
+          .getTemporaryImageList()); // Save images in initState
     }
   }
 
@@ -56,9 +58,10 @@ class _EditItemPageState extends State<EditItemPage> {
     final LocationController locationController = Get.find();
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Color.fromARGB(255, 80, 170, 208),
         // 없어도 <- 모양의 뒤로가기가 기본으로 있으나 < 모양으로 바꾸려고 추가함
         leading: IconButton(
-          icon: Icon(Icons.navigate_before, color: Colors.black),
+          icon: Icon(Icons.navigate_before, color: Colors.white),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -67,11 +70,11 @@ class _EditItemPageState extends State<EditItemPage> {
         title: RichText(
             text: const TextSpan(
           children: [
-            WidgetSpan(child: Icon(Icons.edit_note, color: Colors.black)),
+            // WidgetSpan(child: Icon(Icons.edit_note, color: Colors.black)),
             WidgetSpan(child: SizedBox(width: 5)),
             TextSpan(
               text: '장소 추가 정보 작성',
-              style: TextStyle(fontSize: 22, color: Colors.black),
+              style: TextStyle(fontSize: 22, color: Colors.white),
             ),
           ],
         )),
@@ -82,7 +85,7 @@ class _EditItemPageState extends State<EditItemPage> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              icon: Icon(Icons.close, color: Colors.black)),
+              icon: Icon(Icons.close, color: Colors.white)),
         ],
       ),
       body: SingleChildScrollView(
@@ -120,15 +123,22 @@ class _EditItemPageState extends State<EditItemPage> {
                     longitude: widget.locationData.longitude,
                     roadViewImage: widget.locationData.roadViewImage,
                     // numberOfImage: widget.locationData.numberOfImage,
-                    numberOfImage: _addImageKey.currentState!.getTemporaryImageList().length,
+                    numberOfImage: _addImageKey.currentState!
+                        .getTemporaryImageList()
+                        .length,
                     // numberOfImage: _imageList.length,
                     // numberOfImage: _imageUploaderState.getNumberOfImage(),
-                    title: _titleController.text.isNotEmpty ? _titleController.text : '',
-                    content: _contentController.text.isNotEmpty ? _contentController.text : '',
+                    title: _titleController.text.isNotEmpty
+                        ? _titleController.text
+                        : '',
+                    content: _contentController.text.isNotEmpty
+                        ? _contentController.text
+                        : '',
                     sido: widget.locationData.sido,
                     gugun: widget.locationData.gugun,
                     // temporaryImageList: _imageUploaderState._temporaryImageList,
-                    temporaryImageList: _addImageKey.currentState!.getTemporaryImageList(),
+                    temporaryImageList:
+                        _addImageKey.currentState!.getTemporaryImageList(),
                   );
                   _itemData.title = updatedLocationData.title;
                   _itemData.content = updatedLocationData.content;
@@ -139,7 +149,8 @@ class _EditItemPageState extends State<EditItemPage> {
                   //     updatedLocationData.temporaryImageList;
                   // 사용자가 "저장하기" 버튼을 눌렀을 때 임시 이미지 목록을 저장합니다.
                   // _itemData.saveImageList();
-                  _itemData.saveImageList(_addImageKey.currentState!.getTemporaryImageList());
+                  _itemData.saveImageList(
+                      _addImageKey.currentState!.getTemporaryImageList());
 
                   _itemData = updatedLocationData;
 
@@ -191,8 +202,9 @@ class _PlaceNameState extends State<PlaceName> {
   }
 
   Future<void> _getAddress() async {
-    final List<geocoding.Placemark> placemarks =
-        await geocoding.placemarkFromCoordinates(widget.latitude, widget.longitude, localeIdentifier: 'ko');
+    final List<geocoding.Placemark> placemarks = await geocoding
+        .placemarkFromCoordinates(widget.latitude, widget.longitude,
+            localeIdentifier: 'ko');
 
     if (placemarks.isNotEmpty) {
       final geocoding.Placemark place = placemarks.first;
@@ -203,7 +215,8 @@ class _PlaceNameState extends State<PlaceName> {
       final String administrativeArea = place.administrativeArea ?? '';
 
       setState(() {
-        _address = '$administrativeArea $locality $subLocality $thoroughfare $subThoroughfare';
+        _address =
+            '$administrativeArea $locality $subLocality $thoroughfare $subThoroughfare';
       });
     } else {
       setState(() {
@@ -216,13 +229,15 @@ class _PlaceNameState extends State<PlaceName> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text('장소 상세 내용', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+        Text('장소 상세 내용',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
         SizedBox(height: 10),
         FractionallySizedBox(
           widthFactor: 0.95,
           child: Card(
             elevation: 4,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             child: Row(
               children: [
                 Expanded(
@@ -231,11 +246,16 @@ class _PlaceNameState extends State<PlaceName> {
                     children: [
                       Text(
                         widget.locationName,
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.blue),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            color: Colors.blue),
                       ),
                       SizedBox(height: 8),
                       // Text(_address),
-                      Padding(padding: const EdgeInsets.only(left: 8.0), child: Text(_address)),
+                      Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: Text(_address)),
                     ],
                   ),
                 ),
@@ -245,7 +265,9 @@ class _PlaceNameState extends State<PlaceName> {
                     height: 120,
                     width: double.infinity,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.only(topRight: Radius.circular(16), bottomRight: Radius.circular(16)),
+                      borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(16),
+                          bottomRight: Radius.circular(16)),
                       image: DecorationImage(
                         image: NetworkImage(_imgUrl),
                         fit: BoxFit.cover,
@@ -598,8 +620,11 @@ class _ImageUploaderState extends State<ImageUploader> {
           SizedBox(height: 20),
           SizedBox(
             height: 80,
-            child: _temporaryImageList.isEmpty ? Center(child: Text("이미지를 선택해주세요.")) : buildGridView(),
+            child: _temporaryImageList.isEmpty
+                ? Center(child: Text("이미지를 선택해주세요."))
+                : buildGridView(),
           ),
+          // Text('현재의 장소에 ${_itemdData.numberOfImage}장의 사진이 저장되어있어요'),
         ],
       ),
     );

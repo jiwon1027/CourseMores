@@ -157,7 +157,10 @@ class CourseController extends g.GetxController {
             },
           ));
       if (response.statusCode == 200) {
+        final responseData = response.data; // 서버에서 반환된 데이터
         print('POST 요청 성공');
+        print(responseData);
+        print('7777777');
       }
     } catch (e) {
       if (e is DioError) {
