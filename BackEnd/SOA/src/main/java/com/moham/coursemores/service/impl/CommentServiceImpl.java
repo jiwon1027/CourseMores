@@ -46,7 +46,7 @@ public class CommentServiceImpl implements CommentService {
                 .orElseThrow(() -> new CustomException(userId, CustomErrorCode.USER_NOT_FOUND));
 
         // 한 페이지에 보여줄 댓글의 수
-        final int size = 10;
+        final int size = 50;
 
         // Sort 정렬 기준
         Sort sort = ("Like".equals(sortby)) ?
