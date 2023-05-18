@@ -59,7 +59,8 @@ class MyApp extends StatelessWidget {
                 : FlashyTabBar(
                     selectedIndex: pageNum,
                     showElevation: true,
-                    onItemSelected: (index) => pageController.changePageNum(index),
+                    onItemSelected: (index) =>
+                        pageController.changePageNum(index),
                     items: [
                       FlashyTabBarItem(
                         icon: Icon(Icons.home),
@@ -117,6 +118,8 @@ Future<void> reissueToken() async {
   // final dio = await authDio();
   final prefs = await SharedPreferences.getInstance();
   if (prefs.getBool('isFirstLogin') == false) {
+    // 첫 로그인시가 아니고 (로그인 상태 유지시) 앱 재실행 시
+    // 로컬에 저장된 토큰으로 요청 보내서 토큰 재발급, 유저정보도 받음
     dynamic bodyData = json.encode({
       'accessToken': prefs.getString('accessToken'),
       'nickname': prefs.getString('nickname'),

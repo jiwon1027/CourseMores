@@ -13,7 +13,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 final tokenController = Get.put(TokenStorage());
 final userInfoController = Get.put(UserInfo());
-final firstLoginController = Get.put(LoginCheck());
+// final firstLoginController = Get.put(LoginCheck());
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key? key}) : super(key: key);
@@ -235,7 +235,7 @@ void postLogin(accessToken) async {
   if (response.statusCode == 200) {
     if (response.data['agree'] == false) {
       Fluttertoast.showToast(
-        msg: '닉네임 중복확인을 해 주세요',
+        msg: '이메일 수집동의에 체크해 주세요',
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
         backgroundColor: Colors.grey[400],
