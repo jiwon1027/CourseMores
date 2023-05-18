@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -36,35 +37,36 @@ public class InterestServiceImp implements InterestService {
                 .stream()
                 .map(like -> like.isFlag() ? like.getCourse().getId() : null)
                 .collect(Collectors.toList());
+        List<InterestCourseResDto> result = new ArrayList<>();
         // 현재의 관심 여부(flag)가 true인 것만 가져오기
-        return interestRepository.findByUserIdAndFlag(userId, true)
-                .stream()
-                .map(interest -> {
-                    // 관심 코스 정보 가져오기
-                    Course course = interest.getCourse();
+        interestRepository.findByUserIdAndFlag(userId, true)
+            .forEach(interest -> {
+                // 관심 코스 정보 가져오기
+                Course course = interest.getCourse();
+                if(course.getDeleteTime() != null) return;
 
-                    CoursePreviewResDto coursePreviewResDto = CoursePreviewResDto.builder()
-                            .courseId(course.getId())
-                            .title(course.getTitle())
-                            .content(course.getContent())
-                            .people(course.getPeople())
-                            .visited(course.isVisited())
-                            .likeCount(course.getLikeCount())
-                            .commentCount(course.getCommentList().size())
-                            .image(course.getImage())
-                            .locationName(course.getLocationName() + " 외 " + (course.getLocationSize() - 1) + "곳")
-                            .sido(course.getSido())
-                            .gugun(course.getGugun())
-                            .isInterest(true)
-                            .isLike(userLikeCourse.contains(course.getId()))
-                            .build();
+                CoursePreviewResDto coursePreviewResDto = CoursePreviewResDto.builder()
+                        .courseId(course.getId())
+                        .title(course.getTitle())
+                        .content(course.getContent())
+                        .people(course.getPeople())
+                        .visited(course.isVisited())
+                        .likeCount(course.getLikeCount())
+                        .commentCount(course.getCommentList().size())
+                        .image(course.getImage())
+                        .locationName(course.getLocationName() + " 외 " + (course.getLocationSize() - 1) + "곳")
+                        .sido(course.getSido())
+                        .gugun(course.getGugun())
+                        .isInterest(true)
+                        .isLike(userLikeCourse.contains(course.getId()))
+                        .build();
 
-                    return InterestCourseResDto.builder()
-                            .interestCourseId(interest.getId())
-                            .coursePreviewResDto(coursePreviewResDto)
-                            .build();
-                })
-                .collect(Collectors.toList());
+                result.add(InterestCourseResDto.builder()
+                        .interestCourseId(interest.getId())
+                        .coursePreviewResDto(coursePreviewResDto)
+                        .build());
+            });
+       return result;
     }
 
     @Override
