@@ -10,6 +10,8 @@ import com.moham.coursemores.dto.course.HotPreviewResDto;
 import com.moham.coursemores.dto.course.MyCourseResDto;
 import com.moham.coursemores.dto.course.NearPreviewResDto;
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,4 +28,5 @@ public interface CourseService {
     Long addCourse(Long userId, CourseCreateReqDto courseCreateReqDto, List<MultipartFile> imageList);
     void setCourse(Long userId, Long courseId, CourseUpdateReqDto courseUpdateReqDto, List<MultipartFile> imageList);
     void deleteCourse(Long userId, Long courseId);
+    Map<String, List<Integer>> testES();
 }

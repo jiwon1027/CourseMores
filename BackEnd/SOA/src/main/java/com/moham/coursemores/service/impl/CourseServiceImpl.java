@@ -476,6 +476,11 @@ public class CourseServiceImpl implements CourseService {
         course.delete();
     }
 
+    @Override
+    public Map<String, List<Integer>> testES() {
+        return courseRepository.testES();
+    }
+
     private String initSido(String sido) {
         if(sido == null) return ALL;
         return regionRepository.existsBySido(sido.trim()) ? sido.trim() : ALL;

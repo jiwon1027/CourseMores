@@ -260,4 +260,11 @@ public class CourseController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @GetMapping("test")
+    public ResponseEntity<Map<String, List<Integer>>> test() {
+        logger.debug("[0/1][GET][/course/test] << request : none");
+        Map<String, List<Integer>> resultMap = courseService.testES();
+        logger.debug("[1/1][GET][/course/test] >> response : resultMap\n resultMap = {}",resultMap);
+        return new ResponseEntity<>(resultMap, HttpStatus.OK);
+    }
 }
