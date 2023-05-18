@@ -29,7 +29,8 @@ class _CMMapState extends State<CMMap> {
   @override
   void initState() {
     super.initState();
-    BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(30, 40)), 'assets/flower_marker.png')
+    BitmapDescriptor.fromAssetImage(
+            ImageConfiguration(size: Size(30, 40)), 'assets/flower_marker.png')
         .then((icon) => customIcon = icon);
   }
 
@@ -62,7 +63,8 @@ class _CMMapState extends State<CMMap> {
 
     // 카메라 이동
     _mapController?.animateCamera(
-      CameraUpdate.newCameraPosition(CameraPosition(target: currentPosition, zoom: 15.0)),
+      CameraUpdate.newCameraPosition(
+          CameraPosition(target: currentPosition, zoom: 15.0)),
     );
   }
 
@@ -71,7 +73,10 @@ class _CMMapState extends State<CMMap> {
     setState(() {
       _markers.clear();
       _markers.add(
-        Marker(markerId: MarkerId('selected-location'), position: location, icon: customIcon),
+        Marker(
+            markerId: MarkerId('selected-location'),
+            position: location,
+            icon: customIcon),
       );
     });
     // Get address and show in bottom sheet
@@ -122,8 +127,8 @@ class _CMMapState extends State<CMMap> {
   }
 
   Future<String> _getAddress(double lat, double lon) async {
-    final List<geocoding.Placemark> placemarks =
-        await geocoding.placemarkFromCoordinates(lat, lon, localeIdentifier: 'ko');
+    final List<geocoding.Placemark> placemarks = await geocoding
+        .placemarkFromCoordinates(lat, lon, localeIdentifier: 'ko');
     // if (placemarks != null && placemarks.isNotEmpty) {
     if (placemarks.isNotEmpty) {
       final geocoding.Placemark place = placemarks.first;
@@ -149,8 +154,8 @@ class _CMMapState extends State<CMMap> {
   //   return '';
   // }
   Future<String> _getSido(double lat, double lon) async {
-    final List<geocoding.Placemark> placemarks =
-        await geocoding.placemarkFromCoordinates(lat, lon, localeIdentifier: 'ko');
+    final List<geocoding.Placemark> placemarks = await geocoding
+        .placemarkFromCoordinates(lat, lon, localeIdentifier: 'ko');
     // if (placemarks != null && placemarks.isNotEmpty) {
     if (placemarks.isNotEmpty) {
       final geocoding.Placemark place = placemarks.first;
@@ -164,8 +169,8 @@ class _CMMapState extends State<CMMap> {
   }
 
   Future<String> _getGugun(double lat, double lon) async {
-    final List<geocoding.Placemark> placemarks =
-        await geocoding.placemarkFromCoordinates(lat, lon, localeIdentifier: 'ko');
+    final List<geocoding.Placemark> placemarks = await geocoding
+        .placemarkFromCoordinates(lat, lon, localeIdentifier: 'ko');
     // if (placemarks != null && placemarks.isNotEmpty) {
     if (placemarks.isNotEmpty) {
       final geocoding.Placemark place = placemarks.first;
@@ -184,7 +189,8 @@ class _CMMapState extends State<CMMap> {
 
   void _onMyLocationButtonPressed() async {
     final position = await Geolocator.getCurrentPosition();
-    final cameraUpdate = CameraUpdate.newLatLngZoom(LatLng(position.latitude, position.longitude), 17);
+    final cameraUpdate = CameraUpdate.newLatLngZoom(
+        LatLng(position.latitude, position.longitude), 17);
     _mapController?.animateCamera(cameraUpdate);
   }
 
@@ -213,6 +219,7 @@ class _CMMapState extends State<CMMap> {
         return AlertDialog(
           title: Text('이 장소의 이름을 입력하세요.'),
           content: TextField(
+            maxLength: 30, // 최대 글자 수
             onChanged: (value) {
               locationName = value;
             },
@@ -227,17 +234,40 @@ class _CMMapState extends State<CMMap> {
             TextButton(
               child: Text('확인'),
               onPressed: () {
-                // Save location with the entered name
-                String message = '위치 이름: $locationName\n위도: $latitude, 경도: $longitude';
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
-                Navigator.pop(context);
-                Navigator.pop(context, {
-                  'locationName': locationName,
-                  'latitude': latitude,
-                  'longitude': longitude,
-                  'sido': sido,
-                  'gugun': gugun,
-                });
+                if (locationName.trim().length == 0) {
+                  // If locationName is empty, show a dialog
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: Text('에러'),
+                        content: Text('장소 이름은 1글자 이상입니다'),
+                        actions: <Widget>[
+                          TextButton(
+                            child: Text('확인'),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                } else {
+                  // Save location with the entered name
+                  String message =
+                      '위치 이름: $locationName\n위도: $latitude, 경도: $longitude';
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(SnackBar(content: Text(message)));
+                  Navigator.pop(context);
+                  Navigator.pop(context, {
+                    'locationName': locationName,
+                    'latitude': latitude,
+                    'longitude': longitude,
+                    'sido': sido,
+                    'gugun': gugun,
+                  });
+                }
               },
             ),
           ],
@@ -250,44 +280,50 @@ class _CMMapState extends State<CMMap> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Color.fromARGB(255, 80, 170, 208),
         leading: IconButton(
-          icon: Icon(Icons.navigate_before, color: Colors.black),
+          icon: Icon(Icons.navigate_before, color: Colors.white),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
-        title: RichText(
-            text: TextSpan(
-          children: const [
-            WidgetSpan(child: Icon(Icons.edit_note, color: Colors.black)),
-            WidgetSpan(child: SizedBox(width: 5)),
-            TextSpan(
-              text: '지도 마커로 추가하기',
-              style: TextStyle(fontSize: 22, color: Colors.black),
-            ),
-          ],
-        )),
+        title: Center(
+          child: RichText(
+              text: TextSpan(
+            children: const [
+              // WidgetSpan(child: Icon(Icons.edit_note, color: Colors.white)),
+              WidgetSpan(child: SizedBox(width: 5)),
+              TextSpan(
+                text: '지도 마커로 추가하기',
+                style: TextStyle(fontSize: 22, color: Colors.white),
+              ),
+            ],
+          )),
+        ),
         actions: [
           IconButton(
               onPressed: () {
                 Navigator.pop(context);
               },
-              icon: Icon(Icons.close, color: Colors.black)),
+              icon: Icon(Icons.close, color: Colors.white)),
         ],
       ),
       body: Padding(
         padding: EdgeInsets.all(16),
         child: Column(
           children: [
-            Text('누르면 마커가 생겨요', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            Text('지도 화면을 누르면 마커가 생겨요',
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
             SizedBox(height: 12),
-            Container(
-              height: MediaQuery.of(context).size.height / 1.5,
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Expanded(
+            Flexible(
+              flex: 2,
+              child: Container(
+                // height: MediaQuery.of(context).size.height / 1.5,
+                // height: 550,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(10),
+                ),
                 child: GoogleMap(
                   initialCameraPosition: CameraPosition(
                     target: LatLng(37.5665, 126.9780),
