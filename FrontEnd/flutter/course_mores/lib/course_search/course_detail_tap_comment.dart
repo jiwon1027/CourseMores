@@ -134,21 +134,20 @@ class CommentsListSection extends StatelessWidget {
                         SizedBox(height: 8),
                         Row(
                           children: [
-                            Icon(Icons.calendar_month, size: 16),
+                            Icon(Icons.calendar_month, size: 16, color: Colors.black38),
                             SizedBox(width: 5),
                             Text(
                                 DateFormat('yyyy. MM.dd')
                                     .format(DateTime.parse(detailController.nowCourseCommentList[index]['createTime'])),
-                                style: TextStyle(fontSize: 12)),
+                                style: TextStyle(fontSize: 12, color: Colors.black38)),
                             SizedBox(width: 10),
-                            Icon(Icons.people, size: 16),
+                            Icon(Icons.people, size: 16, color: Colors.black38),
                             SizedBox(width: 5),
-                            if (detailController.nowCourseCommentList[index]['people'] != 0)
-                              if (detailController.nowCourseCommentList[index]['people'] != 5)
-                                Text('${detailController.nowCourseCommentList[index]['people']}명',
-                                    style: TextStyle(fontSize: 12)),
-                            if (detailController.nowCourseCommentList[index]['people'] >= 5)
-                              Text('5명 이상', style: TextStyle(fontSize: 12)),
+                            Text(
+                                detailController.nowCourseCommentList[index]['people'] >= 5
+                                    ? "5명 이상"
+                                    : "${detailController.nowCourseCommentList[index]['people']}명",
+                                style: TextStyle(fontSize: 12, color: Colors.black38)),
                           ],
                         ),
                         if (detailController.nowCourseCommentList[index]['imageList'].length != 0)

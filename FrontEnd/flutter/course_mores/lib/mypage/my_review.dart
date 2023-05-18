@@ -36,98 +36,121 @@ class DetailTapCourseCommentsListSection extends StatelessWidget {
                 children: List.generate(
               commentsList.length,
               (index) {
-                return Card(
-                  margin: EdgeInsets.fromLTRB(10, 10, 10, 5),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                  child: Container(
-                    decoration: const BoxDecoration(boxShadow: [
-                      BoxShadow(
-                          color: Color.fromARGB(255, 211, 211, 211),
-                          blurRadius: 10.0,
-                          spreadRadius: 1.0,
-                          offset: Offset(3, 3)),
-                    ], color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(10))),
-                    padding: EdgeInsets.all(20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: InkWell(
-                                onTap: () async {
-                                  print('mypage 코스리스트 == ${myPageController.myReview}');
-                                  int courseId = (myPageController.myReview[index]['courseId'] as int);
+                return InkWell(
+                  onTap: () async {
+                    print('mypage 코스리스트 == ${myPageController.myReview}');
+                    int courseId = (myPageController.myReview[index]['courseId'] as int);
 
-                                  await searchController.changeNowCourseId(courseId: courseId);
+                    await searchController.changeNowCourseId(courseId: courseId);
 
-                                  await detailController.getCourseInfo('코스 소개');
-                                  await detailController.getIsLikeCourse();
-                                  await detailController.getIsInterestCourse();
-                                  await detailController.getCourseDetailList();
+                    await detailController.getCourseInfo('코스 소개');
+                    await detailController.getIsLikeCourse();
+                    await detailController.getIsInterestCourse();
+                    await detailController.getCourseDetailList();
 
-                                  Get.to(() => detail.Detail());
-                                },
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Expanded(
-                                      child: Row(
-                                        children: [
-                                          Expanded(
-                                            child: Text(
-                                              commentsList[index]['courseTitle'],
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                decoration: TextDecoration.underline,
+                    Get.to(() => detail.Detail());
+                  },
+                  child: Card(
+                    margin: EdgeInsets.fromLTRB(10, 10, 10, 5),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    child: Container(
+                      decoration: const BoxDecoration(boxShadow: [
+                        BoxShadow(
+                            color: Color.fromARGB(255, 211, 211, 211),
+                            blurRadius: 10.0,
+                            spreadRadius: 1.0,
+                            offset: Offset(3, 3)),
+                      ], color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(10))),
+                      padding: EdgeInsets.all(20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(
+                                child: InkWell(
+                                  onTap: () async {
+                                    print('mypage 코스리스트 == ${myPageController.myReview}');
+                                    int courseId = (myPageController.myReview[index]['courseId'] as int);
+
+                                    await searchController.changeNowCourseId(courseId: courseId);
+
+                                    await detailController.getCourseInfo('코스 소개');
+                                    await detailController.getIsLikeCourse();
+                                    await detailController.getIsInterestCourse();
+                                    await detailController.getCourseDetailList();
+
+                                    Get.to(() => detail.Detail());
+                                  },
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Expanded(
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              child: Text(
+                                                commentsList[index]['courseTitle'],
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  decoration: TextDecoration.underline,
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 1,
                                               ),
-                                              overflow: TextOverflow.ellipsis,
-                                              maxLines: 1,
                                             ),
-                                          ),
-                                          Text(' 코스에 작성한 코멘트  ',
-                                              textAlign: TextAlign.left, style: TextStyle(fontSize: 12)),
+                                            Text(' 코스에 작성한 코멘트  ',
+                                                textAlign: TextAlign.left, style: TextStyle(fontSize: 12)),
+                                          ],
+                                        ),
+                                      ),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Icon(Icons.favorite, size: 24, color: Colors.pink[300]),
+                                          SizedBox(width: 5),
+                                          Text('${commentsList[index]['likeCount']}', style: TextStyle(fontSize: 12)),
                                         ],
                                       ),
-                                    ),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Icon(Icons.favorite, size: 24, color: Colors.pink[300]),
-                                        SizedBox(width: 5),
-                                        Text('${commentsList[index]['likeCount']}', style: TextStyle(fontSize: 12)),
-                                      ],
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 5),
-                        Row(
-                          children: [
-                            Icon(Icons.calendar_month, size: 16),
-                            SizedBox(width: 5),
-                            // Text(
-                            //     '${DateFormat('MM-dd').format(DateTime.parse(commentsList[index]['date']))}'),
-                            Text(DateFormat('MM.dd').format(DateTime.parse(commentsList[index]['createTime'])),
-                                style: TextStyle(fontSize: 12)),
-                            SizedBox(width: 10),
-                            Icon(Icons.people, size: 16),
-                            SizedBox(width: 5),
-                            Text('${commentsList[index]['people']}', style: TextStyle(fontSize: 12)),
-                          ],
-                        ),
-                        // SizedBox(height: 10),
-                        // SizedBox(height: 10),
-                        if (commentsList[index]['imageList'].length > 0)
-                          ImageGridView(commentImageList: commentsList[index]['imageList']),
-                        SizedBox(height: 10),
-                        Text('${commentsList[index]['content']}', style: TextStyle(fontSize: 12, height: 1.5)),
-                        SizedBox(height: 10),
-                      ],
+                            ],
+                          ),
+                          SizedBox(height: 5),
+                          Row(
+                            children: [
+                              Icon(Icons.calendar_month, size: 14, color: Colors.black38),
+                              SizedBox(width: 5),
+                              Text(DateFormat('MM.dd').format(DateTime.parse(commentsList[index]['createTime'])),
+                                  style: TextStyle(fontSize: 10, color: Colors.black38)),
+                              SizedBox(width: 10),
+                              Icon(Icons.people, size: 14, color: Colors.black38),
+                              SizedBox(width: 5),
+                              Text(
+                                (commentsList[index]['people']! as int) <= 0
+                                    ? "상관 없음"
+                                    : (commentsList[index]['people']! as int) >= 5
+                                        ? "5명 이상"
+                                        : "${commentsList[index]['people']}명",
+                                style: TextStyle(fontSize: 10, color: Colors.black38),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                                softWrap: true,
+                              ),
+                            ],
+                          ),
+                          // SizedBox(height: 10),
+                          // SizedBox(height: 10),
+                          if (commentsList[index]['imageList'].length > 0)
+                            ImageGridView(commentImageList: commentsList[index]['imageList']),
+                          SizedBox(height: 10),
+                          Text('${commentsList[index]['content']}', style: TextStyle(fontSize: 12, height: 1.5)),
+                          SizedBox(height: 10),
+                        ],
+                      ),
                     ),
                   ),
                 );
