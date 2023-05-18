@@ -33,6 +33,7 @@
 # 📖서비스 개요
 
 **자신의 코스를 만들고, 다른 사람과 함께 공유하세요!**
+<<<<<<< HEAD
 
 > - 사용자의 위치 기반 주변 코스 보기
 > - 지난 한 주 간의 인기 코스 보기
@@ -40,6 +41,10 @@
 > - 좋아요, 관심, 댓글 작성 등으로 공감
 > - 구글 지도를 활용한 장소 검색
 > - 로드뷰 자동 가져오기 및 이미지 첨부 가능
+=======
+>
+> - 서비스 개요 작성
+>>>>>>> 5978f0d (✨ feat : 산출물 추가)
 
 <br />
 
@@ -52,26 +57,42 @@
 
 ## FrontEnd
 
+<<<<<<< HEAD
 | <div align="center"><img src="./assets/readme/flutter.png" alt="Flutter" width="105px" height="50px" /> |
 | :-----------------------------------------------------------------------------------------------------: |
 |                                                 Flutter                                                 |
+=======
+| <div align="center"><img src="./assets/readme/flutter.png" alt="Flutter" width="105px" height="50px" /> | 
+| :-: | 
+| Flutter |  
+>>>>>>> 5978f0d (✨ feat : 산출물 추가)
 
 <br />
 
 ## BackEnd
 
 | <div align="center"><img src="./assets/readme/java.png" alt="Java" width="50px" height="50px" /> </div> | <div align="center"><img src="./assets/readme/gradle.png" alt="Gradle" width="50px" height="50px" /></div> | <div align="center"><img src="./assets/readme/springboot.png" alt="SpringBoot" width="95px" height="50px" /> </div> | <div align="center"><img src="./assets/readme/springdatajpa.png" alt="SpringDataJPA" width="75px" height="50px" /></div> |
+<<<<<<< HEAD
 | :-----------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------------: |
 |                                                  Java                                                   |                                 &nbsp;&nbsp;&nbsp;Gradle&nbsp;&nbsp;&nbsp;                                 |                                                     Spring-Boot                                                     |                                                &nbsp;SpringDataJPA&nbsp;                                                 |
 
 | <div align="center"><img src="./assets/readme/mysql.png" alt="Mysql" width="75px" height="50px" /> </div> | <div align="center"><img src="./assets/readme/redis.png" alt="Redis" width="60px" height="50px" /></div> |
 | :-------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------: |
 |                                                   MySQL                                                   |                                                  Redis                                                   |
+=======
+| :-----------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------------------------------------: | 
+|                                                  Java                                                   |                                 &nbsp;&nbsp;&nbsp;Gradle&nbsp;&nbsp;&nbsp;                                 |                                                     Spring-Boot                                                     |                                                &nbsp;SpringDataJPA&nbsp;                                                 |
+
+| <div align="center"><img src="./assets/readme/mysql.png" alt="Mysql" width="75px" height="50px" /> </div> | <div align="center"><img src="./assets/readme/redis.png" alt="Redis" width="60px" height="50px" /></div> |
+| :-------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------: |
+|                                                   MySQL                                                   |                                                    Redis                                                   |
+>>>>>>> 5978f0d (✨ feat : 산출물 추가)
 
 <br />
 
 ## DevOps
 
+<<<<<<< HEAD
 | <div align="center"><img src="./assets/readme/docker.png" alt="Docker" width="60px" height="50px" /> </div> | <div align="center"><img src="./assets/readme/jenkins.png" alt="Jenkins" width="50px" height="50px" /></div> | <div align="center"><img src="./assets/readme/nginx.png" alt="Nginx" width="50px" height="50px" /></div> | <div align="center"><img src="./assets/readme/awsec2.png" alt="AWS EC2" width="50px" height="50px" /></div> | <div align="center"><img src="./assets/readme/awss3.png" alt="AWS S3" width="70px" height="50px" /></div> |
 | :---------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------------------: |
 |                                                   Docker                                                    |                                             &nbsp;Jenkins&nbsp;                                              |                                      &nbsp;&nbsp;NginX&nbsp;&nbsp;                                       |                                             &nbsp;AWS EC2&nbsp;                                             |                                            &nbsp;AWS S3&nbsp;                                             |
@@ -83,6 +104,19 @@
 | <div align="center"><img src="./assets/readme/sonarqube.png" alt="SonarQube" width="190px" height="50px" /></div> |
 | :---------------------------------------------------------------------------------------------------------------: |
 |                                               &nbsp;SonarQube&nbsp;                                               |
+=======
+| <div align="center"><img src="./assets/readme/docker.png" alt="Docker" width="60px" height="50px" /> </div> | <div align="center"><img src="./assets/readme/jenkins.png" alt="Jenkins" width="50px" height="50px" /></div> | <div align="center"><img src="./assets/readme/nginx.png" alt="Nginx" width="50px" height="50px" /></div> | <div align="center"><img src="./assets/readme/awsec2.png" alt="AWS EC2" width="50px" height="50px" /></div> |<div align="center"><img src="./assets/readme/awss3.png" alt="AWS S3" width="70px" height="50px" /></div> |
+| :---------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------: |
+|                                                   Docker                                                    |                                             &nbsp;Jenkins&nbsp;                                              |                                      &nbsp;&nbsp;NginX&nbsp;&nbsp;                                       |                                         &nbsp;AWS EC2&nbsp;                                          |                                         &nbsp;AWS S3&nbsp;                                         |
+
+| <div align="center"><img src="./assets/readme/elasticsearch.png" alt="elasticsearch" width="95px" height="50px" /> </div> | <div align="center"><img src="./assets/readme/logstash.png" alt="logstash" width="60px" height="50px" /></div> | <div align="center"><img src="./assets/readme/kibana.png" alt="kibana" width="80px" height="50px" /></div> |<div align="center"><img src="./assets/readme/elasticapm.svg" alt="Elastic Apm" width="65px" height="50px" /></div> |
+| :-------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------: |:-----------------------------------------------------------------------------------------------------------: |:-----------------------------------------------------------------------------------------------------------: |
+|                                                   Elasticsearch                                                   |                                &nbsp;                    Logstash                 &nbsp;                                 |                                                   &nbsp;Kibana                         &nbsp;                       |                                                  &nbsp; Elastic APM  &nbsp;                 |
+
+| <div align="center"><img src="./assets/readme/sonarqube.png" alt="SonarQube" width="190px" height="50px" /></div> |
+|:-:|
+|                                        &nbsp;SonarQube&nbsp;                                         |
+>>>>>>> 5978f0d (✨ feat : 산출물 추가)
 
 <br />
 
@@ -90,6 +124,7 @@
 
 # 💡 주요 기능
 
+<<<<<<< HEAD
 - **다양한 코스 검색**
 
   ```
@@ -101,6 +136,12 @@
   ```
   구글 지도를 활용한 장소 검색으로 편리한 코스 작성
   로드뷰 자동 가져오기 및 이미지 첨부 가능
+=======
+- **기능제목**
+
+  ```
+  기능설명
+>>>>>>> 5978f0d (✨ feat : 산출물 추가)
   ```
 
 <br />
@@ -111,19 +152,36 @@
 
 - **시스템 아키텍처**
 
+<<<<<<< HEAD
   <img src="./assets/readme/Architecture.png"  alt="Architecture" width="600px" >
+=======
+  <img src="./assets/readme/architecture.png"  alt="Architecture" width="600px" >
+>>>>>>> 5978f0d (✨ feat : 산출물 추가)
 
 <br />
 
 - **ERD**
 
   <img src="./assets/readme/erd.png" alt="ERD" width="600px" >
+<<<<<<< HEAD
+=======
+  
+<br />
+
+- **추천 Sequence Diagram**
+
+  <img src="./assets/readme/sequencediagram.png" alt="Sequence Diagram" width="600px" >
+>>>>>>> 5978f0d (✨ feat : 산출물 추가)
 
 <br />
 
 # 🎥UCC 영상
 
+<<<<<<< HEAD
 [<img src="./assets/readme/coursemores_logo.png" width="150" alt="UCC 영상 바로가기" />](https://www.youtube.com/watch?v=lZh7i7-TZ8g)
+=======
+[<img src="./assets/readme/coursemores_logo.png" width="150" alt="UCC 영상 바로가기" />](https://youtu.be/youtube)
+>>>>>>> 5978f0d (✨ feat : 산출물 추가)
 
 > 새 창 열기 방법 : Ctrl + click (on Windows and Linux) | CMD + click (on MacOS)
 
