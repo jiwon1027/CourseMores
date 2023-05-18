@@ -64,7 +64,16 @@ class _ProfileEditState extends State<ProfileEdit> {
                 RegisterNickname(),
                 GenderChoice(),
                 AgeRange(),
-                confirmButton(),
+                SizedBox(height: 30),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CancleConfirmButton(),
+                    SizedBox(width: 20),
+                    confirmButton(),
+                  ],
+                )
               ],
             ),
           ),
@@ -72,7 +81,50 @@ class _ProfileEditState extends State<ProfileEdit> {
       ],
       fullyStretchable: false,
       backgroundColor: Colors.white,
-      appBarColor: Color.fromARGB(255, 95, 207, 255),
+      appBarColor: Color.fromARGB(255, 80, 170, 208),
+    );
+  }
+}
+
+class CancleConfirmButton extends StatelessWidget {
+  const CancleConfirmButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: FilledButton(
+        style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.black12)),
+        child: Text("취소하기", style: TextStyle(color: Colors.black)),
+        onPressed: () async {
+          bool confirmed = await showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text("프로필 수정 나가기", style: TextStyle(fontSize: 16)),
+                content: Text("지금 나가면 저장이 되지 않아요! 정말로 취소하시겠어요?", style: TextStyle(fontSize: 14)),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(false); // 취소 버튼을 누를 때 false 반환
+                    },
+                    child: Text("취소"),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(true); // 확인 버튼을 누를 때 true 반환
+                    },
+                    child: Text("확인"),
+                  ),
+                ],
+              );
+            },
+          );
+
+          if (confirmed == true) {
+            Get.back();
+          }
+        },
+      ),
     );
   }
 }
@@ -245,7 +297,7 @@ class _ProfileImageState extends State<ProfileImage> {
         context: context,
         builder: (BuildContext context) {
           return Container(
-              height: 150,
+              height: 180,
               color: Colors.transparent,
               child: Center(
                 child: Column(
@@ -270,7 +322,7 @@ class _ProfileImageState extends State<ProfileImage> {
                             child: Center(
                                 child: Text(
                               '기본 이미지로 변경',
-                              style: TextStyle(fontSize: 20),
+                              style: TextStyle(fontSize: 16),
                               textAlign: TextAlign.center,
                             ))),
                       ),
@@ -285,7 +337,7 @@ class _ProfileImageState extends State<ProfileImage> {
                               child: Center(
                                   child: Text(
                                 '사진 촬영하기',
-                                style: TextStyle(fontSize: 20),
+                                style: TextStyle(fontSize: 16),
                                 textAlign: TextAlign.center,
                               )),
                             )),
@@ -300,7 +352,7 @@ class _ProfileImageState extends State<ProfileImage> {
                               child: Center(
                                   child: Text(
                                 '앨범에서 가져오기',
-                                style: TextStyle(fontSize: 20),
+                                style: TextStyle(fontSize: 16),
                                 textAlign: TextAlign.center,
                               )),
                             )),
@@ -545,8 +597,7 @@ class _AgeRangeState extends State<AgeRange> {
 }
 
 confirmButton() {
-  return Padding(
-    padding: EdgeInsets.only(top: 60),
+  return Expanded(
     child: FilledButton(
       onPressed: () {
         if (userInfoController.editCheck.value == true ||
@@ -574,10 +625,6 @@ confirmButton() {
           );
         }
       },
-      style: ElevatedButton.styleFrom(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        fixedSize: Size.fromHeight(40),
-      ),
       child: Text('수정하기'),
     ),
   );

@@ -62,12 +62,7 @@ class _CMMapState extends State<CMMap> {
 
     // 카메라 이동
     _mapController?.animateCamera(
-      CameraUpdate.newCameraPosition(
-        CameraPosition(
-          target: currentPosition,
-          zoom: 15.0,
-        ),
-      ),
+      CameraUpdate.newCameraPosition(CameraPosition(target: currentPosition, zoom: 15.0)),
     );
   }
 
@@ -76,11 +71,7 @@ class _CMMapState extends State<CMMap> {
     setState(() {
       _markers.clear();
       _markers.add(
-        Marker(
-          markerId: MarkerId('selected-location'),
-          position: location,
-          icon: customIcon,
-        ),
+        Marker(markerId: MarkerId('selected-location'), position: location, icon: customIcon),
       );
     });
     // Get address and show in bottom sheet
@@ -96,27 +87,25 @@ class _CMMapState extends State<CMMap> {
           height: MediaQuery.of(context).size.height / 2,
           child: Column(
             children: [
-              SizedBox(
-                height: 30,
-              ),
+              SizedBox(height: 30),
               Expanded(child: SizedBox(height: 200, child: Image.network(url))),
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: EdgeInsets.all(8),
                 child: Text(address),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  ElevatedButton.icon(
+                  FilledButton.icon(
                     onPressed: () {
                       Navigator.pop(context);
                       // 저장 버튼 클릭 시, _selectedLocation 변수에 현재 선택한 위치 값을 사용할 수 있습니다.
                       _onSavePressed();
                     },
-                    icon: const Icon(Icons.save),
-                    label: const Text('해당 위치 저장'),
+                    icon: Icon(Icons.save),
+                    label: Text('해당 위치 저장'),
                   ),
-                  ElevatedButton.icon(
+                  FilledButton.icon(
                       onPressed: () {
                         Navigator.pop(context);
                       },
@@ -124,9 +113,7 @@ class _CMMapState extends State<CMMap> {
                       label: Text('뒤로 가기'))
                 ],
               ),
-              SizedBox(
-                height: 20,
-              )
+              SizedBox(height: 20)
             ],
           ),
         );
@@ -232,14 +219,17 @@ class _CMMapState extends State<CMMap> {
           ),
           actions: [
             TextButton(
+              child: Text('취소'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
               child: Text('확인'),
               onPressed: () {
                 // Save location with the entered name
                 String message = '위치 이름: $locationName\n위도: $latitude, 경도: $longitude';
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text(message),
-                ));
-                // Navigator.of(context).pop();
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
                 Navigator.pop(context);
                 Navigator.pop(context, {
                   'locationName': locationName,
@@ -248,12 +238,6 @@ class _CMMapState extends State<CMMap> {
                   'sido': sido,
                   'gugun': gugun,
                 });
-              },
-            ),
-            TextButton(
-              child: Text('취소'),
-              onPressed: () {
-                Navigator.of(context).pop();
               },
             ),
           ],
@@ -267,34 +251,19 @@ class _CMMapState extends State<CMMap> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(
-            Icons.navigate_before,
-            color: Colors.black,
-          ),
+          icon: Icon(Icons.navigate_before, color: Colors.black),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
         title: RichText(
-            text: const TextSpan(
-          children: [
-            WidgetSpan(
-              child: Icon(
-                Icons.edit_note,
-                color: Colors.black,
-              ),
-            ),
-            WidgetSpan(
-              child: SizedBox(
-                width: 5,
-              ),
-            ),
+            text: TextSpan(
+          children: const [
+            WidgetSpan(child: Icon(Icons.edit_note, color: Colors.black)),
+            WidgetSpan(child: SizedBox(width: 5)),
             TextSpan(
               text: '지도 마커로 추가하기',
-              style: TextStyle(
-                fontSize: 22,
-                color: Colors.black,
-              ),
+              style: TextStyle(fontSize: 22, color: Colors.black),
             ),
           ],
         )),
@@ -303,18 +272,15 @@ class _CMMapState extends State<CMMap> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              icon: const Icon(
-                Icons.close,
-                color: Colors.black,
-              )),
+              icon: Icon(Icons.close, color: Colors.black)),
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(16),
         child: Column(
           children: [
             Text('누르면 마커가 생겨요', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 12),
+            SizedBox(height: 12),
             Container(
               height: MediaQuery.of(context).size.height / 1.5,
               decoration: BoxDecoration(
@@ -324,7 +290,7 @@ class _CMMapState extends State<CMMap> {
               child: Expanded(
                 child: GoogleMap(
                   initialCameraPosition: CameraPosition(
-                    target: const LatLng(37.5665, 126.9780),
+                    target: LatLng(37.5665, 126.9780),
                     zoom: 10,
                   ),
                   markers: _markers,

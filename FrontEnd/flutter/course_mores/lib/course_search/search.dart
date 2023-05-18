@@ -27,12 +27,22 @@ class Search extends StatelessWidget {
     return Obx(
       () => Container(
         decoration: BoxDecoration(
-          image: DecorationImage(
-              image: AssetImage('assets/background-pink.jpg'),
-              // image: AssetImage('assets/background.gif'),
-              // image: AssetImage('assets/blue_background.gif'),
-              opacity: 1,
-              fit: BoxFit.cover),
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: const [
+              Color.fromARGB(255, 58, 162, 206),
+              Color.fromARGB(232, 255, 218, 218),
+            ],
+            stops: const [0.0, 0.7],
+          ),
+
+          // image: DecorationImage(
+          //     image: AssetImage('assets/background-pink.jpg'),
+          //     // image: AssetImage('assets/background.gif'),
+          //     // image: AssetImage('assets/blue_background.gif'),
+          //     opacity: 1,
+          //     fit: BoxFit.cover),
         ),
         child: Scaffold(
           backgroundColor: Colors.transparent,
@@ -199,9 +209,9 @@ displayNoSearchResultScreen() {
       children: const [
         Text("🔍", style: TextStyle(fontSize: 70)),
         SizedBox(height: 20),
-        Text("검색결과가 없어요."),
+        Text("검색 결과가 없어요.", style: TextStyle(color: Colors.white)),
         SizedBox(height: 10),
-        Text("다른 조건으로 검색해볼까요?"),
+        Text("다른 조건으로 검색해볼까요?", style: TextStyle(color: Colors.white)),
       ],
     ),
   );
