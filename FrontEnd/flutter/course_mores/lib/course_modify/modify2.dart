@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import '../controller/make_controller.dart';
 import 'package:geocoding/geocoding.dart' as geocoding;
 import '../auth/auth_dio.dart';
+import 'package:image_picker/image_picker.dart';
 
 class CourseModify extends StatefulWidget {
   final String? courseId;
@@ -132,6 +133,14 @@ class _CourseModifyState extends State<CourseModify> {
         String gugun = detail['gugun'] ?? ''; // Null일 경우 빈 문자열로 대체
         String roadViewImage =
             detail['roadViewImage'] ?? ''; // Null일 경우 빈 문자열로 대체
+        // List<String> locationImageList =
+        //     (detail['locationImageList'] as List<dynamic>)
+        //         .cast<String>(); // locationImageList 추출
+        List<XFile> locationImageList =
+            (detail['locationImageList'] as List<dynamic>)
+                .cast<String>()
+                .map((imagePath) => XFile(imagePath))
+                .toList();
 
         // LocationData 객체 생성
         LocationData locationData = LocationData(
@@ -146,7 +155,8 @@ class _CourseModifyState extends State<CourseModify> {
           sido: sido,
           gugun: gugun,
           roadViewImage: roadViewImage,
-          temporaryImageList: [], // 임시 이미지 리스트는 초기화
+          // temporaryImageList: [], // 임시 이미지 리스트는 초기화
+          temporaryImageList: locationImageList, // locationImageList 할당
         );
 
         locationData.courseLocationId = courseLocationId;
@@ -615,6 +625,7 @@ class Item extends StatelessWidget {
                               print('Content: ${data.content}');
                               print('Sido: ${data.sido}');
                               print('Gugun: ${data.gugun}');
+                              print('isUpdate: ${data.isUpdate}');
                               // 페이지 이동
                               Navigator.push(
                                 context,
