@@ -25,7 +25,9 @@ class _MakeState extends State<MakeStart> {
       title: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
-        children: const [Text('코스 작성하기', style: TextStyle(color: Colors.white))],
+        children: const [
+          Text('코스 작성하기', style: TextStyle(color: Colors.white))
+        ],
       ),
       headerWidget: headerWidget(context),
       headerExpandedHeight: 0.3,
@@ -39,7 +41,10 @@ class _MakeState extends State<MakeStart> {
                 Center(
                     child: Column(
                   children: [
-                    Lottie.asset('assets/course_plan.json', fit: BoxFit.fitWidth, width: 300),
+                    // Lottie.asset('assets/course_plan.json',
+                    //     fit: BoxFit.fitWidth, width: 300),
+                    Lottie.asset('assets/map.json',
+                        fit: BoxFit.fitWidth, width: 300),
                     Text(
                       '코스를 작성해볼까요?',
                       style: TextStyle(fontSize: 20),
@@ -47,7 +52,8 @@ class _MakeState extends State<MakeStart> {
                     Padding(
                       padding: EdgeInsets.all(40),
                       child: FilledButton(
-                        child: Text('코스 작성하러 가기', style: TextStyle(fontSize: 16)),
+                        child:
+                            Text('코스 작성하러 가기', style: TextStyle(fontSize: 16)),
                         onPressed: () {
                           // 컨트롤러 인스턴스 초기화
                           courseController.title.value = '';
@@ -69,7 +75,8 @@ class _MakeState extends State<MakeStart> {
                           print(courseController.themeIdList);
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => CourseMake()),
+                            MaterialPageRoute(
+                                builder: (context) => CourseMake()),
                           );
                         },
                       ),
@@ -107,9 +114,11 @@ Widget headerWidget(BuildContext context) {
       children: const [
         Text("코스 작성하기", style: TextStyle(fontSize: 25, color: Colors.white)),
         SizedBox(height: 30),
-        Text("나만의 코스를 작성하고", style: TextStyle(fontSize: 16, color: Colors.white)),
+        Text("나만의 코스를 작성하고",
+            style: TextStyle(fontSize: 16, color: Colors.white)),
         SizedBox(height: 10),
-        Text("다른 사람들과 공유할 수 있어요", style: TextStyle(fontSize: 16, color: Colors.white)),
+        Text("다른 사람들과 공유할 수 있어요",
+            style: TextStyle(fontSize: 16, color: Colors.white)),
       ],
     ),
   );
