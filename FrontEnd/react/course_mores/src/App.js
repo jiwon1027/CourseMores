@@ -1,9 +1,9 @@
-// import QR from "../public/coursemores_qr.png";
 import "./App.css";
-import PrivacyPolicy from "./PrivacyPolicy";
+import Home from "./Components/Home";
+import PrivacyPolicy from "./Components/PrivacyPolicy";
 import { BrowserRouter as Router, Link, Route, Routes } from "react-router-dom";
 
-export default function App() {
+function App() {
   return (
     <div className="App">
       <Router>
@@ -16,15 +16,4 @@ export default function App() {
   );
 }
 
-function Home() {
-  return (
-    <header className="App-header">
-      <img src="coursemores_qr.png" className="App-QR" alt="logo" width='300px' />
-      <nav>
-        <br/>
-        <Link to="/policy">개인정보 처리방침</Link>
-      </nav>
-    </header>
-  );
-}
-
+export default App;
