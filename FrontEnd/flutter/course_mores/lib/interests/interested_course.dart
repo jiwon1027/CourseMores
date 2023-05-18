@@ -30,8 +30,9 @@ class _InterestedCourseState extends State<InterestedCourse> {
     final dio = await authDio();
     final response = await dio.get('interest');
     List<dynamic> data = response.data['myInterestCourseList'];
-    interestController
-        .saveInterestedCourse(data.map((item) => Map<String, Object>.from(item['coursePreviewResDto'])).toList());
+    interestController.saveInterestedCourse(data
+        .map((item) => Map<String, Object>.from(item['coursePreviewResDto']))
+        .toList());
 
     setState(() {
       courseList = interestController.interestedCourse;
@@ -72,6 +73,7 @@ class MyInterestedCourse extends StatelessWidget {
     return Container(
       color: Colors.white,
       child: ListView.builder(
+        controller: scrollController,
         shrinkWrap: true,
         scrollDirection: Axis.vertical,
         padding: EdgeInsets.all(8),
@@ -79,7 +81,8 @@ class MyInterestedCourse extends StatelessWidget {
         itemBuilder: (BuildContext context, int index) {
           return InkWell(
             onTap: () async {
-              int courseId = (interestController.interestedCourse[index]['courseId'] as int);
+              int courseId = (interestController.interestedCourse[index]
+                  ['courseId'] as int);
               await searchController.changeNowCourseId(courseId: courseId);
               await detailController.changeNowIndex(courseId);
               await detailController.getCourseInfo('코스 소개');
@@ -92,13 +95,16 @@ class MyInterestedCourse extends StatelessWidget {
             child: Container(
               margin: EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 5),
               padding: EdgeInsets.all(10),
-              decoration: const BoxDecoration(boxShadow: [
-                BoxShadow(
-                    color: Color.fromARGB(255, 211, 211, 211),
-                    blurRadius: 10.0,
-                    spreadRadius: 1.0,
-                    offset: Offset(3, 3)),
-              ], color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(10))),
+              decoration: const BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                        color: Color.fromARGB(255, 211, 211, 211),
+                        blurRadius: 10.0,
+                        spreadRadius: 1.0,
+                        offset: Offset(3, 3)),
+                  ],
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(Radius.circular(10))),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -108,7 +114,8 @@ class MyInterestedCourse extends StatelessWidget {
                           child: Row(children: [
                             ThumbnailImage(index: index),
                             SizedBox(width: 10),
-                            Expanded(child: MyInterestedCourseList(index: index)),
+                            Expanded(
+                                child: MyInterestedCourseList(index: index)),
                           ]))),
                 ],
               ),
@@ -117,6 +124,84 @@ class MyInterestedCourse extends StatelessWidget {
         },
       ),
     );
+
+    // return SingleChildScrollView(
+    //   child: Padding(
+    //     padding: const EdgeInsets.all(8.0),
+    //     child: Column(
+    //       children: List.generate(
+    //         interestController.interestedCourse.length,
+    //         (index) {
+    //           return Card(
+    //             margin: EdgeInsets.fromLTRB(10, 10, 10, 5),
+    //             shape: RoundedRectangleBorder(
+    //                 borderRadius: BorderRadius.circular(10)),
+    //             child: Column(
+    //               crossAxisAlignment: CrossAxisAlignment.start,
+    //               children: [
+    //                 Row(
+    //                   children: [
+    //                     Expanded(
+    //                       child: InkWell(
+    //                         onTap: () async {
+    //                           int courseId = (interestController
+    //                               .interestedCourse[index]['courseId'] as int);
+
+    //                           await searchController.changeNowCourseId(
+    //                               courseId: courseId);
+
+    //                           await detailController.getCourseInfo('코스 소개');
+    //                           await detailController.getIsLikeCourse();
+    //                           await detailController.getIsInterestCourse();
+    //                           await detailController.getCourseDetailList();
+
+    //                           Get.to(() => detail.Detail());
+    //                         },
+    //                         child: Container(
+    //                           margin: EdgeInsets.only(
+    //                               left: 10, right: 10, top: 10, bottom: 5),
+    //                           padding: EdgeInsets.all(10),
+    //                           decoration: const BoxDecoration(
+    //                               boxShadow: [
+    //                                 BoxShadow(
+    //                                     color:
+    //                                         Color.fromARGB(255, 211, 211, 211),
+    //                                     blurRadius: 10.0,
+    //                                     spreadRadius: 1.0,
+    //                                     offset: Offset(3, 3)),
+    //                               ],
+    //                               color: Colors.white,
+    //                               borderRadius:
+    //                                   BorderRadius.all(Radius.circular(10))),
+    //                           child: Row(
+    //                             mainAxisAlignment:
+    //                                 MainAxisAlignment.spaceBetween,
+    //                             children: [
+    //                               Expanded(
+    //                                   child: SizedBox(
+    //                                       width: 300,
+    //                                       child: Row(children: [
+    //                                         ThumbnailImage(index: index),
+    //                                         SizedBox(width: 10),
+    //                                         Expanded(
+    //                                             child: MyInterestedCourseList(
+    //                                                 index: index)),
+    //                                       ]))),
+    //                             ],
+    //                           ),
+    //                         ),
+    //                       ),
+    //                     ),
+    //                   ],
+    //                 ),
+    //               ],
+    //             ),
+    //           );
+    //         },
+    //       ),
+    //     ),
+    //   ),
+    // );
   }
 }
 
@@ -138,14 +223,16 @@ class MyInterestedCourseList extends StatelessWidget {
                   Expanded(
                     child: Text(
                       "${interestController.interestedCourse[index]['title']}",
-                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
                       softWrap: true,
                     ),
                   ),
                   SizedBox(width: 10),
-                  if (interestController.interestedCourse[index]["visited"] == true)
+                  if (interestController.interestedCourse[index]["visited"] ==
+                      true)
                     Container(
                       decoration: BoxDecoration(
                         color: Color.fromARGB(255, 107, 211, 66),
@@ -155,9 +242,12 @@ class MyInterestedCourseList extends StatelessWidget {
                         children: const [
                           Padding(
                             padding: EdgeInsets.all(4.0),
-                            child: Icon(Icons.check, size: 12, color: Colors.white),
+                            child: Icon(Icons.check,
+                                size: 12, color: Colors.white),
                           ),
-                          Text("방문", style: TextStyle(color: Colors.white, fontSize: 10)),
+                          Text("방문",
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 10)),
                           SizedBox(width: 7),
                         ],
                       ),
@@ -168,7 +258,8 @@ class MyInterestedCourseList extends StatelessWidget {
             if (interestController.interestedCourse[index]["interest"] == true)
               Icon(Icons.bookmark, size: 24, color: Colors.green[800]),
             if (interestController.interestedCourse[index]["interest"] == false)
-              Icon(Icons.bookmark_outline_rounded, size: 24, color: Colors.green[800]),
+              Icon(Icons.bookmark_outline_rounded,
+                  size: 24, color: Colors.green[800]),
           ],
         ),
         SizedBox(height: 2),
@@ -221,7 +312,9 @@ class MyInterestedCourseList extends StatelessWidget {
                   children: [
                     Icon(Icons.favorite, size: 14, color: Colors.pink[300]),
                     SizedBox(width: 3),
-                    Text(interestController.interestedCourse[index]["likeCount"].toString(),
+                    Text(
+                        interestController.interestedCourse[index]["likeCount"]
+                            .toString(),
                         style: TextStyle(fontSize: 12)),
                   ],
                 ),
@@ -230,7 +323,10 @@ class MyInterestedCourseList extends StatelessWidget {
                   children: [
                     Icon(Icons.comment, size: 14),
                     SizedBox(width: 3),
-                    Text(interestController.interestedCourse[index]["commentCount"].toString(),
+                    Text(
+                        interestController.interestedCourse[index]
+                                ["commentCount"]
+                            .toString(),
                         style: TextStyle(fontSize: 12)),
                   ],
                 ),
@@ -253,7 +349,8 @@ class ThumbnailImage extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
       child: CachedNetworkImage(
-        imageUrl: interestController.interestedCourse[index]['image'].toString(),
+        imageUrl:
+            interestController.interestedCourse[index]['image'].toString(),
         placeholder: (context, url) => CircularProgressIndicator(),
         errorWidget: (context, url, error) => Icon(Icons.error),
         height: 80,
@@ -283,9 +380,11 @@ Widget headerWidget(BuildContext context) {
       children: const [
         Text("관심 등록한 코스", style: TextStyle(fontSize: 25, color: Colors.white)),
         SizedBox(height: 30),
-        Text("나중에 가고 싶은 코스가 있다면", style: TextStyle(fontSize: 14, color: Colors.white)),
+        Text("나중에 가고 싶은 코스가 있다면",
+            style: TextStyle(fontSize: 14, color: Colors.white)),
         SizedBox(height: 10),
-        Text("관심 등록으로 저장해두고 볼 수 있어요", style: TextStyle(fontSize: 14, color: Colors.white)),
+        Text("관심 등록으로 저장해두고 볼 수 있어요",
+            style: TextStyle(fontSize: 14, color: Colors.white)),
       ],
     ),
   );
