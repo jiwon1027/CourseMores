@@ -76,11 +76,13 @@ public class CourseServiceImpl implements CourseService {
                 .collect(Collectors.groupingBy(Comment::getCourse, Collectors.counting()));
         interests.forEach(interest -> {
             Course course = interest.getCourse();
+            if(course.getDeleteTime() != null || course.getUser().getDeleteTime() != null) return;
             long cnt = map.getOrDefault(course, 0L);
             map.put(course, ++cnt);
         });
         courseLikes.forEach(courseLike -> {
             Course course = courseLike.getCourse();
+            if(course.getDeleteTime() != null || course.getUser().getDeleteTime() != null) return;
             long cnt = map.getOrDefault(course, 0L);
             map.put(course, ++cnt);
         });

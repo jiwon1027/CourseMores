@@ -2,21 +2,14 @@ package com.moham.coursemores.service.impl;
 
 import com.moham.coursemores.common.exception.CustomErrorCode;
 import com.moham.coursemores.common.exception.CustomException;
-import com.moham.coursemores.domain.Comment;
-import com.moham.coursemores.domain.CommentLike;
-import com.moham.coursemores.domain.Course;
-import com.moham.coursemores.domain.CourseLike;
-import com.moham.coursemores.domain.User;
-import com.moham.coursemores.repository.CommentLikeRepository;
-import com.moham.coursemores.repository.CommentRepository;
-import com.moham.coursemores.repository.CourseLikeRepository;
-import com.moham.coursemores.repository.CourseRepository;
-import com.moham.coursemores.repository.UserRepository;
+import com.moham.coursemores.domain.*;
+import com.moham.coursemores.repository.*;
 import com.moham.coursemores.service.LikeService;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -46,6 +39,8 @@ public class LikeServiceImpl implements LikeService {
         boolean alarm;
         if (courseLike.isPresent()) {
             // 코스 좋아요 객체가 존재한다면 좋아요 등록일시를 설정해준다.
+            if(courseLike.get().isFlag())
+                return false;
             courseLike.get().register();
             alarm = false;
         } else {
@@ -66,14 +61,16 @@ public class LikeServiceImpl implements LikeService {
     @Transactional
     public void deleteLikeCourse(Long userId, Long courseId) {
         Course course = courseRepository.findByIdAndDeleteTimeIsNull(courseId)
-                .orElseThrow(() -> new CustomException(courseId,CustomErrorCode.COURSE_NOT_FOUND));
+                        .orElseThrow(() -> new CustomException(courseId,CustomErrorCode.COURSE_NOT_FOUND));
 
         // 코스 좋아요 객체의 해제일시를 설정해준다.
         CourseLike courseLike = courseLikeRepository.findByUserIdAndCourseId(userId, courseId)
                 .orElseThrow(() -> new CustomException(userId,courseId,CustomErrorCode.LIKE_COURSE_NOT_FOUND));
-        courseLike.release();
 
-        course.decreaseLikeCount();
+        if(courseLike.isFlag()){
+            courseLike.release();
+            course.decreaseLikeCount();
+        }
     }
 
     @Override
@@ -93,6 +90,8 @@ public class LikeServiceImpl implements LikeService {
 
         if (commentLike.isPresent()) {
             // 댓글 좋아요 객체가 존재한다면 좋아요 등록일시를 설정해준다.
+            if(commentLike.get().isFlag())
+                return;
             commentLike.get().register();
         } else {
             // 댓글 좋아요 객체가 존재하지 않으면 새로 생성해준다.
@@ -117,10 +116,12 @@ public class LikeServiceImpl implements LikeService {
         // 댓글 좋아요 객체의 해제일시를 설정해준다.
         CommentLike commentLike = commentLikeRepository.findByUserIdAndCommentId(userId, commentId)
                 .orElseThrow(() -> new CustomException(userId,commentId,CustomErrorCode.LIKE_COMMENT_NOT_FOUND));
-        commentLike.release();
 
-        // 댓글의 좋아요수 감소
-        comment.decreaseLikeCount();
+        if(commentLike.isFlag()){
+            commentLike.release();
+            // 댓글의 좋아요수 감소
+            comment.decreaseLikeCount();
+        }
     }
 
 }
