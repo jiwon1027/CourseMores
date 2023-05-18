@@ -21,7 +21,7 @@ class AuthController extends GetxController {
     pageNum.changePageNum(0);
     tokenStorage.clearTokens();
     userInfo.clearUserInfo();
-    loginCheck.clearFirtLogin();
+    loginCheck.clearFirstLogin();
   }
 }
 
@@ -257,11 +257,11 @@ class LoginCheck extends GetxController {
   void changeFirstLogin(bool changeTo) async {
     isFirstLogin = changeTo;
     final prefs = await SharedPreferences.getInstance();
-    prefs.setBool('isFirstLogin', isFirstLogin);
+    prefs.setBool('isFirstLogin', changeTo);
     // print('firstLogin == $isFirstLogin');
   }
 
-  void clearFirtLogin() async {
+  void clearFirstLogin() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('isFirstLogin');
     isFirstLogin = true;
