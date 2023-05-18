@@ -59,7 +59,7 @@ class SignUp extends StatelessWidget {
       fullyStretchable: false,
       expandedBody: headerWidget(context),
       backgroundColor: Colors.white,
-      appBarColor: Color.fromARGB(255, 95, 207, 255),
+      appBarColor: Color.fromARGB(255, 80, 170, 208),
     );
     // return Scaffold(
     //   resizeToAvoidBottomInset: false,

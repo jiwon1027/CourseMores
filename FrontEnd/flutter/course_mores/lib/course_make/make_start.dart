@@ -83,7 +83,7 @@ class _MakeState extends State<MakeStart> {
       ],
       fullyStretchable: false,
       backgroundColor: Colors.white,
-      appBarColor: Color.fromARGB(255, 95, 207, 255),
+      appBarColor: Color.fromARGB(255, 80, 170, 208),
     );
   }
 }

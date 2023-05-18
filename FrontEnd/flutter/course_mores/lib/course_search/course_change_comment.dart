@@ -1,4 +1,5 @@
 import 'package:coursemores/course_search/search.dart';
+import 'package:draggable_home/draggable_home.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -11,52 +12,52 @@ class ChangeComment extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.navigate_before, color: Colors.black),
-          onPressed: () {
-            Get.back();
-          },
-        ),
-        title: RichText(
-            text: TextSpan(
-          children: const [
-            WidgetSpan(child: Icon(Icons.edit, color: Colors.black, size: 20)),
-            WidgetSpan(child: SizedBox(width: 5)),
-            TextSpan(text: '코멘트 작성하기', style: TextStyle(fontSize: 18, color: Colors.black)),
-          ],
-        )),
-        actions: [
-          IconButton(
-              onPressed: () {
-                Get.back();
-              },
-              icon: Icon(Icons.close, color: Colors.black)),
-        ],
+    return DraggableHome(
+      actions: [
+        IconButton(onPressed: () {}, icon: Icon(Icons.settings, color: Colors.transparent)),
+      ],
+      title: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: const [Text('코멘트 수정하기', style: TextStyle(color: Colors.white))],
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              SizedBox(height: 40),
-              SliderPeople(),
-              AddImage(),
-              AddText(),
-              SizedBox(height: 10),
-              ElevatedButton(
-                onPressed: () async {
-                  await detailController.changeComment(index);
-                  Get.back();
-                },
-                child: Text("저장하기"),
-              ),
-            ],
+      headerWidget: headerWidget(context),
+      headerExpandedHeight: 0.3,
+      body: [
+        SingleChildScrollView(
+          child: Container(
+            padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                SizedBox(height: 40),
+                SliderPeople(),
+                AddImage(),
+                AddText(),
+                SizedBox(height: 30),
+                Row(
+                  children: [
+                    CancleConfirmButton(),
+                    SizedBox(width: 20),
+                    Expanded(
+                      child: FilledButton(
+                        onPressed: () async {
+                          await detailController.changeComment(index);
+                          Get.back();
+                        },
+                        child: Text("저장하기"),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
-      ),
+      ],
+      fullyStretchable: false,
+      backgroundColor: Colors.white,
+      appBarColor: Color.fromARGB(255, 80, 170, 208),
     );
   }
 }
@@ -209,5 +210,75 @@ class SliderPeople extends StatelessWidget {
             SizedBox(height: 30),
           ],
         ));
+  }
+}
+
+Widget headerWidget(BuildContext context) {
+  return Container(
+    decoration: BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: const [
+          Color.fromARGB(255, 0, 90, 129),
+          Color.fromARGB(232, 255, 218, 218),
+        ],
+        stops: const [0.0, 0.9],
+      ),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: const [
+        Text("코멘트 수정하기", style: TextStyle(fontSize: 25, color: Colors.white)),
+        SizedBox(height: 30),
+        Text("고치고 싶은 코멘트가 있다면", style: TextStyle(fontSize: 16, color: Colors.white)),
+        SizedBox(height: 10),
+        Text("사진과 글, 방문한 인원 수 등을 변경할 수 있어요", style: TextStyle(fontSize: 16, color: Colors.white)),
+      ],
+    ),
+  );
+}
+
+class CancleConfirmButton extends StatelessWidget {
+  const CancleConfirmButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: FilledButton(
+        style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.black12)),
+        child: Text("취소하기", style: TextStyle(color: Colors.black)),
+        onPressed: () async {
+          bool confirmed = await showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text("코멘트 수정 나가기", style: TextStyle(fontSize: 16)),
+                content: Text("지금 나가면 저장이 되지 않아요! 정말로 취소하시겠어요?", style: TextStyle(fontSize: 14)),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(false); // 취소 버튼을 누를 때 false 반환
+                    },
+                    child: Text("취소"),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(true); // 확인 버튼을 누를 때 true 반환
+                    },
+                    child: Text("확인"),
+                  ),
+                ],
+              );
+            },
+          );
+
+          if (confirmed == true) {
+            Get.back();
+          }
+        },
+      ),
+    );
   }
 }

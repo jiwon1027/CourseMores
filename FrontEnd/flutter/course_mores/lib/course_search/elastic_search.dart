@@ -30,7 +30,7 @@ class SearchScreen extends StatelessWidget {
                       decoration: InputDecoration(
                         contentPadding: EdgeInsets.symmetric(vertical: 24), // TextField의 높이 조정
                         hintText: "코스를 검색해보세요",
-                        hintStyle: TextStyle(color: Colors.grey),
+                        hintStyle: TextStyle(color: Colors.grey, fontSize: 16),
                         prefixIcon: IconButton(onPressed: () => Get.back(), icon: Icon(Icons.arrow_back_rounded)),
                         suffixIcon: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -59,7 +59,7 @@ class SearchScreen extends StatelessWidget {
                           ],
                         ),
                       ),
-                      style: TextStyle(fontSize: 18, color: Colors.black),
+                      style: TextStyle(fontSize: 16, color: Colors.black),
                       onSubmitted: controlSearching,
                     ),
                   ),
@@ -80,7 +80,7 @@ class SearchScreen extends StatelessWidget {
                   var key = keys[index];
                   return ListTile(
                     leading: ElasticIcon(value: searchController.elasticMap[key][0]),
-                    title: Text(key),
+                    title: Text(key, style: TextStyle(fontSize: 14)),
                     onTap: () {
                       searchController.changePage(page: 0);
                       FocusScope.of(context).unfocus(); // 키보드 닫기
