@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 // import 'make2.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../controller/make_controller.dart';
+import '../course_search/search.dart';
 // import 'package:dio/dio.dart';
 
 CourseController courseController = Get.find<CourseController>();
@@ -407,6 +408,9 @@ class _ModifyStepperState extends State<ModifyStepper> {
                             print(courseController.hashtagList);
                             print(courseController.themeIdList);
                             // Navigator를 이용해 적절한 이동 수행
+
+                            detailController.getCourseInfo('코스 소개');
+
                             Navigator.of(context).pop();
                             Navigator.pop(context);
                             Navigator.pop(context);

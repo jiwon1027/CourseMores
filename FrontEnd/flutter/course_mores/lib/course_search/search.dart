@@ -367,7 +367,7 @@ class CourseSearchList extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Icon(Icons.map, size: 12, color: Colors.black54),
+                Icon(Icons.location_pin, size: 12, color: Colors.black54),
                 SizedBox(width: 3),
                 Text(
                   "${searchController.courseList[index]["sido"].toString()} ${searchController.courseList[index]["gugun"].toString()}",
