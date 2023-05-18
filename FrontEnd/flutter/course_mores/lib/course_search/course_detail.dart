@@ -420,10 +420,8 @@ class DetailAddressPeopleTime extends StatelessWidget {
           "${detailController.nowCourseInfo['sido']} ${detailController.nowCourseInfo['gugun']}",
           style: TextStyle(fontSize: 12, color: Colors.black38),
         ),
-        // 추천인원 수가 0이 아니면 보여짐
-        if (detailController.nowCourseInfo['people'] != 0) DetailPeople(),
-        // 소요시간이 0이 아니면 보여짐
-        if (detailController.nowCourseInfo['time'] != 0) DetailTime(),
+        DetailPeople(),
+        DetailTime(),
       ],
     );
   }
@@ -456,9 +454,12 @@ class DetailTime extends StatelessWidget {
         Icon(Icons.timer, size: 14, color: Colors.black38),
         SizedBox(width: 3),
         Text(
-          "${detailController.nowCourseInfo['time']}시간",
-          style: TextStyle(fontSize: 12, color: Colors.black38),
-        ),
+            detailController.nowCourseInfo['time'] <= 1
+                ? "1시간 이하"
+                : detailController.nowCourseInfo['time'] >= 5
+                    ? "4시간 이상"
+                    : "${detailController.nowCourseInfo['time'] - 1}시간",
+            style: TextStyle(fontSize: 12, color: Colors.black38)),
       ],
     );
   }
@@ -475,9 +476,12 @@ class DetailPeople extends StatelessWidget {
         Icon(Icons.people, size: 14, color: Colors.black38),
         SizedBox(width: 3),
         Text(
-          "${detailController.nowCourseInfo['people']}명",
-          style: TextStyle(fontSize: 12, color: Colors.black38),
-        ),
+            detailController.nowCourseInfo['people'] <= 0
+                ? "상관 없음"
+                : detailController.nowCourseInfo['people'] >= 5
+                    ? "5명 이상"
+                    : "${detailController.nowCourseInfo['people']}명",
+            style: TextStyle(fontSize: 12, color: Colors.black38)),
       ],
     );
   }

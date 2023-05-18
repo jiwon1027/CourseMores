@@ -103,42 +103,44 @@ class _MyPageState extends State<MyPage> {
   }
 
   buttonBar() {
-    return SizedBox(
-      width: 220,
-      height: 60,
-      child: AnimatedButtonBar(
-          radius: 8.0,
-          padding: EdgeInsets.all(8),
-          // backgroundColor: Colors.blueGrey.shade50,
-          backgroundColor: Colors.blueGrey.shade50,
-          foregroundColor: Colors.lightBlue,
-          invertedSelection: true,
-          children: [
-            ButtonBarEntry(
-                child: Text(
-                  '내 코스',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-                ),
-                onTap: () {
-                  myPageController.statusToCourse();
-                  setState(() {
-                    status = myPageController.status;
-                  });
-                  print(status);
-                }),
-            ButtonBarEntry(
-                child: Text(
-                  '내 코멘트',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-                ),
-                onTap: () {
-                  myPageController.statusToReview();
-                  setState(() {
-                    status = myPageController.status;
-                  });
-                  print(status);
-                }),
-          ]),
+    return Center(
+      child: SizedBox(
+        width: 220,
+        height: 60,
+        child: AnimatedButtonBar(
+            radius: 8.0,
+            padding: EdgeInsets.all(8),
+            // backgroundColor: Colors.blueGrey.shade50,
+            backgroundColor: Colors.blueGrey.shade50,
+            foregroundColor: Colors.lightBlue,
+            invertedSelection: true,
+            children: [
+              ButtonBarEntry(
+                  child: Text(
+                    '내 코스',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                  ),
+                  onTap: () {
+                    myPageController.statusToCourse();
+                    setState(() {
+                      status = myPageController.status;
+                    });
+                    print(status);
+                  }),
+              ButtonBarEntry(
+                  child: Text(
+                    '내 코멘트',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                  ),
+                  onTap: () {
+                    myPageController.statusToReview();
+                    setState(() {
+                      status = myPageController.status;
+                    });
+                    print(status);
+                  }),
+            ]),
+      ),
     );
   }
 
@@ -165,7 +167,6 @@ class _MyPageState extends State<MyPage> {
                 profileBox(),
                 buttonBar(),
                 if (status == 'course') MyCourse(),
-                // ),
                 if (status == 'review') my_review.DetailTapCourseCommentsListSection(commentsList: reviewList),
               ])),
         )
@@ -298,21 +299,25 @@ class MyCourseList extends StatelessWidget {
         SizedBox(height: 5),
         Row(
           children: [
-            Icon(Icons.map, size: 12, color: Colors.black54),
+            Icon(Icons.map, size: 12, color: Colors.black38),
             SizedBox(width: 3),
             Text(
               "${myPageController.myCourse[index]["sido"].toString()} ${myPageController.myCourse[index]["gugun"].toString()}",
-              style: TextStyle(fontSize: 10, color: Colors.black54),
+              style: TextStyle(fontSize: 10, color: Colors.black38),
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
               softWrap: true,
             ),
             SizedBox(width: 8),
-            Icon(Icons.people, size: 12, color: Colors.black54),
+            Icon(Icons.people, size: 12, color: Colors.black38),
             SizedBox(width: 3),
             Text(
-              "${myPageController.myCourse[index]['people'].toString()}명",
-              style: TextStyle(fontSize: 10, color: Colors.black54),
+              (myPageController.myCourse[index]['people']! as int) <= 0
+                  ? "상관 없음"
+                  : (myPageController.myCourse[index]['people']! as int) >= 5
+                      ? "5명 이상"
+                      : "${myPageController.myCourse[index]['people']}명",
+              style: TextStyle(fontSize: 10, color: Colors.black38),
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
               softWrap: true,
