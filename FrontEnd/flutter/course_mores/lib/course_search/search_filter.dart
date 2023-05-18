@@ -54,7 +54,7 @@ class SearchFilter extends StatelessWidget {
                         SizedBox(height: 10),
                         SearchFilterRegion(),
                         SizedBox(height: 30),
-                        Text("이런 테마는 어때요? 😊", style: TextStyle(fontSize: 18)),
+                        Text("테마를 선택해보세요 😊", style: TextStyle(fontSize: 18)),
                         // SizedBox(height: 10),
                         SearchFilterTheme(),
                         SizedBox(height: 20),
@@ -69,7 +69,7 @@ class SearchFilter extends StatelessWidget {
           fullyStretchable: false,
           expandedBody: headerWidget(context),
           backgroundColor: Colors.white,
-          appBarColor: Color.fromARGB(255, 95, 207, 255),
+          appBarColor: Color.fromARGB(255, 80, 170, 208),
         ));
   }
 }

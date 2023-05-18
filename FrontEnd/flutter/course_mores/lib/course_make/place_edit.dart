@@ -15,8 +15,7 @@ class EditItemPage extends StatefulWidget {
   final LocationData locationData;
 
   @override
-  State<EditItemPage> createState() =>
-      _EditItemPageState(locationData: locationData);
+  State<EditItemPage> createState() => _EditItemPageState(locationData: locationData);
 }
 
 class _EditItemPageState extends State<EditItemPage> {
@@ -43,8 +42,7 @@ class _EditItemPageState extends State<EditItemPage> {
     List<XFile> savedImages = _itemData.getSavedImageList();
     if (_addImageKey.currentState != null) {
       // Make sure currentState is not null before calling getTemporaryImageList
-      locationData.saveImageList(_addImageKey.currentState!
-          .getTemporaryImageList()); // Save images in initState
+      locationData.saveImageList(_addImageKey.currentState!.getTemporaryImageList()); // Save images in initState
     }
   }
 
@@ -60,10 +58,7 @@ class _EditItemPageState extends State<EditItemPage> {
       appBar: AppBar(
         // 없어도 <- 모양의 뒤로가기가 기본으로 있으나 < 모양으로 바꾸려고 추가함
         leading: IconButton(
-          icon: const Icon(
-            Icons.navigate_before,
-            color: Colors.black,
-          ),
+          icon: Icon(Icons.navigate_before, color: Colors.black),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -72,23 +67,11 @@ class _EditItemPageState extends State<EditItemPage> {
         title: RichText(
             text: const TextSpan(
           children: [
-            WidgetSpan(
-              child: Icon(
-                Icons.edit_note,
-                color: Colors.black,
-              ),
-            ),
-            WidgetSpan(
-              child: SizedBox(
-                width: 5,
-              ),
-            ),
+            WidgetSpan(child: Icon(Icons.edit_note, color: Colors.black)),
+            WidgetSpan(child: SizedBox(width: 5)),
             TextSpan(
               text: '장소 추가 정보 작성',
-              style: TextStyle(
-                fontSize: 22,
-                color: Colors.black,
-              ),
+              style: TextStyle(fontSize: 22, color: Colors.black),
             ),
           ],
         )),
@@ -99,10 +82,7 @@ class _EditItemPageState extends State<EditItemPage> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              icon: const Icon(
-                Icons.close,
-                color: Colors.black,
-              )),
+              icon: Icon(Icons.close, color: Colors.black)),
         ],
       ),
       body: SingleChildScrollView(
@@ -131,7 +111,7 @@ class _EditItemPageState extends State<EditItemPage> {
               // AddText(textController: _textController),
               AddText(contentController: _contentController),
               SizedBox(height: 10),
-              ElevatedButton(
+              FilledButton(
                 onPressed: () {
                   final updatedLocationData = LocationData(
                     key: widget.locationData.key,
@@ -140,22 +120,15 @@ class _EditItemPageState extends State<EditItemPage> {
                     longitude: widget.locationData.longitude,
                     roadViewImage: widget.locationData.roadViewImage,
                     // numberOfImage: widget.locationData.numberOfImage,
-                    numberOfImage: _addImageKey.currentState!
-                        .getTemporaryImageList()
-                        .length,
+                    numberOfImage: _addImageKey.currentState!.getTemporaryImageList().length,
                     // numberOfImage: _imageList.length,
                     // numberOfImage: _imageUploaderState.getNumberOfImage(),
-                    title: _titleController.text.isNotEmpty
-                        ? _titleController.text
-                        : '',
-                    content: _contentController.text.isNotEmpty
-                        ? _contentController.text
-                        : '',
+                    title: _titleController.text.isNotEmpty ? _titleController.text : '',
+                    content: _contentController.text.isNotEmpty ? _contentController.text : '',
                     sido: widget.locationData.sido,
                     gugun: widget.locationData.gugun,
                     // temporaryImageList: _imageUploaderState._temporaryImageList,
-                    temporaryImageList:
-                        _addImageKey.currentState!.getTemporaryImageList(),
+                    temporaryImageList: _addImageKey.currentState!.getTemporaryImageList(),
                   );
                   _itemData.title = updatedLocationData.title;
                   _itemData.content = updatedLocationData.content;
@@ -166,8 +139,7 @@ class _EditItemPageState extends State<EditItemPage> {
                   //     updatedLocationData.temporaryImageList;
                   // 사용자가 "저장하기" 버튼을 눌렀을 때 임시 이미지 목록을 저장합니다.
                   // _itemData.saveImageList();
-                  _itemData.saveImageList(
-                      _addImageKey.currentState!.getTemporaryImageList());
+                  _itemData.saveImageList(_addImageKey.currentState!.getTemporaryImageList());
 
                   _itemData = updatedLocationData;
 
@@ -219,9 +191,8 @@ class _PlaceNameState extends State<PlaceName> {
   }
 
   Future<void> _getAddress() async {
-    final List<geocoding.Placemark> placemarks = await geocoding
-        .placemarkFromCoordinates(widget.latitude, widget.longitude,
-            localeIdentifier: 'ko');
+    final List<geocoding.Placemark> placemarks =
+        await geocoding.placemarkFromCoordinates(widget.latitude, widget.longitude, localeIdentifier: 'ko');
 
     if (placemarks.isNotEmpty) {
       final geocoding.Placemark place = placemarks.first;
@@ -232,8 +203,7 @@ class _PlaceNameState extends State<PlaceName> {
       final String administrativeArea = place.administrativeArea ?? '';
 
       setState(() {
-        _address =
-            '$administrativeArea $locality $subLocality $thoroughfare $subThoroughfare';
+        _address = '$administrativeArea $locality $subLocality $thoroughfare $subThoroughfare';
       });
     } else {
       setState(() {
@@ -246,17 +216,13 @@ class _PlaceNameState extends State<PlaceName> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text(
-          '장소 상세 내용',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-        ),
+        Text('장소 상세 내용', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+        SizedBox(height: 10),
         FractionallySizedBox(
           widthFactor: 0.95,
           child: Card(
             elevation: 4,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             child: Row(
               children: [
                 Expanded(
@@ -265,18 +231,11 @@ class _PlaceNameState extends State<PlaceName> {
                     children: [
                       Text(
                         widget.locationName,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: Colors.blue,
-                        ),
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.blue),
                       ),
                       SizedBox(height: 8),
                       // Text(_address),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
-                        child: Text(_address),
-                      ),
+                      Padding(padding: const EdgeInsets.only(left: 8.0), child: Text(_address)),
                     ],
                   ),
                 ),
@@ -286,12 +245,8 @@ class _PlaceNameState extends State<PlaceName> {
                     height: 120,
                     width: double.infinity,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(16),
-                        bottomRight: Radius.circular(16),
-                      ),
+                      borderRadius: BorderRadius.only(topRight: Radius.circular(16), bottomRight: Radius.circular(16)),
                       image: DecorationImage(
-                        // image: AssetImage('assets/img1.jpg'),
                         image: NetworkImage(_imgUrl),
                         fit: BoxFit.cover,
                       ),
@@ -321,7 +276,7 @@ class AddTitle extends StatelessWidget {
       children: [
         Text("요약 정보 (25자 이내)",
             style: TextStyle(
-              fontSize: 20,
+              fontSize: 18,
               fontWeight: FontWeight.w800,
             )),
         SizedBox(height: 10),
@@ -346,7 +301,7 @@ class AddTitle extends StatelessWidget {
             controller: _titleController,
             decoration: InputDecoration(
               border: InputBorder.none,
-              hintText: '장소에 대해 간략히 설명',
+              hintText: '장소에 대해 간략히 설명해주세요',
               prefixText: ' ',
               prefixStyle: TextStyle(color: Colors.transparent),
               hintStyle: TextStyle(color: Colors.grey),
@@ -373,7 +328,7 @@ class AddText extends StatelessWidget {
         Text(
           "장소에 대한 설명 📝",
           style: TextStyle(
-            fontSize: 20,
+            fontSize: 18,
             fontWeight: FontWeight.w800,
           ),
         ),
@@ -456,7 +411,7 @@ class _AddImageState extends State<AddImage> {
       children: [
         Text("이미지를 첨부해보세요 📷",
             style: TextStyle(
-              fontSize: 20,
+              fontSize: 18,
               fontWeight: FontWeight.w800,
             )),
         SizedBox(height: 10),
@@ -616,7 +571,7 @@ class _ImageUploaderState extends State<ImageUploader> {
       padding: EdgeInsets.all(20),
       child: Column(
         children: [
-          ElevatedButton(
+          FilledButton(
             onPressed: () {
               if (_temporaryImageList.length < 5) {
                 _showSelectionDialog(context);
@@ -643,9 +598,7 @@ class _ImageUploaderState extends State<ImageUploader> {
           SizedBox(height: 20),
           SizedBox(
             height: 80,
-            child: _temporaryImageList.isEmpty
-                ? Center(child: Text("이미지를 선택해주세요."))
-                : buildGridView(),
+            child: _temporaryImageList.isEmpty ? Center(child: Text("이미지를 선택해주세요.")) : buildGridView(),
           ),
         ],
       ),

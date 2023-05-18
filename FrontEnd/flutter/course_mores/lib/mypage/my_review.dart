@@ -28,7 +28,7 @@ class DetailTapCourseCommentsListSection extends StatelessWidget {
                     SizedBox(height: 20),
                     Text("아직 코멘트가 없어요."),
                     SizedBox(height: 10),
-                    Text("다른 사람의 코스에 댓글을 남겨보세요.")
+                    Text("다른 사람의 코스에 코멘트를 남겨보세요.")
                   ],
                 )),
           )
@@ -97,7 +97,7 @@ class DetailTapCourseCommentsListSection extends StatelessWidget {
                                               maxLines: 1,
                                             ),
                                           ),
-                                          Text(' 코스에 작성한 리뷰  ',
+                                          Text(' 코스에 작성한 코멘트  ',
                                               textAlign: TextAlign.left, style: TextStyle(fontSize: 12)),
                                         ],
                                       ),

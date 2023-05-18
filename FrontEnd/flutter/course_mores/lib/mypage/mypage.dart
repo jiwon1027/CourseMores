@@ -182,7 +182,7 @@ class _MyPageState extends State<MyPage> {
       ],
       fullyStretchable: false,
       backgroundColor: Colors.white,
-      appBarColor: Color.fromARGB(255, 95, 207, 255),
+      appBarColor: Color.fromARGB(255, 80, 170, 208),
     );
   }
 }
@@ -423,8 +423,8 @@ profileBox() {
                   child: Obx(
                     () => Center(
                         child: WidgetCircularAnimator(
-                      innerColor: Colors.purple.shade300,
-                      outerColor: Colors.pink.shade200,
+                      innerColor: Color.fromARGB(255, 0, 90, 129),
+                      outerColor: Color.fromARGB(232, 255, 131, 131),
                       child: Container(
                         decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.grey[200]),
                         child: CircleAvatar(

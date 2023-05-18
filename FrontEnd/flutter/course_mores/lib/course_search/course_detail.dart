@@ -66,7 +66,8 @@ class Detail extends StatelessWidget {
       ],
       fullyStretchable: false,
       backgroundColor: Colors.white,
-      appBarColor: Color.fromARGB(255, 95, 207, 255),
+      appBarColor: Color.fromARGB(255, 80, 170, 208),
+      // appBarColor: Color.fromARGB(255, 248, 182, 182),
     );
   }
 }
@@ -76,25 +77,6 @@ class DetailTapSwitcher extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // return SingleChildScrollView(
-    //   padding: EdgeInsets.symmetric(vertical: 50),
-    //   child: Center(
-    //     child: Column(
-    //       children: [
-    //         AdvancedSegment(
-    //           controller: detailController.selectedSegment,
-    //           segments: detailController.segments,
-    //           backgroundColor: Color.fromARGB(255, 228, 220, 255),
-    //           activeStyle: TextStyle(
-    //             color: Color.fromARGB(255, 93, 0, 255),
-    //             fontWeight: FontWeight.w700,
-    //             fontFamily: 'KyoboHandwriting2020pdy',
-    //           ),
-    //         ),
-    //       ],
-    //     ),
-    //   ),
-    // );
     return SingleChildScrollView(
       padding: EdgeInsets.symmetric(vertical: 50),
       child: Center(
@@ -122,29 +104,13 @@ class DetailTaps extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // commentScrollController.addListener(() {
-    //   if (commentScrollController.position.pixels == commentScrollController.position.maxScrollExtent) {
-    //     print("불러오기");
-    //     // 스크롤이 리스트의 끝까지 도달하면 다음 검색 결과 호출
-    //     detailController.getNextCommentResults();
-    //   }
-    // });
     return Container(
       margin: EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
       padding: EdgeInsets.all(10),
-      // decoration: BoxDecoration(
-      //   boxShadow: const [
-      //     BoxShadow(
-      //         color: Color.fromARGB(255, 211, 211, 211), blurRadius: 10.0, spreadRadius: 1.0, offset: Offset(3, 3))
-      //   ],
-      //   color: Color.fromARGB(255, 255, 255, 255),
-      //   borderRadius: BorderRadius.all(Radius.circular(10)),
-      // ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SingleChildScrollView(
-            // controller: commentScrollController, // ScrollController 설정
             padding: EdgeInsets.symmetric(vertical: 10),
             child: Center(
               child: Column(
@@ -172,7 +138,6 @@ class DetailTaps extends StatelessWidget {
                           return CourseDetail();
                         case '코멘트':
                           return CourseComments();
-                        // return DetailTapCourseComments(courseIndex: index);
                         default:
                           return Container();
                       }
@@ -196,10 +161,6 @@ class DetailCourseInfo extends StatelessWidget {
     return Obx(() => Container(
           margin: EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
           padding: EdgeInsets.all(10),
-          // decoration: BoxDecoration(boxShadow: const [
-          //   BoxShadow(
-          //       color: Color.fromARGB(255, 211, 211, 211), blurRadius: 10.0, spreadRadius: 1.0, offset: Offset(3, 3)),
-          // ], color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(10))),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [

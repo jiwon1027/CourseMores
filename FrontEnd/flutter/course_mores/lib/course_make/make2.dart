@@ -1,6 +1,7 @@
 import 'package:coursemores/course_make/make3.dart';
 import 'package:coursemores/course_make/make_map.dart';
 import 'package:coursemores/course_make/make_search.dart';
+import 'package:draggable_home/draggable_home.dart';
 import 'package:flutter_reorderable_list/flutter_reorderable_list.dart' as frl;
 import 'package:flutter/material.dart';
 import './place_edit.dart';
@@ -144,14 +145,14 @@ class _CourseMakeState extends State<CourseMake> {
       showDialog(
         context: context,
         builder: (_) => AlertDialog(
-          title: const Text('장소 추가 불가'),
-          content: const Text('장소는 최대 5개까지 추가 가능합니다.'),
+          title: Text('장소 추가 불가'),
+          content: Text('장소는 최대 5개까지 추가 가능합니다.'),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('확인', style: TextStyle(color: Colors.blue)),
+              child: Text('확인', style: TextStyle(color: Colors.blue)),
             ),
           ],
         ),
@@ -166,8 +167,7 @@ class _CourseMakeState extends State<CourseMake> {
 
     LocationData locationData = LocationData(
       // key: UniqueKey(),
-      key: key ??
-          UniqueKey(), // Use the provided key or create a new one if none is provided
+      key: key ?? UniqueKey(), // Use the provided key or create a new one if none is provided
       name: name,
       latitude: latitude,
       longitude: longitude,
@@ -205,8 +205,8 @@ class _CourseMakeState extends State<CourseMake> {
   //   return '';
   // }
   Future<String> _getSido(double lat, double lon) async {
-    final List<geocoding.Placemark> placemarks = await geocoding
-        .placemarkFromCoordinates(lat, lon, localeIdentifier: 'ko');
+    final List<geocoding.Placemark> placemarks =
+        await geocoding.placemarkFromCoordinates(lat, lon, localeIdentifier: 'ko');
     // if (placemarks != null && placemarks.isNotEmpty) {
     if (placemarks.isNotEmpty) {
       final geocoding.Placemark place = placemarks.first;
@@ -220,8 +220,8 @@ class _CourseMakeState extends State<CourseMake> {
   }
 
   Future<String> _getGugun(double lat, double lon) async {
-    final List<geocoding.Placemark> placemarks = await geocoding
-        .placemarkFromCoordinates(lat, lon, localeIdentifier: 'ko');
+    final List<geocoding.Placemark> placemarks =
+        await geocoding.placemarkFromCoordinates(lat, lon, localeIdentifier: 'ko');
     // if (placemarks != null && placemarks.isNotEmpty) {
     if (placemarks.isNotEmpty) {
       final geocoding.Placemark place = placemarks.first;
@@ -289,368 +289,638 @@ class _CourseMakeState extends State<CourseMake> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        // 없어도 <- 모양의 뒤로가기가 기본으로 있으나 < 모양으로 바꾸려고 추가함
-        leading: IconButton(
-          icon: const Icon(
-            Icons.navigate_before,
-            color: Colors.black,
-          ),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        // 알림 아이콘과 텍스트 같이 넣으려고 RichText 사용
-        title: RichText(
-            text: const TextSpan(
-          children: [
-            WidgetSpan(
-              child: Icon(
-                Icons.edit_note,
-                color: Colors.black,
-              ),
-            ),
-            WidgetSpan(
-              child: SizedBox(
-                width: 5,
-              ),
-            ),
-            TextSpan(
-              text: '장소 추가하기 🏙',
-              style: TextStyle(
-                fontSize: 22,
-                color: Colors.black,
-              ),
-            ),
-          ],
-        )),
-        // 피그마와 모양 맞추려고 close 아이콘 하나 넣어둠
-        // <와 X 중 하나만 있어도 될 것 같아서 상의 후 삭제 필요
-        actions: [
-          IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: const Icon(
-                Icons.close,
-                color: Colors.black,
-              )),
-        ],
+    return DraggableHome(
+      actions: [
+        IconButton(onPressed: () {}, icon: Icon(Icons.settings, color: Colors.transparent)),
+      ],
+      title: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: const [Text('장소 추가하기 🏙', style: TextStyle(color: Colors.white))],
       ),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                height: 10,
-              ),
-              Row(
+      headerWidget: headerWidget(context),
+      headerExpandedHeight: 0.3,
+      body: [
+        SingleChildScrollView(
+          child: Container(
+            padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
+            child: Center(
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text(
-                    '장소는 최대 5개까지 추가할 수 있어요',
-                    style: TextStyle(
-                        color: Color.fromARGB(255, 92, 67, 67), fontSize: 18),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.refresh),
-                    onPressed: isRefreshing ? null : refreshImages,
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 5,
-              ),
-              SizedBox(
-                width: 380,
-                height: 520,
-                child: frl.ReorderableList(
-                  onReorder: _reorderCallback,
-                  onReorderDone: _reorderDone,
-                  child: CustomScrollView(
-                    // cacheExtent: 3000,
-                    slivers: <Widget>[
-                      SliverPadding(
-                          padding: EdgeInsets.only(
-                              bottom: MediaQuery.of(context).padding.bottom),
-                          sliver: SliverList(
-                            delegate: SliverChildBuilderDelegate(
-                              (BuildContext context, int index) {
-                                return Padding(
-                                  padding: EdgeInsets.all(5),
-                                  child: Item(
-                                    data: _items[index],
-                                    // first and last attributes affect border drawn during dragging
-                                    isFirst: index == 0,
-                                    isLast: index == _items.length - 1,
-                                    draggingMode: _draggingMode,
-                                    onEdit: () => onEdit(_items[index]),
-                                    onDelete: () => onDelete(_items[index]),
-                                  ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      FilledButton.icon(
+                          onPressed: () {
+                            if (_items.length >= 5) {
+                              showDialog(
+                                context: context,
+                                builder: (_) => AlertDialog(
+                                  title: Text('장소 추가 불가'),
+                                  content: Text('장소는 최대 5개까지 추가 가능합니다.'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text('확인', style: TextStyle(color: Colors.blue)),
+                                    ),
+                                  ],
+                                ),
+                              );
+                              return;
+                            }
+                            Navigator.push(context, MaterialPageRoute(builder: (context) {
+                              return CMSearch();
+                            })).then((selectedPlace) async {
+                              if (selectedPlace != null) {
+                                double latitude = selectedPlace.geometry!.location.lat;
+                                double longitude = selectedPlace.geometry!.location.lng;
+                                String sido = await _getSido(latitude, longitude);
+                                String gugun = await _getGugun(latitude, longitude);
+                                _addItem(
+                                  selectedPlace.name,
+                                  latitude,
+                                  longitude,
+                                  sido,
+                                  gugun,
+                                  UniqueKey(),
+                                  shouldLoadImage: true,
                                 );
-                              },
-                              childCount: _items.length,
-                            ),
+                              }
+                            });
+                          },
+                          icon: Icon(Icons.search),
+                          label: Text(
+                            '검색 추가',
+                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
                           )),
+                      SizedBox(width: 16),
+                      FilledButton.icon(
+                          onPressed: () {
+                            if (_items.length >= 5) {
+                              showDialog(
+                                context: context,
+                                builder: (_) => AlertDialog(
+                                  title: Text('장소 추가 불가'),
+                                  content: Text('장소는 최대 5개까지 추가 가능합니다.'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text('확인', style: TextStyle(color: Colors.blue)),
+                                    ),
+                                  ],
+                                ),
+                              );
+                              return;
+                            }
+                            Navigator.push(context, MaterialPageRoute(builder: (context) {
+                              return CMMap();
+                            })).then((data) {
+                              if (data != null) {
+                                _addItem(
+                                  data['locationName'],
+                                  data['latitude'],
+                                  data['longitude'],
+                                  data['sido'],
+                                  data['gugun'],
+                                  UniqueKey(),
+                                  shouldLoadImage: true,
+                                );
+                              }
+                            });
+                          },
+                          icon: Icon(Icons.location_on, color: Colors.red),
+                          label: Text('마커 추가', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12))),
                     ],
                   ),
-                ),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              // const MyStatefulWidget(),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ElevatedButton.icon(
-                      onPressed: () {
-                        if (_items.length >= 5) {
-                          showDialog(
-                            context: context,
-                            builder: (_) => AlertDialog(
-                              title: const Text('장소 추가 불가'),
-                              content: const Text('장소는 최대 5개까지 추가 가능합니다.'),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text('확인',
-                                      style: TextStyle(color: Colors.blue)),
-                                ),
-                              ],
-                            ),
-                          );
-                          return;
-                        }
-                        // Navigator.push(context,
-                        //     MaterialPageRoute(builder: (context) {
-                        //   return CMSearch();
-                        // })).then((selectedPlace) {
-                        //   if (selectedPlace != null) {
-                        //     _addItem(
-                        //         selectedPlace.name,
-                        //         selectedPlace.geometry!.location.lat,
-                        //         selectedPlace.geometry!.location.lng,
-                        //         UniqueKey());
-                        //   }
-                        // });
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) {
-                          return CMSearch();
-                        })).then((selectedPlace) async {
-                          if (selectedPlace != null) {
-                            double latitude =
-                                selectedPlace.geometry!.location.lat;
-                            double longitude =
-                                selectedPlace.geometry!.location.lng;
-                            String sido = await _getSido(latitude, longitude);
-                            String gugun = await _getGugun(latitude, longitude);
-                            _addItem(
-                              selectedPlace.name,
-                              latitude,
-                              longitude,
-                              sido,
-                              gugun,
-                              UniqueKey(),
-                              shouldLoadImage: true,
-                            );
-                          }
-                        });
-                      },
-                      icon: const Icon(Icons.search),
-                      label: const Text(
-                        '검색 추가',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 18),
-                      )),
-                  const SizedBox(width: 16),
-                  ElevatedButton.icon(
-                      onPressed: () {
-                        if (_items.length >= 5) {
-                          showDialog(
-                            context: context,
-                            builder: (_) => AlertDialog(
-                              title: const Text('장소 추가 불가'),
-                              content: const Text('장소는 최대 5개까지 추가 가능합니다.'),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text('확인',
-                                      style: TextStyle(color: Colors.blue)),
-                                ),
-                              ],
-                            ),
-                          );
-                          return;
-                        }
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) {
-                          return CMMap();
-                        })).then((data) {
-                          if (data != null) {
-                            _addItem(
-                              data['locationName'],
-                              data['latitude'],
-                              data['longitude'],
-                              data['sido'],
-                              data['gugun'],
-                              UniqueKey(),
-                              shouldLoadImage: true,
-                            );
-                          }
-                        });
-                      },
-                      icon: const Icon(
-                        Icons.location_on,
-                        color: Colors.red,
-                      ),
-                      label: const Text(
-                        '마커 추가',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 18),
-                      )),
-                ],
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      final List<LocationData> items = _items;
-                      if (items.length <= 1) {
-                        showDialog(
-                          context: context,
-                          builder: (_) => const AlertDialog(
-                            title: Text('동선 미리보기'),
-                            content: Text('장소를 2개 이상 선택해주세요.'),
-                          ),
-                        );
-                        return;
-                      }
-
-                      showDialog(
-                        context: context,
-                        builder: (_) => Dialog(
-                          child: SizedBox(
-                            height: 400,
-                            width: 300,
-                            child: PreviewRoute(items: items),
-                          ),
-                        ),
-                      );
-                    },
-                    icon: const Icon(Icons.route),
-                    label: const Text('동선 미리보기'),
-                  ),
-                  const SizedBox(width: 16),
-                  ElevatedButton.icon(
-                    icon: const Icon(Icons.verified),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                    ),
-                    onPressed: () {
-                      if (_items.length >= 2) {
-                        // _items 리스트에 2개 이상의 항목이 있는 경우
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: const Text('작성한 내용을 저장하겠습니까?'),
-                              content: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    '작성한 장소 ${_items.length}곳:',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.red,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: _items
-                                        .map((item) => Text(
-                                              '- ${item.name}',
-                                              style: const TextStyle(
-                                                color: Colors.red,
-                                              ),
-                                            ))
-                                        .toList(),
-                                  ),
-                                ],
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => MakeStepper()),
+                  SizedBox(height: 10),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 600,
+                    child: frl.ReorderableList(
+                      onReorder: _reorderCallback,
+                      onReorderDone: _reorderDone,
+                      child: CustomScrollView(
+                        // cacheExtent: 3000,
+                        slivers: <Widget>[
+                          SliverPadding(
+                              padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
+                              sliver: SliverList(
+                                delegate: SliverChildBuilderDelegate(
+                                  (BuildContext context, int index) {
+                                    return Padding(
+                                      padding: EdgeInsets.symmetric(vertical: 10),
+                                      child: Item(
+                                        data: _items[index],
+                                        // first and last attributes affect border drawn during dragging
+                                        isFirst: index == 0,
+                                        isLast: index == _items.length - 1,
+                                        draggingMode: _draggingMode,
+                                        onEdit: () => onEdit(_items[index]),
+                                        onDelete: () => onDelete(_items[index]),
+                                      ),
                                     );
                                   },
-                                  child: const Text('저장'),
+                                  childCount: _items.length,
                                 ),
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text('취소'),
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      } else {
-                        // _items 리스트에 2개 미만의 항목이 있는 경우
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: Center(
-                                  child: Row(
-                                children: const [
-                                  Icon(Icons.do_not_disturb),
-                                  Text('코스 등록 불가'),
-                                ],
                               )),
-                              content: const Text('코스는 2개 이상의 장소여야 등록이 가능합니다.'),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text('확인'),
-                                ),
-                              ],
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  // const MyStatefulWidget(),
+
+                  SizedBox(height: 10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      FilledButton.icon(
+                        onPressed: () {
+                          final List<LocationData> items = _items;
+                          if (items.length <= 1) {
+                            showDialog(
+                              context: context,
+                              builder: (_) => const AlertDialog(
+                                title: Text('동선 미리보기'),
+                                content: Text('장소를 2개 이상 선택해주세요.'),
+                              ),
                             );
-                          },
-                        );
-                      }
-                    },
-                    label: const Text('코스 지정 완료'),
+                            return;
+                          }
+
+                          showDialog(
+                            context: context,
+                            builder: (_) => Dialog(
+                              child: SizedBox(
+                                height: 400,
+                                width: 300,
+                                child: PreviewRoute(items: items),
+                              ),
+                            ),
+                          );
+                        },
+                        icon: Icon(Icons.route),
+                        label: Text('동선 미리보기'),
+                      ),
+                      SizedBox(width: 16),
+                      FilledButton.icon(
+                        icon: Icon(Icons.verified),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green,
+                        ),
+                        onPressed: () {
+                          if (_items.length >= 2) {
+                            // _items 리스트에 2개 이상의 항목이 있는 경우
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text('작성한 내용을 저장하겠습니까?'),
+                                  content: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        '작성한 장소 ${_items.length}곳:',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.red,
+                                        ),
+                                      ),
+                                      SizedBox(height: 8),
+                                      Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: _items
+                                            .map((item) => Text(
+                                                  '- ${item.name}',
+                                                  style: TextStyle(
+                                                    color: Colors.red,
+                                                  ),
+                                                ))
+                                            .toList(),
+                                      ),
+                                    ],
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text('취소'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(builder: (context) => MakeStepper()),
+                                        );
+                                      },
+                                      child: Text('저장'),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          } else {
+                            // _items 리스트에 2개 미만의 항목이 있는 경우
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Center(
+                                      child: Row(
+                                    children: const [
+                                      Icon(Icons.do_not_disturb),
+                                      Text('코스 등록 불가'),
+                                    ],
+                                  )),
+                                  content: Text('코스는 2개 이상의 장소여야 등록이 가능합니다.'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text('확인'),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          }
+                        },
+                        label: Text('코스 지정 완료'),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
+            ),
           ),
         ),
-      ),
+      ],
+      fullyStretchable: false,
+      backgroundColor: Colors.white,
+      appBarColor: Color.fromARGB(255, 80, 170, 208),
     );
+
+    // return Scaffold(
+    //   appBar: AppBar(
+    //     // 없어도 <- 모양의 뒤로가기가 기본으로 있으나 < 모양으로 바꾸려고 추가함
+    //     leading: IconButton(
+    //       icon: const Icon(
+    //         Icons.navigate_before,
+    //         color: Colors.black,
+    //       ),
+    //       onPressed: () {
+    //         Navigator.pop(context);
+    //       },
+    //     ),
+    //     // 알림 아이콘과 텍스트 같이 넣으려고 RichText 사용
+    //     title: RichText(
+    //         text: const TextSpan(
+    //       children: [
+    //         WidgetSpan(
+    //           child: Icon(
+    //             Icons.edit_note,
+    //             color: Colors.black,
+    //           ),
+    //         ),
+    //         WidgetSpan(
+    //           child: SizedBox(
+    //             width: 5,
+    //           ),
+    //         ),
+    //         TextSpan(
+    //           text: '장소 추가하기 🏙',
+    //           style: TextStyle(
+    //             fontSize: 22,
+    //             color: Colors.black,
+    //           ),
+    //         ),
+    //       ],
+    //     )),
+    //     // 피그마와 모양 맞추려고 close 아이콘 하나 넣어둠
+    //     // <와 X 중 하나만 있어도 될 것 같아서 상의 후 삭제 필요
+    //     actions: [
+    //       IconButton(
+    //           onPressed: () {
+    //             Navigator.pop(context);
+    //           },
+    //           icon: const Icon(
+    //             Icons.close,
+    //             color: Colors.black,
+    //           )),
+    //     ],
+    //   ),
+    //   body: SingleChildScrollView(
+    //     child: Center(
+    //       child: Column(
+    //         mainAxisAlignment: MainAxisAlignment.center,
+    //         children: [
+    //           SizedBox(
+    //             height: 10,
+    //           ),
+    //           Row(
+    //             mainAxisAlignment: MainAxisAlignment.center,
+    //             children: [
+    //               const Text(
+    //                 '장소는 최대 5개까지 추가할 수 있어요',
+    //                 style: TextStyle(color: Color.fromARGB(255, 92, 67, 67), fontSize: 18),
+    //               ),
+    //               IconButton(
+    //                 icon: Icon(Icons.refresh),
+    //                 onPressed: isRefreshing ? null : refreshImages,
+    //               ),
+    //             ],
+    //           ),
+    //           SizedBox(
+    //             height: 5,
+    //           ),
+    //           SizedBox(
+    //             width: 380,
+    //             height: 520,
+    //             child: frl.ReorderableList(
+    //               onReorder: _reorderCallback,
+    //               onReorderDone: _reorderDone,
+    //               child: CustomScrollView(
+    //                 // cacheExtent: 3000,
+    //                 slivers: <Widget>[
+    //                   SliverPadding(
+    //                       padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
+    //                       sliver: SliverList(
+    //                         delegate: SliverChildBuilderDelegate(
+    //                           (BuildContext context, int index) {
+    //                             return Padding(
+    //                               padding: EdgeInsets.all(5),
+    //                               child: Item(
+    //                                 data: _items[index],
+    //                                 // first and last attributes affect border drawn during dragging
+    //                                 isFirst: index == 0,
+    //                                 isLast: index == _items.length - 1,
+    //                                 draggingMode: _draggingMode,
+    //                                 onEdit: () => onEdit(_items[index]),
+    //                                 onDelete: () => onDelete(_items[index]),
+    //                               ),
+    //                             );
+    //                           },
+    //                           childCount: _items.length,
+    //                         ),
+    //                       )),
+    //                 ],
+    //               ),
+    //             ),
+    //           ),
+    //           SizedBox(
+    //             height: 20,
+    //           ),
+    //           // const MyStatefulWidget(),
+    //           Row(
+    //             mainAxisSize: MainAxisSize.min,
+    //             mainAxisAlignment: MainAxisAlignment.center,
+    //             children: [
+    //               ElevatedButton.icon(
+    //                   onPressed: () {
+    //                     if (_items.length >= 5) {
+    //                       showDialog(
+    //                         context: context,
+    //                         builder: (_) => AlertDialog(
+    //                           title: const Text('장소 추가 불가'),
+    //                           content: const Text('장소는 최대 5개까지 추가 가능합니다.'),
+    //                           actions: [
+    //                             TextButton(
+    //                               onPressed: () {
+    //                                 Navigator.of(context).pop();
+    //                               },
+    //                               child: const Text('확인', style: TextStyle(color: Colors.blue)),
+    //                             ),
+    //                           ],
+    //                         ),
+    //                       );
+    //                       return;
+    //                     }
+    //                     // Navigator.push(context,
+    //                     //     MaterialPageRoute(builder: (context) {
+    //                     //   return CMSearch();
+    //                     // })).then((selectedPlace) {
+    //                     //   if (selectedPlace != null) {
+    //                     //     _addItem(
+    //                     //         selectedPlace.name,
+    //                     //         selectedPlace.geometry!.location.lat,
+    //                     //         selectedPlace.geometry!.location.lng,
+    //                     //         UniqueKey());
+    //                     //   }
+    //                     // });
+    //                     Navigator.push(context, MaterialPageRoute(builder: (context) {
+    //                       return CMSearch();
+    //                     })).then((selectedPlace) async {
+    //                       if (selectedPlace != null) {
+    //                         double latitude = selectedPlace.geometry!.location.lat;
+    //                         double longitude = selectedPlace.geometry!.location.lng;
+    //                         String sido = await _getSido(latitude, longitude);
+    //                         String gugun = await _getGugun(latitude, longitude);
+    //                         _addItem(
+    //                           selectedPlace.name,
+    //                           latitude,
+    //                           longitude,
+    //                           sido,
+    //                           gugun,
+    //                           UniqueKey(),
+    //                           shouldLoadImage: true,
+    //                         );
+    //                       }
+    //                     });
+    //                   },
+    //                   icon: const Icon(Icons.search),
+    //                   label: const Text(
+    //                     '검색 추가',
+    //                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+    //                   )),
+    //               const SizedBox(width: 16),
+    //               ElevatedButton.icon(
+    //                   onPressed: () {
+    //                     if (_items.length >= 5) {
+    //                       showDialog(
+    //                         context: context,
+    //                         builder: (_) => AlertDialog(
+    //                           title: const Text('장소 추가 불가'),
+    //                           content: const Text('장소는 최대 5개까지 추가 가능합니다.'),
+    //                           actions: [
+    //                             TextButton(
+    //                               onPressed: () {
+    //                                 Navigator.of(context).pop();
+    //                               },
+    //                               child: const Text('확인', style: TextStyle(color: Colors.blue)),
+    //                             ),
+    //                           ],
+    //                         ),
+    //                       );
+    //                       return;
+    //                     }
+    //                     Navigator.push(context, MaterialPageRoute(builder: (context) {
+    //                       return CMMap();
+    //                     })).then((data) {
+    //                       if (data != null) {
+    //                         _addItem(
+    //                           data['locationName'],
+    //                           data['latitude'],
+    //                           data['longitude'],
+    //                           data['sido'],
+    //                           data['gugun'],
+    //                           UniqueKey(),
+    //                           shouldLoadImage: true,
+    //                         );
+    //                       }
+    //                     });
+    //                   },
+    //                   icon: const Icon(
+    //                     Icons.location_on,
+    //                     color: Colors.red,
+    //                   ),
+    //                   label: const Text(
+    //                     '마커 추가',
+    //                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+    //                   )),
+    //             ],
+    //           ),
+    //           SizedBox(
+    //             height: 10,
+    //           ),
+    //           Row(
+    //             mainAxisAlignment: MainAxisAlignment.center,
+    //             children: [
+    //               ElevatedButton.icon(
+    //                 onPressed: () {
+    //                   final List<LocationData> items = _items;
+    //                   if (items.length <= 1) {
+    //                     showDialog(
+    //                       context: context,
+    //                       builder: (_) => const AlertDialog(
+    //                         title: Text('동선 미리보기'),
+    //                         content: Text('장소를 2개 이상 선택해주세요.'),
+    //                       ),
+    //                     );
+    //                     return;
+    //                   }
+
+    //                   showDialog(
+    //                     context: context,
+    //                     builder: (_) => Dialog(
+    //                       child: SizedBox(
+    //                         height: 400,
+    //                         width: 300,
+    //                         child: PreviewRoute(items: items),
+    //                       ),
+    //                     ),
+    //                   );
+    //                 },
+    //                 icon: const Icon(Icons.route),
+    //                 label: const Text('동선 미리보기'),
+    //               ),
+    //               const SizedBox(width: 16),
+    //               ElevatedButton.icon(
+    //                 icon: const Icon(Icons.verified),
+    //                 style: ElevatedButton.styleFrom(
+    //                   backgroundColor: Colors.green,
+    //                 ),
+    //                 onPressed: () {
+    //                   if (_items.length >= 2) {
+    //                     // _items 리스트에 2개 이상의 항목이 있는 경우
+    //                     showDialog(
+    //                       context: context,
+    //                       builder: (BuildContext context) {
+    //                         return AlertDialog(
+    //                           title: const Text('작성한 내용을 저장하겠습니까?'),
+    //                           content: Column(
+    //                             mainAxisSize: MainAxisSize.min,
+    //                             crossAxisAlignment: CrossAxisAlignment.start,
+    //                             children: [
+    //                               Text(
+    //                                 '작성한 장소 ${_items.length}곳:',
+    //                                 style: TextStyle(
+    //                                   fontWeight: FontWeight.bold,
+    //                                   color: Colors.red,
+    //                                 ),
+    //                               ),
+    //                               const SizedBox(height: 8),
+    //                               Column(
+    //                                 mainAxisSize: MainAxisSize.min,
+    //                                 crossAxisAlignment: CrossAxisAlignment.start,
+    //                                 children: _items
+    //                                     .map((item) => Text(
+    //                                           '- ${item.name}',
+    //                                           style: const TextStyle(
+    //                                             color: Colors.red,
+    //                                           ),
+    //                                         ))
+    //                                     .toList(),
+    //                               ),
+    //                             ],
+    //                           ),
+    //                           actions: [
+    //                             TextButton(
+    //                               onPressed: () {
+    //                                 Navigator.of(context).pop();
+    //                                 Navigator.push(
+    //                                   context,
+    //                                   MaterialPageRoute(builder: (context) => MakeStepper()),
+    //                                 );
+    //                               },
+    //                               child: const Text('저장'),
+    //                             ),
+    //                             TextButton(
+    //                               onPressed: () {
+    //                                 Navigator.of(context).pop();
+    //                               },
+    //                               child: const Text('취소'),
+    //                             ),
+    //                           ],
+    //                         );
+    //                       },
+    //                     );
+    //                   } else {
+    //                     // _items 리스트에 2개 미만의 항목이 있는 경우
+    //                     showDialog(
+    //                       context: context,
+    //                       builder: (BuildContext context) {
+    //                         return AlertDialog(
+    //                           title: Center(
+    //                               child: Row(
+    //                             children: const [
+    //                               Icon(Icons.do_not_disturb),
+    //                               Text('코스 등록 불가'),
+    //                             ],
+    //                           )),
+    //                           content: const Text('코스는 2개 이상의 장소여야 등록이 가능합니다.'),
+    //                           actions: [
+    //                             TextButton(
+    //                               onPressed: () {
+    //                                 Navigator.of(context).pop();
+    //                               },
+    //                               child: const Text('확인'),
+    //                             ),
+    //                           ],
+    //                         );
+    //                       },
+    //                     );
+    //                   }
+    //                 },
+    //                 label: const Text('코스 지정 완료'),
+    //               ),
+    //             ],
+    //           ),
+    //         ],
+    //       ),
+    //     ),
+    //   ),
+    // );
   }
 }
 
@@ -685,8 +955,7 @@ class Item extends StatelessWidget {
     final String imgUrl =
         "https://maps.googleapis.com/maps/api/streetview?size=400x400&location=${data.latitude},${data.longitude}&fov=90&heading=235&pitch=10&key=$apiKey";
 
-    if (state == frl.ReorderableItemState.dragProxy ||
-        state == frl.ReorderableItemState.dragProxyFinished) {
+    if (state == frl.ReorderableItemState.dragProxy || state == frl.ReorderableItemState.dragProxyFinished) {
       // slightly transparent background white dragging (just like on iOS)
       decoration = const BoxDecoration(color: Color(0xD0FFFFFF));
     } else {
@@ -707,9 +976,9 @@ class Item extends StatelessWidget {
     Widget dragHandle = draggingMode == DraggingMode.iOS
         ? frl.ReorderableListener(
             child: Container(
-              padding: const EdgeInsets.only(right: 18.0, left: 18.0),
-              color: const Color(0x08000000),
-              child: const Center(
+              padding: EdgeInsets.only(right: 18.0, left: 18.0),
+              color: Color(0x08000000),
+              child: Center(
                 child: Icon(Icons.reorder, color: Color(0xFF888888)),
               ),
             ),
@@ -728,15 +997,12 @@ class Item extends StatelessWidget {
               Expanded(
                 flex: 5,
                 child: Container(
-                  padding:
-                      EdgeInsets.symmetric(vertical: 14.0, horizontal: 14.0),
+                  padding: EdgeInsets.fromLTRB(20, 21, 20, 7),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        data.name,
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
+                      Text(data.name, style: Theme.of(context).textTheme.titleMedium),
+                      SizedBox(height: 10),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
@@ -757,18 +1023,16 @@ class Item extends StatelessWidget {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) =>
-                                      EditItemPage(locationData: data),
+                                  builder: (context) => EditItemPage(locationData: data),
                                 ),
                               );
                               // },
                             },
                             icon: Icon(Icons.edit),
-                            label: Text('추가 정보 작성'),
+                            label: Text('추가 정보 작성', style: TextStyle(fontSize: 12)),
                             style: ElevatedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20),
-                              ),
+                              backgroundColor: Color.fromARGB(255, 119, 181, 212),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                             ),
                           ),
                           SizedBox(width: 10),
@@ -777,8 +1041,9 @@ class Item extends StatelessWidget {
                               onDelete();
                             },
                             icon: Icon(Icons.delete),
-                            label: Text('장소 삭제'),
+                            label: Text('장소 삭제', style: TextStyle(fontSize: 12)),
                             style: ElevatedButton.styleFrom(
+                              backgroundColor: Color.fromARGB(255, 243, 115, 115),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20),
                               ),
@@ -824,37 +1089,18 @@ class Item extends StatelessWidget {
     if (draggingMode == DraggingMode.android) {
       content = frl.DelayedReorderableListener(
         child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20.0),
-          ),
-          child: Column(
-            children: [
-              image,
-              content,
-            ],
-          ),
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(20.0)),
+          child: Column(children: [image, content]),
         ),
       );
     }
 
     return Container(
-      decoration: BoxDecoration(
-        // borderRadius: BorderRadius.circular(20.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 2,
-            blurRadius: 3,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          image,
-          content,
-        ],
-      ),
+      clipBehavior: Clip.hardEdge,
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(25), boxShadow: [
+        BoxShadow(color: Colors.grey.withOpacity(0.5), spreadRadius: 2, blurRadius: 3, offset: Offset(0, 2)),
+      ]),
+      child: Column(children: [image, content]),
     );
   }
 
@@ -876,25 +1122,18 @@ class PreviewRoute extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<LatLng> positions =
-        items.map((item) => LatLng(item.latitude, item.longitude)).toList();
+    final List<LatLng> positions = items.map((item) => LatLng(item.latitude, item.longitude)).toList();
     final List<Future<BitmapDescriptor>> futures = [
-      BitmapDescriptor.fromAssetImage(
-          ImageConfiguration(size: Size(24, 24)), 'assets/marker1.png'),
-      BitmapDescriptor.fromAssetImage(
-          ImageConfiguration(size: Size(24, 24)), 'assets/marker2.png'),
-      BitmapDescriptor.fromAssetImage(
-          ImageConfiguration(size: Size(24, 24)), 'assets/marker3.png'),
-      BitmapDescriptor.fromAssetImage(
-          ImageConfiguration(size: Size(24, 24)), 'assets/marker4.png'),
-      BitmapDescriptor.fromAssetImage(
-          ImageConfiguration(size: Size(24, 24)), 'assets/marker5.png'),
+      BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(24, 24)), 'assets/marker1.png'),
+      BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(24, 24)), 'assets/marker2.png'),
+      BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(24, 24)), 'assets/marker3.png'),
+      BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(24, 24)), 'assets/marker4.png'),
+      BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(24, 24)), 'assets/marker5.png'),
     ];
     final Future<List<BitmapDescriptor>> markersFuture = Future.wait(futures);
     return FutureBuilder<List<BitmapDescriptor>>(
         future: markersFuture,
-        builder: (BuildContext context,
-            AsyncSnapshot<List<BitmapDescriptor>> snapshot) {
+        builder: (BuildContext context, AsyncSnapshot<List<BitmapDescriptor>> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Container(
               color: Colors.grey,
@@ -933,4 +1172,31 @@ class PreviewRoute extends StatelessWidget {
           );
         });
   }
+}
+
+Widget headerWidget(BuildContext context) {
+  return Container(
+    decoration: BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: const [
+          Color.fromARGB(255, 0, 90, 129),
+          Color.fromARGB(232, 255, 218, 218),
+        ],
+        stops: const [0.0, 0.9],
+      ),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: const [
+        Text("장소 추가하기", style: TextStyle(fontSize: 25, color: Colors.white)),
+        SizedBox(height: 30),
+        Text("코스에 넣을 장소들을 골라보세요", style: TextStyle(fontSize: 16, color: Colors.white)),
+        SizedBox(height: 10),
+        Text("장소는 최대 5개까지 추가할 수 있어요", style: TextStyle(fontSize: 16, color: Colors.white)),
+      ],
+    ),
+  );
 }

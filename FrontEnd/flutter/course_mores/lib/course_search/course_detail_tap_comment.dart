@@ -116,7 +116,7 @@ class CommentsListSection extends StatelessWidget {
               itemBuilder: (context, index) {
                 return Card(
                   elevation: 6,
-                  margin: EdgeInsets.fromLTRB(4, 10, 4, 0),
+                  margin: EdgeInsets.fromLTRB(4, 10, 4, 10),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                   child: Padding(
                     padding: EdgeInsets.all(15),
@@ -149,7 +149,7 @@ class CommentsListSection extends StatelessWidget {
                             SizedBox(width: 5),
                             Text(
                                 DateFormat('yyyy. MM.dd')
-                                    .format(DateTime.parse(detailController.nowCourseInfo['createTime'])),
+                                    .format(DateTime.parse(detailController.nowCourseCommentList[index]['createTime'])),
                                 style: TextStyle(fontSize: 12)),
                             SizedBox(width: 10),
                             Icon(Icons.people, size: 16),
@@ -184,7 +184,34 @@ class CommentsListSection extends StatelessWidget {
                               IconButton(
                                   icon: Icon(Icons.delete_forever_rounded),
                                   onPressed: () async {
-                                    detailController.deleteComment(index);
+                                    print(detailController.nowIndex);
+                                    bool confirmed = await showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: Text("코멘트 삭제", style: TextStyle(fontSize: 16)),
+                                          content: Text("정말로 삭제하시겠습니까?", style: TextStyle(fontSize: 14)),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop(false); // 취소 버튼을 누를 때 false 반환
+                                              },
+                                              child: Text("취소"),
+                                            ),
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop(true); // 확인 버튼을 누를 때 true 반환
+                                              },
+                                              child: Text("확인"),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+
+                                    if (confirmed == true) {
+                                      detailController.deleteComment(index);
+                                    }
                                   },
                                   tooltip: "삭제"),
                             ],

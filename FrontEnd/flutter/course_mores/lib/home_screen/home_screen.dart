@@ -34,37 +34,30 @@ class _HomeScreenState extends State<HomeScreen> {
     switch (iconCode) {
       case '01d':
       case '01n':
-        return Lottie.asset('assets/weather_sunny.json',
-            fit: BoxFit.fitWidth, width: 200);
+        return Lottie.asset('assets/weather_sunny.json', fit: BoxFit.fitWidth, width: 200);
       case '02d':
       case '02n':
       case '03d':
       case '03n':
       case '04d':
       case '04n':
-        return Lottie.asset('assets/weather_cloudy.json',
-            fit: BoxFit.fitWidth, width: 200);
+        return Lottie.asset('assets/weather_cloudy.json', fit: BoxFit.fitWidth, width: 200);
       case '09d':
       case '09n':
       case '10d':
       case '10n':
-        return Lottie.asset('assets/weather_rainy.json',
-            fit: BoxFit.fitWidth, width: 200);
+        return Lottie.asset('assets/weather_rainy.json', fit: BoxFit.fitWidth, width: 200);
       case '11d':
       case '11n':
-        return Lottie.asset('assets/weather_thunderstorm.json',
-            fit: BoxFit.fitWidth, width: 200);
+        return Lottie.asset('assets/weather_thunderstorm.json', fit: BoxFit.fitWidth, width: 200);
       case '13d':
       case '13n':
-        return Lottie.asset('assets/weather_snow.json',
-            fit: BoxFit.fitWidth, width: 200);
+        return Lottie.asset('assets/weather_snow.json', fit: BoxFit.fitWidth, width: 200);
       case '50d':
       case '50n':
-        return Lottie.asset('assets/weather_mist.json',
-            fit: BoxFit.fitWidth, width: 200);
+        return Lottie.asset('assets/weather_mist.json', fit: BoxFit.fitWidth, width: 200);
       default:
-        return Lottie.asset('assets/weather_sunny.json',
-            fit: BoxFit.fitWidth, width: 200);
+        return Lottie.asset('assets/weather_sunny.json', fit: BoxFit.fitWidth, width: 200);
     }
   }
 
@@ -98,9 +91,8 @@ class _HomeScreenState extends State<HomeScreen> {
     final tokenStorage = Get.put(TokenStorage());
     final dio = await authDio();
 
-    final response = await dio.get('course/hot',
-        options: Options(
-            headers: {'Authorization': 'Bearer ${tokenStorage.accessToken}'}));
+    final response =
+        await dio.get('course/hot', options: Options(headers: {'Authorization': 'Bearer ${tokenStorage.accessToken}'}));
 
     List<dynamic> data = response.data['courseList'];
     hotCourse = data.map((item) => Map<String, Object>.from(item)).toList();
@@ -115,8 +107,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final dio = await authDio();
     final response = await dio.get(
         'course/around?latitude=${locationController.latitude}&longitude=${locationController.longitude}',
-        options: Options(
-            headers: {'Authorization': 'Bearer ${tokenStorage.accessToken}'}));
+        options: Options(headers: {'Authorization': 'Bearer ${tokenStorage.accessToken}'}));
 
     List<dynamic> data = response.data['courseList'];
     nearCourse = data.map((item) => Map<String, Object>.from(item)).toList();
@@ -164,12 +155,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<String> _getAddress(double lat, double lon) async {
-    final List<geocoding.Placemark> placemarks = await geocoding
-        .placemarkFromCoordinates(lat, lon, localeIdentifier: 'ko');
+    final List<geocoding.Placemark> placemarks =
+        await geocoding.placemarkFromCoordinates(lat, lon, localeIdentifier: 'ko');
     if (placemarks.isNotEmpty) {
       final placemark = placemarks.first;
-      final String address =
-          '${placemark.subLocality} ${placemark.thoroughfare} ';
+      final String address = '${placemark.subLocality} ${placemark.thoroughfare} ';
       return address;
     }
     return '';
@@ -179,15 +169,25 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     searchController.getThemeList();
     searchController.getSidoList();
+
     return Scaffold(
         body: Container(
             decoration: BoxDecoration(
-              image: DecorationImage(
-                  image: AssetImage('assets/background-pink.jpg'),
-                  // image: AssetImage('assets/background.gif'),
-                  // image: AssetImage('assets/blue_background.gif'),
-                  opacity: 1,
-                  fit: BoxFit.cover),
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: const [
+                  Color.fromARGB(255, 0, 90, 129),
+                  Color.fromARGB(232, 255, 218, 218),
+                ],
+                stops: const [0.0, 0.3],
+              ),
+              // image: DecorationImage(
+              // image: AssetImage('assets/background-pink.jpg'),
+              // image: AssetImage('assets/background.gif'),
+              // image: AssetImage('assets/blue_background.gif'),
+              // opacity: 1,
+              // fit: BoxFit.cover),
             ),
             child: Obx(
               () => SingleChildScrollView(
@@ -207,84 +207,54 @@ class _HomeScreenState extends State<HomeScreen> {
                               builder: (context, snapshot) {
                                 if (snapshot.hasData) {
                                   final weatherData = snapshot.data!;
-                                  final temp =
-                                      weatherData['main']['temp'].toString();
-                                  final weather = weatherData['weather'][0]
-                                          ['description']
-                                      .toString();
-                                  final iconCode = weatherData['weather'][0]
-                                          ['icon']
-                                      .toString();
+                                  final temp = weatherData['main']['temp'].toString();
+                                  final weather = weatherData['weather'][0]['description'].toString();
+                                  final iconCode = weatherData['weather'][0]['icon'].toString();
                                   return Row(
                                     children: [
                                       Expanded(
                                         child: Container(
                                           decoration: BoxDecoration(
-                                              color: Color.fromARGB(
-                                                  168, 255, 255, 255),
-                                              borderRadius:
-                                                  BorderRadius.circular(20)),
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 20),
+                                              color: Color.fromARGB(168, 255, 255, 255),
+                                              borderRadius: BorderRadius.circular(20)),
+                                          padding: EdgeInsets.symmetric(vertical: 20),
                                           alignment: Alignment.bottomCenter,
                                           child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
+                                            mainAxisAlignment: MainAxisAlignment.center,
                                             children: [
                                               Text(
                                                 '${temp.split('.')[0]} °C',
-                                                style: TextStyle(
-                                                    fontSize: 26,
-                                                    color: Colors.black),
+                                                style: TextStyle(fontSize: 26, color: Colors.black),
                                               ),
                                               SizedBox(height: 10),
                                               Text(
                                                 weather,
-                                                style: TextStyle(
-                                                    fontSize: 14,
-                                                    color: Colors.black),
+                                                style: TextStyle(fontSize: 14, color: Colors.black),
                                               ),
                                               SizedBox(height: 16),
                                               FutureBuilder<String>(
                                                 future: _getAddress(
-                                                    _currentPosition
-                                                            ?.latitude ??
-                                                        0,
-                                                    _currentPosition
-                                                            ?.longitude ??
-                                                        0),
+                                                    _currentPosition?.latitude ?? 0, _currentPosition?.longitude ?? 0),
                                                 builder: (context, snapshot) {
-                                                  if (snapshot
-                                                          .connectionState ==
-                                                      ConnectionState.waiting) {
+                                                  if (snapshot.connectionState == ConnectionState.waiting) {
                                                     return Text('검색중...');
                                                   } else if (snapshot.hasData) {
-                                                    final address =
-                                                        snapshot.data!;
+                                                    final address = snapshot.data!;
                                                     return Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
+                                                      mainAxisAlignment: MainAxisAlignment.center,
                                                       children: [
-                                                        Icon(Icons.location_on,
-                                                            color:
-                                                                Colors.purple),
+                                                        Icon(Icons.location_on, color: Colors.purple),
                                                         SizedBox(width: 4),
                                                         Text(
                                                           address.length > 10
                                                               ? '${address.substring(0, 10)}...'
                                                               : address,
-                                                          style: TextStyle(
-                                                              fontSize: 16,
-                                                              color: Colors
-                                                                  .purple),
+                                                          style: TextStyle(fontSize: 16, color: Colors.purple),
                                                         ),
                                                       ],
                                                     );
-                                                  } else if (snapshot
-                                                      .hasError) {
-                                                    return Text(
-                                                        'Error: ${snapshot.error}');
+                                                  } else if (snapshot.hasError) {
+                                                    return Text('Error: ${snapshot.error}');
                                                   } else {
                                                     return Text('');
                                                   }
@@ -383,8 +353,7 @@ class _ButtonBar2State extends State<ButtonBar2> {
                     Icon(Icons.route, color: Colors.purple, size: 30),
                     Text(
                       '코스 작성',
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
                     )
                   ],
                 ),
@@ -404,9 +373,7 @@ class _ButtonBar2State extends State<ButtonBar2> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: const [
                     Icon(Icons.star_outline, color: Colors.purple, size: 30),
-                    Text('관심 목록',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 12))
+                    Text('관심 목록', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12))
                   ],
                 ),
               ),
@@ -425,9 +392,7 @@ class _ButtonBar2State extends State<ButtonBar2> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: const [
                     Icon(Icons.account_circle, color: Colors.purple, size: 30),
-                    Text('마이페이지',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 12))
+                    Text('마이페이지', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12))
                   ],
                 ),
               ),
@@ -440,9 +405,7 @@ class _ButtonBar2State extends State<ButtonBar2> {
 }
 
 iconBoxDeco() {
-  return BoxDecoration(
-      border: Border.all(color: Colors.black),
-      borderRadius: BorderRadius.circular(10));
+  return BoxDecoration(border: Border.all(color: Colors.black), borderRadius: BorderRadius.circular(10));
 }
 
 boxDeco() {
@@ -516,10 +479,7 @@ themeList() {
                   padding: EdgeInsets.only(top: 15, bottom: 25),
                   child: Text(
                     '이런 테마는 어때요? 😊',
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold),
+                    style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
                 Padding(
@@ -538,9 +498,7 @@ themeList() {
                         onTap: () {
                           pageController.changePageNum(2);
                           search.Search();
-                          searchController.queryParameters['themeIds'] = [
-                            theme['themeId']
-                          ];
+                          searchController.queryParameters['themeIds'] = [theme['themeId']];
                           searchController.isSearchResults.value = true;
                           searchController.changePage(page: 0);
                           searchController.searchCourse();
@@ -561,12 +519,10 @@ themeList() {
                             ],
                           ),
                           child: Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 12.0, vertical: 8.0),
+                            padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
                             child: Text(
                               theme['name'],
-                              style: TextStyle(
-                                  color: Colors.black, fontSize: 12.0),
+                              style: TextStyle(color: Colors.black, fontSize: 12.0),
                             ),
                           ),
                         ),
@@ -599,12 +555,9 @@ searchButtonBar() {
       },
       decoration: InputDecoration(
         hintText: "코스, 장소, 해시태그 등을 검색해보세요",
-        hintStyle: TextStyle(
-            color: Color.fromARGB(152, 144, 59, 159), fontSize: 12, height: 2),
-        enabledBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: Colors.transparent)),
-        focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: Colors.transparent)),
+        hintStyle: TextStyle(color: Color.fromARGB(152, 144, 59, 159), fontSize: 12, height: 2),
+        enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.transparent)),
+        focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.transparent)),
         prefixIcon: IconButton(
             icon: Icon(Icons.tune),
             color: Colors.purple,
@@ -641,7 +594,7 @@ searchButtonBar() {
           ],
         ),
       ),
-      style: TextStyle(fontSize: 18, color: Colors.black),
+      style: TextStyle(fontSize: 14, color: Colors.black),
       onFieldSubmitted: controlSearching,
     ),
   );
