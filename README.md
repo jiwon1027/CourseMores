@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="./assets/readme/coursemores_logo.png" alt="HTML" />
+  <img src="./assets/readme/coursemores_logo.png" alt="HTML" width=300px" />
 </div>
 
 <div align="center">

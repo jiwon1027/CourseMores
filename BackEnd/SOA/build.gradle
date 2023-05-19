@@ -1,0 +1,106 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '2.7.11'
+	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+	id "org.sonarqube" version "4.0.0.2929"
+	// Querydsl 추가
+	id 'com.ewerk.gradle.plugins.querydsl' version '1.0.10'
+}
+
+group = 'com.moham'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	compileOnly 'org.projectlombok:lombok'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	runtimeOnly 'com.mysql:mysql-connector-j'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.security:spring-security-test'
+	// jwt 관련 의존성
+	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+	implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
+	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+	// querydsl
+	implementation "com.querydsl:querydsl-jpa:5.0.0"
+	implementation "com.querydsl:querydsl-apt:5.0.0"
+	// https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-s3
+	implementation 'com.amazonaws:aws-java-sdk-s3:1.12.460'
+	// elasticsearch
+	implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
+	//logstash
+	implementation group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: '7.2'
+	// redis
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	// https://mvnrepository.com/artifact/com.google.firebase/firebase-admin
+	implementation 'com.google.firebase:firebase-admin:9.1.1'
+	// spring health check
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+// 실행파일 생성
+bootJar {
+	archiveFileName = "coursemores-0.0.1-SNAPSHOT.jar"
+}
+
+sonar {
+	properties {
+		property "sonar.host.url", "http://coursemores.site:8082"
+		property "sonar.projectKey", "sqa_7b4dff5b3173cfd25ae0feae999ca310004a6161"
+		property "sonar.projectName", "coursemores"
+	}
+}
+
+/*
+ * Querydsl 빌드 옵션 시작
+ */
+
+// querydsl 사용 경로 지정, 이 부분은 .gitignore에 포함되므로 git에 올라가지는 않아요~
+def querydslDir = "$buildDir/generated/querydsl"
+
+// JPA 사용 여부 및 사용 경로 설정
+querydsl {
+	jpa = true
+	querydslSourcesDir = querydslDir
+}
+
+// build시 사용할 sourceSet 추가 설정
+sourceSets {
+	main.java.srcDir querydslDir
+}
+
+// querydsl 컴파일 시 사용할 옵션 설정
+compileQuerydsl {
+	options.annotationProcessorPath = configurations.querydsl
+}
+
+// querydsl이 compileClassPath를 상속하도록 설정
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+	querydsl.extendsFrom compileClasspath
+}
+// Querydsl 빌드 옵션 끝
