@@ -123,7 +123,7 @@
 
 # 🎥UCC 영상
 
-[<img src="./assets/readme/coursemores_logo.png" width="150" alt="UCC 영상 바로가기" />](https://youtu.be/youtube)
+[<img src="./assets/readme/coursemores_logo.png" width="150" alt="UCC 영상 바로가기" />](https://www.youtube.com/watch?v=lZh7i7-TZ8g)
 
 > 새 창 열기 방법 : Ctrl + click (on Windows and Linux) | CMD + click (on MacOS)
 
