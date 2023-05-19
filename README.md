@@ -111,7 +111,7 @@
 
 - **시스템 아키텍처**
 
-  <img src="./assets/readme/architecture.png"  alt="Architecture" width="600px" >
+  <img src="./assets/readme/Architecture.png"  alt="Architecture" width="600px" >
 
 <br />
 
